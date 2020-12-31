@@ -27,16 +27,14 @@ $EndComp
 $Comp
 L power:+5V #PWR0101
 U 1 1 5FD64472
-P 3000 3350
-F 0 "#PWR0101" H 3000 3200 50  0001 C CNN
-F 1 "+5V" H 3015 3523 50  0000 C CNN
-F 2 "" H 3000 3350 50  0001 C CNN
-F 3 "" H 3000 3350 50  0001 C CNN
-	1    3000 3350
+P 3350 3350
+F 0 "#PWR0101" H 3350 3200 50  0001 C CNN
+F 1 "+5V" H 3365 3523 50  0000 C CNN
+F 2 "" H 3350 3350 50  0001 C CNN
+F 3 "" H 3350 3350 50  0001 C CNN
+	1    3350 3350
 	1    0    0    -1  
 $EndComp
-Wire Wire Line
-	3000 3350 2800 3350
 $Comp
 L power:+5V #PWR0102
 U 1 1 5FD65A34
@@ -48,21 +46,17 @@ F 3 "" H 2000 3450 50  0001 C CNN
 	1    2000 3450
 	1    0    0    -1  
 $EndComp
-Wire Wire Line
-	2300 3450 2050 3450
 $Comp
 L power:GND #PWR0103
 U 1 1 5FD65E00
-P 3000 3450
-F 0 "#PWR0103" H 3000 3200 50  0001 C CNN
-F 1 "GND" H 3005 3277 50  0000 C CNN
-F 2 "" H 3000 3450 50  0001 C CNN
-F 3 "" H 3000 3450 50  0001 C CNN
-	1    3000 3450
+P 3350 3450
+F 0 "#PWR0103" H 3350 3200 50  0001 C CNN
+F 1 "GND" H 3355 3277 50  0000 C CNN
+F 2 "" H 3350 3450 50  0001 C CNN
+F 3 "" H 3350 3450 50  0001 C CNN
+	1    3350 3450
 	1    0    0    -1  
 $EndComp
-Wire Wire Line
-	3000 3450 2800 3450
 $Comp
 L power:GND #PWR0104
 U 1 1 5FD66D1A
@@ -144,7 +138,7 @@ Text GLabel 2300 4550 0    50   Input ~ 0
 SYNC
 Text GLabel 1750 4450 0    50   Input ~ 0
 ~IRQ~
-Text GLabel 2800 4550 2    50   BiDi ~ 0
+Text GLabel 3000 4550 2    50   BiDi ~ 0
 ~SLOT_IRQ~
 Text GLabel 2800 4450 2    50   BiDi ~ 0
 EX5
@@ -153,31 +147,16 @@ EX4
 Text GLabel 2800 4250 2    50   BiDi ~ 0
 EX3
 Wire Wire Line
-	3100 3300 3100 3350
-Wire Wire Line
-	3100 3350 3000 3350
-Connection ~ 3000 3350
-Wire Wire Line
-	3100 3500 3100 3450
-Wire Wire Line
-	3100 3450 3000 3450
-Connection ~ 3000 3450
-Wire Wire Line
-	2050 3500 2050 3450
-Connection ~ 2050 3450
-Wire Wire Line
-	2050 3450 2000 3450
-Wire Wire Line
 	1750 4450 2300 4450
 Wire Wire Line
 	1750 4050 2300 4050
 Wire Wire Line
 	1750 4150 2300 4150
-Text GLabel 2800 3550 2    50   BiDi ~ 0
-EX3
+Text GLabel 2900 3500 2    50   BiDi ~ 0
+~SSEL~
 Text GLabel 2800 3650 2    50   BiDi ~ 0
 ~INH~
-Text GLabel 2800 3750 2    50   BiDi ~ 0
+Text GLabel 3050 3750 2    50   BiDi ~ 0
 ~SLOT_SEL~
 Text GLabel 2800 3850 2    50   BiDi ~ 0
 LED1
@@ -209,7 +188,7 @@ L Connector:Mini-DIN-6 J3
 U 1 1 5FD93536
 P 7700 4050
 F 0 "J3" H 7700 4417 50  0000 C CNN
-F 1 "Mini-DIN-6" H 7700 4326 50  0000 C CNN
+F 1 "Mini-DIN-6" H 7750 4350 50  0000 C CNN
 F 2 "mini-din:MINI-DIN-6-FULL-SHIELD" H 7700 4050 50  0001 C CNN
 F 3 "http://service.powerdynamics.com/ec/Catalog17/Section%2011.pdf" H 7700 4050 50  0001 C CNN
 	1    7700 4050
@@ -235,7 +214,7 @@ Text GLabel 5850 2900 0    50   Input ~ 0
 R~W~
 Text GLabel 5850 1700 0    50   Input ~ 0
 CLK
-Text GLabel 5850 1600 0    50   Input ~ 0
+Text GLabel 5750 1550 0    50   Input ~ 0
 ~RESET~
 Text GLabel 5850 1900 0    50   Output ~ 0
 ~SLOT_IRQ~
@@ -358,9 +337,6 @@ F 3 "" H 7700 3200 50  0001 C CNN
 $EndComp
 Wire Wire Line
 	7700 3400 7700 3500
-Connection ~ 7700 3500
-Wire Wire Line
-	7700 3500 7050 3500
 $Comp
 L Device:R_Small R1
 U 1 1 5FF71274
@@ -452,7 +428,7 @@ Text GLabel 7050 3200 2    50   BiDi ~ 0
 MISO
 Text GLabel 7050 3300 2    50   BiDi ~ 0
 MOSI
-Text GLabel 7050 3400 2    50   BiDi ~ 0
+Text GLabel 7150 3450 2    50   BiDi ~ 0
 ~CONF~
 $Comp
 L Connector_Generic:Conn_02x10_Odd_Even J4
@@ -872,4 +848,49 @@ Text Label 5200 5400 0    50   ~ 0
 SS6
 Text Label 5200 5300 0    50   ~ 0
 SS7
+Wire Wire Line
+	2800 3350 3350 3350
+Wire Wire Line
+	2800 3450 2850 3450
+Wire Wire Line
+	3050 3750 2800 3750
+Wire Wire Line
+	2000 3450 2300 3450
+Wire Wire Line
+	3000 4550 2800 4550
+Wire Wire Line
+	2900 3500 2850 3500
+Wire Wire Line
+	2850 3500 2850 3550
+Wire Wire Line
+	2850 3550 2800 3550
+Wire Wire Line
+	7150 3450 7100 3450
+Wire Wire Line
+	7100 3450 7100 3400
+Wire Wire Line
+	7100 3400 7050 3400
+Wire Wire Line
+	7700 3500 7450 3500
+Wire Wire Line
+	7450 3500 7450 3550
+Wire Wire Line
+	7450 3550 7100 3550
+Wire Wire Line
+	7100 3550 7100 3500
+Wire Wire Line
+	7100 3500 7050 3500
+Connection ~ 7700 3500
+Wire Wire Line
+	5750 1550 5800 1550
+Wire Wire Line
+	5800 1550 5800 1600
+Wire Wire Line
+	5800 1600 5850 1600
+Wire Wire Line
+	3350 3450 3350 3400
+Wire Wire Line
+	3350 3400 2850 3400
+Wire Wire Line
+	2850 3400 2850 3450
 $EndSCHEMATC
