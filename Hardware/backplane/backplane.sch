@@ -859,18 +859,6 @@ Text GLabel 8750 4650 0    50   Input ~ 0
 SYNC
 Text GLabel 8200 4550 0    50   Input ~ 0
 ~IRQ~
-Wire Wire Line
-	9600 3400 9550 3400
-Wire Wire Line
-	9550 3400 9550 3450
-Wire Wire Line
-	9550 3450 9450 3450
-Connection ~ 9450 3450
-Wire Wire Line
-	9550 3600 9550 3550
-Wire Wire Line
-	9550 3550 9450 3550
-Connection ~ 9450 3550
 $Comp
 L Device:C_Small C11
 U 1 1 5FF3D2E3
@@ -1340,7 +1328,7 @@ L Power_Supervisor:MAX811SEUS-T U3
 U 1 1 600754D0
 P 8850 1100
 F 0 "U3" H 9294 1146 50  0000 L CNN
-F 1 "MAX811SEUS-T" H 9294 1055 50  0000 L CNN
+F 1 "MAX811SEUS-T" H 8550 500 50  0000 L CNN
 F 2 "Package_TO_SOT_SMD:SOT-143" H 8950 800 50  0001 L CNN
 F 3 "https://datasheets.maximintegrated.com/en/ds/MAX811-MAX812.pdf" H 8500 400 50  0001 C CNN
 	1    8850 1100
@@ -1357,7 +1345,7 @@ F 3 "https://datasheets.maximintegrated.com/en/ds/MAX811-MAX812.pdf" H 6700 400 
 	1    7050 1100
 	1    0    0    -1  
 $EndComp
-Text GLabel 9250 1100 2    50   Output ~ 0
+Text GLabel 9950 1100 2    50   Output ~ 0
 ~NMI~
 Text GLabel 7450 1100 2    50   Output ~ 0
 ~RESET~
@@ -2005,4 +1993,19 @@ Wire Wire Line
 	2550 1100 2450 1100
 Wire Wire Line
 	1550 1100 2050 1100
+Wire Wire Line
+	9950 1100 9750 1100
+Wire Wire Line
+	9550 1100 9250 1100
+$Comp
+L Device:R_Small R?
+U 1 1 60052F9C
+P 9650 1100
+F 0 "R?" V 9454 1100 50  0000 C CNN
+F 1 "4.7k" V 9545 1100 50  0000 C CNN
+F 2 "Resistor_SMD:R_0805_2012Metric_Pad1.15x1.40mm_HandSolder" H 9650 1100 50  0001 C CNN
+F 3 "~" H 9650 1100 50  0001 C CNN
+	1    9650 1100
+	0    1    1    0   
+$EndComp
 $EndSCHEMATC
