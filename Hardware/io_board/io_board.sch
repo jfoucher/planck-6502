@@ -145,13 +145,13 @@ SYNC
 Text GLabel 1750 4450 0    50   Input ~ 0
 ~IRQ~
 Text GLabel 2800 4550 2    50   BiDi ~ 0
-~IRQ0~
+~SLOT_IRQ~
 Text GLabel 2800 4450 2    50   BiDi ~ 0
-~IRQ1~
+EX5
 Text GLabel 2800 4350 2    50   BiDi ~ 0
-~IRQ2~
+EX4
 Text GLabel 2800 4250 2    50   BiDi ~ 0
-~IRQ3~
+EX3
 Wire Wire Line
 	3100 3300 3100 3350
 Wire Wire Line
@@ -238,7 +238,7 @@ CLK
 Text GLabel 5850 1600 0    50   Input ~ 0
 ~RESET~
 Text GLabel 5850 1900 0    50   Output ~ 0
-~IRQ0~
+~SLOT_IRQ~
 Text GLabel 5850 2400 0    50   Input ~ 0
 A0
 Text GLabel 5850 2500 0    50   Input ~ 0

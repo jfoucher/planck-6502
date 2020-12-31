@@ -144,14 +144,6 @@ Text GLabel 2300 4650 0    50   Input ~ 0
 SYNC
 Text GLabel 1750 4550 0    50   Input ~ 0
 IRQ
-Text GLabel 2800 4650 2    50   BiDi ~ 0
-IRQ0
-Text GLabel 2800 4550 2    50   BiDi ~ 0
-IRQ1
-Text GLabel 2800 4450 2    50   BiDi ~ 0
-IRQ2
-Text GLabel 2800 4350 2    50   BiDi ~ 0
-IRQ3
 $Comp
 L Device:C_Small C2
 U 1 1 5FD8A65F
@@ -200,14 +192,14 @@ Wire Wire Line
 	2050 3550 2000 3550
 Text GLabel 1150 7150 0    50   BiDi ~ 0
 NMI
-Text GLabel 1150 7050 0    50   BiDi ~ 0
-IRQ0
-Text GLabel 1150 6950 0    50   BiDi ~ 0
-IRQ1
-Text GLabel 1150 6850 0    50   BiDi ~ 0
-IRQ2
 Text GLabel 1150 6750 0    50   BiDi ~ 0
-IRQ3
+~SLOT4_IRQ~
+Text GLabel 1150 6850 0    50   BiDi ~ 0
+~SLOT3_IRQ~
+Text GLabel 1150 6950 0    50   BiDi ~ 0
+~SLOT2_IRQ~
+Text GLabel 1150 7050 0    50   BiDi ~ 0
+~SLOT1_IRQ~
 Text GLabel 1150 6550 0    50   Input ~ 0
 IRQ
 Text GLabel 1150 5850 0    50   Input ~ 0
@@ -530,13 +522,7 @@ SYNC
 Text GLabel 3900 4550 0    50   Input ~ 0
 IRQ
 Text GLabel 4950 4650 2    50   BiDi ~ 0
-IRQ0
-Text GLabel 4950 4550 2    50   BiDi ~ 0
-IRQ1
-Text GLabel 4950 4450 2    50   BiDi ~ 0
-IRQ2
-Text GLabel 4950 4350 2    50   BiDi ~ 0
-IRQ3
+~SLOT2_IRQ~
 $Comp
 L Device:C_Small C7
 U 1 1 5FF330F2
@@ -705,13 +691,7 @@ SYNC
 Text GLabel 6000 4500 0    50   Input ~ 0
 IRQ
 Text GLabel 7050 4600 2    50   BiDi ~ 0
-IRQ0
-Text GLabel 7050 4500 2    50   BiDi ~ 0
-IRQ1
-Text GLabel 7050 4400 2    50   BiDi ~ 0
-IRQ2
-Text GLabel 7050 4300 2    50   BiDi ~ 0
-IRQ3
+~SLOT4_IRQ~
 $Comp
 L Device:C_Small C10
 U 1 1 5FF3893B
@@ -879,14 +859,6 @@ Text GLabel 8750 4650 0    50   Input ~ 0
 SYNC
 Text GLabel 8200 4550 0    50   Input ~ 0
 IRQ
-Text GLabel 9250 4650 2    50   BiDi ~ 0
-IRQ0
-Text GLabel 9250 4550 2    50   BiDi ~ 0
-IRQ1
-Text GLabel 9250 4450 2    50   BiDi ~ 0
-IRQ2
-Text GLabel 9250 4350 2    50   BiDi ~ 0
-IRQ3
 Wire Wire Line
 	9600 3400 9550 3400
 Wire Wire Line
@@ -1058,13 +1030,7 @@ SYNC
 Text GLabel 2200 7250 0    50   Input ~ 0
 IRQ
 Text GLabel 3250 7350 2    50   BiDi ~ 0
-IRQ0
-Text GLabel 3250 7250 2    50   BiDi ~ 0
-IRQ1
-Text GLabel 3250 7150 2    50   BiDi ~ 0
-IRQ2
-Text GLabel 3250 7050 2    50   BiDi ~ 0
-IRQ3
+~SLOT1_IRQ~
 Wire Wire Line
 	3550 6100 3550 6150
 Wire Wire Line
@@ -1234,13 +1200,7 @@ SYNC
 Text GLabel 4300 7350 0    50   Input ~ 0
 IRQ
 Text GLabel 5350 7450 2    50   BiDi ~ 0
-IRQ0
-Text GLabel 5350 7350 2    50   BiDi ~ 0
-IRQ1
-Text GLabel 5350 7250 2    50   BiDi ~ 0
-IRQ2
-Text GLabel 5350 7150 2    50   BiDi ~ 0
-IRQ3
+~SLOT3_IRQ~
 $Comp
 L Device:C_Small C8
 U 1 1 5FF52D97
@@ -1345,34 +1305,34 @@ $EndComp
 $Comp
 L power:GND #PWR0133
 U 1 1 60033398
-P 1850 1300
-F 0 "#PWR0133" H 1850 1050 50  0001 C CNN
-F 1 "GND" H 1855 1127 50  0000 C CNN
-F 2 "" H 1850 1300 50  0001 C CNN
-F 3 "" H 1850 1300 50  0001 C CNN
-	1    1850 1300
+P 2550 1300
+F 0 "#PWR0133" H 2550 1050 50  0001 C CNN
+F 1 "GND" H 2555 1127 50  0000 C CNN
+F 2 "" H 2550 1300 50  0001 C CNN
+F 3 "" H 2550 1300 50  0001 C CNN
+	1    2550 1300
 	1    0    0    -1  
 $EndComp
 $Comp
 L power:+5V #PWR0134
 U 1 1 60039848
-P 2450 1100
-F 0 "#PWR0134" H 2450 950 50  0001 C CNN
-F 1 "+5V" H 2465 1273 50  0000 C CNN
-F 2 "" H 2450 1100 50  0001 C CNN
-F 3 "" H 2450 1100 50  0001 C CNN
-	1    2450 1100
+P 2700 1100
+F 0 "#PWR0134" H 2700 950 50  0001 C CNN
+F 1 "+5V" H 2715 1273 50  0000 C CNN
+F 2 "" H 2700 1100 50  0001 C CNN
+F 3 "" H 2700 1100 50  0001 C CNN
+	1    2700 1100
 	1    0    0    -1  
 $EndComp
 $Comp
 L Device:C_Small C13
 U 1 1 6003A557
-P 1850 1200
-F 0 "C13" H 1942 1246 50  0000 L CNN
-F 1 "C_Small" H 1942 1155 50  0000 L CNN
-F 2 "Capacitor_THT:CP_Radial_D6.3mm_P2.50mm" H 1850 1200 50  0001 C CNN
-F 3 "~" H 1850 1200 50  0001 C CNN
-	1    1850 1200
+P 2550 1200
+F 0 "C13" H 2642 1246 50  0000 L CNN
+F 1 "C_Small" H 2642 1155 50  0000 L CNN
+F 2 "Capacitor_THT:CP_Radial_D6.3mm_P2.50mm" H 2550 1200 50  0001 C CNN
+F 3 "~" H 2550 1200 50  0001 C CNN
+	1    2550 1200
 	1    0    0    -1  
 $EndComp
 $Comp
@@ -1904,8 +1864,6 @@ F 3 "" H 1250 1800 50  0001 C CNN
 	1    1250 1800
 	1    0    0    -1  
 $EndComp
-Wire Wire Line
-	2050 1100 1850 1100
 $Comp
 L Connector:USB_B_Micro J1
 U 1 1 5FE9DEAA
@@ -2003,8 +1961,50 @@ Wire Wire Line
 	9250 5700 9250 5050
 Wire Wire Line
 	9250 5050 9500 5050
-Connection ~ 1850 1100
-Wire Wire Line
-	1850 1100 1550 1100
 Connection ~ 1250 1700
+Text GLabel 4950 4350 2    50   BiDi ~ 0
+EX3
+Text GLabel 4950 4450 2    50   BiDi ~ 0
+EX4
+Text GLabel 4950 4550 2    50   BiDi ~ 0
+EX5
+Text GLabel 7050 4300 2    50   BiDi ~ 0
+EX3
+Text GLabel 7050 4400 2    50   BiDi ~ 0
+EX4
+Text GLabel 7050 4500 2    50   BiDi ~ 0
+EX5
+Text GLabel 9250 4350 2    50   BiDi ~ 0
+EX3
+Text GLabel 9250 4450 2    50   BiDi ~ 0
+EX4
+Text GLabel 9250 4550 2    50   BiDi ~ 0
+EX5
+Text GLabel 5350 7150 2    50   BiDi ~ 0
+EX3
+Text GLabel 5350 7250 2    50   BiDi ~ 0
+EX4
+Text GLabel 5350 7350 2    50   BiDi ~ 0
+EX5
+Text GLabel 3250 7050 2    50   BiDi ~ 0
+EX3
+Text GLabel 3250 7150 2    50   BiDi ~ 0
+EX4
+Text GLabel 3250 7250 2    50   BiDi ~ 0
+EX5
+Text GLabel 2800 4350 2    50   BiDi ~ 0
+~SLOT4_IRQ~
+Text GLabel 2800 4450 2    50   BiDi ~ 0
+~SLOT3_IRQ~
+Text GLabel 2800 4550 2    50   BiDi ~ 0
+~SLOT2_IRQ~
+Text GLabel 2800 4650 2    50   BiDi ~ 0
+~SLOT1_IRQ~
+Wire Wire Line
+	2700 1100 2550 1100
+Connection ~ 2550 1100
+Wire Wire Line
+	2550 1100 2450 1100
+Wire Wire Line
+	1550 1100 2050 1100
 $EndSCHEMATC
