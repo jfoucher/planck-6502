@@ -131,7 +131,7 @@ D7
 Text GLabel 2300 4750 0    50   Input ~ 0
 ~RESET~
 Text GLabel 2800 4750 2    50   BiDi ~ 0
-NMI
+~NMI~
 Text GLabel 1750 4150 0    50   Input ~ 0
 RDY
 Text GLabel 1750 4250 0    50   Input ~ 0
@@ -143,7 +143,7 @@ R~W~
 Text GLabel 2300 4650 0    50   Input ~ 0
 SYNC
 Text GLabel 1750 4550 0    50   Input ~ 0
-IRQ
+~IRQ~
 $Comp
 L Device:C_Small C2
 U 1 1 5FD8A65F
@@ -191,17 +191,17 @@ Connection ~ 2050 3550
 Wire Wire Line
 	2050 3550 2000 3550
 Text GLabel 1150 7150 0    50   BiDi ~ 0
-NMI
+~NMI~
 Text GLabel 1150 6750 0    50   BiDi ~ 0
-~SLOT4_IRQ~
+~IRQ4~
 Text GLabel 1150 6850 0    50   BiDi ~ 0
-~SLOT3_IRQ~
+~IRQ3~
 Text GLabel 1150 6950 0    50   BiDi ~ 0
-~SLOT2_IRQ~
+~IRQ2~
 Text GLabel 1150 7050 0    50   BiDi ~ 0
-~SLOT1_IRQ~
+~IRQ1~
 Text GLabel 1150 6550 0    50   Input ~ 0
-IRQ
+~IRQ~
 Text GLabel 1150 5850 0    50   Input ~ 0
 RDY
 Text GLabel 1150 6050 0    50   Input ~ 0
@@ -508,7 +508,7 @@ D7
 Text GLabel 4450 4750 0    50   Input ~ 0
 ~RESET~
 Text GLabel 4950 4750 2    50   BiDi ~ 0
-NMI
+~NMI~
 Text GLabel 3900 4150 0    50   Input ~ 0
 RDY
 Text GLabel 3900 4250 0    50   Input ~ 0
@@ -520,9 +520,9 @@ R~W~
 Text GLabel 4450 4650 0    50   Input ~ 0
 SYNC
 Text GLabel 3900 4550 0    50   Input ~ 0
-IRQ
+~IRQ~
 Text GLabel 4950 4650 2    50   BiDi ~ 0
-~SLOT2_IRQ~
+~IRQ2~
 $Comp
 L Device:C_Small C7
 U 1 1 5FF330F2
@@ -677,7 +677,7 @@ D7
 Text GLabel 6550 4700 0    50   Input ~ 0
 ~RESET~
 Text GLabel 7050 4700 2    50   BiDi ~ 0
-NMI
+~NMI~
 Text GLabel 6000 4100 0    50   Input ~ 0
 RDY
 Text GLabel 6000 4200 0    50   Input ~ 0
@@ -689,9 +689,9 @@ R~W~
 Text GLabel 6550 4600 0    50   Input ~ 0
 SYNC
 Text GLabel 6000 4500 0    50   Input ~ 0
-IRQ
+~IRQ~
 Text GLabel 7050 4600 2    50   BiDi ~ 0
-~SLOT4_IRQ~
+~IRQ4~
 $Comp
 L Device:C_Small C10
 U 1 1 5FF3893B
@@ -846,7 +846,7 @@ D7
 Text GLabel 8750 4750 0    50   Input ~ 0
 ~RESET~
 Text GLabel 9250 4750 2    50   BiDi ~ 0
-NMI
+~NMI~
 Text GLabel 8200 4150 0    50   Input ~ 0
 RDY
 Text GLabel 8200 4250 0    50   Input ~ 0
@@ -858,7 +858,7 @@ R~W~
 Text GLabel 8750 4650 0    50   Input ~ 0
 SYNC
 Text GLabel 8200 4550 0    50   Input ~ 0
-IRQ
+~IRQ~
 Wire Wire Line
 	9600 3400 9550 3400
 Wire Wire Line
@@ -1016,7 +1016,7 @@ D7
 Text GLabel 2750 7450 0    50   Input ~ 0
 ~RESET~
 Text GLabel 3250 7450 2    50   BiDi ~ 0
-NMI
+~NMI~
 Text GLabel 2200 6850 0    50   Input ~ 0
 RDY
 Text GLabel 2200 6950 0    50   Input ~ 0
@@ -1028,9 +1028,9 @@ R~W~
 Text GLabel 2750 7350 0    50   Input ~ 0
 SYNC
 Text GLabel 2200 7250 0    50   Input ~ 0
-IRQ
+~IRQ~
 Text GLabel 3250 7350 2    50   BiDi ~ 0
-~SLOT1_IRQ~
+~IRQ1~
 Wire Wire Line
 	3550 6100 3550 6150
 Wire Wire Line
@@ -1186,7 +1186,7 @@ D7
 Text GLabel 4850 7550 0    50   Input ~ 0
 ~RESET~
 Text GLabel 5350 7550 2    50   BiDi ~ 0
-NMI
+~NMI~
 Text GLabel 4300 6950 0    50   Input ~ 0
 RDY
 Text GLabel 4300 7050 0    50   Input ~ 0
@@ -1198,9 +1198,9 @@ R~W~
 Text GLabel 4850 7450 0    50   Input ~ 0
 SYNC
 Text GLabel 4300 7350 0    50   Input ~ 0
-IRQ
+~IRQ~
 Text GLabel 5350 7450 2    50   BiDi ~ 0
-~SLOT3_IRQ~
+~IRQ3~
 $Comp
 L Device:C_Small C8
 U 1 1 5FF52D97
@@ -1358,7 +1358,7 @@ F 3 "https://datasheets.maximintegrated.com/en/ds/MAX811-MAX812.pdf" H 6700 400 
 	1    0    0    -1  
 $EndComp
 Text GLabel 9250 1100 2    50   Output ~ 0
-NMI
+~NMI~
 Text GLabel 7450 1100 2    50   Output ~ 0
 ~RESET~
 $Comp
@@ -1749,8 +1749,6 @@ Text GLabel 10700 6150 2    50   Input ~ 0
 A14
 Text GLabel 10700 6050 2    50   Input ~ 0
 A15
-Text GLabel 10700 5850 2    50   Input ~ 0
-CLK
 Text GLabel 10700 5950 2    50   Input ~ 0
 R~W~
 Text GLabel 10700 5550 2    50   Output ~ 0
@@ -1830,7 +1828,7 @@ F 3 "" H 1350 7350 50  0001 C CNN
 	0    1    1    0   
 $EndComp
 Text GLabel 1150 7550 0    50   BiDi ~ 0
-SLOT_ACTIVE
+~SSEL~
 $Comp
 L Device:R_Small R15
 U 1 1 5FE705F3
@@ -1993,13 +1991,13 @@ EX4
 Text GLabel 3250 7250 2    50   BiDi ~ 0
 EX5
 Text GLabel 2800 4350 2    50   BiDi ~ 0
-~SLOT4_IRQ~
+~IRQ4~
 Text GLabel 2800 4450 2    50   BiDi ~ 0
-~SLOT3_IRQ~
+~IRQ3~
 Text GLabel 2800 4550 2    50   BiDi ~ 0
-~SLOT2_IRQ~
+~IRQ2~
 Text GLabel 2800 4650 2    50   BiDi ~ 0
-~SLOT1_IRQ~
+~IRQ1~
 Wire Wire Line
 	2700 1100 2550 1100
 Connection ~ 2550 1100

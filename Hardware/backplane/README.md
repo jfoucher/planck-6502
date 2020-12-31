@@ -38,14 +38,16 @@ Most pins correspond to the pins of the same name on the CPU.
 
 Below are the pins that are specific to the expansion bus:
 
+
 | Pin | Description |
 |-----   |-------------|
 | EX0-EX2 | 3 expansion pins that are reserved for future use or can be used for communication betwen two expansion cards.|
+| EX3-EX5 | 3 more expansion pins that can be used for card to card communications. These are not connected to lot zero because slot 0 uses these pins to receive IRQs from the expansion cards|
 | <span style="text-decoration:overline">INH</span>|When low, this signal inhibits the RAM and ROM present on the CPU card and allows an expansion card to take over the whole bus (except expansion region).|
 |<span style="text-decoration:overline">SEL1</span>-<span style="text-decoration:overline">SEL5</span>|The expansion card in the slot in which this signal is low should activate.|
 |<span style="text-decoration:overline">SSEL</span>| Slot selected. The cpu card and any other card should disable all bus access when this signal is low and their own select signal (<span style="text-decoration:overline">SEL1</span>-<span style="text-decoration:overline">SEL5</span>) is high.|
 |LED1-LED4| Debug leds 1 to 4.|
-| <span style="text-decoration:overline">IRQ0</span>-<span style="text-decoration:overline">IRQ3</span>|Should be used by expansion cards when they want to signal an IRQ. All 4 lines are ANDed together on the processor board and pull the <span style="text-decoration:overline">IRQ</span> line low when at least one of them is low.|
+| <span style="text-decoration:overline">IRQ1</span>-<span style="text-decoration:overline">IRQ4</span>|Should be used by expansion cards when they want to signal an IRQ. All 4 lines are ANDed together on the processor board and pull the <span style="text-decoration:overline">IRQ</span> line low when at least one of them is low.|
 
 ### Board view
 
