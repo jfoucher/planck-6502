@@ -1,6 +1,6 @@
 ## Planck 6502 Serial board
 
-This board uses a DWC 6551 chip to provide a serial port for the computer. It accepts a TTL serial to usb adapter.
+This board uses a 6551 chip to provide a serial port for the computer. It accepts a TTL serial to usb adapter.
 
 This is what the board looks like at the moment
 
