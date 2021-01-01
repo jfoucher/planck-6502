@@ -145,31 +145,6 @@ SYNC
 Text GLabel 1750 4550 0    50   Input ~ 0
 ~IRQ~
 $Comp
-L Device:C_Small C2
-U 1 1 5FD8A65F
-P 3150 3500
-F 0 "C2" H 3242 3546 50  0000 L CNN
-F 1 "C_Small" H 3242 3455 50  0000 L CNN
-F 2 "Capacitor_SMD:C_1206_3216Metric_Pad1.42x1.75mm_HandSolder" H 3150 3500 50  0001 C CNN
-F 3 "~" H 3150 3500 50  0001 C CNN
-	1    3150 3500
-	1    0    0    -1  
-$EndComp
-Wire Wire Line
-	3150 3400 3100 3400
-Wire Wire Line
-	3100 3400 3100 3450
-Wire Wire Line
-	3100 3450 3000 3450
-Connection ~ 3000 3450
-Wire Wire Line
-	3150 3600 3100 3600
-Wire Wire Line
-	3100 3600 3100 3550
-Wire Wire Line
-	3100 3550 3000 3550
-Connection ~ 3000 3550
-$Comp
 L Device:C_Small C1
 U 1 1 5FD8C99F
 P 1650 3500
@@ -1927,7 +1902,7 @@ F 3 "" H 8950 5350 50  0001 C CNN
 	1    8950 5350
 	1    0    0    -1  
 $EndComp
-Text GLabel 10700 5050 2    50   Output ~ 0
+Text GLabel 10700 5850 2    50   Output ~ 0
 CLK
 Text GLabel 4950 3650 2    50   BiDi ~ 0
 ~SSEL~
