@@ -173,7 +173,7 @@ EX0
 Text GLabel 2800 3150 2    50   BiDi ~ 0
 EX1
 Text GLabel 2800 3250 2    50   BiDi ~ 0
-EX2
+~SLOW~
 $Comp
 L 65xx:W65C02SxP U2
 U 1 1 5FD67072
@@ -785,7 +785,7 @@ Wire Wire Line
 Text GLabel 8450 3500 2    50   Input ~ 0
 RAM_CS
 Wire Wire Line
-	8900 4350 8900 4700
+	8900 4350 8900 4500
 Wire Wire Line
 	8450 5750 8400 5750
 Wire Wire Line
@@ -808,8 +808,6 @@ F 3 "http://www.ti.com/lit/gpn/sn74hc00" H 6700 5600 50  0001 C CNN
 	1    6700 5600
 	1    0    0    -1  
 $EndComp
-Text GLabel 8100 4600 0    50   Input ~ 0
-A15
 Wire Wire Line
 	7200 5600 7100 5600
 Wire Wire Line
@@ -861,4 +859,11 @@ F 3 "https://web.mit.edu/6.115/www/document/62256.pdf" H 7600 3350 50  0001 C CN
 	1    7600 3450
 	1    0    0    -1  
 $EndComp
+Text GLabel 8850 4500 0    50   Output ~ 0
+~SLOW~
+Wire Wire Line
+	8850 4500 8900 4500
+Connection ~ 8900 4500
+Wire Wire Line
+	8900 4500 8900 4700
 $EndSCHEMATC

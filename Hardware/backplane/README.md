@@ -17,7 +17,7 @@ In addition to the power LED, there are 4 LEDs that are connected to the expansi
 
 There is built in address decoding logic for the expansion slots in the form of a GAL22V10 chip or equivalent. The decoding is very basic and simply sets a signal low that goes to one of the 5 expansion slots. Each expansion card is then responsible for trigerring itself when that signal is low. 
 
-The address range available to each slot can be changed by simply reprogramming the GAL22V10 chip. By default the range $8000 to $807F is reserved for expansion cards. That is 16 bytes of address range for up to 8 expansion cards (of which there are 5 in the current design)
+The address range available to each slot can be changed by simply reprogramming the GAL22V10 chip. By default the range `$FF80` to `$FFCF` is reserved for expansion cards. That is 16 bytes of address range for each of the 5 expansion slots
 
 Expansion cards are not forced to honor their select line, it's just the range where they can be sure that the CPU board RAM or ROM will be disconnected from the data bus. We can therefore have a card like a RAM expansion board that can use banking to replace any address range, simply by asserting the INH signal when necessary.
 Expansion cards must disconnect from the bus when another slot address range is called, or risk getting bus contention.
@@ -30,7 +30,7 @@ A INH signal has also been added. This signal inhibits the built in ROM and RAM 
 
 ### Built-in clock
 
-An oscillator is included and provides clocking for the whole computer. It goes through the memory decoder GAL to allow for manipulating the clock inside the GAL.
+The onboard oscillator provides the base clock. It is divided by two to provide a stable clock to the peripherals that require it through the `CLK_12M` signal. Cards can assert the SLOW signal to require a slower clock. In that case the clock signal goes through a counter that divides the clock further. This is the `CLK` signal and is the only one that the CPU board listens to.
 
 ### Expansion bus signals
 

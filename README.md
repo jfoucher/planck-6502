@@ -73,17 +73,17 @@ Below are the pins that are specific to the expansion bus:
 | 19 | A9 | Processor address bus pin 9 |
 | 20 | EX1 | Extra pin for future use or for communication between expansion cards |
 | 21 | A10 | Processor address bus pin 10 |
-| 22 | EX2 | Extra pin for future use or for communication between expansion cards |
+| 22 | <span style="text-decoration:overline">SLOW</span> | Used by slow peripherals to request a slower clock speed, active low. |
 | 23 | GND | Ground |
 | 24 | +5V | Positive voltage |
 | 25 | +5V | Positive voltage |
 | 26 | GND | Ground |
 | 27 | A11 | Processor address bus pin 11 |
-| 28 | <span style="text-decoration:overline">SSEL</span> | An expansion card is selected. Used by the processor card to disable it's built-in ram an ROM |
+| 28 | <span style="text-decoration:overline">SSEL</span> | An expansion card is selected. Used by the processor card to disable it's built-in ram an ROM, active low |
 | 29 | A12 | Processor address bus pin 12 |
 | 30 | <span style="text-decoration:overline">INH</span> | When this is active (low), processor card RAM and ROM are disabled |
 | 31 | A13 | Processor address bus pin 13 |
-| 32 | <span style="text-decoration:overline">SLOT_SEL</span> | Used by the backplane to signal to expansion cards when they should activate |
+| 32 | <span style="text-decoration:overline">SLOT_SEL</span> | Used by the backplane to signal to expansion cards when they should activate, active low |
 | 33 | A14 | Processor address bus pin 14 |
 | 34 | LED1 | Connected to one of the backplane LEDs |
 | 35 | A15 | Processor address bus pin 15 |
@@ -92,16 +92,16 @@ Below are the pins that are specific to the expansion bus:
 | 38 | LED3 | Connected to one of the backplane LEDs |
 | 39 | BE | Processor input pin. when low the processor releases the bus |
 | 40 | LED4 | Connected to one of the backplane LEDs |
-| 41 | CLK | Main computer clock |
-| 42 | EX3 | Extra signal 3. **Not connected to slot 0** |
+| 41 | CLK | Main computer clock. Can be stretched or not depending on the state of the SLOW signal. |
+| 42 | CLK_12M | Stable clock for e.g. VIA timers. **Not connected to slot 0** |
 | 43 | R<span style="text-decoration:overline">W</span> | CPU read / write pin |
 | 44 | EX4 | Extra signal 4. **Not connected to slot 0** |
-| 45 | <span style="text-decoration:overline">IRQ</span> | This goes low when an interrupt request has occured |
-| 46 | EX5 | Extra signal 5. Not connected to slot 0 |
+| 45 | <span style="text-decoration:overline">IRQ</span> | This goes low when an interrupt request has occured, active low |
+| 46 | EX5 | Extra signal 5. **Not connected to slot 0** |
 | 47 | SYNC | CPU output. Indicates when the CPU is fetching an opcode |
-| 48 | <span style="text-decoration:overline">SLOT_IRQ</span> | Used by expansion cards to signal an interrupt request to the processor board. **Not connected on slot 5**  |
-| 49 | <span style="text-decoration:overline">RESET</span> | Reset signal trigered by the button on the backplane |
-| 50 | <span style="text-decoration:overline">NMI</span> | non maskable interrupt signal trigered by the button on the backplane |
+| 48 | <span style="text-decoration:overline">SLOT_IRQ</span> | Used by expansion cards to signal an interrupt request to the processor board. **Not connected on slot 5**, active low  |
+| 49 | <span style="text-decoration:overline">RESET</span> | Reset signal trigered by the button on the backplane, active low |
+| 50 | <span style="text-decoration:overline">NMI</span> | non maskable interrupt signal trigered by the button on the backplane, active low |
 
 
 

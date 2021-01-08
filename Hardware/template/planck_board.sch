@@ -145,7 +145,7 @@ EX5
 Text GLabel 2450 4450 2    50   BiDi ~ 0
 EX4
 Text GLabel 2450 4350 2    50   BiDi ~ 0
-EX3
+CLK_12M
 $Comp
 L Device:C_Small C2
 U 1 1 5FD8A65F
@@ -199,7 +199,7 @@ EX0
 Text GLabel 2450 3250 2    50   BiDi ~ 0
 EX1
 Text GLabel 2450 3350 2    50   BiDi ~ 0
-EX2
+~SLOW~
 Wire Wire Line
 	2450 3450 3050 3450
 Connection ~ 3050 3450
