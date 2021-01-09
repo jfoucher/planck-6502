@@ -1221,7 +1221,7 @@ EX0
 Text GLabel 4950 3250 2    50   BiDi ~ 0
 EX1
 Text GLabel 4950 3350 2    50   BiDi ~ 0
-~SLOW~
+~SLOW2~
 Text GLabel 4950 3750 2    50   BiDi ~ 0
 ~INH~
 Text GLabel 4950 3850 2    50   BiDi ~ 0
@@ -1648,29 +1648,29 @@ LED3
 Text GLabel 5300 950  2    50   BiDi ~ 0
 LED4
 Text GLabel 2800 3350 2    50   BiDi ~ 0
-~SLOW~
+~SLOW0~
 Text GLabel 2800 3650 2    50   BiDi ~ 0
 ~SSEL~
 Text GLabel 7050 3300 2    50   BiDi ~ 0
-~SLOW~
+~SLOW4~
 Text GLabel 7050 3700 2    50   BiDi ~ 0
 ~INH~
 Text GLabel 7050 3800 2    50   BiDi ~ 0
 SLOT4
 Text GLabel 9250 3350 2    50   BiDi ~ 0
-~SLOW~
+~SLOW5~
 Text GLabel 9250 3750 2    50   BiDi ~ 0
 ~INH~
 Text GLabel 9250 3850 2    50   BiDi ~ 0
 SLOT5
 Text GLabel 5350 6150 2    50   BiDi ~ 0
-~SLOW~
+~SLOW3~
 Text GLabel 5350 6550 2    50   BiDi ~ 0
 ~INH~
 Text GLabel 5350 6650 2    50   BiDi ~ 0
 SLOT3
 Text GLabel 3250 6050 2    50   BiDi ~ 0
-~SLOW~
+~SLOW1~
 Text GLabel 3250 6450 2    50   BiDi ~ 0
 ~INH~
 Text GLabel 3250 6550 2    50   BiDi ~ 0
@@ -1960,8 +1960,8 @@ L 74xx:74LS161 U1
 U 1 1 5FF93A76
 P 9000 6700
 F 0 "U1" H 9000 7681 50  0000 C CNN
-F 1 "74HC161" H 9000 7590 50  0000 C CNN
-F 2 "Package_DIP:DIP-16_W7.62mm_Socket" H 9000 6700 50  0001 C CNN
+F 1 "74AC161" H 9000 7590 50  0000 C CNN
+F 2 "Package_SO:SOIC-16_3.9x9.9mm_P1.27mm" H 9000 6700 50  0001 C CNN
 F 3 "http://www.ti.com/lit/gpn/sn74LS163" H 9000 6700 50  0001 C CNN
 	1    9000 6700
 	1    0    0    -1  
@@ -2064,23 +2064,13 @@ CLK_24M
 Wire Wire Line
 	9500 6400 9800 6400
 Wire Wire Line
-	8500 6300 8500 6200
-Wire Wire Line
 	8500 5600 9000 5600
-Connection ~ 8500 6200
 Wire Wire Line
 	8500 6200 8500 5600
 Wire Wire Line
 	8500 6500 8400 6500
 Wire Wire Line
-	8400 6500 8400 6300
-Wire Wire Line
-	8400 6300 8500 6300
-Connection ~ 8500 6300
-Text GLabel 8150 6400 0    50   Input ~ 0
-~SLOW~
-Wire Wire Line
-	8500 6400 8150 6400
+	8500 6400 8300 6400
 Text GLabel 7050 4400 2    50   BiDi ~ 0
 EX2
 Text GLabel 7050 4500 2    50   BiDi ~ 0
@@ -2097,4 +2087,138 @@ Text GLabel 3250 7150 2    50   BiDi ~ 0
 EX2
 Text GLabel 3250 7250 2    50   BiDi ~ 0
 EX3
+Text GLabel 6300 5900 0    50   Input ~ 0
+~SLOW0~
+Text GLabel 6300 6000 0    50   Input ~ 0
+~SLOW1~
+Text GLabel 6300 6100 0    50   Input ~ 0
+~SLOW2~
+Text GLabel 6300 6400 0    50   Input ~ 0
+~SLOW3~
+Text GLabel 6300 6500 0    50   Input ~ 0
+~SLOW4~
+Text GLabel 6300 6600 0    50   Input ~ 0
+~SLOW5~
+Wire Wire Line
+	8300 5350 8300 6400
+$Comp
+L power:+5V #PWR0160
+U 1 1 5FFEA08F
+P 11250 2950
+F 0 "#PWR0160" H 11250 2800 50  0001 C CNN
+F 1 "+5V" H 11265 3123 50  0000 C CNN
+F 2 "" H 11250 2950 50  0001 C CNN
+F 3 "" H 11250 2950 50  0001 C CNN
+	1    11250 2950
+	1    0    0    -1  
+$EndComp
+Wire Wire Line
+	11250 3400 11250 3100
+$Comp
+L Device:C_Small C5
+U 1 1 5FFEA096
+P 11500 3100
+F 0 "C5" H 11592 3146 50  0000 L CNN
+F 1 "C_Small" H 11592 3055 50  0000 L CNN
+F 2 "Capacitor_SMD:C_1206_3216Metric_Pad1.42x1.75mm_HandSolder" H 11500 3100 50  0001 C CNN
+F 3 "~" H 11500 3100 50  0001 C CNN
+	1    11500 3100
+	0    -1   -1   0   
+$EndComp
+Wire Wire Line
+	11400 3100 11250 3100
+Connection ~ 11250 3100
+Wire Wire Line
+	11250 3100 11250 2950
+$Comp
+L power:GND #PWR0161
+U 1 1 5FFEA09F
+P 11600 3100
+F 0 "#PWR0161" H 11600 2850 50  0001 C CNN
+F 1 "GND" H 11605 2927 50  0000 C CNN
+F 2 "" H 11600 3100 50  0001 C CNN
+F 3 "" H 11600 3100 50  0001 C CNN
+	1    11600 3100
+	1    0    0    -1  
+$EndComp
+$Comp
+L power:GND #PWR0162
+U 1 1 5FFF04AD
+P 11250 4400
+F 0 "#PWR0162" H 11250 4150 50  0001 C CNN
+F 1 "GND" H 11255 4227 50  0000 C CNN
+F 2 "" H 11250 4400 50  0001 C CNN
+F 3 "" H 11250 4400 50  0001 C CNN
+	1    11250 4400
+	1    0    0    -1  
+$EndComp
+Wire Wire Line
+	8400 6500 8400 6200
+Wire Wire Line
+	8400 6200 8500 6200
+Connection ~ 8500 6200
+Wire Wire Line
+	8500 6300 8500 6400
+Connection ~ 8500 6400
+$Comp
+L 74xx:74LS11 U5
+U 1 1 6002FB92
+P 6600 6000
+F 0 "U5" H 6600 6325 50  0000 C CNN
+F 1 "74AC11" H 6600 6234 50  0000 C CNN
+F 2 "Package_SO:SOIC-14_3.9x8.7mm_P1.27mm" H 6600 6000 50  0001 C CNN
+F 3 "http://www.ti.com/lit/gpn/sn74LS11" H 6600 6000 50  0001 C CNN
+	1    6600 6000
+	1    0    0    -1  
+$EndComp
+$Comp
+L 74xx:74LS11 U5
+U 2 1 600332A1
+P 6600 6500
+F 0 "U5" H 6600 6825 50  0000 C CNN
+F 1 "74AC11" H 6600 6734 50  0000 C CNN
+F 2 "Package_SO:SOIC-14_3.9x8.7mm_P1.27mm" H 6600 6500 50  0001 C CNN
+F 3 "http://www.ti.com/lit/gpn/sn74LS11" H 6600 6500 50  0001 C CNN
+	2    6600 6500
+	1    0    0    -1  
+$EndComp
+$Comp
+L 74xx:74LS11 U5
+U 3 1 60036171
+P 7300 5350
+F 0 "U5" H 7300 5675 50  0000 C CNN
+F 1 "74AC11" H 7300 5584 50  0000 C CNN
+F 2 "Package_SO:SOIC-14_3.9x8.7mm_P1.27mm" H 7300 5350 50  0001 C CNN
+F 3 "http://www.ti.com/lit/gpn/sn74LS11" H 7300 5350 50  0001 C CNN
+	3    7300 5350
+	1    0    0    -1  
+$EndComp
+$Comp
+L 74xx:74LS11 U5
+U 4 1 60038B35
+P 11250 3900
+F 0 "U5" H 11480 3946 50  0000 L CNN
+F 1 "74AC11" H 11480 3855 50  0000 L CNN
+F 2 "Package_SO:SOIC-14_3.9x8.7mm_P1.27mm" H 11250 3900 50  0001 C CNN
+F 3 "http://www.ti.com/lit/gpn/sn74LS11" H 11250 3900 50  0001 C CNN
+	4    11250 3900
+	1    0    0    -1  
+$EndComp
+Wire Wire Line
+	6900 6500 6950 6500
+Wire Wire Line
+	7600 5350 8300 5350
+Wire Wire Line
+	6900 6000 6900 5450
+Wire Wire Line
+	6900 5450 7000 5450
+Wire Wire Line
+	6950 6500 6950 5350
+Wire Wire Line
+	6950 5250 7000 5250
+Wire Wire Line
+	7000 5350 6950 5350
+Connection ~ 6950 5350
+Wire Wire Line
+	6950 5350 6950 5250
 $EndSCHEMATC
