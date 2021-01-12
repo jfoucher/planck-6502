@@ -141,11 +141,11 @@ Text GLabel 1750 4450 0    50   Input ~ 0
 Text GLabel 3000 4550 2    50   BiDi ~ 0
 ~SLOT_IRQ~
 Text GLabel 2800 4450 2    50   BiDi ~ 0
-EX5
-Text GLabel 2800 4350 2    50   BiDi ~ 0
-EX4
-Text GLabel 2800 4250 2    50   BiDi ~ 0
 EX3
+Text GLabel 2800 4350 2    50   BiDi ~ 0
+EX2
+Text GLabel 2800 4250 2    50   BiDi ~ 0
+CLK_12M
 Wire Wire Line
 	1750 4450 2300 4450
 Wire Wire Line
@@ -171,7 +171,7 @@ EX0
 Text GLabel 2800 3150 2    50   BiDi ~ 0
 EX1
 Text GLabel 2800 3250 2    50   BiDi ~ 0
-EX2
+~SLOW~
 $Comp
 L 65xx:W65C22NxP U2
 U 1 1 5FD922C5
@@ -213,7 +213,7 @@ D7
 Text GLabel 5850 2900 0    50   Input ~ 0
 R~W~
 Text GLabel 5850 1700 0    50   Input ~ 0
-CLK
+CLK_12M
 Text GLabel 5750 1550 0    50   Input ~ 0
 ~RESET~
 Text GLabel 5850 1900 0    50   Output ~ 0

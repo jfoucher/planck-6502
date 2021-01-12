@@ -141,9 +141,9 @@ Text GLabel 1700 4550 0    50   BiDi ~ 0
 Text GLabel 2650 4650 2    50   BiDi ~ 0
 ~SLOT_IRQ~
 Text GLabel 2450 4550 2    50   BiDi ~ 0
-EX5
+EX3
 Text GLabel 2450 4450 2    50   BiDi ~ 0
-EX4
+EX2
 Text GLabel 2450 4350 2    50   BiDi ~ 0
 CLK_12M
 $Comp

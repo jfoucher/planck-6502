@@ -426,7 +426,7 @@ $Comp
 L 74xx:74HC00 U5
 U 3 1 5FDF1828
 P 8600 5050
-F 0 "U5" H 8600 5375 50  0000 C CNN
+F 0 "U5" H 8600 4850 50  0000 C CNN
 F 1 "74HC00" H 8600 5284 50  0000 C CNN
 F 2 "Package_DIP:DIP-14_W7.62mm_Socket" H 8600 5050 50  0001 C CNN
 F 3 "http://www.ti.com/lit/gpn/sn74hc00" H 8600 5050 50  0001 C CNN
@@ -472,10 +472,6 @@ F 3 "" H 8950 4150 50  0001 C CNN
 $EndComp
 Wire Wire Line
 	9100 4150 8950 4150
-Wire Wire Line
-	9100 4250 9050 4250
-Wire Wire Line
-	9050 4250 9050 4550
 Wire Wire Line
 	9050 4550 9500 4550
 $Comp
@@ -535,8 +531,6 @@ Text GLabel 9900 3150 2    50   BiDi ~ 0
 D6
 Text GLabel 9900 3250 2    50   BiDi ~ 0
 D7
-Wire Wire Line
-	8900 4350 9100 4350
 Text GLabel 6400 5500 0    50   Input ~ 0
 ~SSEL~
 $Comp
@@ -785,8 +779,6 @@ Wire Wire Line
 Text GLabel 8450 3500 2    50   Input ~ 0
 RAM_CS
 Wire Wire Line
-	8900 4350 8900 4500
-Wire Wire Line
 	8450 5750 8400 5750
 Wire Wire Line
 	8400 5750 8400 5700
@@ -859,11 +851,57 @@ F 3 "https://web.mit.edu/6.115/www/document/62256.pdf" H 7600 3350 50  0001 C CN
 	1    7600 3450
 	1    0    0    -1  
 $EndComp
-Text GLabel 8850 4500 0    50   Output ~ 0
+Text GLabel 8250 4500 0    50   Output ~ 0
 ~SLOW~
-Wire Wire Line
-	8850 4500 8900 4500
 Connection ~ 8900 4500
 Wire Wire Line
 	8900 4500 8900 4700
+Wire Wire Line
+	9050 4550 9050 4350
+Wire Wire Line
+	9050 4350 9100 4350
+Wire Wire Line
+	8900 4250 9100 4250
+Wire Wire Line
+	8900 4250 8900 4500
+$Comp
+L Device:D_Schottky D1
+U 1 1 601C82E8
+P 8650 4500
+F 0 "D1" H 8650 4600 50  0000 C CNN
+F 1 "D_Schottky" H 8650 4400 50  0000 C CNN
+F 2 "Diode_SMD:D_0805_2012Metric_Pad1.15x1.40mm_HandSolder" H 8650 4500 50  0001 C CNN
+F 3 "~" H 8650 4500 50  0001 C CNN
+	1    8650 4500
+	-1   0    0    1   
+$EndComp
+Wire Wire Line
+	8800 4500 8900 4500
+$Comp
+L Device:R_Small R2
+U 1 1 601D19CD
+P 8400 4400
+F 0 "R2" V 8204 4400 50  0000 C CNN
+F 1 "1k" V 8295 4400 50  0000 C CNN
+F 2 "Resistor_SMD:R_0805_2012Metric_Pad1.15x1.40mm_HandSolder" H 8400 4400 50  0001 C CNN
+F 3 "~" H 8400 4400 50  0001 C CNN
+	1    8400 4400
+	1    0    0    -1  
+$EndComp
+$Comp
+L power:+5V #PWR0123
+U 1 1 601D30DC
+P 8400 4300
+F 0 "#PWR0123" H 8400 4150 50  0001 C CNN
+F 1 "+5V" H 8415 4473 50  0000 C CNN
+F 2 "" H 8400 4300 50  0001 C CNN
+F 3 "" H 8400 4300 50  0001 C CNN
+	1    8400 4300
+	1    0    0    -1  
+$EndComp
+Wire Wire Line
+	8500 4500 8400 4500
+Connection ~ 8400 4500
+Wire Wire Line
+	8400 4500 8250 4500
 $EndSCHEMATC
