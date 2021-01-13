@@ -315,17 +315,6 @@ F 3 "http://www.ti.com/lit/gpn/sn74LS21" H 4100 6050 50  0001 C CNN
 $EndComp
 $Comp
 L 74xx:74LS21 U1
-U 2 1 5FD7380A
-P 8750 5900
-F 0 "U1" H 8750 6275 50  0000 C CNN
-F 1 "74HC21" H 8750 6184 50  0000 C CNN
-F 2 "Package_DIP:DIP-14_W7.62mm_Socket" H 8750 5900 50  0001 C CNN
-F 3 "http://www.ti.com/lit/gpn/sn74LS21" H 8750 5900 50  0001 C CNN
-	2    8750 5900
-	1    0    0    -1  
-$EndComp
-$Comp
-L 74xx:74LS21 U1
 U 3 1 5FD74C69
 P 6050 1600
 F 0 "U1" H 6280 1646 50  0000 L CNN
@@ -398,8 +387,6 @@ Text GLabel 3800 5900 0    50   Input ~ 0
 ~IRQ3~
 Text GLabel 4400 6050 2    50   Output ~ 0
 ~IRQ~
-Wire Wire Line
-	8450 6050 8450 6150
 $Comp
 L Memory_EEPROM:28C256 U4
 U 1 1 5FDE4AF9
@@ -435,17 +422,6 @@ F 3 "http://www.ti.com/lit/gpn/sn74hc00" H 8600 5050 50  0001 C CNN
 $EndComp
 $Comp
 L 74xx:74HC00 U5
-U 4 1 5FDF4BFF
-P 9550 5800
-F 0 "U5" H 9550 6125 50  0000 C CNN
-F 1 "74HC00" H 9550 6034 50  0000 C CNN
-F 2 "Package_DIP:DIP-14_W7.62mm_Socket" H 9550 5800 50  0001 C CNN
-F 3 "http://www.ti.com/lit/gpn/sn74hc00" H 9550 5800 50  0001 C CNN
-	4    9550 5800
-	1    0    0    -1  
-$EndComp
-$Comp
-L 74xx:74HC00 U5
 U 5 1 5FDF7440
 P 6950 1600
 F 0 "U5" H 7180 1646 50  0000 L CNN
@@ -457,8 +433,6 @@ F 3 "http://www.ti.com/lit/gpn/sn74hc00" H 6950 1600 50  0001 C CNN
 $EndComp
 Wire Wire Line
 	2300 4350 2050 4350
-Text GLabel 8450 5850 0    50   Input ~ 0
-CLK
 $Comp
 L power:+5V #PWR0111
 U 1 1 5FE008F9
@@ -533,17 +507,6 @@ Text GLabel 9900 3250 2    50   BiDi ~ 0
 D7
 Text GLabel 6400 5500 0    50   Input ~ 0
 ~SSEL~
-$Comp
-L power:+5V #PWR0113
-U 1 1 5FE18DC9
-P 7850 6150
-F 0 "#PWR0113" H 7850 6000 50  0001 C CNN
-F 1 "+5V" H 7865 6323 50  0000 C CNN
-F 2 "" H 7850 6150 50  0001 C CNN
-F 3 "" H 7850 6150 50  0001 C CNN
-	1    7850 6150
-	1    0    0    -1  
-$EndComp
 Text GLabel 6400 5700 0    50   Input ~ 0
 ~INH~
 Text GLabel 7100 2750 0    50   Input ~ 0
@@ -726,8 +689,6 @@ Wire Wire Line
 	9500 2100 9500 2050
 Wire Wire Line
 	2000 3450 2300 3450
-Text GLabel 8100 3950 2    50   Input ~ 0
-R~W~
 $Comp
 L power:GND #PWR0122
 U 1 1 5FDC0E22
@@ -761,30 +722,10 @@ Text GLabel 8100 3350 2    50   BiDi ~ 0
 D6
 Text GLabel 8100 3450 2    50   BiDi ~ 0
 D7
-$Comp
-L Device:R_Small R1
-U 1 1 5FDC7508
-P 8050 6150
-F 0 "R1" V 7854 6150 50  0000 C CNN
-F 1 "4k7" V 7945 6150 50  0000 C CNN
-F 2 "Resistor_SMD:R_0805_2012Metric_Pad1.15x1.40mm_HandSolder" H 8050 6150 50  0001 C CNN
-F 3 "~" H 8050 6150 50  0001 C CNN
-	1    8050 6150
-	0    1    1    0   
-$EndComp
-Wire Wire Line
-	8150 6150 8450 6150
-Wire Wire Line
-	7950 6150 7850 6150
-Text GLabel 8450 3500 2    50   Input ~ 0
-RAM_CS
 Wire Wire Line
 	8450 5750 8400 5750
 Wire Wire Line
 	8400 5750 8400 5700
-Connection ~ 8450 6050
-Wire Wire Line
-	8450 5950 8450 6050
 Text GLabel 8300 4950 0    50   Input ~ 0
 A15
 Wire Wire Line
@@ -831,8 +772,6 @@ Wire Wire Line
 Connection ~ 8900 4850
 Wire Wire Line
 	8900 4850 8900 5050
-Text GLabel 9850 5800 2    50   Output ~ 0
-RAM_CS
 Text GLabel 8950 4700 2    50   Output ~ 0
 ROM_CS
 Wire Wire Line
@@ -904,4 +843,65 @@ Wire Wire Line
 Connection ~ 8400 4500
 Wire Wire Line
 	8400 4500 8250 4500
+Text GLabel 9850 5800 2    50   Output ~ 0
+RAM_CS
+$Comp
+L 74xx:74HC00 U5
+U 4 1 5FDF4BFF
+P 9550 5800
+F 0 "U5" H 9550 6125 50  0000 C CNN
+F 1 "74HC00" H 9550 6034 50  0000 C CNN
+F 2 "Package_DIP:DIP-14_W7.62mm_Socket" H 9550 5800 50  0001 C CNN
+F 3 "http://www.ti.com/lit/gpn/sn74hc00" H 9550 5800 50  0001 C CNN
+	4    9550 5800
+	1    0    0    -1  
+$EndComp
+Wire Wire Line
+	8450 5950 8450 6050
+Connection ~ 8450 6050
+Wire Wire Line
+	7950 6150 7850 6150
+Wire Wire Line
+	8150 6150 8450 6150
+$Comp
+L Device:R_Small R1
+U 1 1 5FDC7508
+P 8050 6150
+F 0 "R1" V 7854 6150 50  0000 C CNN
+F 1 "4k7" V 7945 6150 50  0000 C CNN
+F 2 "Resistor_SMD:R_0805_2012Metric_Pad1.15x1.40mm_HandSolder" H 8050 6150 50  0001 C CNN
+F 3 "~" H 8050 6150 50  0001 C CNN
+	1    8050 6150
+	0    1    1    0   
+$EndComp
+$Comp
+L power:+5V #PWR0113
+U 1 1 5FE18DC9
+P 7850 6150
+F 0 "#PWR0113" H 7850 6000 50  0001 C CNN
+F 1 "+5V" H 7865 6323 50  0000 C CNN
+F 2 "" H 7850 6150 50  0001 C CNN
+F 3 "" H 7850 6150 50  0001 C CNN
+	1    7850 6150
+	1    0    0    -1  
+$EndComp
+Text GLabel 8450 5850 0    50   Input ~ 0
+CLK
+Wire Wire Line
+	8450 6050 8450 6150
+$Comp
+L 74xx:74LS21 U1
+U 2 1 5FD7380A
+P 8750 5900
+F 0 "U1" H 8750 6275 50  0000 C CNN
+F 1 "74HC21" H 8750 6184 50  0000 C CNN
+F 2 "Package_DIP:DIP-14_W7.62mm_Socket" H 8750 5900 50  0001 C CNN
+F 3 "http://www.ti.com/lit/gpn/sn74LS21" H 8750 5900 50  0001 C CNN
+	2    8750 5900
+	1    0    0    -1  
+$EndComp
+Text GLabel 8100 3950 2    50   Input ~ 0
+R~W~
+Text GLabel 8450 3500 2    50   Input ~ 0
+RAM_CS
 $EndSCHEMATC
