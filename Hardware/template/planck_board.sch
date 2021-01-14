@@ -146,36 +146,6 @@ Text GLabel 2450 4450 2    50   BiDi ~ 0
 EX2
 Text GLabel 2450 4350 2    50   BiDi ~ 0
 CLK_12M
-$Comp
-L Device:C_Small C2
-U 1 1 5FD8A65F
-P 3300 3500
-F 0 "C2" H 3392 3546 50  0000 L CNN
-F 1 "C_Small" H 3392 3455 50  0000 L CNN
-F 2 "Capacitor_SMD:C_1206_3216Metric_Pad1.42x1.75mm_HandSolder" H 3300 3500 50  0001 C CNN
-F 3 "~" H 3300 3500 50  0001 C CNN
-	1    3300 3500
-	1    0    0    -1  
-$EndComp
-Wire Wire Line
-	3150 3400 3150 3450
-Wire Wire Line
-	3150 3600 3150 3550
-Wire Wire Line
-	3150 3550 3050 3550
-$Comp
-L Device:C_Small C1
-U 1 1 5FD8C99F
-P 1300 3500
-F 0 "C1" H 1392 3546 50  0000 L CNN
-F 1 "C_Small" H 1392 3455 50  0000 L CNN
-F 2 "Capacitor_SMD:C_1206_3216Metric_Pad1.42x1.75mm_HandSolder" H 1300 3500 50  0001 C CNN
-F 3 "~" H 1300 3500 50  0001 C CNN
-	1    1300 3500
-	1    0    0    -1  
-$EndComp
-Wire Wire Line
-	1300 3600 1700 3600
 Wire Wire Line
 	1700 3600 1700 3550
 Wire Wire Line
@@ -202,16 +172,8 @@ Text GLabel 2450 3350 2    50   BiDi ~ 0
 ~SLOW~
 Wire Wire Line
 	2450 3450 3050 3450
-Connection ~ 3050 3450
-Wire Wire Line
-	3050 3450 3150 3450
-Wire Wire Line
-	3150 3400 3300 3400
 Wire Wire Line
 	2450 3550 3050 3550
-Connection ~ 3050 3550
-Wire Wire Line
-	3150 3600 3300 3600
 Wire Wire Line
 	2750 3700 2700 3700
 Wire Wire Line
@@ -238,8 +200,6 @@ Wire Wire Line
 	1300 3400 1300 3300
 Wire Wire Line
 	1300 3300 1100 3300
-Connection ~ 1300 3400
 Wire Wire Line
-	1300 3600 850  3600
-Connection ~ 1300 3600
+	850  3600 1700 3600
 $EndSCHEMATC
