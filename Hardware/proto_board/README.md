@@ -1,6 +1,6 @@
-## Planck 6502 expansion board template
+## Planck 6502 expansion board prototype
 
-This is a template to help create expansion cards for the Planck computer.
+This board allows you to prototype any thing for the Planck computer
 
 This is what the board looks like at the moment
 
