@@ -99,7 +99,7 @@ Below are the pins that are specific to the expansion bus:
 | 45 | <span style="text-decoration:overline">IRQ</span> | This goes low when an interrupt request has occured, active low |
 | 46 | EX5 | Extra signal 5. **Not connected to slot 0** |
 | 47 | SYNC | CPU output. Indicates when the CPU is fetching an opcode |
-| 48 | <span style="text-decoration:overline">SLOT_IRQ</span> | Used by expansion cards to signal an interrupt request to the processor board. **Not connected on slot 5**, active low  |
+| 48 | <span style="text-decoration:overline">SLOT_IRQ</span> | Used by expansion cards to signal an interrupt request to the processor board, active low  |
 | 49 | <span style="text-decoration:overline">RESET</span> | Reset signal trigered by the button on the backplane, active low |
 | 50 | <span style="text-decoration:overline">NMI</span> | non maskable interrupt signal trigered by the button on the backplane, active low |
 

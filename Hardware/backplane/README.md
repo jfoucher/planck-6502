@@ -47,7 +47,7 @@ Below are the pins that are specific to the expansion bus:
 |<span style="text-decoration:overline">SEL1</span>-<span style="text-decoration:overline">SEL5</span>|The expansion card in the slot in which this signal is low should activate.|
 |<span style="text-decoration:overline">SSEL</span>| Slot selected. The cpu card and any other card should disable all bus access when this signal is low and their own select signal (<span style="text-decoration:overline">SEL1</span>-<span style="text-decoration:overline">SEL5</span>) is high.|
 |LED1-LED4| Debug leds 1 to 4.|
-| <span style="text-decoration:overline">IRQ1</span>-<span style="text-decoration:overline">IRQ4</span>|Should be used by expansion cards when they want to signal an IRQ. All 4 lines are ANDed together on the processor board and pull the <span style="text-decoration:overline">IRQ</span> line low when at least one of them is low.|
+| <span style="text-decoration:overline">IRQ1</span>-<span style="text-decoration:overline">IRQ5</span>|Should be used by expansion cards when they want to signal an IRQ. All 5 lines are ANDed together on the processor board and pull the <span style="text-decoration:overline">IRQ</span> line low when at least one of them is low.|
 
 ### Board view
 
