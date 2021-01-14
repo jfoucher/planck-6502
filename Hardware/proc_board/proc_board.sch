@@ -303,91 +303,6 @@ Text GLabel 4000 3100 0    50   Input ~ 0
 Text GLabel 4000 3200 0    50   Input ~ 0
 ~NMI~
 $Comp
-L 74xx:74LS21 U1
-U 1 1 5FD70EEB
-P 4100 6050
-F 0 "U1" H 4100 6425 50  0000 C CNN
-F 1 "74HC21" H 4100 6334 50  0000 C CNN
-F 2 "Package_DIP:DIP-14_W7.62mm_Socket" H 4100 6050 50  0001 C CNN
-F 3 "http://www.ti.com/lit/gpn/sn74LS21" H 4100 6050 50  0001 C CNN
-	1    4100 6050
-	1    0    0    -1  
-$EndComp
-$Comp
-L 74xx:74LS21 U1
-U 3 1 5FD74C69
-P 6050 1600
-F 0 "U1" H 6280 1646 50  0000 L CNN
-F 1 "74HC21" H 6280 1555 50  0000 L CNN
-F 2 "Package_DIP:DIP-14_W7.62mm_Socket" H 6050 1600 50  0001 C CNN
-F 3 "http://www.ti.com/lit/gpn/sn74LS21" H 6050 1600 50  0001 C CNN
-	3    6050 1600
-	1    0    0    -1  
-$EndComp
-$Comp
-L power:+5V #PWR0108
-U 1 1 5FD775B0
-P 6050 800
-F 0 "#PWR0108" H 6050 650 50  0001 C CNN
-F 1 "+5V" H 6065 973 50  0000 C CNN
-F 2 "" H 6050 800 50  0001 C CNN
-F 3 "" H 6050 800 50  0001 C CNN
-	1    6050 800 
-	1    0    0    -1  
-$EndComp
-Wire Wire Line
-	6050 1100 6050 850 
-$Comp
-L Device:C_Small C4
-U 1 1 5FD775B7
-P 6250 850
-F 0 "C4" V 6021 850 50  0000 C CNN
-F 1 "C_Small" V 6112 850 50  0000 C CNN
-F 2 "Capacitor_SMD:C_1206_3216Metric_Pad1.42x1.75mm_HandSolder" H 6250 850 50  0001 C CNN
-F 3 "~" H 6250 850 50  0001 C CNN
-	1    6250 850 
-	0    1    1    0   
-$EndComp
-$Comp
-L power:GND #PWR0109
-U 1 1 5FD775BD
-P 6500 850
-F 0 "#PWR0109" H 6500 600 50  0001 C CNN
-F 1 "GND" H 6505 677 50  0000 C CNN
-F 2 "" H 6500 850 50  0001 C CNN
-F 3 "" H 6500 850 50  0001 C CNN
-	1    6500 850 
-	1    0    0    -1  
-$EndComp
-Wire Wire Line
-	6500 850  6350 850 
-Wire Wire Line
-	6150 850  6050 850 
-Connection ~ 6050 850 
-Wire Wire Line
-	6050 850  6050 800 
-$Comp
-L power:GND #PWR0110
-U 1 1 5FD782E3
-P 6050 2100
-F 0 "#PWR0110" H 6050 1850 50  0001 C CNN
-F 1 "GND" H 6055 1927 50  0000 C CNN
-F 2 "" H 6050 2100 50  0001 C CNN
-F 3 "" H 6050 2100 50  0001 C CNN
-	1    6050 2100
-	1    0    0    -1  
-$EndComp
-Text GLabel 3800 6200 0    50   Input ~ 0
-~IRQ0~
-Text GLabel 3800 6100 0    50   Input ~ 0
-~IRQ1~
-Text GLabel 3800 6000 0    50   Input ~ 0
-~IRQ2~
-Text GLabel 3800 5900 0    50   Input ~ 0
-~IRQ3~
-Text GLabel 4400 6050 2    50   Output ~ 0
-~IRQ~
-$Comp
 L Memory_EEPROM:28C256 U4
 U 1 1 5FDE4AF9
 P 9500 3450
@@ -396,39 +311,6 @@ F 1 "28C256" H 9500 4640 50  0000 C CNN
 F 2 "Socket:DIP_Socket-28_W11.9_W12.7_W15.24_W17.78_W18.5_3M_228-1277-00-0602J" H 9500 3450 50  0001 C CNN
 F 3 "http://ww1.microchip.com/downloads/en/DeviceDoc/doc0006.pdf" H 9500 3450 50  0001 C CNN
 	1    9500 3450
-	1    0    0    -1  
-$EndComp
-$Comp
-L 74xx:74HC00 U5
-U 2 1 5FDF020A
-P 7500 5700
-F 0 "U5" H 7500 6025 50  0000 C CNN
-F 1 "74HC00" H 7500 5934 50  0000 C CNN
-F 2 "Package_DIP:DIP-14_W7.62mm_Socket" H 7500 5700 50  0001 C CNN
-F 3 "http://www.ti.com/lit/gpn/sn74hc00" H 7500 5700 50  0001 C CNN
-	2    7500 5700
-	1    0    0    -1  
-$EndComp
-$Comp
-L 74xx:74HC00 U5
-U 3 1 5FDF1828
-P 8600 5050
-F 0 "U5" H 8600 4850 50  0000 C CNN
-F 1 "74HC00" H 8600 5284 50  0000 C CNN
-F 2 "Package_DIP:DIP-14_W7.62mm_Socket" H 8600 5050 50  0001 C CNN
-F 3 "http://www.ti.com/lit/gpn/sn74hc00" H 8600 5050 50  0001 C CNN
-	3    8600 5050
-	1    0    0    -1  
-$EndComp
-$Comp
-L 74xx:74HC00 U5
-U 5 1 5FDF7440
-P 6950 1600
-F 0 "U5" H 7180 1646 50  0000 L CNN
-F 1 "74HC00" H 7180 1555 50  0000 L CNN
-F 2 "Package_DIP:DIP-14_W7.62mm_Socket" H 6950 1600 50  0001 C CNN
-F 3 "http://www.ti.com/lit/gpn/sn74hc00" H 6950 1600 50  0001 C CNN
-	5    6950 1600
 	1    0    0    -1  
 $EndComp
 Wire Wire Line
@@ -505,10 +387,6 @@ Text GLabel 9900 3150 2    50   BiDi ~ 0
 D6
 Text GLabel 9900 3250 2    50   BiDi ~ 0
 D7
-Text GLabel 6400 5500 0    50   Input ~ 0
-~SSEL~
-Text GLabel 6400 5700 0    50   Input ~ 0
-~INH~
 Text GLabel 7100 2750 0    50   Input ~ 0
 A0
 Text GLabel 7100 2850 0    50   Input ~ 0
@@ -540,48 +418,6 @@ A13
 Text GLabel 7100 4150 0    50   Input ~ 0
 A14
 $Comp
-L power:+5V #PWR0114
-U 1 1 5FE29AEB
-P 6950 800
-F 0 "#PWR0114" H 6950 650 50  0001 C CNN
-F 1 "+5V" H 6965 973 50  0000 C CNN
-F 2 "" H 6950 800 50  0001 C CNN
-F 3 "" H 6950 800 50  0001 C CNN
-	1    6950 800 
-	1    0    0    -1  
-$EndComp
-Wire Wire Line
-	6950 1100 6950 850 
-$Comp
-L Device:C_Small C5
-U 1 1 5FE29AF2
-P 7150 850
-F 0 "C5" V 6921 850 50  0000 C CNN
-F 1 "C_Small" V 7012 850 50  0000 C CNN
-F 2 "Capacitor_SMD:C_1206_3216Metric_Pad1.42x1.75mm_HandSolder" H 7150 850 50  0001 C CNN
-F 3 "~" H 7150 850 50  0001 C CNN
-	1    7150 850 
-	0    1    1    0   
-$EndComp
-$Comp
-L power:GND #PWR0115
-U 1 1 5FE29AF8
-P 7400 850
-F 0 "#PWR0115" H 7400 600 50  0001 C CNN
-F 1 "GND" H 7405 677 50  0000 C CNN
-F 2 "" H 7400 850 50  0001 C CNN
-F 3 "" H 7400 850 50  0001 C CNN
-	1    7400 850 
-	1    0    0    -1  
-$EndComp
-Wire Wire Line
-	7400 850  7250 850 
-Wire Wire Line
-	7050 850  6950 850 
-Connection ~ 6950 850 
-Wire Wire Line
-	6950 850  6950 800 
-$Comp
 L power:GND #PWR0116
 U 1 1 5FE2A461
 P 7600 4350
@@ -590,17 +426,6 @@ F 1 "GND" H 7605 4177 50  0000 C CNN
 F 2 "" H 7600 4350 50  0001 C CNN
 F 3 "" H 7600 4350 50  0001 C CNN
 	1    7600 4350
-	1    0    0    -1  
-$EndComp
-$Comp
-L power:GND #PWR0117
-U 1 1 5FE2AFAA
-P 6950 2100
-F 0 "#PWR0117" H 6950 1850 50  0001 C CNN
-F 1 "GND" H 6955 1927 50  0000 C CNN
-F 2 "" H 6950 2100 50  0001 C CNN
-F 3 "" H 6950 2100 50  0001 C CNN
-	1    6950 2100
 	1    0    0    -1  
 $EndComp
 $Comp
@@ -692,16 +517,16 @@ Wire Wire Line
 $Comp
 L power:GND #PWR0122
 U 1 1 5FDC0E22
-P 8400 3750
-F 0 "#PWR0122" H 8400 3500 50  0001 C CNN
-F 1 "GND" H 8405 3577 50  0000 C CNN
-F 2 "" H 8400 3750 50  0001 C CNN
-F 3 "" H 8400 3750 50  0001 C CNN
-	1    8400 3750
+P 8500 3750
+F 0 "#PWR0122" H 8500 3500 50  0001 C CNN
+F 1 "GND" H 8505 3577 50  0000 C CNN
+F 2 "" H 8500 3750 50  0001 C CNN
+F 3 "" H 8500 3750 50  0001 C CNN
+	1    8500 3750
 	1    0    0    -1  
 $EndComp
 Wire Wire Line
-	8400 3750 8250 3750
+	8500 3750 8250 3750
 Wire Wire Line
 	8250 3750 8250 3850
 Wire Wire Line
@@ -723,62 +548,11 @@ D6
 Text GLabel 8100 3450 2    50   BiDi ~ 0
 D7
 Wire Wire Line
-	8450 5750 8400 5750
-Wire Wire Line
-	8400 5750 8400 5700
-Text GLabel 8300 4950 0    50   Input ~ 0
-A15
-Wire Wire Line
 	8450 3500 8350 3500
-$Comp
-L 74xx:74HC00 U5
-U 1 1 5FDEE6F2
-P 6700 5600
-F 0 "U5" H 6700 5925 50  0000 C CNN
-F 1 "74HC00" H 6700 5834 50  0000 C CNN
-F 2 "Package_DIP:DIP-14_W7.62mm_Socket" H 6700 5600 50  0001 C CNN
-F 3 "http://www.ti.com/lit/gpn/sn74hc00" H 6700 5600 50  0001 C CNN
-	1    6700 5600
-	1    0    0    -1  
-$EndComp
-Wire Wire Line
-	7200 5600 7100 5600
-Wire Wire Line
-	7200 5800 7100 5800
-Wire Wire Line
-	7100 5800 7100 5600
-Connection ~ 7100 5600
-Wire Wire Line
-	7100 5600 7000 5600
-Wire Wire Line
-	7800 5700 8050 5700
-Wire Wire Line
-	8050 5700 8050 5150
-Wire Wire Line
-	8050 5150 8300 5150
-Connection ~ 8050 5700
-Wire Wire Line
-	8050 5700 8400 5700
 Wire Wire Line
 	8350 3500 8350 3650
 Wire Wire Line
 	8350 3650 8100 3650
-Wire Wire Line
-	9250 5900 9050 5900
-Wire Wire Line
-	9250 5700 9250 4850
-Wire Wire Line
-	9250 4850 8900 4850
-Connection ~ 8900 4850
-Wire Wire Line
-	8900 4850 8900 5050
-Text GLabel 8950 4700 2    50   Output ~ 0
-ROM_CS
-Wire Wire Line
-	8950 4700 8900 4700
-Connection ~ 8900 4700
-Wire Wire Line
-	8900 4700 8900 4850
 $Comp
 L Memory_RAM:HM62256BLP U3
 U 1 1 5FDE3197
@@ -790,118 +564,125 @@ F 3 "https://web.mit.edu/6.115/www/document/62256.pdf" H 7600 3350 50  0001 C CN
 	1    7600 3450
 	1    0    0    -1  
 $EndComp
-Text GLabel 8250 4500 0    50   Output ~ 0
-~SLOW~
-Connection ~ 8900 4500
-Wire Wire Line
-	8900 4500 8900 4700
 Wire Wire Line
 	9050 4550 9050 4350
 Wire Wire Line
 	9050 4350 9100 4350
+Text GLabel 8100 3950 2    50   Input ~ 0
+~RAMW~
+Text GLabel 8450 3500 2    50   Input ~ 0
+~RAM_CS~
+Text GLabel 1750 5950 0    50   Input ~ 0
+CLK
+Text GLabel 1750 6050 0    50   Input ~ 0
+~IRQ0~
+Text GLabel 1500 6150 0    50   Input ~ 0
+~IRQ1~
+Text GLabel 1750 6250 0    50   Input ~ 0
+~IRQ2~
+Text GLabel 1500 6350 0    50   Input ~ 0
+~IRQ3~
+Text GLabel 2750 5950 2    50   Output ~ 0
+~IRQ~
+Text GLabel 1500 6650 0    50   Input ~ 0
+~SSEL~
+Text GLabel 1750 6550 0    50   Input ~ 0
+~INH~
 Wire Wire Line
-	8900 4250 9100 4250
+	1750 6650 1500 6650
 Wire Wire Line
-	8900 4250 8900 4500
+	1750 6350 1500 6350
+Wire Wire Line
+	1750 6150 1500 6150
+Text GLabel 3150 6050 2    50   Output ~ 0
+~RAM_CS~
+Wire Wire Line
+	3150 6050 2750 6050
+Text GLabel 1700 6750 0    50   Input ~ 0
+A15
+Wire Wire Line
+	1750 6750 1700 6750
+Text GLabel 3150 6200 2    50   Output ~ 0
+~ROM_CS~
+Text GLabel 3150 6350 2    50   Output ~ 0
+~SLOW~
+Wire Wire Line
+	3150 6350 3100 6350
+Wire Wire Line
+	3100 6350 3100 6200
+Wire Wire Line
+	3100 6150 2750 6150
+Wire Wire Line
+	3150 6200 3100 6200
+Connection ~ 3100 6200
+Wire Wire Line
+	3100 6200 3100 6150
+Text GLabel 2750 6250 2    50   Output ~ 0
+~RAMW~
+Text GLabel 9100 4250 0    50   Input ~ 0
+~ROM_CS~
 $Comp
-L Device:D_Schottky D1
-U 1 1 601C82E8
-P 8650 4500
-F 0 "D1" H 8650 4600 50  0000 C CNN
-F 1 "D_Schottky" H 8650 4400 50  0000 C CNN
-F 2 "Diode_SMD:D_0805_2012Metric_Pad1.15x1.40mm_HandSolder" H 8650 4500 50  0001 C CNN
-F 3 "~" H 8650 4500 50  0001 C CNN
-	1    8650 4500
-	-1   0    0    1   
-$EndComp
-Wire Wire Line
-	8800 4500 8900 4500
-$Comp
-L Device:R_Small R2
-U 1 1 601D19CD
-P 8400 4400
-F 0 "R2" V 8204 4400 50  0000 C CNN
-F 1 "1k" V 8295 4400 50  0000 C CNN
-F 2 "Resistor_SMD:R_0805_2012Metric_Pad1.15x1.40mm_HandSolder" H 8400 4400 50  0001 C CNN
-F 3 "~" H 8400 4400 50  0001 C CNN
-	1    8400 4400
+L power:+5V #PWR0108
+U 1 1 60043475
+P 2250 5450
+F 0 "#PWR0108" H 2250 5300 50  0001 C CNN
+F 1 "+5V" H 2265 5623 50  0000 C CNN
+F 2 "" H 2250 5450 50  0001 C CNN
+F 3 "" H 2250 5450 50  0001 C CNN
+	1    2250 5450
 	1    0    0    -1  
 $EndComp
+Wire Wire Line
+	2250 5750 2250 5500
 $Comp
-L power:+5V #PWR0123
-U 1 1 601D30DC
-P 8400 4300
-F 0 "#PWR0123" H 8400 4150 50  0001 C CNN
-F 1 "+5V" H 8415 4473 50  0000 C CNN
-F 2 "" H 8400 4300 50  0001 C CNN
-F 3 "" H 8400 4300 50  0001 C CNN
-	1    8400 4300
-	1    0    0    -1  
-$EndComp
-Wire Wire Line
-	8500 4500 8400 4500
-Connection ~ 8400 4500
-Wire Wire Line
-	8400 4500 8250 4500
-Text GLabel 9850 5800 2    50   Output ~ 0
-RAM_CS
-$Comp
-L 74xx:74HC00 U5
-U 4 1 5FDF4BFF
-P 9550 5800
-F 0 "U5" H 9550 6125 50  0000 C CNN
-F 1 "74HC00" H 9550 6034 50  0000 C CNN
-F 2 "Package_DIP:DIP-14_W7.62mm_Socket" H 9550 5800 50  0001 C CNN
-F 3 "http://www.ti.com/lit/gpn/sn74hc00" H 9550 5800 50  0001 C CNN
-	4    9550 5800
-	1    0    0    -1  
-$EndComp
-Wire Wire Line
-	8450 5950 8450 6050
-Connection ~ 8450 6050
-Wire Wire Line
-	7950 6150 7850 6150
-Wire Wire Line
-	8150 6150 8450 6150
-$Comp
-L Device:R_Small R1
-U 1 1 5FDC7508
-P 8050 6150
-F 0 "R1" V 7854 6150 50  0000 C CNN
-F 1 "4k7" V 7945 6150 50  0000 C CNN
-F 2 "Resistor_SMD:R_0805_2012Metric_Pad1.15x1.40mm_HandSolder" H 8050 6150 50  0001 C CNN
-F 3 "~" H 8050 6150 50  0001 C CNN
-	1    8050 6150
+L Device:C_Small C4
+U 1 1 6004347C
+P 2450 5500
+F 0 "C4" V 2221 5500 50  0000 C CNN
+F 1 "C_Small" V 2312 5500 50  0000 C CNN
+F 2 "Capacitor_SMD:C_1206_3216Metric_Pad1.42x1.75mm_HandSolder" H 2450 5500 50  0001 C CNN
+F 3 "~" H 2450 5500 50  0001 C CNN
+	1    2450 5500
 	0    1    1    0   
 $EndComp
 $Comp
-L power:+5V #PWR0113
-U 1 1 5FE18DC9
-P 7850 6150
-F 0 "#PWR0113" H 7850 6000 50  0001 C CNN
-F 1 "+5V" H 7865 6323 50  0000 C CNN
-F 2 "" H 7850 6150 50  0001 C CNN
-F 3 "" H 7850 6150 50  0001 C CNN
-	1    7850 6150
+L power:GND #PWR0109
+U 1 1 60043482
+P 2700 5500
+F 0 "#PWR0109" H 2700 5250 50  0001 C CNN
+F 1 "GND" H 2705 5327 50  0000 C CNN
+F 2 "" H 2700 5500 50  0001 C CNN
+F 3 "" H 2700 5500 50  0001 C CNN
+	1    2700 5500
 	1    0    0    -1  
 $EndComp
-Text GLabel 8450 5850 0    50   Input ~ 0
-CLK
 Wire Wire Line
-	8450 6050 8450 6150
+	2700 5500 2550 5500
+Wire Wire Line
+	2350 5500 2250 5500
+Connection ~ 2250 5500
+Wire Wire Line
+	2250 5500 2250 5450
 $Comp
-L 74xx:74LS21 U1
-U 2 1 5FD7380A
-P 8750 5900
-F 0 "U1" H 8750 6275 50  0000 C CNN
-F 1 "74HC21" H 8750 6184 50  0000 C CNN
-F 2 "Package_DIP:DIP-14_W7.62mm_Socket" H 8750 5900 50  0001 C CNN
-F 3 "http://www.ti.com/lit/gpn/sn74LS21" H 8750 5900 50  0001 C CNN
-	2    8750 5900
+L power:GND #PWR0110
+U 1 1 60044188
+P 2250 7150
+F 0 "#PWR0110" H 2250 6900 50  0001 C CNN
+F 1 "GND" H 2255 6977 50  0000 C CNN
+F 2 "" H 2250 7150 50  0001 C CNN
+F 3 "" H 2250 7150 50  0001 C CNN
+	1    2250 7150
 	1    0    0    -1  
 $EndComp
-Text GLabel 8100 3950 2    50   Input ~ 0
-R~W~
-Text GLabel 8450 3500 2    50   Input ~ 0
-RAM_CS
+$Comp
+L Logic_Programmable:GAL16V8 U1
+U 1 1 6005DE74
+P 2250 6450
+F 0 "U1" H 2250 7331 50  0000 C CNN
+F 1 "GAL16V8" H 2250 7240 50  0000 C CNN
+F 2 "Package_DIP:DIP-20_W7.62mm_Socket" H 2250 6450 50  0001 C CNN
+F 3 "" H 2250 6450 50  0001 C CNN
+	1    2250 6450
+	1    0    0    -1  
+$EndComp
 $EndSCHEMATC
