@@ -143,13 +143,13 @@ SYNC
 Text GLabel 1750 4450 0    50   Input ~ 0
 ~IRQ~
 Text GLabel 2800 4550 2    50   BiDi ~ 0
-~IRQ0~
-Text GLabel 2800 4450 2    50   BiDi ~ 0
 ~IRQ1~
-Text GLabel 2800 4350 2    50   BiDi ~ 0
+Text GLabel 2800 4450 2    50   BiDi ~ 0
 ~IRQ2~
-Text GLabel 2800 4250 2    50   BiDi ~ 0
+Text GLabel 2800 4350 2    50   BiDi ~ 0
 ~IRQ3~
+Text GLabel 2800 4250 2    50   BiDi ~ 0
+~IRQ4~
 Wire Wire Line
 	1750 4450 2300 4450
 Wire Wire Line
@@ -167,7 +167,7 @@ LED2
 Text GLabel 2800 4050 2    50   BiDi ~ 0
 LED3
 Text GLabel 2800 4150 2    50   BiDi ~ 0
-LED4
+~IRQ5~
 Text GLabel 2800 3050 2    50   BiDi ~ 0
 EX0
 Text GLabel 2800 3150 2    50   BiDi ~ 0
@@ -575,13 +575,13 @@ Text GLabel 8450 3500 2    50   Input ~ 0
 Text GLabel 1750 5950 0    50   Input ~ 0
 CLK
 Text GLabel 1750 6050 0    50   Input ~ 0
-~IRQ0~
-Text GLabel 1500 6150 0    50   Input ~ 0
 ~IRQ1~
-Text GLabel 1750 6250 0    50   Input ~ 0
+Text GLabel 1500 6150 0    50   Input ~ 0
 ~IRQ2~
-Text GLabel 1500 6350 0    50   Input ~ 0
+Text GLabel 1750 6250 0    50   Input ~ 0
 ~IRQ3~
+Text GLabel 1500 6350 0    50   Input ~ 0
+~IRQ4~
 Text GLabel 2750 5950 2    50   Output ~ 0
 ~IRQ~
 Text GLabel 1500 6650 0    50   Input ~ 0
@@ -685,4 +685,8 @@ F 3 "" H 2250 6450 50  0001 C CNN
 	1    2250 6450
 	1    0    0    -1  
 $EndComp
+Text GLabel 1250 6450 0    50   Input ~ 0
+~IRQ5~
+Wire Wire Line
+	1750 6450 1250 6450
 $EndSCHEMATC

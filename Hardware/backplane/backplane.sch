@@ -1166,7 +1166,7 @@ Text GLabel 2800 4050 2    50   BiDi ~ 0
 LED2
 Text GLabel 2800 4150 2    50   BiDi ~ 0
 LED3
-Text GLabel 2800 4250 2    50   BiDi ~ 0
+Text GLabel 3200 4300 2    50   BiDi ~ 0
 LED4
 Text GLabel 2800 3150 2    50   BiDi ~ 0
 EX0
@@ -2096,4 +2096,8 @@ Text Label 9250 7950 0    50   ~ 0
 DS2
 Text Label 9250 7850 0    50   ~ 0
 DS1
+Text GLabel 2800 4250 2    50   BiDi ~ 0
+~IRQ5~
+Text GLabel 4950 9350 2    50   BiDi ~ 0
+~IRQ5~
 $EndSCHEMATC
