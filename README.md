@@ -156,3 +156,5 @@ The main board is [the CPU board](Hardware/proc_board) that provides it's own RA
 
 
 <a rel="license" href="http://creativecommons.org/licenses/by-sa/4.0/"><img alt="Creative Commons License" style="border-width:0" src="https://i.creativecommons.org/l/by-sa/4.0/88x31.png" /></a><br />This documentation is licensed under a <a rel="license" href="http://creativecommons.org/licenses/by-sa/4.0/">Creative Commons Attribution-ShareAlike 4.0 International License</a>.
+
+<img src="license.svg" alt="CERN-OHL-1.2 GPL-3.0-or-later CC-BY-SA-4.0" />
