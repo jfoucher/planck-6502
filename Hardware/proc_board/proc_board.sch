@@ -604,10 +604,8 @@ Wire Wire Line
 	1750 6750 1700 6750
 Text GLabel 3150 6200 2    50   Output ~ 0
 ~ROM_CS~
-Text GLabel 3150 6350 2    50   Output ~ 0
+Text GLabel 4500 6350 2    50   Output ~ 0
 ~SLOW~
-Wire Wire Line
-	3150 6350 3100 6350
 Wire Wire Line
 	3100 6350 3100 6200
 Wire Wire Line
@@ -689,4 +687,52 @@ Text GLabel 1250 6450 0    50   Input ~ 0
 ~IRQ5~
 Wire Wire Line
 	1750 6450 1250 6450
+Text GLabel 1750 6850 0    50   Input ~ 0
+R~W~
+Text Notes 1200 7000 0    50   ~ 0
+Added RW here
+Text Notes 3150 6750 0    50   ~ 0
+Added diode + pullup here
+$Comp
+L pspice:DIODE D?
+U 1 1 60359E86
+P 4050 6350
+F 0 "D?" H 4050 6615 50  0000 C CNN
+F 1 "1N4148" H 4050 6524 50  0000 C CNN
+F 2 "Diode_THT:D_DO-35_SOD27_P7.62mm_Horizontal" H 4050 6350 50  0001 C CNN
+F 3 "~" H 4050 6350 50  0001 C CNN
+	1    4050 6350
+	-1   0    0    1   
+$EndComp
+Wire Wire Line
+	4500 6350 4350 6350
+Wire Wire Line
+	3100 6350 3850 6350
+$Comp
+L Device:R_Small R?
+U 1 1 6035C6C6
+P 4350 6050
+F 0 "R?" H 4409 6096 50  0000 L CNN
+F 1 "4.7k" H 4409 6005 50  0000 L CNN
+F 2 "Resistor_SMD:R_0805_2012Metric_Pad1.15x1.40mm_HandSolder" H 4350 6050 50  0001 C CNN
+F 3 "~" H 4350 6050 50  0001 C CNN
+	1    4350 6050
+	1    0    0    -1  
+$EndComp
+$Comp
+L power:+5V #PWR?
+U 1 1 6035CE86
+P 4350 5950
+F 0 "#PWR?" H 4350 5800 50  0001 C CNN
+F 1 "+5V" H 4365 6123 50  0000 C CNN
+F 2 "" H 4350 5950 50  0001 C CNN
+F 3 "" H 4350 5950 50  0001 C CNN
+	1    4350 5950
+	1    0    0    -1  
+$EndComp
+Wire Wire Line
+	4350 6150 4350 6350
+Connection ~ 4350 6350
+Wire Wire Line
+	4350 6350 4250 6350
 $EndSCHEMATC
