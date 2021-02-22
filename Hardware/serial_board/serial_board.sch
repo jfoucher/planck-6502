@@ -358,12 +358,6 @@ F 3 "" H 6750 3700 50  0001 C CNN
 	1    6750 3700
 	1    0    0    -1  
 $EndComp
-Wire Wire Line
-	6750 3600 6300 3600
-Wire Wire Line
-	6300 3600 6300 3700
-Wire Wire Line
-	6300 3700 5900 3700
 $Comp
 L power:+5V #PWR0112
 U 1 1 5FEDDFEF
@@ -487,4 +481,36 @@ Wire Wire Line
 Wire Wire Line
 	6750 3000 6750 3200
 Connection ~ 6750 3200
+$Comp
+L Device:R_Small R3
+U 1 1 60353899
+P 4000 3000
+F 0 "R3" V 3804 3000 50  0000 C CNN
+F 1 "10k" V 3895 3000 50  0000 C CNN
+F 2 "Resistor_SMD:R_0805_2012Metric_Pad1.15x1.40mm_HandSolder" H 4000 3000 50  0001 C CNN
+F 3 "~" H 4000 3000 50  0001 C CNN
+	1    4000 3000
+	0    1    1    0   
+$EndComp
+Wire Wire Line
+	4700 3000 4100 3000
+$Comp
+L power:+5V #PWR0116
+U 1 1 60354CFE
+P 3700 3000
+F 0 "#PWR0116" H 3700 2850 50  0001 C CNN
+F 1 "+5V" H 3715 3173 50  0000 C CNN
+F 2 "" H 3700 3000 50  0001 C CNN
+F 3 "" H 3700 3000 50  0001 C CNN
+	1    3700 3000
+	1    0    0    -1  
+$EndComp
+Wire Wire Line
+	3900 3000 3700 3000
+Text Notes 3500 2750 0    50   ~ 0
+Added pullup here
+Wire Wire Line
+	5900 3600 6750 3600
+Text Notes 6000 3700 0    50   ~ 0
+moved cts to rts
 $EndSCHEMATC
