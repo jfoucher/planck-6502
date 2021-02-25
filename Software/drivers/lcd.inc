@@ -3,11 +3,12 @@
 ; all pins on VIA PORTA, 4 bit mode
 
 ; PORTA0 is free
-LCD_RS = $2             ; PORTA1
-LCD_RW = $4             ; PORTA2
-LCD_E = $8              ; PORTA3
+LCD_BASE = $FFC0
+LCD_ADDR_DISABLED = LCD_BASE
+LCD_DATA_DISABLED = LCD_BASE + 1
+LCD_ADDR_ENABLED = LCD_BASE + 2
+LCD_DATA_ENABLED = LCD_BASE + 3
 
-LCD_DATA = $F0          ; PORTA4-PORTA7
 
-LCD_PORT = PORTA
-LCD_DDR = DDRA
+; A0: RS
+; A1: E
