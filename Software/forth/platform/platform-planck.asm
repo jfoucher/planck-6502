@@ -172,14 +172,11 @@
 .alias ACIA_COMMAND ACIA_DATA+2
 .alias ACIA_CTRL    ACIA_DATA+3
 
-.alias LCD_RS $2             ; PORTA1
-.alias LCD_RW $4             ; PORTA2
-.alias LCD_E $8              ; PORTA3
-
-.alias LCD_DATA $F0          ; PORTA4-PORTA7
-
-.alias LCD_PORT PORTA
-.alias LCD_DDR DDRA
+.alias LCD_BASE $FFC0
+.alias LCD_ADDR_DISABLED LCD_BASE
+.alias LCD_DATA_DISABLED LCD_BASE + 1
+.alias LCD_ADDR_ENABLED LCD_BASE + 2
+.alias LCD_DATA_ENABLED LCD_BASE + 3
 
 ; Zero page variables
 
@@ -212,6 +209,8 @@
 .alias line             $9D
 .alias char             $9E
 .alias lcd_absent       $9F
+.alias lcd_pos          $A0
+
 
 
 
@@ -221,6 +220,7 @@
 .require "../../drivers/timer.s"
 .require "../../drivers/lcd.s"
 .require "../../drivers/vga.s"
+
 ; Default kernel file for Tali Forth 2 
 ; Scot W. Stevenson <scot.stevenson@gmail.com>
 ; First version: 19. Jan 2014
@@ -252,13 +252,16 @@ kernel_init:
 .scope
         lda #$FF
         sta DDRA
+
         jsr Init_ACIA
+
         jsr ps2_init
+
         jsr timer_init
         jsr lcd_init
         ;jsr video_init
-        lda #0
-        sta DDRB
+        lda #0                  ; no LED if not error
+        sta PORTB
 
 
         ;cli
@@ -326,6 +329,8 @@ no_char_available:
         clc                         ; Indicate no char available.
         rts
 
+
+
 kernel_getc:
         ; """Get a single character from the keyboard (waits for key). 
         ; """
@@ -336,6 +341,8 @@ Get_Char_Wait:
         bcc Get_Char_Wait
         rts
 
+
+
 kernel_putc:
         ; """Print a single character to the console. """
         ;; Send_Char - send character in A out serial port.
@@ -343,9 +350,14 @@ kernel_putc:
 Send_Char:
         phy
         sta ACIA_DATA
-        ldy #$10            ;minimal delay is $02
-        jsr delay_short
         jsr lcd_print
+        ; nedd to provide additional delay for ACIA
+        ldy #$20
+        jsr delay_short
+        ; Delay is provided by writing to the LCD screen
+        ; ldy #$34            ;minimal delay; The min delay increased when added diode on SLOW. Why?
+        ; jsr delay_short
+
         ;jsr char_out
         
         ply
