@@ -110,6 +110,20 @@
 
 
 .advance $e000
+
+
+    ;; Defines for hardware:
+.alias ACIA_DATA    $FFA0
+.alias ACIA_STATUS  ACIA_DATA+1
+.alias ACIA_COMMAND ACIA_DATA+2
+.alias ACIA_CTRL    ACIA_DATA+3
+
+.alias LCD_BASE $FFC0
+.alias LCD_ADDR_DISABLED LCD_BASE
+.alias LCD_DATA_DISABLED LCD_BASE + 1
+.alias LCD_ADDR_ENABLED LCD_BASE + 2
+.alias LCD_DATA_ENABLED LCD_BASE + 3
+
 .alias VIA1_BASE    $FF90
 .alias PORTB  VIA1_BASE
 .alias PORTA   VIA1_BASE+1
@@ -127,20 +141,19 @@
 .alias IER  VIA1_BASE + 14
 
 
-.alias VIDEO_BASE $FF80
+.alias VIDEO_BASE $FFB0
 
 .alias VIDEO_CTRL VIDEO_BASE       ;// Formatted as follows |INCR_5|INCR_4|INCR_3|INCR_2|INCR_1|INCR_0|MODE_1|MODE_0|  default to LORES
-.alias VIDEO_ADDR_LOW VIDEO_BASE + 1   ;// also contains the increment ||||ADDR4|ADDR_3|ADDR_2|ADDR_1|ADDR_0|
+.alias VIDEO_ADDR_LOW VIDEO_BASE + 1   ;//  ||||ADDR4|ADDR_3|ADDR_2|ADDR_1|ADDR_0|
 .alias VIDEO_ADDR_HIGH VIDEO_BASE + 2
 .alias VIDEO_DATA VIDEO_BASE + 3
 .alias VIDEO_IEN VIDEO_BASE + 4    ;// formatted as follows |VSYNC| | | | | | |HSYNC|
 .alias VIDEO_INTR VIDEO_BASE + 5   ;// formatted as follows |VSYNC| | | | | | |HSYNC|
 .alias VIDEO_HSCROLL VIDEO_BASE + 6
 .alias VIDEO_VSCROLL VIDEO_BASE + 7
-
+.alias VIDEO_HIRES_HCHARS 100
+.alias VIDEO_HIRES_VCHARS 75
         ; ps2 defines
-
-
 
         
 
@@ -165,18 +178,6 @@
 .alias RSHIFT_KEY $59
 
 .alias TIMER_DELAY $C4
-
-    ;; Defines for hardware:
-.alias ACIA_DATA    $FFA0
-.alias ACIA_STATUS  ACIA_DATA+1
-.alias ACIA_COMMAND ACIA_DATA+2
-.alias ACIA_CTRL    ACIA_DATA+3
-
-.alias LCD_BASE $FFC0
-.alias LCD_ADDR_DISABLED LCD_BASE
-.alias LCD_DATA_DISABLED LCD_BASE + 1
-.alias LCD_ADDR_ENABLED LCD_BASE + 2
-.alias LCD_DATA_ENABLED LCD_BASE + 3
 
 ; Zero page variables
 
@@ -258,8 +259,8 @@ kernel_init:
         jsr ps2_init
 
         jsr timer_init
-        jsr lcd_init
-        ;jsr video_init
+        ;jsr lcd_init
+        jsr video_init
         lda #0                  ; no LED if not error
         sta PORTB
 
@@ -350,13 +351,14 @@ kernel_putc:
 Send_Char:
         phy
         sta ACIA_DATA
-        jsr lcd_print
+        ;jsr lcd_print
+        jsr char_out
         ; nedd to provide additional delay for ACIA
-        ldy #$20
-        jsr delay_short
-        ; Delay is provided by writing to the LCD screen
-        ; ldy #$34            ;minimal delay; The min delay increased when added diode on SLOW. Why?
+        ; ldy #$20
         ; jsr delay_short
+        ; Delay is provided by writing to the LCD screen
+        ldy #$34            ;minimal delay; The min delay increased when added diode on SLOW. Why?
+        jsr delay_short
 
         ;jsr char_out
         

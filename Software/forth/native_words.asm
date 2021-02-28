@@ -11997,7 +11997,7 @@ xt_lcdprint:
 
                 lda 0,x
 
-                jsr lcd_print
+                jsr lcd_send
 z_lcdprint: rts
 
 
