@@ -1,12 +1,12 @@
 video_init:
     ; set colors
-    lda #$1E
+    lda #$3E
     sta VIDEO_ADDR_LOW
-    lda #$FF
+    lda #$7F
     sta VIDEO_ADDR_HIGH
-    lda #$E0
+    lda #$00
     sta VIDEO_DATA
-    lda #$1c
+    lda #$F0
     sta VIDEO_DATA
     lda #0
     sta VIDEO_IEN
