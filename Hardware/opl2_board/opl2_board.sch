@@ -632,48 +632,6 @@ Text GLabel 2750 6150 0    50   Input ~ 0
 Text GLabel 3550 6150 2    50   Output ~ 0
 ~SLOW~
 $Comp
-L pspice:DIODE D1
-U 1 1 60349715
-P 3100 6150
-F 0 "D1" H 3100 5885 50  0000 C CNN
-F 1 "1N4148" H 3100 5976 50  0000 C CNN
-F 2 "Diode_THT:D_DO-35_SOD27_P7.62mm_Horizontal" H 3100 6150 50  0001 C CNN
-F 3 "~" H 3100 6150 50  0001 C CNN
-	1    3100 6150
-	-1   0    0    1   
-$EndComp
-Wire Wire Line
-	3550 6150 3400 6150
-Wire Wire Line
-	2900 6150 2750 6150
-$Comp
-L Device:R_Small R1
-U 1 1 6035227C
-P 3400 5900
-F 0 "R1" H 3459 5946 50  0000 L CNN
-F 1 "1k" H 3459 5855 50  0000 L CNN
-F 2 "Resistor_SMD:R_0805_2012Metric_Pad1.15x1.40mm_HandSolder" H 3400 5900 50  0001 C CNN
-F 3 "~" H 3400 5900 50  0001 C CNN
-	1    3400 5900
-	1    0    0    -1  
-$EndComp
-Wire Wire Line
-	3400 6000 3400 6150
-Connection ~ 3400 6150
-Wire Wire Line
-	3400 6150 3300 6150
-$Comp
-L power:+5V #PWR0120
-U 1 1 603555C6
-P 3400 5800
-F 0 "#PWR0120" H 3400 5650 50  0001 C CNN
-F 1 "+5V" H 3415 5973 50  0000 C CNN
-F 2 "" H 3400 5800 50  0001 C CNN
-F 3 "" H 3400 5800 50  0001 C CNN
-	1    3400 5800
-	1    0    0    -1  
-$EndComp
-$Comp
 L 74xx:74HC00 U1
 U 1 1 60450257
 P 4050 3600
@@ -864,4 +822,8 @@ F 3 "" H 6550 2550 60  0000 C CNN
 	1    6550 2550
 	1    0    0    -1  
 $EndComp
+Wire Wire Line
+	3550 6150 2750 6150
+Text Notes 2400 6000 0    50   ~ 0
+Diode + pullup provided by backplane
 $EndSCHEMATC

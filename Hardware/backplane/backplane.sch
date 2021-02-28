@@ -176,7 +176,7 @@ Text GLabel 14900 3900 0    50   BiDi ~ 0
 Text GLabel 14900 4000 0    50   BiDi ~ 0
 ~IRQ1~
 Text GLabel 14900 3500 0    50   Input ~ 0
-~IRQ~
+~SLOW~
 Text GLabel 14900 2800 0    50   Input ~ 0
 RDY
 Text GLabel 14900 3000 0    50   Input ~ 0
@@ -1154,8 +1154,6 @@ Text GLabel 7100 3200 2    50   BiDi ~ 0
 EX0
 Text GLabel 7100 3300 2    50   BiDi ~ 0
 EX1
-Text GLabel 7100 3400 2    50   BiDi ~ 0
-~SLOW~
 Text GLabel 7100 3800 2    50   BiDi ~ 0
 ~INH~
 Text GLabel 7100 3900 2    50   BiDi ~ 0
@@ -1581,30 +1579,22 @@ Text GLabel 11950 5450 2    50   BiDi ~ 0
 LED3
 Text GLabel 12900 4650 2    50   BiDi ~ 0
 LED4
-Text GLabel 2800 3350 2    50   BiDi ~ 0
-~SLOW~
 Text GLabel 2800 3650 2    50   BiDi ~ 0
 ~SSEL~
-Text GLabel 2750 8000 2    50   BiDi ~ 0
-~SLOW~
 Text GLabel 2750 8400 2    50   BiDi ~ 0
 ~INH~
 Text GLabel 2750 8500 2    50   BiDi ~ 0
 ~SLOT4~
-Text GLabel 4950 8050 2    50   BiDi ~ 0
-~SLOW~
 Text GLabel 4950 8450 2    50   BiDi ~ 0
 ~INH~
 Text GLabel 4950 8550 2    50   BiDi ~ 0
 ~SLOT5~
-Text GLabel 9550 3400 2    50   BiDi ~ 0
+Text GLabel 10400 2950 2    50   BiDi ~ 0
 ~SLOW~
 Text GLabel 9550 3800 2    50   BiDi ~ 0
 ~INH~
 Text GLabel 9550 3900 2    50   BiDi ~ 0
 ~SLOT3~
-Text GLabel 4800 3350 2    50   BiDi ~ 0
-~SLOW~
 Text GLabel 4800 3750 2    50   BiDi ~ 0
 ~INH~
 Text GLabel 4800 3850 2    50   BiDi ~ 0
@@ -2100,4 +2090,118 @@ Text GLabel 2800 4250 2    50   BiDi ~ 0
 ~IRQ5~
 Text GLabel 4950 9350 2    50   BiDi ~ 0
 ~IRQ5~
+Text Notes 13150 3500 0    50   ~ 0
+Replace IRQ pull up with SLOW pullup
+$Comp
+L pspice:DIODE D7
+U 1 1 603C94D3
+P 10200 2950
+F 0 "D7" H 10200 2685 50  0000 C CNN
+F 1 "DIODE" H 10200 2776 50  0000 C CNN
+F 2 "Diode_SMD:D_0805_2012Metric_Pad1.15x1.40mm_HandSolder" H 10200 2950 50  0001 C CNN
+F 3 "~" H 10200 2950 50  0001 C CNN
+	1    10200 2950
+	-1   0    0    1   
+$EndComp
+Wire Wire Line
+	10000 2950 9850 2950
+Wire Wire Line
+	9850 2950 9850 3400
+Wire Wire Line
+	9850 3400 9550 3400
+Text GLabel 7950 2950 2    50   BiDi ~ 0
+~SLOW~
+$Comp
+L pspice:DIODE D6
+U 1 1 603F44EB
+P 7750 2950
+F 0 "D6" H 7750 2685 50  0000 C CNN
+F 1 "DIODE" H 7750 2776 50  0000 C CNN
+F 2 "Diode_SMD:D_0805_2012Metric_Pad1.15x1.40mm_HandSolder" H 7750 2950 50  0001 C CNN
+F 3 "~" H 7750 2950 50  0001 C CNN
+	1    7750 2950
+	-1   0    0    1   
+$EndComp
+Wire Wire Line
+	7550 2950 7400 2950
+Wire Wire Line
+	7400 2950 7400 3400
+Text GLabel 5650 2900 2    50   BiDi ~ 0
+~SLOW~
+$Comp
+L pspice:DIODE D4
+U 1 1 603F9D4C
+P 5450 2900
+F 0 "D4" H 5450 2635 50  0000 C CNN
+F 1 "DIODE" H 5450 2726 50  0000 C CNN
+F 2 "Diode_SMD:D_0805_2012Metric_Pad1.15x1.40mm_HandSolder" H 5450 2900 50  0001 C CNN
+F 3 "~" H 5450 2900 50  0001 C CNN
+	1    5450 2900
+	-1   0    0    1   
+$EndComp
+Wire Wire Line
+	5250 2900 5100 2900
+Wire Wire Line
+	5100 2900 5100 3350
+Text GLabel 3650 2900 2    50   BiDi ~ 0
+~SLOW~
+Wire Wire Line
+	3100 2900 3100 3350
+Text GLabel 3550 7550 2    50   BiDi ~ 0
+~SLOW~
+$Comp
+L pspice:DIODE D2
+U 1 1 6040585B
+P 3350 7550
+F 0 "D2" H 3350 7285 50  0000 C CNN
+F 1 "DIODE" H 3350 7376 50  0000 C CNN
+F 2 "Diode_SMD:D_0805_2012Metric_Pad1.15x1.40mm_HandSolder" H 3350 7550 50  0001 C CNN
+F 3 "~" H 3350 7550 50  0001 C CNN
+	1    3350 7550
+	-1   0    0    1   
+$EndComp
+Wire Wire Line
+	3150 7550 3000 7550
+Wire Wire Line
+	3000 7550 3000 8000
+Text GLabel 5750 7600 2    50   BiDi ~ 0
+~SLOW~
+$Comp
+L pspice:DIODE D5
+U 1 1 6040B971
+P 5550 7600
+F 0 "D5" H 5550 7335 50  0000 C CNN
+F 1 "DIODE" H 5550 7426 50  0000 C CNN
+F 2 "Diode_SMD:D_0805_2012Metric_Pad1.15x1.40mm_HandSolder" H 5550 7600 50  0001 C CNN
+F 3 "~" H 5550 7600 50  0001 C CNN
+	1    5550 7600
+	-1   0    0    1   
+$EndComp
+Wire Wire Line
+	5350 7600 5200 7600
+Wire Wire Line
+	5200 7600 5200 8050
+Wire Wire Line
+	5200 8050 4950 8050
+Wire Wire Line
+	3000 8000 2750 8000
+Wire Wire Line
+	3100 3350 2800 3350
+Wire Wire Line
+	5100 3350 4800 3350
+Wire Wire Line
+	7400 3400 7100 3400
+Wire Wire Line
+	3250 2900 3100 2900
+$Comp
+L pspice:DIODE D3
+U 1 1 603FF9D8
+P 3450 2900
+F 0 "D3" H 3450 2635 50  0000 C CNN
+F 1 "DIODE" H 3450 2726 50  0000 C CNN
+F 2 "Diode_SMD:D_0805_2012Metric_Pad1.15x1.40mm_HandSolder" H 3450 2900 50  0001 C CNN
+F 3 "~" H 3450 2900 50  0001 C CNN
+	1    3450 2900
+	-1   0    0    1   
+$EndComp
 $EndSCHEMATC
