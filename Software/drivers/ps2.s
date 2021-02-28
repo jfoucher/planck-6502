@@ -89,8 +89,6 @@ kb_conn_msg_end:
 
 
 done_init:
-  lda #$0F
-  sta PORTA
   lda #0
   sta DDRB
   sta PCR
