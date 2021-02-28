@@ -70,12 +70,17 @@ nl:
 
 scroll_up:
     pha
-    lda #1
-    sta VIDEO_VSCROLL
-    lda mult_table_high+60
+    ; lda #1
+    ; sta VIDEO_VSCROLL
+    ; lda mult_table_high+60
+    ; sta VIDEO_ADDR_HIGH
+    ; lda mult_table_low+60
+    ; sta VIDEO_ADDR_LOW
+    lda #0
     sta VIDEO_ADDR_HIGH
-    lda mult_table_low+60
     sta VIDEO_ADDR_LOW
+    sta char
+    sta line
     pla
     rts
 
