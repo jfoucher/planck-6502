@@ -25,6 +25,8 @@ char_out:
     beq next_line
     cmp #$0A
     beq next_line
+    cmp #$08
+    beq backspace
     sta VIDEO_DATA
     inc char
     ldx char
@@ -36,6 +38,20 @@ char_out_exit:
     plx
     pla
     rts
+
+backspace:
+    dec char
+    lda #$85        ; make increment negative
+    sta VIDEO_CTRL
+    lda #$20
+    sta VIDEO_DATA  ;write a space to go back one
+    lda #$01        ; make increment zero
+    sta VIDEO_CTRL
+    lda #$20
+    sta VIDEO_DATA  ; replace with a space
+    lda #$05        ; make increment positive again
+    sta VIDEO_CTRL
+    bra char_out_exit
 
 next_line:
     inc line
