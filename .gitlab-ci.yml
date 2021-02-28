@@ -9,12 +9,12 @@ variables:
 
 before_script:
   - gem install bundler
-  - cd docs && bundle install
+  - cd docs && bundle install && cd ../
 
 test:
   stage: test
   script:
-    - cd docs && bundle exec jekyll build -d test
+    - cd docs && bundle exec jekyll build -d ../test
   artifacts:
     paths:
       - test
@@ -24,7 +24,7 @@ test:
 pages:
   stage: deploy
   script:
-    - cd docs && bundle exec jekyll build -d public
+    - cd docs && bundle exec jekyll build -d ../public
   artifacts:
     paths:
       - public
