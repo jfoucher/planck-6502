@@ -9,7 +9,7 @@ variables:
 
 before_script:
   - gem install bundler
-  - bundle install
+  - cd docs && bundle install
 
 test:
   stage: test
