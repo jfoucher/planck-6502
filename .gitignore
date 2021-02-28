@@ -5,3 +5,4 @@ Software/lcd_test.o
 Software/lcd_test.s
 Software/lcd_test.s.lst
 Software/planck.cfg
+docs/_site
