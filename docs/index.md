@@ -156,12 +156,3 @@ The main board is [the CPU board](Hardware/proc_board) that provides it's own RA
 ## Serial board
 
 [The serial board](Hardware/serial_board) is based on a WDC65C51 chip and provides serial output through a TTL serial to USB adapter. When plugging the USB cable to your PC, it may be best to unplug the power from the backplane and let the computer be powered from your PC through the USB to serial adapter.
-
-
-
-
-
-
-<a rel="license" href="http://creativecommons.org/licenses/by-sa/4.0/"><img alt="Creative Commons License" style="border-width:0" src="https://i.creativecommons.org/l/by-sa/4.0/88x31.png" /></a><br />This documentation is licensed under a <a rel="license" href="http://creativecommons.org/licenses/by-sa/4.0/">Creative Commons Attribution-ShareAlike 4.0 International License</a>.
-
-<img src="license.svg" alt="CERN-OHL-1.2 GPL-3.0-or-later CC-BY-SA-4.0" />
