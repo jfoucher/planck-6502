@@ -1,1 +1,14 @@
-#theme: jekyll-theme-architect
+title: Planck 6502 computer
+email: jfoucher@6px.eu
+
+description: "Planck 6502 is an extensible, open hardware, retro computer based on the 6502 processor designed by Jonathan Foucher."
+
+baseurl: "" # the subpath of your site, e.g. /blog
+url: "https://planck6502.jfoucher.com" # the base hostname & protocol for your site
+twitter_username: jfoucher 
+github_username:  jfoucher
+
+# Build settings
+markdown: kramdown
+kramdown:
+  input: GFM

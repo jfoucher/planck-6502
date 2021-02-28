@@ -1,6 +1,7 @@
 ---
+layout: page
 ---
-# Planck computer
+# An open hardware, extensible 65c02 based computer
 
 ![General view](img/1.jpg)
 
@@ -22,10 +23,10 @@ The constraints for it's design were the following:
     - Parallel port
     - SPI / SPI65B port
     - PS/2 port for keyboard
+    - Sound card
     - eventually VGA out
   - Target clock speed of 10 to 12 MHz
 
-  
 
 ## Some details
 
