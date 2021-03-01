@@ -115,9 +115,11 @@ footer {
 
     
     a {
+        text-decoration: none;
         color: #CCC;
         &:hover {
             color: #EEE;
+            text-decoration: none;
         }
     }
     img { /* svg on an img tag */
