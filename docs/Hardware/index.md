@@ -4,11 +4,11 @@ layout: page
 
 # Hardware
 
-The Planck hardware is organized around a backplane that hosts minimal active circuitry. The only functions it assumes are that of [clock generation](#clock-generation), [board connection](#board-connection) and [expansion slot activation](#expansion-slot-activation)
+The Planck hardware is organized around a backplane that hosts minimal active circuitry. The only functions it assumes are that of [clock generation](#clock-generation), [board connection](#board-connection),  [expansion slot activation](#expansion-slot-activation) and basic user IO.
 
 ## The backplane
 
-The backplane is at once the heart of the computer and also the one that does the least work. Indeed it has only the following three functions:
+The backplane is at once the heart of the computer and also the one that does the least work. Indeed it has only the following four functions:
 
 ### Clock generation
 The clock generation starts with an oscillator. This oscillator should be at twice the target frequency since it is divided by two by a [74HC161 binary counter](https://assets.nexperia.com/documents/data-sheet/74HC161.pdf)
@@ -97,3 +97,13 @@ This means that we need some external logic to activate certain devices when the
 In our case, the backplane has some logic that tells one of the expansion slots to activate when a certain address range is requested by the CPU. This address decoding, as it is called is taken care of by an ATF22V10, a [programmable logic chip](https://en.wikipedia.org/wiki/Programmable_logic_device) that can be thought of as an ancestor to FPGAs.
 
 It can thus be programmed to activate the expansion slots for any address ranges the user wishes to use. In the default case, slot 1 responds in the address range `$FF80` to `$FF8F`, slot 2 to `$FF90` to `$FF9F`, etc until slot 5 at `$FFC0` to `$FFCF`. This address decoding can be reconfigured by simply reprogramming the PLD, giving quite a lot of flexibility to the system.
+
+### Basic user IO
+
+The backplane provides some basic user input and output in the form of two buttons and 4 leds.
+
+The two buttons are a reset button and an NMI (non maskable interrupt) buttons. The reset button triggers a hard reset of the processor, whereas the NMI button provides a non maskable interrupt to the code that can be handled as a soft reset by the code.
+
+The 4 LEDs are connected to pins on the expansion bus, and can thus be driven by any card that wants to signal something to the user. You have to be midful in your code not to drive a led low while another card is trying to drive it high, as that would cause very high current to flow into / from your peripherals.
+
+Finally, there is a power plug (micro USB), a power switch and a power LED.
