@@ -9,12 +9,20 @@
   
     <div class="nav">
         <nav>
-          <ul class="page-link">
+          <ul class="level-1">
             <li><a href="{{ "/" | prepend: site.baseurl }}">Home</a></li>
             <li><a href="{{ "/Hardware" | prepend: site.baseurl }}">Hardware</a></li>
             <li><a href="{{ "/Software" | prepend: site.baseurl }}">Software</a></li>
-            <!-- <li><a href="{{ "/feed.xml" | prepend: site.baseurl }}">RSS</a></li> -->
+            <li><a href="https://gitlab.com/planck-6502/planck-6502/">Git</a></li>
           </ul>
+          {%if page.url contains "/Hardware/"%}
+          <ul class="level-2">
+            <li><a href="{{ "/Hardware/build" | prepend: site.baseurl }}">Build guide</a></li>
+            <li><a href="{{ "/Hardware/cpu" | prepend: site.baseurl }}">CPU board</a></li>
+            <li><a href="{{ "/Hardware/io" | prepend: site.baseurl }}">I/O board</a></li>
+            <li><a href="{{ "/Hardware/serial" | prepend: site.baseurl }}">Serial board</a></li>
+          </ul>
+          {%endif%}
         </nav>
     </div>
   </header>

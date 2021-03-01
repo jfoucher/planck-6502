@@ -4,9 +4,11 @@ layout: page
 
 # Hardware
 
-The Planck hardware is organized around a backplane that hosts minimal active circuitry. The only functions it assumes are that of [clock generation](#clock-generation), [board connection](#board-connection),  [expansion slot activation](#expansion-slot-activation) and basic user IO.
+The Planck hardware is organized around a backplane that hosts minimal active circuitry. The only functions it assumes are that of [clock generation](#clock-generation), [board connection](#board-connection),  [expansion slot activation](#expansion-slot-activation) and [basic user IO](#basic-user-io).
 
 ## The backplane
+
+[Design files](https://gitlab.com/planck-6502/planck-6502/-/tree/master/Hardware/backplane)
 
 The backplane is at once the heart of the computer and also the one that does the least work. Indeed it has only the following four functions:
 

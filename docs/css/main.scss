@@ -25,11 +25,10 @@ table {
 
 
 a {
-    text-decoration: none;
+    text-decoration: underline;
     color: #667;
 }
 a:hover {
-    text-decoration: underline;
     color: #222;
 }
 
@@ -50,12 +49,24 @@ h2.logo {
     padding: 0;
     margin:0;
     list-style: none;
+
     li {
-        display:inline-block;
+        font-size: 1.1em;
         padding: 1em;
+        display:inline-block;
     }
     li:first-of-type {
         padding: 1em 1em 1em 0;
+    }
+
+    &.level-2 {
+        li {
+            font-size: 0.9em;
+            padding: 0.9em;
+        }
+        li:first-of-type {
+            padding: 0.9em 0.9em 0.9em 0;
+        }
     }
 }
 
@@ -82,7 +93,7 @@ footer {
     background: rgb(39, 39, 4);
     color: #FFF;
     padding-top: 1.5em;
-
+    margin-top: 4em;
     .container {
         display:flex;
         flex-direction: row;
