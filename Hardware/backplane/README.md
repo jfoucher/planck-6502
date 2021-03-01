@@ -39,15 +39,62 @@ Most pins correspond to the pins of the same name on the CPU.
 Below are the pins that are specific to the expansion bus:
 
 
-| Pin | Description |
-|-----   |-------------|
-| EX0-EX2 | 3 expansion pins that are reserved for future use or can be used for communication betwen two expansion cards.|
-| EX3-EX5 | 3 more expansion pins that can be used for card to card communications. These are not connected to lot zero because slot 0 uses these pins to receive IRQs from the expansion cards|
-| <span style="text-decoration:overline">INH</span>|When low, this signal inhibits the RAM and ROM present on the CPU card and allows an expansion card to take over the whole bus (except expansion region).|
-|<span style="text-decoration:overline">SEL1</span>-<span style="text-decoration:overline">SEL5</span>|The expansion card in the slot in which this signal is low should activate.|
-|<span style="text-decoration:overline">SSEL</span>| Slot selected. The cpu card and any other card should disable all bus access when this signal is low and their own select signal (<span style="text-decoration:overline">SEL1</span>-<span style="text-decoration:overline">SEL5</span>) is high.|
-|LED1-LED4| Debug leds 1 to 4.|
-| <span style="text-decoration:overline">IRQ1</span>-<span style="text-decoration:overline">IRQ5</span>|Should be used by expansion cards when they want to signal an IRQ. All 5 lines are ANDed together on the processor board and pull the <span style="text-decoration:overline">IRQ</span> line low when at least one of them is low.|
+
+
+| Pin number | Pin name | Description |
+|-----   |-----|--------|
+| 1 | A0 | Processor address bus pin 0 |
+| 2 | D0 | Processor data bus pin 0 |
+| 3 | A1 | Processor address bus pin 1 |
+| 4 | D1 | Processor data bus pin 1 |
+| 5 | A2 | Processor address bus pin 2 |
+| 6 | D2 | Processor data bus pin 2 |
+| 7 | A3 | Processor address bus pin 3 |
+| 8 | D3 | Processor data bus pin 3 |
+| 9 | A4 | Processor address bus pin 4 |
+| 10 | D4 | Processor data bus pin 4 |
+| 11 | A5 | Processor address bus pin 5 |
+| 12 | D5 | Processor data bus pin 5 |
+| 13 | A6 | Processor address bus pin 6 |
+| 14 | D6 | Processor data bus pin 6 |
+| 15 | A7 | Processor address bus pin 7 |
+| 16 | D7 | Processor data bus pin 7 |
+| 17 | A8 | Processor address bus pin 8 |
+| 18 | EX0 | Extra pin for future use or for communication between expansion cards |
+| 19 | A9 | Processor address bus pin 9 |
+| 20 | EX1 | Extra pin for future use or for communication between expansion cards |
+| 21 | A10 | Processor address bus pin 10 |
+| 22 | <span style="text-decoration:overline">SLOW</span> | Used by slow peripherals to request a slower clock speed, active low. |
+| 23 | GND | Ground |
+| 24 | +5V | Positive voltage |
+| 25 | +5V | Positive voltage |
+| 26 | GND | Ground |
+| 27 | A11 | Processor address bus pin 11 |
+| 28 | <span style="text-decoration:overline">SSEL</span> | An expansion card is selected. Used by the processor card to disable it's built-in ram an ROM, active low |
+| 29 | A12 | Processor address bus pin 12 |
+| 30 | <span style="text-decoration:overline">INH</span> | When this is active (low), processor card RAM and ROM are disabled |
+| 31 | A13 | Processor address bus pin 13 |
+| 32 | <span style="text-decoration:overline">SLOT_SEL</span> | Used by the backplane to signal to expansion cards when they should activate, active low |
+| 33 | A14 | Processor address bus pin 14 |
+| 34 | LED1 | Connected to one of the backplane LEDs |
+| 35 | A15 | Processor address bus pin 15 |
+| 36 | LED2 | Connected to one of the backplane LEDs |
+| 37 | RDY | Processor I/O pin. When low, the processor waits in it's curent state |
+| 38 | LED3 | Connected to one of the backplane LEDs |
+| 39 | BE | Processor input pin. when low the processor releases the bus |
+| 40 | LED4 | Connected to one of the backplane LEDs |
+| 41 | CLK | Main computer clock. Can be stretched or not depending on the state of the SLOW signal. |
+| 42 | CLK_12M | Stable clock for e.g. VIA timers. **Not connected to slot 0** |
+| 43 | R<span style="text-decoration:overline">W</span> | CPU read / write pin |
+| 44 | EX4 | Extra signal 4. **Not connected to slot 0** |
+| 45 | <span style="text-decoration:overline">IRQ</span> | This goes low when an interrupt request has occured, active low |
+| 46 | EX5 | Extra signal 5. **Not connected to slot 0** |
+| 47 | SYNC | CPU output. Indicates when the CPU is fetching an opcode |
+| 48 | <span style="text-decoration:overline">SLOT_IRQ</span> | Used by expansion cards to signal an interrupt request to the processor board, active low  |
+| 49 | <span style="text-decoration:overline">RESET</span> | Reset signal trigered by the button on the backplane, active low |
+| 50 | <span style="text-decoration:overline">NMI</span> | non maskable interrupt signal trigered by the button on the backplane, active low |
+
+
 
 ### Board view
 
