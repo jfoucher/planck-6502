@@ -1,8 +1,8 @@
 ---
 layout: page
+title: Planck 6502 hardware
 ---
 
-# Hardware
 
 The Planck hardware is organized around a backplane that hosts minimal active circuitry. The only functions it assumes are that of [clock generation](#clock-generation), [board connection](#board-connection),  [expansion slot activation](#expansion-slot-activation) and [basic user IO](#basic-user-io).
 

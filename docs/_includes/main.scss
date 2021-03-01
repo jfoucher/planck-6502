@@ -61,10 +61,10 @@ h2.logo {
     &.level-2 {
         li {
             font-size: 0.9em;
-            padding: 0.9em;
+            padding: 0 0.9em;
         }
         li:first-of-type {
-            padding: 0.9em 0.9em 0.9em 0;
+            padding: 0em 0.9em 0em 0;
         }
     }
 }
@@ -87,15 +87,36 @@ h1 {
     padding-top: 2px;
 }
 
+.meta {
+    margin-bottom: 2em;
+    p {
+        margin: 0;
+    }
+}
+
 
 footer {
     background: rgb(39, 39, 4);
     color: #FFF;
-    padding-top: 1.5em;
+    font-size: 0.9em;
     margin-top: 4em;
+    padding: 1.5em 0;
     .container {
         display:flex;
         flex-direction: row;
+        justify-items:center;
+
+        section {
+            flex: 1;
+            
+            
+            &:first-of-type {
+                padding-right: 1em;
+            }
+            &:last-of-type {
+                padding-left: 1em;
+            }
+        }
     }
 
     
@@ -109,7 +130,5 @@ footer {
         -webkit-filter: invert(.75); /* safari 6.0 - 9.0 */
                 filter: invert(.75);
       }
-      section {
-          flex: 0.5;
-      }
+      
 }

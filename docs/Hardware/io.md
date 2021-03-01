@@ -1,10 +1,10 @@
 ---
-layout: page
+layout: board
+title: I/O board
+status: prod
+design_files: https://gitlab.com/planck-6502/planck-6502/-/tree/master/Hardware/io_board
 ---
 
-# Input / output board
-
-[Design files](https://gitlab.com/planck-6502/planck-6502/-/tree/master/Hardware/io_board)
 
 This board is based on a WDC65C22 chip and provides a keyboard PS/2 port, a parallel port and a 65SIB port (serial port similar to and compatible with SPI)
 

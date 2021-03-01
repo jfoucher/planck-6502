@@ -1,8 +1,8 @@
 ---
 layout: page
+short_title: Build Guide
+title: Building the computer
 ---
-
-# Building the computer
 
 Building the computer from PCBs is fairly easy, but please note that the design uses surface mount components for most passives (resistors and capacitors mostly) and that there is a technique to be acquired if you want to solder them without getting frustrated.
 
