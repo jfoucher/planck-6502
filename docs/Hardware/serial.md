@@ -3,6 +3,7 @@ layout: board
 title: Serial board
 status: prod
 design_files: https://gitlab.com/planck-6502/planck-6502/-/tree/master/Hardware/serial_board
+order: 30
 ---
 
 

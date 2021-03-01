@@ -3,6 +3,7 @@ layout: board
 title: LCD board
 status: dev
 design_files: https://gitlab.com/planck-6502/planck-6502/-/tree/master/Hardware/lcd_board
+order: 50
 ---
 
 

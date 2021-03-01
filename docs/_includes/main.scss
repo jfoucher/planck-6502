@@ -51,20 +51,14 @@ h2.logo {
 
     li {
         font-size: 1.1em;
-        padding: 1em;
+        padding: 1em 2em 1em 0;
         display:inline-block;
-    }
-    li:first-of-type {
-        padding: 1em 1em 1em 0;
     }
 
     &.level-2 {
         li {
             font-size: 0.9em;
-            padding: 0 0.9em;
-        }
-        li:first-of-type {
-            padding: 0em 0.9em 0em 0;
+            padding: 0 1.5em 0 0;
         }
     }
 }

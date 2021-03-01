@@ -3,6 +3,7 @@ layout: board
 title: Compact Flash board
 short_title: CF board
 status: planned
+order: 80
 ---
 
 

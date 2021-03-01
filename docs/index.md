@@ -32,4 +32,6 @@ The constraints for it's design were the following:
 
 These requirements resulted in a computer based on a backplane and separate boards that plug into it. A backplane is a mostly passive board that just interconnects all the cards that provide actual functionality together.
 
-The [Planck hardware pages](/Hardware) explains more about the functionality that each board provides.
+The [Planck hardware pages](/Hardware) explains more about the functionality of the backplane and of each basic extension boards.
+
+Of course, you can [design your own expansion boards](/Hardware/make) to make the computer do whatever **you** decide

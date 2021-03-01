@@ -17,7 +17,8 @@
           </ul>
           {%if page.url contains "/Hardware/"%}
           <ul class="level-2">
-            {% for npage in site.pages %}
+            {% assign sorted_pages = site.pages | sort:"order" %}
+            {% for npage in sorted_pages %}
             {%if npage.url contains "/Hardware/"%}
             {% assign url = npage.url | replace: "/Hardware/", "" %}
 

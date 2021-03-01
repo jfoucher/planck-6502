@@ -3,6 +3,7 @@ layout: page
 title: CPU board
 status: prod
 design_files: https://gitlab.com/planck-6502/planck-6502/-/tree/master/Hardware/proc_board
+order: 20
 ---
 
 The CPU board contains the 65C02 cpu itself, but also 32K of ROM and 32K of RAM as well as the address decoding to handle these.
