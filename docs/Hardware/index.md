@@ -107,3 +107,11 @@ The two buttons are a reset button and an NMI (non maskable interrupt) buttons. 
 The 4 LEDs are connected to pins on the expansion bus, and can thus be driven by any card that wants to signal something to the user. You have to be midful in your code not to drive a led low while another card is trying to drive it high, as that would cause very high current to flow into / from your peripherals.
 
 Finally, there is a power plug (micro USB), a power switch and a power LED.
+
+Here are the pages with details about each individual board:
+
+ - [CPU board](cpu)
+ - [Serial board](serial)
+ - [I/O board](io)
+
+If you want to build this computer, please see the [building the computer](build) page to get more details about what to expect.
