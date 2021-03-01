@@ -106,25 +106,47 @@
 ; wants to use them for.
 
 
+; ******************************************************************
+; *  Hardware definitions for Planck 6502 computer                 *
+; *  Change these depending on the slot in which                   *
+; *  you want to put each card                                     *
+; *  As a reminder here are the addresses for each slot:           *
+; *                                                                *
+; * START ADDRESS    |   END ADDRESS       |     DESCRIPTION       *
+; * 0xFF80           |   0xFF8F            | SLOT1 Selected        *
+; * 0xFF90           |   0xFF9F            | SLOT2 Selected        *
+; * 0xFFA0           |   0xFFAF            | SLOT3 Selected        *
+; * 0xFFB0           |   0xFFBF            | SLOT4 Selected        *
+; * 0xFFC0           |   0xFFCF            | SLOT5 Selected        *
+; ******************************************************************
+;
+;
+; I/O board in slot 2
+.alias VIA1_BASE        $FF90
+; Serial board in slot 3
+.alias ACIA_BASE        $FFA0
 
+; VIDEO board in slot 4
+.alias VIDEO_BASE       $FFB0
 
+; LCD board in slot 5
+.alias LCD_BASE         $FFC0
 
 .advance $e000
 
 
-    ;; Defines for hardware:
-.alias ACIA_DATA    $FFA0
-.alias ACIA_STATUS  ACIA_DATA+1
-.alias ACIA_COMMAND ACIA_DATA+2
-.alias ACIA_CTRL    ACIA_DATA+3
+.alias ACIA_DATA    ACIA_BASE
+.alias ACIA_STATUS  ACIA_BASE+1
+.alias ACIA_COMMAND ACIA_BASE+2
+.alias ACIA_CTRL    ACIA_BASE+3
 
-.alias LCD_BASE $FFC0
+
 .alias LCD_ADDR_DISABLED LCD_BASE
 .alias LCD_DATA_DISABLED LCD_BASE + 1
 .alias LCD_ADDR_ENABLED LCD_BASE + 2
 .alias LCD_DATA_ENABLED LCD_BASE + 3
 
-.alias VIA1_BASE    $FF90
+
 .alias PORTB  VIA1_BASE
 .alias PORTA   VIA1_BASE+1
 .alias DDRB  VIA1_BASE+2
@@ -141,7 +163,7 @@
 .alias IER  VIA1_BASE + 14
 
 
-.alias VIDEO_BASE $FFB0
+
 
 .alias VIDEO_CTRL VIDEO_BASE       ;// Formatted as follows |INCR_5|INCR_4|INCR_3|INCR_2|INCR_1|INCR_0|MODE_1|MODE_0|  default to LORES
 .alias VIDEO_ADDR_LOW VIDEO_BASE + 1   ;//  ||||ADDR4|ADDR_3|ADDR_2|ADDR_1|ADDR_0|
