@@ -10,7 +10,11 @@ Building the computer from PCBs is fairly easy, but please note that the design 
 
 I limited myself to the smallest sizes that I thought could be compfortably soldered by hand, so if you're having trouble, watch a few Youtube videos on the subject and practice on some scrap pieces of PCB or prototype boards until you get the hang of it.
 
-There are also a limited number of surface mount active components, such as the binary counter for the clock circuit on the backplane. However these are relatively big SMD components and again with a bit of practice can be soldered by hand. Please see this video if you want to see the basic technique: https://www.youtube.com/watch?v=hoLf8gvvXXU. There are many more to choose frome.
+There are also a limited number of surface mount active components, such as the binary counter for the clock circuit on the backplane. However these are relatively big SMD components and again with a bit of practice can be soldered by hand. Please see this video if you want to see the basic technique: 
+
+<iframe width="560" height="315" src="https://www.youtube.com/embed/hoLf8gvvXXU" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+
+There are many more to choose from.
 
 ## Soldering order
 
