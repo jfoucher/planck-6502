@@ -29,7 +29,7 @@ Next I recommend you solder sockets for all the dip chips. Sockets are great bec
 
 Now that everything is soldered up, all that's left to do is to plug the chips in their respective sockets and give the board a test.
 
-First check that with a multimeter that you do not have a short between ground and VCC. Give a thourough visual inspection to the board to make sure that all solder joint are ok and that no bridging between pins occurs. Touch up where necessary.
+First check with a multimeter that you do not have a short between ground and VCC. Give a thorough visual inspection to the board to make sure that all solder joint are ok and that no bridging between pins occurs. Touch up where necessary.
 
 Then if everything looks ok, you are ready to power up the board and test it's functionality. The source code [Software](https://gitlab.com/planck-6502/planck-6502/-/tree/master/Software) folder should provide everything you need to test the whole computer as well as individual parts.
 
