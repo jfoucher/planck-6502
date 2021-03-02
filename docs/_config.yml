@@ -15,7 +15,7 @@ kramdown:
 
 sass:
     style: compressed
-
+permalink: /news/:year/:month/:day/:title/
 compress_html:
     clippings: []
     comments: []
