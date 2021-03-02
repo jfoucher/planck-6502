@@ -100,7 +100,25 @@ This means that we need some external logic to activate certain devices when the
 
 In our case, the backplane has some logic that tells one of the expansion slots to activate when a certain address range is requested by the CPU. This address decoding, as it is called is taken care of by an ATF22V10, a [programmable logic chip](https://en.wikipedia.org/wiki/Programmable_logic_device) that can be thought of as an ancestor to FPGAs.
 
-It can thus be programmed to activate the expansion slots for any address ranges the user wishes to use. In the default case, slot 1 responds in the address range `$FF80` to `$FF8F`, slot 2 to `$FF90` to `$FF9F`, etc until slot 5 at `$FFC0` to `$FFCF`. This address decoding can be reconfigured by simply reprogramming the PLD, giving quite a lot of flexibility to the system.
+This functionality could also be built from discrete logic chips, but using a PLD chip does three things for us:
+- First it saves board space. The functionality this single chip provides would need at least two or three to replicate with discrete logic
+- Secondly, it speeds up the response time. Each time a signal passes through a chip, it incurs a slight delay. So the fewer chips are on the path, the faster our computer can run.
+- Finally, it allows us to reprogram it to easily change the memory map of the system.
+
+In the default case, slot 1 responds in the address range `$FF80` to `$FF8F`, slot 2 to `$FF90` to `$FF9F`, etc until slot 5 at `$FFC0` to `$FFCF`. This address decoding can be reconfigured by simply reprogramming the PLD, giving quite a lot of flexibility to the system.
+
+Here is the default expansion memory map in table form
+
+|-------------------------------------------------------------------|
+|  START ADDRESS    |   END ADDRESS       |     DESCRIPTION         |
+|-------------------------------------------------------------------|
+|  0xFF80           |   0xFF8F            | SLOT1 Selected          |
+|  0xFF90           |   0xFF9F            | SLOT2 Selected          |
+|  0xFFA0           |   0xFFAF            | SLOT3 Selected          |
+|  0xFFB0           |   0xFFBF            | SLOT4 Selected          |
+|  0xFFC0           |   0xFFCF            | SLOT5 Selected          |
+|-------------------------------------------------------------------|
+
 
 ### Basic user IO
 
