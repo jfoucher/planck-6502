@@ -1,0 +1,11 @@
+---
+layout: page
+title: Planck 6502 News
+---
+
+{% for post in site.posts %}
+<li>
+  <a href="{{ post.url }}">{{ post.title }}</a>
+  {{ post.excerpt}}
+</li>
+{% endfor %}
