@@ -1,7 +1,9 @@
 ---
 layout: page
-title:  "The Planck 6502 expansion bus pinout is published on pinouts.ru"
+title:  "Planck 6502 expansion bus pinout published on pinouts.ru"
 ---
+
+Great news!
 
 The official Planck 6502 expansion bus pinout is now published on pinouts.ru
 
