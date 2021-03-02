@@ -15,4 +15,4 @@ The ROM placement on the board can accomodate a ZIF socket to allow the user to 
 
 ## Slot placement
 
-The CPU board **MUST** be inserted in SLOT 0, marked `CPU BOARD`on the backplane.
+The CPU board **MUST** be inserted in SLOT 0, marked `CPU BOARD` on the backplane.
