@@ -2,10 +2,15 @@
 layout: page
 title: Planck 6502 News
 ---
-
+<ul class="news">
 {% for post in site.posts %}
-<li>
-  <a href="{{ post.url }}">{{ post.title }}</a>
-  {{ post.excerpt}}
-</li>
+    <li>
+        
+        <h3>
+            <div class="date">{{post.date | date: "%-d %B %Y"}}</div>
+            <a href="{{ post.url }}">{{ post.title }}</a>
+        </h3>
+        {{ post.excerpt}}
+    </li>
 {% endfor %}
+</ul>
