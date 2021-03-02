@@ -10,6 +10,8 @@ The Planck hardware is organized around a backplane that hosts minimal active ci
 
 [Design files](https://gitlab.com/planck-6502/planck-6502/-/tree/master/Hardware/backplane)
 
+![Backplane board fully populated](/img/backplane.jpg)
+
 The backplane is at once the heart of the computer and also the one that does the least work. Indeed it has only the following four functions:
 
 ### Clock generation
@@ -83,9 +85,9 @@ Most pins on this extension consist of the 65C02 signals, such as 16 address lin
 | 41 | CLK | Main computer clock. Can be stretched or not depending on the state of the <span class="overline">SLOW</span> signal. |
 | 42 | CLK_12M | Stable clock for e.g. VIA timers. **Not connected to slot 0** |
 | 43 | R<span class="overline">W</span> | CPU read / write pin |
-| 44 | EX4 | Extra signal 4. **Not connected to slot 0** |
+| 44 | EX2 | Extra signal 2. **Not connected to slot 0** |
 | 45 | <span class="overline">IRQ</span> | This goes low when an interrupt request has occured, active low |
-| 46 | EX5 | Extra signal 5. **Not connected to slot 0** |
+| 46 | EX3 | Extra signal 3. **Not connected to slot 0** |
 | 47 | SYNC | CPU output. Indicates when the CPU is fetching an opcode |
 | 48 | <span class="overline">SLOT_IRQ</span> | Used by expansion cards to signal an interrupt request to the processor board, active low  |
 | 49 | <span class="overline">RESET</span> | Reset signal trigered by the button on the backplane, active low |

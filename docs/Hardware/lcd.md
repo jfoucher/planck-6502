@@ -11,6 +11,7 @@ This board allows a HD44780 based LCD such as [this one](https://www.ebay.fr/itm
 
 It is currently in development on a prototype board but so far seems to work without a hitch.
 
+![Planck prototype board for LCD](/img/lcd_board.jpg)
 
 ## Slot placement
 

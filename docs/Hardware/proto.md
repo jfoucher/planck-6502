@@ -10,4 +10,7 @@ order: 100
 
 This is a prototyping board. It has a header to connect it to the backplane, power delivery, and the rest is up to you!
 
-![Planck prototype board](/img/proto_board.png)
+
+For example here is my prototype of the [LCD board](/Hardware/lcd)
+
+![Planck prototype board for LCD](/img/lcd_board.jpg)

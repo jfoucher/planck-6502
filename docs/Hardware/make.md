@@ -13,7 +13,11 @@ This Kicad project provides a base schematic and board layout for you start desi
 
 ![Planck extension board template](/img/planck_board.png)
 
-Of course, you can also create a extension card using some prototype board and a 2x25 pins right angle header.
-Actually I would strongly recommend you do have before having your PCB fabricated.
+Of course, you can also create an extension card using some prototype board and a 2x25 pins right angle header.
+Actually I would strongly recommend you do that before having your PCB fabricated.
 
-Alternatively, you could also order get a few [prototype boards](/Hardware/proto) fabricated to be able to create many boards or refine designs to your heart's content.
+Alternatively, you could also get a few [prototype boards](/Hardware/proto) fabricated to be able to create many boards or refine designs to your heart's content.
+
+For example, here is the prototype of the [LCD board](/Hardware/lcd)
+
+![LCD board prototype](/img/lcd_board.jpg)
