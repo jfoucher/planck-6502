@@ -304,7 +304,7 @@ F 3 "" H 7900 4650 50  0001 C CNN
 	1    0    0    -1  
 $EndComp
 Wire Wire Line
-	8200 4650 7900 4650
+	8200 4650 8000 4650
 Wire Wire Line
 	8800 4750 8900 4750
 Wire Wire Line
@@ -843,8 +843,6 @@ Wire Wire Line
 Wire Wire Line
 	7100 3400 7050 3400
 Wire Wire Line
-	7450 3500 7450 3550
-Wire Wire Line
 	7450 3550 7100 3550
 Wire Wire Line
 	7100 3550 7100 3500
@@ -1161,24 +1159,24 @@ PA7
 $Comp
 L 74xx:74LS14 U3
 U 1 1 601A49CD
-P 1900 5500
-F 0 "U3" H 1900 5817 50  0000 C CNN
-F 1 "74LS14" H 1900 5726 50  0000 C CNN
-F 2 "Package_DIP:DIP-14_W7.62mm_Socket" H 1900 5500 50  0001 C CNN
-F 3 "http://www.ti.com/lit/gpn/sn74LS14" H 1900 5500 50  0001 C CNN
-	1    1900 5500
-	1    0    0    -1  
+P 8250 3900
+F 0 "U3" H 8250 4217 50  0000 C CNN
+F 1 "74LS14" H 8250 4126 50  0000 C CNN
+F 2 "Package_DIP:DIP-14_W7.62mm_Socket" H 8250 3900 50  0001 C CNN
+F 3 "http://www.ti.com/lit/gpn/sn74LS14" H 8250 3900 50  0001 C CNN
+	1    8250 3900
+	-1   0    0    1   
 $EndComp
 $Comp
 L 74xx:74LS14 U3
 U 2 1 601A559B
-P 1900 5900
-F 0 "U3" H 1900 6217 50  0000 C CNN
-F 1 "74LS14" H 1900 6126 50  0000 C CNN
-F 2 "Package_DIP:DIP-14_W7.62mm_Socket" H 1900 5900 50  0001 C CNN
-F 3 "http://www.ti.com/lit/gpn/sn74LS14" H 1900 5900 50  0001 C CNN
-	2    1900 5900
-	1    0    0    -1  
+P 7450 3900
+F 0 "U3" H 7450 4217 50  0000 C CNN
+F 1 "74LS14" H 7450 4126 50  0000 C CNN
+F 2 "Package_DIP:DIP-14_W7.62mm_Socket" H 7450 3900 50  0001 C CNN
+F 3 "http://www.ti.com/lit/gpn/sn74LS14" H 7450 3900 50  0001 C CNN
+	2    7450 3900
+	-1   0    0    1   
 $EndComp
 $Comp
 L 74xx:74LS14 U3
@@ -1205,23 +1203,23 @@ $EndComp
 $Comp
 L 74xx:74LS14 U3
 U 5 1 601A824E
-P 8300 3500
-F 0 "U3" H 8300 3817 50  0000 C CNN
-F 1 "74LS14" H 8300 3726 50  0000 C CNN
-F 2 "Package_DIP:DIP-14_W7.62mm_Socket" H 8300 3500 50  0001 C CNN
-F 3 "http://www.ti.com/lit/gpn/sn74LS14" H 8300 3500 50  0001 C CNN
-	5    8300 3500
+P 7750 3400
+F 0 "U3" H 7750 3717 50  0000 C CNN
+F 1 "74LS14" H 7750 3626 50  0000 C CNN
+F 2 "Package_DIP:DIP-14_W7.62mm_Socket" H 7750 3400 50  0001 C CNN
+F 3 "http://www.ti.com/lit/gpn/sn74LS14" H 7750 3400 50  0001 C CNN
+	5    7750 3400
 	-1   0    0    1   
 $EndComp
 $Comp
 L 74xx:74LS14 U3
 U 6 1 601A8ACA
-P 7900 3800
-F 0 "U3" H 7900 4117 50  0000 C CNN
-F 1 "74LS14" H 7900 4026 50  0000 C CNN
-F 2 "Package_DIP:DIP-14_W7.62mm_Socket" H 7900 3800 50  0001 C CNN
-F 3 "http://www.ti.com/lit/gpn/sn74LS14" H 7900 3800 50  0001 C CNN
-	6    7900 3800
+P 8300 3500
+F 0 "U3" H 8300 3817 50  0000 C CNN
+F 1 "74LS14" H 8300 3726 50  0000 C CNN
+F 2 "Package_DIP:DIP-14_W7.62mm_Socket" H 8300 3500 50  0001 C CNN
+F 3 "http://www.ti.com/lit/gpn/sn74LS14" H 8300 3500 50  0001 C CNN
+	6    8300 3500
 	-1   0    0    1   
 $EndComp
 $Comp
@@ -1238,8 +1236,6 @@ $EndComp
 Wire Wire Line
 	8900 3500 8750 3500
 Wire Wire Line
-	7450 3500 8000 3500
-Wire Wire Line
 	8750 3400 8750 3500
 Connection ~ 8750 3500
 Wire Wire Line
@@ -1248,11 +1244,7 @@ Wire Wire Line
 	9000 4400 8800 4400
 Connection ~ 8800 4400
 Wire Wire Line
-	8800 4400 8800 3800
-Wire Wire Line
-	8800 3800 8200 3800
-Wire Wire Line
-	7050 3800 7600 3800
+	8800 4400 8800 3900
 $Comp
 L power:+5V #PWR0132
 U 1 1 6023E73F
@@ -1285,12 +1277,12 @@ Wire Wire Line
 $Comp
 L power:GND #PWR0133
 U 1 1 6023E74F
-P 9800 4900
-F 0 "#PWR0133" H 9800 4650 50  0001 C CNN
-F 1 "GND" H 9805 4727 50  0000 C CNN
-F 2 "" H 9800 4900 50  0001 C CNN
-F 3 "" H 9800 4900 50  0001 C CNN
-	1    9800 4900
+P 8000 4950
+F 0 "#PWR0133" H 8000 4700 50  0001 C CNN
+F 1 "GND" H 8005 4777 50  0000 C CNN
+F 2 "" H 8000 4950 50  0001 C CNN
+F 3 "" H 8000 4950 50  0001 C CNN
+	1    8000 4950
 	1    0    0    -1  
 $EndComp
 $Comp
@@ -1316,12 +1308,6 @@ F 3 "" H 1600 6950 50  0001 C CNN
 	1    0    0    -1  
 $EndComp
 Wire Wire Line
-	1600 5500 1600 5900
-Connection ~ 1600 5900
-Wire Wire Line
-	1600 5900 1600 6350
-Connection ~ 1600 6350
-Wire Wire Line
 	1600 6350 1600 6800
 Connection ~ 1600 6800
 Wire Wire Line
@@ -1344,4 +1330,41 @@ Wire Wire Line
 Wire Wire Line
 	4200 5900 4200 5850
 Connection ~ 4200 5850
+$Comp
+L Device:C_Small C3
+U 1 1 604850AB
+P 8000 4850
+F 0 "C3" H 8092 4896 50  0000 L CNN
+F 1 "C_Small" H 8092 4805 50  0000 L CNN
+F 2 "Capacitor_SMD:C_1206_3216Metric_Pad1.42x1.75mm_HandSolder" H 8000 4850 50  0001 C CNN
+F 3 "~" H 8000 4850 50  0001 C CNN
+	1    8000 4850
+	1    0    0    -1  
+$EndComp
+Wire Wire Line
+	8000 4750 8000 4650
+Connection ~ 8000 4650
+Wire Wire Line
+	8000 4650 7900 4650
+Wire Wire Line
+	8050 3400 8050 3450
+Wire Wire Line
+	8050 3450 8000 3450
+Wire Wire Line
+	8000 3450 8000 3500
+Wire Wire Line
+	7450 3400 7450 3550
+Wire Wire Line
+	8550 3900 8800 3900
+Connection ~ 8800 3900
+Wire Wire Line
+	8800 3900 8800 3800
+Wire Wire Line
+	7950 3900 7750 3900
+Wire Wire Line
+	7150 3900 7100 3900
+Wire Wire Line
+	7100 3900 7100 3800
+Wire Wire Line
+	7100 3800 7050 3800
 $EndSCHEMATC

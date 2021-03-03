@@ -2058,7 +2058,7 @@ Wire Wire Line
 Wire Wire Line
 	3200 8200 3100 8200
 Connection ~ 3100 8200
-Text GLabel 8600 7950 0    50   Input ~ 0
+Text GLabel 8400 7950 0    50   Input ~ 0
 ~SLOW~
 $Comp
 L Connector_Generic:Conn_02x02_Odd_Even J2
@@ -2074,12 +2074,10 @@ $EndComp
 Wire Wire Line
 	8100 8550 9750 8550
 Wire Wire Line
-	8600 7950 8750 7950
-Wire Wire Line
 	8750 7950 8750 7850
 Connection ~ 8750 7950
 Wire Wire Line
-	9250 7950 9750 7950
+	9250 7950 9400 7950
 Wire Wire Line
 	9750 7850 9250 7850
 Text Label 9250 7950 0    50   ~ 0
@@ -2203,5 +2201,126 @@ F 2 "Diode_SMD:D_0805_2012Metric_Pad1.15x1.40mm_HandSolder" H 3450 2900 50  0001
 F 3 "~" H 3450 2900 50  0001 C CNN
 	1    3450 2900
 	-1   0    0    1   
+$EndComp
+$Comp
+L Device:R_Small R17
+U 1 1 6040FBAF
+P 9250 7550
+F 0 "R17" V 9054 7550 50  0000 C CNN
+F 1 "1k" V 9145 7550 50  0000 C CNN
+F 2 "Resistor_SMD:R_0805_2012Metric_Pad1.15x1.40mm_HandSolder" H 9250 7550 50  0001 C CNN
+F 3 "~" H 9250 7550 50  0001 C CNN
+	1    9250 7550
+	1    0    0    -1  
+$EndComp
+$Comp
+L power:+5V #PWR0160
+U 1 1 60416782
+P 9250 7300
+F 0 "#PWR0160" H 9250 7150 50  0001 C CNN
+F 1 "+5V" H 9265 7473 50  0000 C CNN
+F 2 "" H 9250 7300 50  0001 C CNN
+F 3 "" H 9250 7300 50  0001 C CNN
+	1    9250 7300
+	1    0    0    -1  
+$EndComp
+Wire Wire Line
+	9250 7650 9250 7850
+Wire Wire Line
+	9250 7300 9250 7450
+Connection ~ 9250 7850
+Wire Wire Line
+	8400 7950 8750 7950
+$Comp
+L Device:R_Small R18
+U 1 1 6043B47C
+P 9400 7650
+F 0 "R18" V 9204 7650 50  0000 C CNN
+F 1 "1k" V 9295 7650 50  0000 C CNN
+F 2 "Resistor_SMD:R_0805_2012Metric_Pad1.15x1.40mm_HandSolder" H 9400 7650 50  0001 C CNN
+F 3 "~" H 9400 7650 50  0001 C CNN
+	1    9400 7650
+	1    0    0    -1  
+$EndComp
+$Comp
+L power:+5V #PWR0161
+U 1 1 6043B482
+P 9400 7400
+F 0 "#PWR0161" H 9400 7250 50  0001 C CNN
+F 1 "+5V" H 9415 7573 50  0000 C CNN
+F 2 "" H 9400 7400 50  0001 C CNN
+F 3 "" H 9400 7400 50  0001 C CNN
+	1    9400 7400
+	1    0    0    -1  
+$EndComp
+Wire Wire Line
+	9400 7400 9400 7550
+Wire Wire Line
+	9400 7750 9400 7950
+Connection ~ 9400 7950
+Wire Wire Line
+	9400 7950 9750 7950
+$Comp
+L Mechanical:MountingHole_Pad H1
+U 1 1 604A8FFB
+P 7250 9750
+F 0 "H1" H 7350 9799 50  0000 L CNN
+F 1 "MountingHole_Pad" H 7350 9708 50  0000 L CNN
+F 2 "MountingHole:MountingHole_3.2mm_M3_Pad" H 7250 9750 50  0001 C CNN
+F 3 "~" H 7250 9750 50  0001 C CNN
+	1    7250 9750
+	1    0    0    -1  
+$EndComp
+$Comp
+L Mechanical:MountingHole_Pad H2
+U 1 1 604B1566
+P 7650 9750
+F 0 "H2" H 7750 9799 50  0000 L CNN
+F 1 "MountingHole_Pad" H 7750 9708 50  0000 L CNN
+F 2 "MountingHole:MountingHole_3.2mm_M3_Pad" H 7650 9750 50  0001 C CNN
+F 3 "~" H 7650 9750 50  0001 C CNN
+	1    7650 9750
+	1    0    0    -1  
+$EndComp
+$Comp
+L Mechanical:MountingHole_Pad H3
+U 1 1 604B8573
+P 8050 9750
+F 0 "H3" H 8150 9799 50  0000 L CNN
+F 1 "MountingHole_Pad" H 8150 9708 50  0000 L CNN
+F 2 "MountingHole:MountingHole_3.2mm_M3_Pad" H 8050 9750 50  0001 C CNN
+F 3 "~" H 8050 9750 50  0001 C CNN
+	1    8050 9750
+	1    0    0    -1  
+$EndComp
+$Comp
+L Mechanical:MountingHole_Pad H4
+U 1 1 604BF521
+P 8450 9750
+F 0 "H4" H 8550 9799 50  0000 L CNN
+F 1 "MountingHole_Pad" H 8550 9708 50  0000 L CNN
+F 2 "MountingHole:MountingHole_3.2mm_M3_Pad" H 8450 9750 50  0001 C CNN
+F 3 "~" H 8450 9750 50  0001 C CNN
+	1    8450 9750
+	1    0    0    -1  
+$EndComp
+Wire Wire Line
+	8450 9850 8050 9850
+Connection ~ 7650 9850
+Wire Wire Line
+	7650 9850 7250 9850
+Connection ~ 8050 9850
+Wire Wire Line
+	8050 9850 7650 9850
+$Comp
+L power:GND #PWR0162
+U 1 1 604CE063
+P 7650 9850
+F 0 "#PWR0162" H 7650 9600 50  0001 C CNN
+F 1 "GND" H 7655 9677 50  0000 C CNN
+F 2 "" H 7650 9850 50  0001 C CNN
+F 3 "" H 7650 9850 50  0001 C CNN
+	1    7650 9850
+	1    0    0    -1  
 $EndComp
 $EndSCHEMATC

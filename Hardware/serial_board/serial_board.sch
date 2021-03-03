@@ -372,7 +372,7 @@ $EndComp
 Wire Wire Line
 	6750 3500 6550 3500
 Wire Wire Line
-	6750 3400 5900 3400
+	6750 3400 6450 3400
 Wire Wire Line
 	6750 3300 6700 3300
 Wire Wire Line
@@ -476,11 +476,6 @@ F 3 "" H 7650 3000 50  0001 C CNN
 $EndComp
 Wire Wire Line
 	7650 3000 7550 3000
-Wire Wire Line
-	7050 3000 6750 3000
-Wire Wire Line
-	6750 3000 6750 3200
-Connection ~ 6750 3200
 $Comp
 L Device:R_Small R3
 U 1 1 60353899
@@ -513,4 +508,11 @@ Wire Wire Line
 	5900 3600 6750 3600
 Text Notes 6000 3700 0    50   ~ 0
 moved cts to rts
+Wire Wire Line
+	6450 3000 6450 3400
+Wire Wire Line
+	6450 3000 7050 3000
+Connection ~ 6450 3400
+Wire Wire Line
+	6450 3400 5900 3400
 $EndSCHEMATC
