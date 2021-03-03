@@ -124,156 +124,156 @@ inner:
 ; These are precalculated multiplications for ADDR_LOW and ADDR_HIGH depending on the line number
 mult_table_high:
     .byte $00
+    .byte $01
     .byte $03
+    .byte $04
     .byte $06
+    .byte $07
     .byte $09
+    .byte $0a
     .byte $0c
+    .byte $0e
     .byte $0f
+    .byte $11
     .byte $12
+    .byte $14
     .byte $15
+    .byte $17
     .byte $19
+    .byte $1a
     .byte $1c
+    .byte $1d
     .byte $1f
+    .byte $20
     .byte $22
+    .byte $23
     .byte $25
+    .byte $27
     .byte $28
+    .byte $2a
     .byte $2b
+    .byte $2d
     .byte $2e
+    .byte $30
     .byte $32
+    .byte $33
     .byte $35
+    .byte $36
     .byte $38
+    .byte $39
     .byte $3b
+    .byte $3c
     .byte $3e
+    .byte $40
     .byte $41
+    .byte $43
     .byte $44
+    .byte $46
     .byte $47
+    .byte $49
     .byte $4b
+    .byte $4c
     .byte $4e
+    .byte $4f
     .byte $51
+    .byte $52
     .byte $54
+    .byte $55
     .byte $57
+    .byte $59
     .byte $5a
+    .byte $5c
     .byte $5d
+    .byte $5f
     .byte $60
+    .byte $62
     .byte $64
+    .byte $65
     .byte $67
+    .byte $68
     .byte $6a
+    .byte $6b
     .byte $6d
+    .byte $6e
     .byte $70
+    .byte $72
     .byte $73
-    .byte $76
-    .byte $79
-    .byte $7d
-    .byte $80
-    .byte $83
-    .byte $86
-    .byte $89
-    .byte $8c
-    .byte $8f
-    .byte $92
-    .byte $96
-    .byte $99
-    .byte $9c
-    .byte $9f
-    .byte $a2
-    .byte $a5
-    .byte $a8
-    .byte $ab
-    .byte $af
-    .byte $b2
-    .byte $b5
-    .byte $b8
-    .byte $bb
-    .byte $be
-    .byte $c1
-    .byte $c4
-    .byte $c8
-    .byte $cb
-    .byte $ce
-    .byte $d1
-    .byte $d4
-    .byte $d7
-    .byte $da
-    .byte $dd
-    .byte $e1
-    .byte $e4
-    .byte $e7
-    .byte $ea
+    .byte $75
 
 mult_table_low:
     .byte $00
-    .byte $04
+    .byte $24
     .byte $08
-    .byte $0c
+    .byte $2c
     .byte $10
-    .byte $14
+    .byte $34
     .byte $18
+    .byte $3c
+    .byte $20
+    .byte $04
+    .byte $28
+    .byte $0c
+    .byte $30
+    .byte $14
+    .byte $38
     .byte $1c
     .byte $00
-    .byte $04
+    .byte $24
     .byte $08
-    .byte $0c
+    .byte $2c
     .byte $10
-    .byte $14
+    .byte $34
     .byte $18
+    .byte $3c
+    .byte $20
+    .byte $04
+    .byte $28
+    .byte $0c
+    .byte $30
+    .byte $14
+    .byte $38
     .byte $1c
     .byte $00
-    .byte $04
+    .byte $24
     .byte $08
-    .byte $0c
+    .byte $2c
     .byte $10
-    .byte $14
+    .byte $34
     .byte $18
+    .byte $3c
+    .byte $20
+    .byte $04
+    .byte $28
+    .byte $0c
+    .byte $30
+    .byte $14
+    .byte $38
     .byte $1c
     .byte $00
-    .byte $04
+    .byte $24
     .byte $08
-    .byte $0c
+    .byte $2c
     .byte $10
-    .byte $14
+    .byte $34
     .byte $18
+    .byte $3c
+    .byte $20
+    .byte $04
+    .byte $28
+    .byte $0c
+    .byte $30
+    .byte $14
+    .byte $38
     .byte $1c
     .byte $00
-    .byte $04
+    .byte $24
     .byte $08
-    .byte $0c
+    .byte $2c
     .byte $10
-    .byte $14
+    .byte $34
     .byte $18
-    .byte $1c
-    .byte $00
+    .byte $3c
+    .byte $20
     .byte $04
-    .byte $08
-    .byte $0c
-    .byte $10
-    .byte $14
-    .byte $18
-    .byte $1c
-    .byte $00
-    .byte $04
-    .byte $08
-    .byte $0c
-    .byte $10
-    .byte $14
-    .byte $18
-    .byte $1c
-    .byte $00
-    .byte $04
-    .byte $08
-    .byte $0c
-    .byte $10
-    .byte $14
-    .byte $18
-    .byte $1c
-    .byte $00
-    .byte $04
-    .byte $08
-    .byte $0c
-    .byte $10
-    .byte $14
-    .byte $18
-    .byte $1c
-    .byte $00
-    .byte $04
-    .byte $08
+    .byte $28
     .byte $0c

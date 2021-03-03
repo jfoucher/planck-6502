@@ -121,6 +121,8 @@
 ; ******************************************************************
 ;
 ;
+
+.advance $e000
 ; I/O board in slot 2
 .alias VIA1_BASE        $FF90
 ; Serial board in slot 3
@@ -132,26 +134,20 @@
 ; LCD board in slot 5
 .alias LCD_BASE         $FFC0
 
-.advance $e000
-
-
 .alias ACIA_DATA    ACIA_BASE
 .alias ACIA_STATUS  ACIA_BASE+1
 .alias ACIA_COMMAND ACIA_BASE+2
 .alias ACIA_CTRL    ACIA_BASE+3
-
 
 .alias LCD_ADDR_DISABLED LCD_BASE
 .alias LCD_DATA_DISABLED LCD_BASE + 1
 .alias LCD_ADDR_ENABLED LCD_BASE + 2
 .alias LCD_DATA_ENABLED LCD_BASE + 3
 
-
 .alias PORTB  VIA1_BASE
 .alias PORTA   VIA1_BASE+1
 .alias DDRB  VIA1_BASE+2
 .alias DDRA  VIA1_BASE+3
-
 
 .alias T1CL  VIA1_BASE + 4
 .alias T1CH  VIA1_BASE + 5
@@ -233,7 +229,7 @@
 .alias char             $9E
 .alias lcd_absent       $9F
 .alias lcd_pos          $A0
-
+.alias has_acia         $A1
 
 
 
@@ -275,29 +271,35 @@ kernel_init:
 .scope
         lda #$FF
         sta DDRA
+        jsr clear_buffer
+        
+
+
+
+        
+        ;jsr lcd_init
+        jsr video_init
+
+        
+        jsr ps2_init
+        jsr timer_init
 
         jsr Init_ACIA
 
-        jsr ps2_init
-
-        jsr timer_init
-        ;jsr lcd_init
-        jsr video_init
-        lda #0                  ; no LED if not error
-        sta PORTB
-
+        ldy #$10
+        jsr delay_long
 
         ;cli
         ; lda #$55
         ; sta PORTA
         ; We've successfully set everything up, so print the kernel
         ; string
-;         ldx #0
-; *       lda s_kernel_id,x
-;         beq _done
-;         jsr kernel_putc
-;         inx
-;         bra -
+        ldx #0
+*       lda s_kernel_id,x
+        beq _done
+        jsr kernel_putc
+        inx
+        bra -
 _done:
         jmp forth
 .scend
@@ -311,28 +313,38 @@ platform_bye:
     ;; Init ACIA to 19200 8,N,1
     ;; Uses: A (not restored)
 Init_ACIA:  
-    sta ACIA_STATUS        ; soft reset (value not important)
+        sta ACIA_STATUS        ; soft reset (value not important)
                             ; set specific modes and functions
-    lda #$0B                ; no parity, no echo, no Tx interrupt, NO Rx interrupt, enable Tx/Rx
-    ;lda #$09                ; no parity, no echo, no Tx interrupt, Rx interrupt, enable Tx/Rx
-    sta ACIA_COMMAND           ; store to the command register
+        stz has_acia
+        lda #$0B                ; no parity, no echo, no Tx interrupt, NO Rx interrupt, enable Tx/Rx
+        ;lda #$09                ; no parity, no echo, no Tx interrupt, Rx interrupt, enable Tx/Rx
+        sta ACIA_COMMAND           ; store to the command register
+        lda ACIA_COMMAND
+        cmp #$0B
+        bne acia_absent
+        lda #1
+        sta has_acia
+        
+acia_absent:
+        lda #$10                ; 1 stop bits, 8 bit word length, internal clock, 115.200k baud rate
+        sta ACIA_CTRL          ; program the ctl register
+        rts
 
-    lda #$10                ; 1 stop bits, 8 bit word length, internal clock, 115.200k baud rate
-    sta ACIA_CTRL          ; program the ctl register
-    rts
 
         ;; Get_Char - get a character from the serial port into A.
         ;; Set the carry flag if char is valid.
         ;; Return immediately with carry flag clear if no char available.
         ;; Uses: A (return value)
 Get_Char:
-      lda ACIA_STATUS      ; Read the ACAI status to
-      and #$08         ; Check if there is character in the receiver
-      beq no_acia_char_available      ; Exit now if we don't get one.
-      lda ACIA_DATA      ; Load it into the accumulator
+        lda has_acia
+        beq no_acia_char_available
+        lda ACIA_STATUS      ; Read the ACAI status to
+        and #$08         ; Check if there is character in the receiver
+        beq no_acia_char_available      ; Exit now if we don't get one.
+        lda ACIA_DATA      ; Load it into the accumulator
 
-      sec            ; Set Carry to show we got a character
-      rts            ; Return
+        sec            ; Set Carry to show we got a character
+        rts            ; Return
       
 no_acia_char_available:
         phx
@@ -353,7 +365,6 @@ no_char_available:
         rts
 
 
-
 kernel_getc:
         ; """Get a single character from the keyboard (waits for key). 
         ; """
@@ -371,19 +382,23 @@ kernel_putc:
         ;; Send_Char - send character in A out serial port.
         ;; Uses: A (original value restored)
 Send_Char:
+        
+        jsr char_out
         phy
+        ldy has_acia
+        beq send_char_exit
         sta ACIA_DATA
         ;jsr lcd_print
-        jsr char_out
+        
         ; nedd to provide additional delay for ACIA
         ; ldy #$20
         ; jsr delay_short
         ; Delay is provided by writing to the LCD screen
-        ldy #$34            ;minimal delay; The min delay increased when added diode on SLOW. Why?
+        ldy #$32            ;minimal delay; The min delay increased when added diode on SLOW. Why?
         jsr delay_short
 
         ;jsr char_out
-        
+send_char_exit:    
         ply
         rts         
 
@@ -437,7 +452,7 @@ v_exit:
 ; is easier to see where the kernel ends in hex dumps. This string is
 ; displayed after a successful boot
 s_kernel_id: 
-        .byte "Tali Forth 2 default kernel for proto SBC (03/01/2021)", AscLF, 0
+        .byte "Tali Forth 2 default kernel for Planck 6502 (28/02/2021)", AscLF, 0
 
 
 ; Add the interrupt vectors 

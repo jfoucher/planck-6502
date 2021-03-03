@@ -11991,14 +11991,19 @@ z_editor_o:     rts
 
 ; ## LCDPRINT ( s -- ) "Print to LCD"
 ; ## "lcdprint" coded Custom
-
 xt_lcdprint:
                 jsr underflow_1
 
                 lda 0,x
 
-                jsr lcd_send
+                jsr lcd_print
 z_lcdprint: rts
 
+
+; ## CLS ( -- ) "clea VGA screen"
+; ## "cls" coded Custom
+xt_cls:
+                jsr vga_clear
+z_cls: rts
 
 ; END
