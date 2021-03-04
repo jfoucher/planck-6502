@@ -6,10 +6,10 @@ lcd_absent: .res  1
 
 .segment "CODE"
 
-.include "drivers/lcd.inc"
-.include "drivers/via.inc"
-.include "drivers/lcd.s"
-.include "drivers/delayroutines.s"
+.include "../drivers/lcd.inc"
+.include "../drivers/via.inc"
+.include "../drivers/lcd.s"
+.include "../drivers/delayroutines.s"
 
 reset:
     LDA #$38            ;function set

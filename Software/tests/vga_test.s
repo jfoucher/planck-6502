@@ -6,10 +6,10 @@ char: .res  1
 .segment "CODE"
 
 
-.include "drivers/via.inc"
-.include "drivers/vga.inc"
-.include "drivers/vga.s"
-.include "drivers/delayroutines.s"
+.include "../drivers/via.inc"
+.include "../drivers/vga.inc"
+.include "../drivers/vga.s"
+.include "../drivers/delayroutines.s"
 
 reset:
     ldy #$10
