@@ -93,6 +93,9 @@ ps2_irq:
 @unshifted:
     ;stx PORTA
     lda ASCIITBL, x
+
+    cmp #$1B             ; reset if escape pressed
+    beq @esc
     bra @output
 @shifted:
     lda ASCIITBL+128, x
@@ -107,7 +110,8 @@ ps2_irq:
     plx
     pla
     rts
-
+@esc:
+    jmp v_reset
 @init:
     stx ready
     bra @exit
@@ -193,7 +197,7 @@ ps2_irq:
     sta PORTB
     lda #KB_STATE_STOP      ;next state is stop
     sta KB_STATE
-    bra @exit
+    jmp @exit
 @odd_parity:
     lda PORTB
     and #$7F
