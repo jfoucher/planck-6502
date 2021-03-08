@@ -377,10 +377,6 @@ Wire Wire Line
 	6750 3300 6700 3300
 Wire Wire Line
 	6750 3200 6150 3200
-Wire Wire Line
-	6150 3200 6150 3900
-Wire Wire Line
-	6150 3900 5900 3900
 $Comp
 L power:GND #PWR0113
 U 1 1 5FEDFB28
@@ -392,9 +388,6 @@ F 3 "" H 5900 4300 50  0001 C CNN
 	1    5900 4300
 	1    0    0    -1  
 $EndComp
-Wire Wire Line
-	5900 4000 5900 4200
-Connection ~ 5900 4200
 Wire Wire Line
 	5900 4200 5900 4300
 Text GLabel 2450 4350 2    50   BiDi ~ 0
@@ -506,8 +499,6 @@ Text Notes 3500 2750 0    50   ~ 0
 Added pullup here
 Wire Wire Line
 	5900 3600 6750 3600
-Text Notes 6000 3700 0    50   ~ 0
-moved cts to rts
 Wire Wire Line
 	6450 3000 6450 3400
 Wire Wire Line
@@ -515,4 +506,34 @@ Wire Wire Line
 Connection ~ 6450 3400
 Wire Wire Line
 	6450 3400 5900 3400
+Text Label 5900 3300 0    50   ~ 0
+TX
+Text Label 5900 3400 0    50   ~ 0
+RX
+Text Label 5900 3600 0    50   ~ 0
+~RTS~
+Text Label 5900 3700 0    50   ~ 0
+~CTS~
+Text Label 5900 3900 0    50   ~ 0
+~DTR~
+Text Label 5900 4000 0    50   ~ 0
+~DSR~
+Text Label 5900 4200 0    50   ~ 0
+~DCD~
+Wire Wire Line
+	5900 3700 6050 3700
+Wire Wire Line
+	6150 3200 6150 4000
+Wire Wire Line
+	5900 4000 6150 4000
+Wire Wire Line
+	5900 3900 6050 3900
+Wire Wire Line
+	6050 3900 6050 3700
+Wire Wire Line
+	6050 3900 6050 4200
+Wire Wire Line
+	6050 4200 5900 4200
+Connection ~ 6050 3900
+Connection ~ 5900 4200
 $EndSCHEMATC
