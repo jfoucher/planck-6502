@@ -256,12 +256,8 @@
 ;       s_kernel_id - The zero-terminated string printed at boot
 ;
 
-; All vectors currently end up in the same place - we restart the system
-; hard. If you want to use them on actual hardware, you'll have to redirect
-; them all.
 v_nmi:
 v_reset:
-;v_irq: ; IRQ redirected to SERVICE_ACIA
 kernel_init:
         ; """Initialize the hardware. This is called with a JMP and not
         ; a JSR because we don't have anything set up for that yet. With
@@ -271,23 +267,15 @@ kernel_init:
 .scope
         lda #$FF
         sta DDRA
-        jsr clear_buffer
-        
 
 
-
-        
         ;jsr lcd_init
         jsr video_init
 
         
         jsr ps2_init
         jsr timer_init
-
         jsr Init_ACIA
-
-        ldy #$10
-        jsr delay_long
 
         ;cli
         ; lda #$55
@@ -301,8 +289,10 @@ kernel_init:
         inx
         bra -
 _done:
+        jsr clear_buffer
         jmp forth
 .scend
+
 
 ; My SBC runs Tali Forth 2 as the OS, to there is nowhere to go back to.
 ; Just restart TALI.
@@ -322,12 +312,22 @@ Init_ACIA:
         lda ACIA_COMMAND
         cmp #$0B
         bne acia_absent
+        lda ACIA_STATUS      ; Read the ACAI status to
+        and #$60
+        bne acia_absent
         lda #1
         sta has_acia
-        
-acia_absent:
         lda #$10                ; 1 stop bits, 8 bit word length, internal clock, 115.200k baud rate
         sta ACIA_CTRL          ; program the ctl register
+
+acia_absent:
+        ldy #20
+aa_loop:
+        lda ACIA_STATUS      ; Read the ACAI status to
+        lda ACIA_DATA      ; Load it into the accumulator
+        dey
+        bne aa_loop
+aa_end:
         rts
 
 
@@ -429,6 +429,7 @@ v_ps2:
         ; this delay is here to ensure we prevent desynchronization
         ldy #$04         ; correct delay seems to be #$20 at 10Mhz
         jsr delay_short
+        
         
         jsr ps2_irq
         ldy #$04         ; correct delay seems to be #$20 at 10Mhz

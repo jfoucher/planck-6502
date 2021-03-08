@@ -12004,6 +12004,7 @@ z_lcdprint: rts
 ; ## "cls" coded Custom
 xt_cls:
                 jsr vga_clear
+                
 z_cls: rts
 
 ; END

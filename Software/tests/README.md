@@ -8,4 +8,4 @@ To assemble, install ca65 and run the following command in this folder:
 
 Where `${file}` is the file name you want to assemble.
 
-You can then burn a.out to your EEPROM.
+You can then burn `a.out` to your EEPROM.
