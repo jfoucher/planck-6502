@@ -5,6 +5,7 @@ title: Building the computer
 order: 10
 ---
 
+
 Building the computer from PCBs is fairly easy, but please note that the design uses surface mount components for most passives (resistors and capacitors mostly) and that there is a technique to be acquired if you want to solder them without getting frustrated.
 
 ## Surface mount components
@@ -31,5 +32,5 @@ Now that everything is soldered up, all that's left to do is to plug the chips i
 
 First check with a multimeter that you do not have a short between ground and VCC. Give a thorough visual inspection to the board to make sure that all solder joint are ok and that no bridging between pins occurs. Touch up where necessary.
 
-Then if everything looks ok, you are ready to power up the board and test it's functionality. The source code [Software](https://gitlab.com/planck-6502/planck-6502/-/tree/master/Software) folder should provide everything you need to test the whole computer as well as individual parts.
+Then if everything looks ok, you are ready to power up the board and test it's functionality. It's time to head on over to [the software part of this documentation](/Software)
 
