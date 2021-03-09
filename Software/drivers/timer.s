@@ -1,21 +1,20 @@
 
+
+.alias COUNTER CLOCK_SPEED/400        ; n/s
+
+
 timer_init:
     lda IER
     ora #$C0        ;enable interrupt on timer1 timeout
     sta IER
     lda #$40        ; timer one free run mode
     sta ACR
-    ; lda #$50      ; set timer to $C350 which is about 5 ms at 10Mhz
-    
-    ;lda #$60        ; set timer to $EA60 which is about 5 ms at 12Mhz
-    lda #$D9        ; set timer to $F5D9 which is about 5 ms at 12.58Mhz
+    lda #<COUNTER     ; set timer to low byte to calculated value from defined clock speed
     sta T1CL
-    ; lda #$C3       ; set timer to $C350 which is about 5 ms at 10Mhz
-    ;lda #$ea       ; set timer to $EA60 which is about 5 ms at 12Mhz
-    lda #$F5       ; set timer to $F5D9 which is about 5 ms at 12.58Mhz
-    ;lda #$48        ; set timer to $4800 which is  0.1s at 1.8432Mhz
+    lda #>COUNTER       ; set timer to high byte to calculated value from defined clock speed
+
     sta T1CH        
-    lda #0
+    lda #0              ; reset time variable
     sta time
     sta time+1
     sta time+2

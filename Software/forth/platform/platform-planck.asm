@@ -71,6 +71,7 @@
             
 
 
+
 ; SOFT PHYSICAL ADDRESSES
 
 ; Tali currently doesn't have separate user variables for multitasking. To
@@ -123,6 +124,9 @@
 ;
 
 .advance $e000
+; clock speed of main oscillator in hertz
+; used by drivers/timer.s to set proper via timing interval
+.alias CLOCK_SPEED 25175000         
 ; I/O board in slot 2
 .alias VIA1_BASE        $FF90
 ; Serial board in slot 3
@@ -159,8 +163,6 @@
 .alias IER  VIA1_BASE + 14
 
 
-
-
 .alias VIDEO_CTRL VIDEO_BASE       ;// Formatted as follows |INCR_5|INCR_4|INCR_3|INCR_2|INCR_1|INCR_0|MODE_1|MODE_0|  default to LORES
 .alias VIDEO_ADDR_LOW VIDEO_BASE + 1   ;//  ||||ADDR4|ADDR_3|ADDR_2|ADDR_1|ADDR_0|
 .alias VIDEO_ADDR_HIGH VIDEO_BASE + 2
@@ -171,12 +173,11 @@
 .alias VIDEO_VSCROLL VIDEO_BASE + 7
 .alias VIDEO_HIRES_HCHARS 100
 .alias VIDEO_HIRES_VCHARS 75
-        ; ps2 defines
 
-        
+; ps2 defines
 
-.alias DATA $80   ; Data is in bit 7 of PORTA
-; clock is on CA2
+.alias DATA $80   ; Data is in bit 7 of PORTB
+; clock is on CB2
 .alias SHIFT $1
 .alias ALT $2
 
@@ -294,37 +295,37 @@ _done:
 .scend
 
 
-; My SBC runs Tali Forth 2 as the OS, to there is nowhere to go back to.
+; The Planck computer runs Tali Forth 2 as the OS, to there is nowhere to go back to.
 ; Just restart TALI.
 platform_bye:   
         jmp kernel_init
 
 
-    ;; Init ACIA to 19200 8,N,1
+    ;; Init ACIA to 115200 8,N,1
     ;; Uses: A (not restored)
 Init_ACIA:  
         sta ACIA_STATUS        ; soft reset (value not important)
                             ; set specific modes and functions
         stz has_acia
         lda #$0B                ; no parity, no echo, no Tx interrupt, NO Rx interrupt, enable Tx/Rx
-        ;lda #$09                ; no parity, no echo, no Tx interrupt, Rx interrupt, enable Tx/Rx
-        sta ACIA_COMMAND           ; store to the command register
-        lda ACIA_COMMAND
-        cmp #$0B
-        bne acia_absent
-        lda ACIA_STATUS      ; Read the ACAI status to
-        and #$60
+        ;lda #$09               ; no parity, no echo, no Tx interrupt, Rx interrupt, enable Tx/Rx
+        sta ACIA_COMMAND        ; store to the command register
+        lda ACIA_COMMAND        ; load command register again
+        cmp #$0B                ; if not the same
+        bne acia_absent         ; then it means the ACIA is not connected
+        lda ACIA_STATUS         ; Read the ACAI status to
+        and #$60                ; check if present or absent
         bne acia_absent
         lda #1
-        sta has_acia
-        lda #$10                ; 1 stop bits, 8 bit word length, internal clock, 115.200k baud rate
+        sta has_acia           ; remeber that ACIA is here
+        lda #$10               ; 1 stop bits, 8 bit word length, internal clock, 115.200k baud rate
         sta ACIA_CTRL          ; program the ctl register
 
 acia_absent:
         ldy #20
 aa_loop:
-        lda ACIA_STATUS      ; Read the ACAI status to
-        lda ACIA_DATA      ; Load it into the accumulator
+        lda ACIA_STATUS         ; Read ACIA data a few times
+        lda ACIA_DATA           ; to try and prevent spurious characters
         dey
         bne aa_loop
 aa_end:
@@ -336,33 +337,33 @@ aa_end:
         ;; Return immediately with carry flag clear if no char available.
         ;; Uses: A (return value)
 Get_Char:
-        lda has_acia
-        beq no_acia_char_available
-        lda ACIA_STATUS      ; Read the ACAI status to
-        and #$08         ; Check if there is character in the receiver
+        lda has_acia                    ; if no ACIA
+        beq no_acia_char_available      ; exit now
+        lda ACIA_STATUS                 ; Read the ACAI status to
+        and #$08                        ; Check if there is character in the receiver
         beq no_acia_char_available      ; Exit now if we don't get one.
-        lda ACIA_DATA      ; Load it into the accumulator
+        lda ACIA_DATA                   ; Load it into the accumulator
 
-        sec            ; Set Carry to show we got a character
-        rts            ; Return
+        sec                             ; Set Carry to show we got a character
+        rts                             ; Return
       
-no_acia_char_available:
-        phx
-        ldx KB_BUF_R_PTR
-        lda KB_BUF, x
-        beq no_ps2_char_available
-        stz KB_BUF, x
-        inc KB_BUF_R_PTR
+no_acia_char_available:                 ; no ACIA char available
+        phx                             ; save X
+        ldx KB_BUF_R_PTR                ; check the keyboard buffer
+        lda KB_BUF, x                   
+        beq no_ps2_char_available       ; exit if nothing found
+        stz KB_BUF, x                   ; if there was a character, reset this buffer cell
+        inc KB_BUF_R_PTR                ; and increment the read pointer
 
-        sec
-        plx
-        rts
-no_ps2_char_available:
-        inc KB_BUF_R_PTR
-        plx
+        sec                             ; mark character present
+        plx                             ; restore X
+        rts                             ; return
+no_ps2_char_available:                  ; no keyboard char
+        inc KB_BUF_R_PTR                ; increment read pointer for next time
+        plx                             ; restore X
 no_char_available:
-        clc                         ; Indicate no char available.
-        rts
+        clc                             ; Indicate no char available.
+        rts                             ; return
 
 
 kernel_getc:
@@ -374,8 +375,6 @@ Get_Char_Wait:
         jsr Get_Char
         bcc Get_Char_Wait
         rts
-
-
 
 kernel_putc:
         ; """Print a single character to the console. """
