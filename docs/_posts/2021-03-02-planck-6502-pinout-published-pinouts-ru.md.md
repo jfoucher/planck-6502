@@ -1,5 +1,5 @@
 ---
-layout: page
+layout: post
 title:  "Planck 6502 expansion bus pinout published on pinouts.ru"
 ---
 
