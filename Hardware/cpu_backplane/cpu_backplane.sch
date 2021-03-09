@@ -3233,4 +3233,16 @@ F 3 "~" H 11500 6200 50  0001 C CNN
 $EndComp
 Wire Wire Line
 	11600 6200 12000 6200
+Text GLabel 6650 5950 0    50   Input ~ 0
+CLK
+Wire Wire Line
+	6950 5950 6650 5950
+Text GLabel 14050 2000 2    50   Input ~ 0
+~SIRQ~
+Wire Wire Line
+	14050 2000 13850 2000
+Text GLabel 6550 6150 0    50   Output ~ 0
+~SIRQ~
+Wire Wire Line
+	6950 6150 6550 6150
 $EndSCHEMATC
