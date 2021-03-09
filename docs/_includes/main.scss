@@ -45,11 +45,6 @@ ul.news {
     margin:0;
     padding:0;
     list-style: none;
-    li {
-        h3 {
-            
-        }
-    }
 }
 
 h2.logo {
@@ -74,6 +69,28 @@ h2.logo {
         font-size: 1.1em;
         padding: 1em 2em 1em 0;
         display:inline-block;
+        &.notif {
+            position: relative;
+            z-index: 2;
+            &::after {
+                z-index: 1;
+                border-radius: 6px;
+                height: 10px;
+                width: 10px;
+                display:block;
+                position: absolute;
+                top: 0.8em;
+                right: 1.6em;
+                background: rgb(228, 3, 3);
+                border: 1px solid rgb(197, 0, 0);
+                content: '';
+            }
+            a {
+                z-index:100;
+                position: relative;
+            }
+        }
+        
     }
 
     &.level-2 {

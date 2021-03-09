@@ -6,14 +6,22 @@
             <span>LANCK 65c02</span>
         </a>
     </h2>
-  
+    {% assign today_date = site.time | date: '%Y%j' %}
+
+    {% assign last_post_date = site.posts[0].date | date: '%Y%j' %}
+
+
+    {% assign days_since_last_post = today_date | minus: today_date %}
     <div class="nav">
         <nav>
+
           <ul class="level-1">
             <li><a href="{{ "/" | prepend: site.baseurl }}">Home</a></li>
             <li><a href="{{ "/Hardware" | prepend: site.baseurl }}">Hardware</a></li>
             <li><a href="{{ "/Software" | prepend: site.baseurl }}">Software</a></li>
-            <li><a href="{{ "/news" | prepend: site.baseurl }}">News</a></li>
+            <li {%if days_since_last_post <= 7%}class="notif"{% endif %}>
+              <a href="{{ "/news" | prepend: site.baseurl }}">News</a>
+            </li>
             <li><a href="https://gitlab.com/planck-6502/planck-6502/">Git</a></li>
           </ul>
           {%if page.url contains "/Hardware/"%}
