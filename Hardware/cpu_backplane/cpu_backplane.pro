@@ -1,4 +1,4 @@
-update=2021 March 08, Monday 22:28:35
+update=Sunday, 29 August 2021 at 22:14:49
 version=1
 last_client=kicad
 [general]
@@ -27,7 +27,7 @@ MinViaDiameter=0.4
 MinViaDrill=0.3
 MinMicroViaDiameter=0.2
 MinMicroViaDrill=0.09999999999999999
-MinHoleToHole=0.25
+MinHoleToHole=0.3
 TrackWidth1=0.25
 TrackWidth2=0.154
 TrackWidth3=0.5
@@ -59,7 +59,7 @@ OthersTextSizeH=1
 OthersTextSizeThickness=0.15
 OthersTextItalic=0
 OthersTextUpright=1
-SolderMaskClearance=0.05
+SolderMaskClearance=0
 SolderMaskMinWidth=0
 SolderPasteClearance=0
 SolderPasteRatio=-0

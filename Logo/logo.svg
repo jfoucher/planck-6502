@@ -1,22 +1,22 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <svg
-   xmlns:dc="http://purl.org/dc/elements/1.1/"
-   xmlns:cc="http://creativecommons.org/ns#"
-   xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
-   xmlns:svg="http://www.w3.org/2000/svg"
-   xmlns="http://www.w3.org/2000/svg"
-   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
-   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
    width="210mm"
    height="297mm"
    viewBox="0 0 744.09448819 1052.3622047"
    id="svg2"
    version="1.1"
-   inkscape:version="1.0.1 (c497b03c, 2020-09-10)"
+   inkscape:version="1.1 (c4e8f9e, 2021-05-24)"
    sodipodi:docname="logo.svg"
-   inkscape:export-filename="/Users/jonathan/Documents/6502/logo-mini.png"
-   inkscape:export-xdpi="254"
-   inkscape:export-ydpi="254">
+   inkscape:export-filename="/Users/jonathan/Documents/planck-6502/logo-mini.png"
+   inkscape:export-xdpi="50.71497"
+   inkscape:export-ydpi="50.71497"
+   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
+   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:svg="http://www.w3.org/2000/svg"
+   xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+   xmlns:cc="http://creativecommons.org/ns#"
+   xmlns:dc="http://purl.org/dc/elements/1.1/">
   <defs
      id="defs4" />
   <sodipodi:namedview
@@ -26,20 +26,21 @@
      borderopacity="1.0"
      inkscape:pageopacity="0.0"
      inkscape:pageshadow="2"
-     inkscape:zoom="0.76885651"
-     inkscape:cx="345.70672"
-     inkscape:cy="346.28644"
+     inkscape:zoom="0.95034484"
+     inkscape:cx="252.53991"
+     inkscape:cy="256.74891"
      inkscape:document-units="px"
      inkscape:current-layer="layer1"
      showgrid="false"
      inkscape:window-width="1389"
      inkscape:window-height="830"
      inkscape:window-x="0"
-     inkscape:window-y="23"
+     inkscape:window-y="25"
      inkscape:window-maximized="0"
      showguides="true"
      inkscape:guide-bbox="true"
-     inkscape:document-rotation="0">
+     inkscape:document-rotation="0"
+     inkscape:pagecheckerboard="0">
     <sodipodi:guide
        position="40.282139,608.54803"
        orientation="0,1"
@@ -75,7 +76,7 @@
            x="58.688728"
            y="435.96298" /></flowRegion><flowPara
          id="flowPara4142"
-         style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:72.078px;line-height:125%;font-family:Anurati;-inkscape-font-specification:'Anurati, Normal';text-align:start;writing-mode:lr-tb;text-anchor:start">ANCK</flowPara></flowRoot>
+         style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:72.078px;line-height:125%;font-family:Anurati;-inkscape-font-specification:'Anurati, Normal';text-align:start;writing-mode:lr-tb;text-anchor:start">AN</flowPara></flowRoot>
     <flowRoot
        xml:space="preserve"
        id="flowRoot3347"
@@ -106,5 +107,20 @@
            y="343.10883" /></flowRegion><flowPara
          id="flowPara3363"
          style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:150px;line-height:125%;font-family:Anurati;-inkscape-font-specification:'Anurati, Normal';text-align:start;writing-mode:lr-tb;text-anchor:start">L</flowPara></flowRoot>
+    <flowRoot
+       xml:space="preserve"
+       id="flowRoot6061"
+       style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;line-height:0.01%;font-family:Dosis;-inkscape-font-specification:'Dosis, Normal';text-align:start;letter-spacing:0px;word-spacing:0px;writing-mode:lr-tb;text-anchor:start;fill:#000000;fill-opacity:1;stroke:none;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
+       transform="matrix(2.0810799,0,0,2.0810799,370.06414,-790.7564)"
+       inkscape:export-xdpi="252.60001"
+       inkscape:export-ydpi="252.60001"><flowRegion
+         id="flowRegion6057"><rect
+           id="rect6055"
+           width="502.91641"
+           height="350.45752"
+           x="58.688728"
+           y="435.96298" /></flowRegion><flowPara
+         id="flowPara6059"
+         style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:72.078px;line-height:125%;font-family:Anurati;-inkscape-font-specification:'Anurati, Normal';text-align:start;writing-mode:lr-tb;text-anchor:start">CK</flowPara></flowRoot>
   </g>
 </svg>
