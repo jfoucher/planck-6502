@@ -1,7 +1,4 @@
-## RAM / ROM board
-
-This is the RAM ROM board for the Planck 6502
-
-It contains 32K or RAM and 32K of rom and uses a very simple address decoding.
+## Planck 6502 RAM board
 
 
+<a rel="license" href="http://creativecommons.org/licenses/by-sa/4.0/"><img alt="Creative Commons License" style="border-width:0" src="https://i.creativecommons.org/l/by-sa/4.0/88x31.png" /></a><br />This documentation is licensed under a <a rel="license" href="http://creativecommons.org/licenses/by-sa/4.0/">Creative Commons Attribution-ShareAlike 4.0 International License</a>.
