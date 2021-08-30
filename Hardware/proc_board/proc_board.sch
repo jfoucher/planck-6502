@@ -262,8 +262,8 @@ L Device:C_Small C3
 U 1 1 5FD6D1DF
 P 4800 1700
 F 0 "C3" V 4571 1700 50  0000 C CNN
-F 1 "C_Small" V 4662 1700 50  0000 C CNN
-F 2 "Capacitor_SMD:C_1206_3216Metric_Pad1.42x1.75mm_HandSolder" H 4800 1700 50  0001 C CNN
+F 1 "4.7u" V 4662 1700 50  0000 C CNN
+F 2 "Capacitor_THT:C_Disc_D4.3mm_W1.9mm_P5.00mm" H 4800 1700 50  0001 C CNN
 F 3 "~" H 4800 1700 50  0001 C CNN
 	1    4800 1700
 	0    1    1    0   
@@ -308,7 +308,7 @@ U 1 1 5FDE4AF9
 P 9500 3450
 F 0 "U4" H 9500 4731 50  0000 C CNN
 F 1 "28C256" H 9500 4640 50  0000 C CNN
-F 2 "Socket:DIP_Socket-28_W11.9_W12.7_W15.24_W17.78_W18.5_3M_228-1277-00-0602J" H 9500 3450 50  0001 C CNN
+F 2 "Package_DIP:DIP-28_W15.24mm_Socket" H 9500 3450 50  0001 C CNN
 F 3 "http://ww1.microchip.com/downloads/en/DeviceDoc/doc0006.pdf" H 9500 3450 50  0001 C CNN
 	1    9500 3450
 	1    0    0    -1  
@@ -446,8 +446,8 @@ L Device:C_Small C1
 U 1 1 5FE2C36B
 P 7800 2300
 F 0 "C1" V 7571 2300 50  0000 C CNN
-F 1 "C_Small" V 7662 2300 50  0000 C CNN
-F 2 "Capacitor_SMD:C_1206_3216Metric_Pad1.42x1.75mm_HandSolder" H 7800 2300 50  0001 C CNN
+F 1 "4.7u" V 7662 2300 50  0000 C CNN
+F 2 "Capacitor_THT:C_Disc_D4.3mm_W1.9mm_P5.00mm" H 7800 2300 50  0001 C CNN
 F 3 "~" H 7800 2300 50  0001 C CNN
 	1    7800 2300
 	0    1    1    0   
@@ -488,8 +488,8 @@ L Device:C_Small C2
 U 1 1 5FE2E059
 P 9700 2100
 F 0 "C2" V 9471 2100 50  0000 C CNN
-F 1 "C_Small" V 9562 2100 50  0000 C CNN
-F 2 "Capacitor_SMD:C_1206_3216Metric_Pad1.42x1.75mm_HandSolder" H 9700 2100 50  0001 C CNN
+F 1 "4.7u" V 9562 2100 50  0000 C CNN
+F 2 "Capacitor_THT:C_Disc_D4.3mm_W1.9mm_P5.00mm" H 9700 2100 50  0001 C CNN
 F 3 "~" H 9700 2100 50  0001 C CNN
 	1    9700 2100
 	0    1    1    0   
@@ -637,8 +637,8 @@ L Device:C_Small C4
 U 1 1 6004347C
 P 2450 5500
 F 0 "C4" V 2221 5500 50  0000 C CNN
-F 1 "C_Small" V 2312 5500 50  0000 C CNN
-F 2 "Capacitor_SMD:C_1206_3216Metric_Pad1.42x1.75mm_HandSolder" H 2450 5500 50  0001 C CNN
+F 1 "4.7u" V 2312 5500 50  0000 C CNN
+F 2 "Capacitor_THT:C_Disc_D4.3mm_W1.9mm_P5.00mm" H 2450 5500 50  0001 C CNN
 F 3 "~" H 2450 5500 50  0001 C CNN
 	1    2450 5500
 	0    1    1    0   
@@ -689,10 +689,62 @@ Wire Wire Line
 	1750 6450 1250 6450
 Text GLabel 1750 6850 0    50   Input ~ 0
 R~W~
-Text Notes 1200 7000 0    50   ~ 0
-Added RW here
 Text Notes 3100 6550 0    50   ~ 0
 Diode + pullup provided by backplane
 Wire Wire Line
 	3150 6350 3100 6350
+$Comp
+L Connector_Generic:Conn_01x14 J2
+U 1 1 61551DA1
+P 6450 3400
+F 0 "J2" H 6530 3392 50  0000 L CNN
+F 1 "Conn_01x14" H 6530 3301 50  0000 L CNN
+F 2 "Connector_PinSocket_2.54mm:PinSocket_1x14_P2.54mm_Vertical" H 6450 3400 50  0001 C CNN
+F 3 "~" H 6450 3400 50  0001 C CNN
+	1    6450 3400
+	1    0    0    -1  
+$EndComp
+Wire Wire Line
+	7600 2300 6100 2300
+Wire Wire Line
+	6100 2300 6100 2800
+Wire Wire Line
+	6100 2800 6250 2800
+Text GLabel 6250 2900 0    50   Input ~ 0
+~RAMW~
+Text GLabel 6250 3000 0    50   Input ~ 0
+A13
+Text GLabel 6250 3100 0    50   Input ~ 0
+A8
+Text GLabel 6250 3200 0    50   Input ~ 0
+A9
+Text GLabel 6250 3300 0    50   Input ~ 0
+A11
+$Comp
+L power:GND #PWR0113
+U 1 1 6155B08E
+P 5950 3400
+F 0 "#PWR0113" H 5950 3150 50  0001 C CNN
+F 1 "GND" H 5955 3227 50  0000 C CNN
+F 2 "" H 5950 3400 50  0001 C CNN
+F 3 "" H 5950 3400 50  0001 C CNN
+	1    5950 3400
+	1    0    0    -1  
+$EndComp
+Wire Wire Line
+	6250 3400 5950 3400
+Text GLabel 6250 3500 0    50   Input ~ 0
+A10
+Text GLabel 6250 3600 0    50   Input ~ 0
+~RAM_CS~
+Text GLabel 6250 4100 0    50   BiDi ~ 0
+D3
+Text GLabel 6250 4000 0    50   BiDi ~ 0
+D4
+Text GLabel 6250 3900 0    50   BiDi ~ 0
+D5
+Text GLabel 6250 3800 0    50   BiDi ~ 0
+D6
+Text GLabel 6250 3700 0    50   BiDi ~ 0
+D7
 $EndSCHEMATC
