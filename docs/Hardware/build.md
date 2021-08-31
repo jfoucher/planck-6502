@@ -5,6 +5,7 @@ title: Building the computer
 order: 10
 ---
 
+NOTE: the following only applies to the simple backplane as all other boards have been reworked using through hole components.
 
 Building the computer from PCBs is fairly easy, but please note that the design uses surface mount components for most passives (resistors and capacitors mostly) and that there is a technique to be acquired if you want to solder them without getting frustrated.
 
