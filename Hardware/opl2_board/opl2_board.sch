@@ -742,15 +742,13 @@ U 1 1 604ABF00
 P 3350 1250
 F 0 "R2" H 3409 1296 50  0000 L CNN
 F 1 "330R" H 3409 1205 50  0000 L CNN
-F 2 "Resistor_THT:R_Axial_DIN0204_L3.6mm_D1.6mm_P5.08mm_Horizontal" H 3350 1250 50  0001 C CNN
+F 2 "Resistor_THT:R_Axial_DIN0207_L6.3mm_D2.5mm_P10.16mm_Horizontal" H 3350 1250 50  0001 C CNN
 F 3 "~" H 3350 1250 50  0001 C CNN
 	1    3350 1250
 	0    -1   -1   0   
 $EndComp
 Wire Wire Line
 	3700 1250 3450 1250
-Wire Wire Line
-	3250 1250 3050 1250
 $Comp
 L Amplifier_Operational:LM358 U4
 U 1 1 604C59E9
@@ -853,4 +851,6 @@ F 3 "" H 5250 3150 60  0000 C CNN
 $EndComp
 Wire Wire Line
 	7350 4300 6950 4300
+Wire Wire Line
+	3050 1250 3250 1250
 $EndSCHEMATC
