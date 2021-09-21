@@ -1,4 +1,4 @@
-Name            Processor decoder;
+Name            Processor-16V8;
 Partno          PLANCK-1;
 Revision        01;
 Date            22/10/2020;
@@ -6,7 +6,7 @@ Designer        Jonathan Foucher;
 Company         Six Pixels;
 Location        France;
 Assembly        None;
-Device          p16v8;
+Device          g16v8a;
 
 /************************************************************************************/
 /* MIT License                                                                      */
@@ -34,64 +34,42 @@ Device          p16v8;
 
 
 /* Pin Map 
-       --------
-NONE   |1     24| Vcc
-NONE   |2     23| NONE
-CLK    |3     22| VCC INPUT
-IRQ1   |4     21| IRQ_OUT
-IRQ2   |5     20| RAM_CS
-IRQ3   |6     19| ROM_CS
-IRQ4   |7     18| RAM_W
-IRQ5   |8     17| NONE
-INH    |9     16| NONE
-SEL    |10    15| NONE
-A15    |11    14| NONE
-Gnd    |12    13| NONE
+        --------
+CLK    |1     20| VCC INPUT
+IRQ0   |2     19| IRQ_OUT
+IRQ1   |3     18| RAM_CS
+IRQ2   |4     17| ROM_CS
+IRQ3   |5     16| RAM_W
+IRQ4   |6     15| NONE
+IRQ5   |7     14| SIRQ
+SER_IRQ|8     13| INH
+A15    |9     12| SSEL
+Gnd    |10    11| RW
        --------
 */
 
-Pin 3  =  CLK;
-Pin 4  =  IRQ1;
-Pin 5  =  IRQ2;
-Pin 6  =  IRQ3;
-Pin 7  =  IRQ4;
-Pin 8  =  IRQ5; 
-Pin 9 =  INH;
-Pin 10 =  SSEL;
-Pin 11 =  A15;
-Pin 13 =  RW;
-Pin 22 = VCC_IN;  
-
-/*
- *	Outputs
- *  22V10 output logic macrocell available input terms
- *  Pin Terms
- *  14	8
- *  15	10
- *  16	12
- *  17	14
- *  18	16
- *  19	16
- *  20	14
- *  21	12
- *  22	10
- *  23	8
- */
-
-/*
- * Outputs:  define outputs - all are simple combinatorial
- */
+Pin 1  =  CLK;
+Pin 2  =  IRQ0;
+Pin 3  =  IRQ1;
+Pin 4  =  IRQ2;
+Pin 5  =  IRQ3;
+Pin 6  =  IRQ4; 
+Pin 7  =  IRQ5;
+Pin 8  =  SER_IRQ;
+Pin 9  =  A15;
+Pin 11 =  RW;
+Pin 12 = SSEL;  
+Pin 13 = INH; 
+Pin 14 = SIRQ; 
+Pin 16 = RAM_W; 
+Pin 17 = ROM_CS; 
+Pin 18 = RAM_CS; 
+Pin 19 = IRQ_OUT; 
 
 
- 
-Pin 21 = IRQ_OUT;   
-Pin 20 = RAM_CS;   
-Pin 19 = ROM_CS;  
-Pin 18 = RAM_W;  
+IRQ_OUT = IRQ0 & IRQ1 & IRQ2 & IRQ3 & IRQ4 & IRQ5 & SIRQ;
 
-IRQ_OUT = IRQ1 & IRQ2 & IRQ3 & IRQ4 & IRQ5;
-
-RAM_CS = A15; //!(!A15 & SSEL);   // RAM is selected when A15 is low AND SSEL is high
+RAM_CS = !(!A15 & SSEL);   // RAM is selected when A15 is low AND SSEL is high
 
 ROM_CS = !(A15 & SSEL & INH);   // R0M is selected when A15 is high AND SSEL is high and INH is high
 
