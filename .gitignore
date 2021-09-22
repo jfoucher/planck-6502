@@ -6,3 +6,6 @@ Software/lcd_test.s
 Software/lcd_test.s.lst
 Software/planck.cfg
 docs/_site
+Software/forth/docs/py65mon-labelmap.txt
+Software/forth/docs/py65mon-listing.txt
+taliforth-py65mon.bin
