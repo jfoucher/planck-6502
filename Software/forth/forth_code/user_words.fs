@@ -53,10 +53,10 @@
         \  setup constants to remove magic numbers to allow
         \  for greater zoom with different scale factors
 20 constant maxiter
--49 constant minval
-50 constant maxval
--37 constant mincol
-37  constant maxcol
+-39 constant minval
+20 constant maxval
+-29 constant mincol
+29  constant maxcol
 
 
 
@@ -77,7 +77,8 @@ variable s_escape
 
 ( translate escape cnt to ascii greyscale )
 : .char
-s" ..,'~!^:;[/<&?oxox#  " 
+\ s" ..,'~!^:;[/<&?oxox#  " 
+s"    ,-!:=;*/I3X6A8%NW  "
 drop + 1 
 type ; 
 
@@ -134,19 +135,30 @@ maxcol mincol do
 i dorow cr 
 loop ; 
 
-: cmandel scale_factor @ 0 = if 20 scale_factor ! then cls mandelbrot ;
+: uptime  130 @ 132 @ 200 um/mod s>d 60 um/mod s>d 60 um/mod cr . ." h " . ." m " . ." ," 2/ . ." s" cr ;
+: l 256 0 do i 65425 ! loop ;
+: lights 0 do l loop ;
+
+: delay 0 do loop ;
+: delay_long 0 do 255 delay loop ;
+: sl 256 0 do 255 delay i 65425 ! loop ;
+: slights 0 do sl loop ;
+
+\ : cmandel scale_factor @ 0 = if 20 scale_factor ! then cls mandelbrot ;
 
 : mandel scale_factor @ 0 = if 20 scale_factor ! then mandelbrot ;
 
 : tmandel uptime mandel uptime ;
 
-: tcmandel uptime cmandel uptime ;
+\ : tcmandel uptime cmandel uptime ;
 
 : multimandel 18 scale_factor ! 0 do scale_factor @ 1+ 1+ scale_factor ! mandel loop ;
 
 : tmultimandel 18 scale_factor ! 0 do scale_factor @ 1+ 1+ scale_factor ! tmandel loop ;
 
-: tcmultimandel 18 scale_factor ! 0 do scale_factor @ 1+ 1+ scale_factor ! tcmandel loop ;
+\ : tcmultimandel 18 scale_factor ! 0 do scale_factor @ 1+ 1+ scale_factor ! tcmandel loop ;
+
+
 
 \ cr .( Welcome to Planck 6502 ) cr
 \ END 
