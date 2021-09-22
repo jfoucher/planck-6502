@@ -68,7 +68,8 @@ def main():
                 continue
 
             # Add only the non-comment words to the results.
-            words = line.split()
+            words = re.findall(r'\s?(\s*\S+)', line.rstrip())
+            #words = line.split()
             all_words.extend(words)
 
     # Merge everything into one big line for compact printing

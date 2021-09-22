@@ -126,11 +126,11 @@
 .advance $e000
 ; clock speed of main oscillator in hertz
 ; used by drivers/timer.s to set proper via timing interval
-.alias CLOCK_SPEED 25175000         
+.alias CLOCK_SPEED 24000000      
 ; I/O board in slot 2
 .alias VIA1_BASE        $FF90
 ; Serial board in slot 3
-.alias ACIA_BASE        $FFA0
+.alias ACIA_BASE        $FFE0
 
 ; VIDEO board in slot 4
 .alias VIDEO_BASE       $FFB0
@@ -266,15 +266,22 @@ kernel_init:
         ; back to the label forth to start the Forth system.
         ; """
 .scope
+        lda #1
+        sta PORTA
         lda #$FF
         sta DDRA
+        sta DDRB
+        
+        ;ldy #40
+        ;jsr delay_long
+
 
 
         ;jsr lcd_init
-        jsr video_init
+        ;jsr video_init
 
         
-        jsr ps2_init
+        ;jsr ps2_init
         jsr timer_init
         jsr Init_ACIA
 
@@ -291,6 +298,8 @@ kernel_init:
         bra -
 _done:
         jsr clear_buffer
+        lda #1
+        sta PORTB
         jmp forth
 .scend
 
@@ -305,7 +314,7 @@ platform_bye:
     ;; Uses: A (not restored)
 Init_ACIA:  
         sta ACIA_STATUS        ; soft reset (value not important)
-                            ; set specific modes and functions
+                                ; set specific modes and functions
         stz has_acia
         lda #$0B                ; no parity, no echo, no Tx interrupt, NO Rx interrupt, enable Tx/Rx
         ;lda #$09               ; no parity, no echo, no Tx interrupt, Rx interrupt, enable Tx/Rx
@@ -317,8 +326,9 @@ Init_ACIA:
         and #$60                ; check if present or absent
         bne acia_absent
         lda #1
-        sta has_acia           ; remeber that ACIA is here
+        sta has_acia           ; remember that ACIA is here
         lda #$10               ; 1 stop bits, 8 bit word length, internal clock, 115.200k baud rate
+        ;lda #$10               ; 1 stop bits, 8 bit word length, internal clock, 1200 baud rate
         sta ACIA_CTRL          ; program the ctl register
 
 acia_absent:
@@ -390,11 +400,13 @@ Send_Char:
         ;jsr lcd_print
         
         ; nedd to provide additional delay for ACIA
-        ; ldy #$20
-        ; jsr delay_short
-        ; Delay is provided by writing to the LCD screen
-        ldy #$32            ;minimal delay; The min delay increased when added diode on SLOW. Why?
+        ldy #$20
         jsr delay_short
+        ; Delay is provided by writing to the LCD screen
+        ;ldy #$32            ;minimal delay; The min delay increased when added diode on SLOW. Why?
+        ;jsr delay_short
+        ;ldy #$30
+        ;jsr delay
 
         ;jsr char_out
 send_char_exit:    
@@ -452,7 +464,7 @@ v_exit:
 ; is easier to see where the kernel ends in hex dumps. This string is
 ; displayed after a successful boot
 s_kernel_id: 
-        .byte "Tali Forth 2 default kernel for Planck 6502 (28/02/2021)", AscLF, 0
+        .byte "Tali Forth 2 default kernel for Planck 6502 (27/08/2021)", AscLF, 0
 
 
 ; Add the interrupt vectors 
