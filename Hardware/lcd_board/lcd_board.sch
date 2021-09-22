@@ -786,15 +786,13 @@ F 3 "" H 8600 4250 50  0001 C CNN
 	1    8600 4250
 	1    0    0    -1  
 $EndComp
-Text Notes 10350 4250 2    50   ~ 0
-TODO check the order of the two pins
 $Comp
 L Device:R_Small R1
 U 1 1 603E9145
 P 8800 4700
 F 0 "R1" V 8604 4700 50  0000 C CNN
 F 1 "330R" V 8695 4700 50  0000 C CNN
-F 2 "Resistor_THT:R_Axial_DIN0204_L3.6mm_D1.6mm_P5.08mm_Horizontal" H 8800 4700 50  0001 C CNN
+F 2 "Resistor_THT:R_Axial_DIN0207_L6.3mm_D2.5mm_P10.16mm_Horizontal" H 8800 4700 50  0001 C CNN
 F 3 "~" H 8800 4700 50  0001 C CNN
 	1    8800 4700
 	0    1    1    0   
