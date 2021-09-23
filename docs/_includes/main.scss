@@ -1,3 +1,6 @@
+:root {
+    color-scheme: light dark;
+}
 
 body {
     font-family: sans-serif;
@@ -21,6 +24,8 @@ table {
         padding: 0.2em 1em;
     }
 }
+
+
 
 
 a {
@@ -59,6 +64,8 @@ h2.logo {
     }
 }
 
+
+
 .subscribe-link {
     font-size: 14px;
     display:block;
@@ -80,9 +87,9 @@ h2.logo {
             z-index: 2;
             &::after {
                 z-index: 1;
-                border-radius: 6px;
-                height: 10px;
-                width: 10px;
+                border-radius: 4px;
+                height: 8px;
+                width: 8px;
                 display:block;
                 position: absolute;
                 top: 0.8em;
@@ -132,6 +139,40 @@ h1 {
     }
 }
 
+/* DARK MODE */
+
+@media (prefers-color-scheme: dark) {
+    img {
+        filter: brightness(.8) contrast(1.2);
+    }
+    .overline {
+        border-top: 1px solid rgb(212, 212, 144);
+    }
+    body {
+        color: rgb(182, 182, 169);
+        background-color: #111;
+    }
+    table, td, th {
+        border: 1px solid rgb(54, 54, 54);
+    }
+    a {
+        color: rgb(125, 127, 146);
+    }
+    a:hover {
+        color: rgb(199, 199, 199);
+    }
+    .date {
+        color: rgb(73, 73, 73);
+    }
+    h2.logo {
+        span {
+            color: #fff;
+        }
+        img {
+            filter: brightness(0.8) contrast(1.2) invert(1);
+        }
+    }
+}
 
 footer {
     background: rgb(39, 39, 4);
