@@ -824,7 +824,7 @@ F 1 "LED" H 4143 1926 50  0000 C CNN
 F 2 "LED_THT:LED_D3.0mm_Horizontal_O3.81mm_Z6.0mm" H 4150 1800 50  0001 C CNN
 F 3 "~" H 4150 1800 50  0001 C CNN
 	1    4150 1800
-	1    0    0    -1  
+	-1   0    0    -1  
 $EndComp
 $Comp
 L Device:R_Small R5
@@ -861,7 +861,7 @@ F 1 "LED" H 4143 2176 50  0000 C CNN
 F 2 "LED_THT:LED_D3.0mm_Horizontal_O3.81mm_Z6.0mm" H 4150 2050 50  0001 C CNN
 F 3 "~" H 4150 2050 50  0001 C CNN
 	1    4150 2050
-	1    0    0    -1  
+	-1   0    0    -1  
 $EndComp
 $Comp
 L Device:R_Small R6
@@ -896,7 +896,7 @@ F 1 "LED" H 4143 2426 50  0000 C CNN
 F 2 "LED_THT:LED_D3.0mm_Horizontal_O3.81mm_Z6.0mm" H 4150 2300 50  0001 C CNN
 F 3 "~" H 4150 2300 50  0001 C CNN
 	1    4150 2300
-	1    0    0    -1  
+	-1   0    0    -1  
 $EndComp
 $Comp
 L Device:R_Small R7
@@ -931,7 +931,7 @@ F 1 "LED" H 4143 2676 50  0000 C CNN
 F 2 "LED_THT:LED_D3.0mm_Horizontal_O3.81mm_Z6.0mm" H 4150 2550 50  0001 C CNN
 F 3 "~" H 4150 2550 50  0001 C CNN
 	1    4150 2550
-	1    0    0    -1  
+	-1   0    0    -1  
 $EndComp
 $Comp
 L Device:R_Small R8
@@ -966,7 +966,7 @@ F 1 "LED" H 4143 2926 50  0000 C CNN
 F 2 "LED_THT:LED_D3.0mm_Horizontal_O3.81mm_Z6.0mm" H 4150 2800 50  0001 C CNN
 F 3 "~" H 4150 2800 50  0001 C CNN
 	1    4150 2800
-	1    0    0    -1  
+	-1   0    0    -1  
 $EndComp
 $Comp
 L Device:R_Small R9
@@ -1001,7 +1001,7 @@ F 1 "LED" H 4143 3176 50  0000 C CNN
 F 2 "LED_THT:LED_D3.0mm_Horizontal_O3.81mm_Z6.0mm" H 4150 3050 50  0001 C CNN
 F 3 "~" H 4150 3050 50  0001 C CNN
 	1    4150 3050
-	1    0    0    -1  
+	-1   0    0    -1  
 $EndComp
 $Comp
 L Device:R_Small R10
@@ -1036,7 +1036,7 @@ F 1 "LED" H 4143 3426 50  0000 C CNN
 F 2 "LED_THT:LED_D3.0mm_Horizontal_O3.81mm_Z6.0mm" H 4150 3300 50  0001 C CNN
 F 3 "~" H 4150 3300 50  0001 C CNN
 	1    4150 3300
-	1    0    0    -1  
+	-1   0    0    -1  
 $EndComp
 $Comp
 L Device:R_Small R11
@@ -1071,7 +1071,7 @@ F 1 "LED" H 4143 3676 50  0000 C CNN
 F 2 "LED_THT:LED_D3.0mm_Horizontal_O3.81mm_Z6.0mm" H 4150 3550 50  0001 C CNN
 F 3 "~" H 4150 3550 50  0001 C CNN
 	1    4150 3550
-	1    0    0    -1  
+	-1   0    0    -1  
 $EndComp
 $Comp
 L Device:R_Small R12
@@ -1305,9 +1305,6 @@ Wire Wire Line
 	7450 3400 7450 3550
 Wire Wire Line
 	8550 3900 8800 3900
-Connection ~ 8800 3900
-Wire Wire Line
-	8800 3900 8800 3800
 Wire Wire Line
 	7950 3900 7750 3900
 Wire Wire Line
