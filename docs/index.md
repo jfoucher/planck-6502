@@ -17,7 +17,7 @@ Planck is a new variant on this type of expandable machines with a different set
 
 The constraints for it's design were the following:
 
-  - 100x100mm maximum board size, 2 layers, as that is the size that is often cheapest to have fabricated.
+  - Minimum board size, 2 layers, as that is what is cheapest to have fabricated.
   - Easily extensible with for example:
     - Serial port
     - Parallel port
@@ -25,12 +25,14 @@ The constraints for it's design were the following:
     - PS/2 port for keyboard
     - Sound card
     - eventually VGA out
+    - SD card
+    - LCD screen
   - Target clock speed of 10 to 12 MHz
 
 
 ## Some details
 
-These requirements resulted in a computer based on a backplane and separate boards that plug into it. A backplane is a mostly passive board that just interconnects all the cards that provide actual functionality together.
+These requirements resulted in a computer based on a [motherboard](/Hardware) hosting RAM, ROM and CPU and extension slots for expansion cards to plug into.
 
 The [Planck hardware pages](/Hardware) explains more about the functionality of the backplane and of each basic extension boards.
 
