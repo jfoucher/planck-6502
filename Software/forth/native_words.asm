@@ -11988,7 +11988,6 @@ xt_editor_o:
 
 z_editor_o:     rts
 
-
 ; ## LCDPRINT ( s -- ) "Print to LCD"
 ; ## "lcdprint" coded Custom
 xt_lcdprint:

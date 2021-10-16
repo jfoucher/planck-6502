@@ -79,12 +79,12 @@ nt_lcdprint:
 
 nt_cls:
         .byte 3, 0
-        .word nt_lcdprint, xt_cls, z_cls
+        .word nt_cold, xt_cls, z_cls
         .byte "cls"
 
 nt_ed:                  ; ed6502
         .byte 2, NN
-        .word nt_cls, xt_ed, z_ed
+        .word nt_cold, xt_ed, z_ed
         .byte "ed"
 
 nt_see: .byte 3, NN

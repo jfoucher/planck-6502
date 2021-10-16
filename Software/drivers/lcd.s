@@ -7,7 +7,8 @@ lcd_init:
     sta LCD_BUF_W_PTR
     sta LCD_BUF_R_PTR
     sta lcd_pos
-    
+
+
     ldy #$FF
     jsr delay
 
@@ -38,6 +39,7 @@ lcd_init:
     ldy #$ff            ; wait a while
     jsr delay
 
+
     RTS
 
 ; Send an instruction in 8 bit mode
@@ -65,6 +67,7 @@ lcd_send:
 lcd_print:               ; 8 bit data in A
     phy
     phx
+    pha
     cmp #$0A
     beq @next_line
     cmp #$0D
@@ -90,6 +93,7 @@ lcd_print:               ; 8 bit data in A
     beq @clr
     
 @continue:
+    pla
     plx
     ply
     rts

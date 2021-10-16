@@ -128,9 +128,10 @@
 ; used by drivers/timer.s to set proper via timing interval
 .alias CLOCK_SPEED 24000000      
 ; I/O board in slot 2
-.alias VIA1_BASE        $FF90
+.alias VIA1_BASE        $FF80
 ; Serial board in slot 3
 .alias ACIA_BASE        $FFE0
+
 
 ; VIDEO board in slot 4
 .alias VIDEO_BASE       $FFB0
@@ -144,8 +145,8 @@
 .alias ACIA_CTRL    ACIA_BASE+3
 
 .alias LCD_ADDR_DISABLED LCD_BASE
-.alias LCD_DATA_DISABLED LCD_BASE + 1
-.alias LCD_ADDR_ENABLED LCD_BASE + 2
+.alias LCD_ADDR_ENABLED LCD_BASE + 1
+.alias LCD_DATA_DISABLED LCD_BASE + 2
 .alias LCD_DATA_ENABLED LCD_BASE + 3
 
 .alias PORTB  VIA1_BASE
@@ -272,19 +273,19 @@ kernel_init:
         sta DDRA
         sta DDRB
         
-        ;ldy #40
-        ;jsr delay_long
+        ldy #04
+        jsr delay_long
 
 
-
-        ;jsr lcd_init
-        ;jsr video_init
+        jsr video_init
 
         
-        ;jsr ps2_init
+        jsr ps2_init
         jsr timer_init
         jsr Init_ACIA
 
+        jsr lcd_init
+        
         ;cli
         ; lda #$55
         ; sta PORTA
@@ -393,11 +394,11 @@ kernel_putc:
 Send_Char:
         
         jsr char_out
+        
         phy
         ldy has_acia
         beq send_char_exit
         sta ACIA_DATA
-        ;jsr lcd_print
         
         ; nedd to provide additional delay for ACIA
         ldy #$20
@@ -410,6 +411,7 @@ Send_Char:
 
         ;jsr char_out
 send_char_exit:    
+        jsr lcd_print
         ply
         rts         
 
@@ -428,6 +430,7 @@ v_irq:                          ; IRQ handler
         bne v_timer
         bra v_exit
 
+
 v_ps2:
         lda time
         sta last_ps2_time
@@ -438,13 +441,13 @@ v_ps2:
         lda time+3
         sta last_ps2_time+3
         ; this delay is here to ensure we prevent desynchronization
-        ldy #$04         ; correct delay seems to be #$20 at 10Mhz
-        jsr delay_short
+        ;ldy #$04         ; correct delay seems to be #$20 at 10Mhz
+        ; jsr delay_short
         
         
         jsr ps2_irq
-        ldy #$04         ; correct delay seems to be #$20 at 10Mhz
-        jsr delay_short
+        ; ldy #$04         ; correct delay seems to be #$20 at 10Mhz
+        ; jsr delay_short
         bra v_exit
 v_timer:
         lda T1CL
@@ -465,6 +468,7 @@ v_exit:
 ; displayed after a successful boot
 s_kernel_id: 
         .byte "Tali Forth 2 default kernel for Planck 6502 (27/08/2021)", AscLF, 0
+
 
 
 ; Add the interrupt vectors 
