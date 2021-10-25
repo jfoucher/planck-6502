@@ -4,6 +4,7 @@ LCD_BUF_R_PTR: .res  1
 LCD_BUF_W_PTR: .res  1
 lcd_absent: .res  1
 
+
 .segment "CODE"
 
 .include "../drivers/lcd.inc"
@@ -12,25 +13,28 @@ lcd_absent: .res  1
 .include "../drivers/delayroutines.s"
 
 reset:
+    ldy #$FF
+    jsr delay
+    
     LDA #$38            ;function set
     jsr lcd_inst
 
     ldy #$FF
     jsr delay
 
-    LDA #$0F            ;function set
+    LDA #$0F            ;display on / off control
     jsr lcd_inst
 
     ldy #$FF
     jsr delay
 
-    LDA #$06            ;function set
+    LDA #$06            ;entry mode set
     jsr lcd_inst
 
     ldy #$FF
     jsr delay
 
-    LDA #$01            ;function set
+    LDA #$01            ;clear display
     jsr lcd_inst
 
     ldy #$FF
@@ -58,6 +62,8 @@ l:
     ; jsr delay_long
 
     ; jmp l
+
+LCD_BUF: .res 256
 
 .segment "ROM_VECTORS"
 

@@ -5,7 +5,6 @@ char: .res  1
 
 .segment "CODE"
 
-
 .include "../drivers/via.inc"
 .include "../drivers/vga.inc"
 .include "../drivers/vga.s"
@@ -14,31 +13,29 @@ char: .res  1
 reset:
     ldy #$10
     jsr delay_long
-    jsr vga_clear
+    jsr video_init
     ;set background color
     lda #$1E
     sta VIDEO_ADDR_LOW
-    lda #$FF
+    lda #$BF
     sta VIDEO_ADDR_HIGH
-    lda #$E0            ; red background
+    lda #$1F            ; red background
     sta VIDEO_DATA
-    lda #$1C            ; green foreground
+    lda #$C0            ; green foreground
     sta VIDEO_DATA
 
     lda #$00
     sta VIDEO_ADDR_LOW
-    lda #$00
     sta VIDEO_ADDR_HIGH
-
+restart:
     ldx #0
 loop:
     lda message,x
-
-    beq read_data
+    beq restart
     sta VIDEO_DATA
     
-    ; ldy #$ff
-    ; jsr delay
+    ldy #$20
+    jsr delay
     inx
     
     jmp loop
