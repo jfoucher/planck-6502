@@ -2,7 +2,7 @@
 layout: board
 title: OPL2 sound card
 short_title: OPL2 board
-status: dev
+status: prod
 design_files: https://gitlab.com/planck-6502/planck-6502/-/tree/master/Hardware/opl2_board
 order: 60
 ---

@@ -9,3 +9,6 @@ docs/_site
 Software/forth/docs/py65mon-labelmap.txt
 Software/forth/docs/py65mon-listing.txt
 taliforth-py65mon.bin
+tests/*.o
+Software/tests/*.o
+Software/tests/*.lst
