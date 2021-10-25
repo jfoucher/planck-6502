@@ -16,7 +16,7 @@ The resistors should be placed as follows :
  - R13, R12, R11, R10, R9 have 330 Ω value
  - R27, R26, R25, R24, R23, R15, R8, R1 have 10 kΩ value
 
-There are two types of capacitors: the cylidrical one is called electrolytic and should be placed near the power plug
+There are two types of capacitors: the cylindrical one is called electrolytic and should be placed near the power plug
 The other should be placed as follows : the big ones next to the expansion slots, and the small ones near the chips.
 
 Place the 1.8432 MHz oscillator in the footprint that reads "SERIAL CLOCK"
@@ -28,7 +28,7 @@ All other components have only one place where they can fit, so solder away. Jus
 
 Now that everything is soldered up, all that's left to do is to plug the chips in their respective sockets and give the board a test.
 
-First check with a multimeter that you do not have a short between ground and VCC. Give a thorough visual inspection to the board to make sure that all solder joint are ok and that no bridging between pins occurs. Touch up where necessary.
+First check with a multimeter that you do not have a short between ground and VCC. Give a thorough visual inspection to the board to make sure that all solder joints are ok and that no bridging between pins occurs. Touch up where necessary.
 
 Then if everything looks ok, you are ready to power up the board and test it's functionality. It's time to head on over to [the software part of this documentation](/Software)
 
