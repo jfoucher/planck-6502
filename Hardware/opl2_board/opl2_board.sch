@@ -380,25 +380,24 @@ F 3 "" H 7800 3300 50  0001 C CNN
 	1    0    0    -1  
 $EndComp
 Wire Wire Line
-	7500 3550 7650 3550
+	7500 3650 7650 3650
 Wire Wire Line
 	8450 3550 8450 2250
 Wire Wire Line
 	8450 2250 8350 2250
 Wire Wire Line
-	7500 3650 7650 3650
+	7500 3750 7650 3750
 Wire Wire Line
 	7650 3650 7650 3550
-Connection ~ 7650 3550
 Wire Wire Line
 	7650 3550 8450 3550
 $Comp
-L Connector:AudioJack3 J2
+L Connector:AudioJack4 J2
 U 1 1 603BB663
 P 7300 3550
 F 0 "J2" H 7282 3875 50  0000 C CNN
-F 1 "AudioJack3" H 7282 3784 50  0000 C CNN
-F 2 "Connector_Audio:Jack_3.5mm_CUI_SJ1-3533NG_Horizontal" H 7300 3550 50  0001 C CNN
+F 1 "AudioJack" H 7282 3784 50  0000 C CNN
+F 2 "Connector_Audio:Jack_3.5mm_PJ320E_Horizontal" H 7300 3550 50  0001 C CNN
 F 3 "~" H 7300 3550 50  0001 C CNN
 	1    7300 3550
 	1    0    0    -1  
@@ -853,4 +852,10 @@ Wire Wire Line
 	7350 4300 6950 4300
 Wire Wire Line
 	3050 1250 3250 1250
+Wire Wire Line
+	7650 3650 7650 3750
+Connection ~ 7650 3650
+Wire Wire Line
+	7500 3550 7500 3450
+Connection ~ 7500 3450
 $EndSCHEMATC
