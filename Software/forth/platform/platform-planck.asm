@@ -127,17 +127,16 @@
 ; clock speed of main oscillator in hertz
 ; used by drivers/timer.s to set proper via timing interval
 .alias CLOCK_SPEED 24000000      
-; I/O board in slot 2
+; I/O board in slot 0
 .alias VIA1_BASE        $FF80
-; Serial board in slot 3
+; Serial chip at this address
 .alias ACIA_BASE        $FFE0
 
-
-; VIDEO board in slot 4
+; VIDEO board in slot 3
 .alias VIDEO_BASE       $FFB0
 
-; LCD board in slot 5
-.alias LCD_BASE         $FFC0
+; LCD board in slot 2
+.alias LCD_BASE         $FFA0
 
 .alias ACIA_DATA    ACIA_BASE
 .alias ACIA_STATUS  ACIA_BASE+1
