@@ -5,6 +5,8 @@ title: Building the computer
 order: 10
 ---
 
+Here is the print version of [the build guide](/Planck 6502 build guide.pdf) I include with the kit.
+
 The computer motherboard as well as all expansion boards not marked as "deprecated" have been redesigned using through hole components almost exclusively.
 
 A build video is coming soon, but for now just solder the lowest components first, such as capacitors and resistors, and progress to the higher components at the end of the build.
