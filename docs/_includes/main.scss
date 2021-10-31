@@ -65,7 +65,14 @@ h2.logo {
 }
 
 
-
+.excerpt {
+    p {
+        margin-bottom: 0.2em;
+        &.more {
+            margin-top: 0;
+        }
+    }
+}
 .subscribe-link {
     font-size: 14px;
     display:block;
