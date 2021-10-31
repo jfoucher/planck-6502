@@ -11,6 +11,6 @@ order: 100
 This is a prototyping board. It has a header to connect it to the backplane, power delivery, and the rest is up to you!
 
 
-For example here is my prototype of the [LCD board](/Hardware/lcd)
+For example here is my prototype of the [OPL2 sound card](/Hardware/opl2)
 
-![Planck prototype board for LCD](/img/lcd_board.jpg)
+![Planck prototype board for LCD](/img/opl2-sound-card.jpg)
