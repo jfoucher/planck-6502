@@ -3304,4 +3304,29 @@ F 3 "~" H 9750 9350 50  0001 C CNN
 	1    9750 9350
 	1    0    0    -1  
 $EndComp
+$Comp
+L Device:C_Small C18
+U 1 1 617BF140
+P 5500 8200
+F 0 "C18" H 5592 8246 50  0000 L CNN
+F 1 "10n" H 5592 8155 50  0000 L CNN
+F 2 "Capacitor_THT:C_Disc_D4.3mm_W1.9mm_P5.00mm" H 5500 8200 50  0001 C CNN
+F 3 "~" H 5500 8200 50  0001 C CNN
+	1    5500 8200
+	1    0    0    -1  
+$EndComp
+Wire Wire Line
+	5350 8150 5450 8150
+Wire Wire Line
+	5450 8150 5450 8100
+Wire Wire Line
+	5450 8100 5500 8100
+Connection ~ 5350 8150
+Wire Wire Line
+	5500 8300 5450 8300
+Wire Wire Line
+	5450 8300 5450 8250
+Wire Wire Line
+	5450 8250 5350 8250
+Connection ~ 5350 8250
 $EndSCHEMATC
