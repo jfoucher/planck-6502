@@ -125,155 +125,125 @@ inner:
 mult_table_high:
     .byte $00
     .byte $01
+    .byte $02
     .byte $03
-    .byte $04
+    .byte $05
     .byte $06
     .byte $07
-    .byte $09
+    .byte $08
     .byte $0a
+    .byte $0b
     .byte $0c
-    .byte $0e
+    .byte $0d
     .byte $0f
+    .byte $10
     .byte $11
     .byte $12
     .byte $14
     .byte $15
+    .byte $16
     .byte $17
     .byte $19
     .byte $1a
+    .byte $1b
     .byte $1c
-    .byte $1d
+    .byte $1e
     .byte $1f
     .byte $20
-    .byte $22
+    .byte $21
     .byte $23
+    .byte $24
     .byte $25
-    .byte $27
+    .byte $26
     .byte $28
+    .byte $29
     .byte $2a
     .byte $2b
     .byte $2d
     .byte $2e
+    .byte $2f
     .byte $30
     .byte $32
     .byte $33
+    .byte $34
     .byte $35
-    .byte $36
+    .byte $37
     .byte $38
     .byte $39
-    .byte $3b
+    .byte $3a
     .byte $3c
+    .byte $3d
     .byte $3e
-    .byte $40
+    .byte $3f
     .byte $41
+    .byte $42
     .byte $43
     .byte $44
     .byte $46
     .byte $47
+    .byte $48
     .byte $49
     .byte $4b
-    .byte $4c
-    .byte $4e
-    .byte $4f
-    .byte $51
-    .byte $52
-    .byte $54
-    .byte $55
-    .byte $57
-    .byte $59
-    .byte $5a
-    .byte $5c
-    .byte $5d
-    .byte $5f
-    .byte $60
-    .byte $62
-    .byte $64
-    .byte $65
-    .byte $67
-    .byte $68
-    .byte $6a
-    .byte $6b
-    .byte $6d
-    .byte $6e
-    .byte $70
-    .byte $72
-    .byte $73
-    .byte $75
 
 mult_table_low:
     .byte $00
-    .byte $24
-    .byte $08
-    .byte $2c
     .byte $10
-    .byte $34
-    .byte $18
-    .byte $3c
     .byte $20
-    .byte $04
-    .byte $28
-    .byte $0c
     .byte $30
-    .byte $14
-    .byte $38
-    .byte $1c
     .byte $00
-    .byte $24
-    .byte $08
-    .byte $2c
     .byte $10
-    .byte $34
-    .byte $18
-    .byte $3c
     .byte $20
-    .byte $04
-    .byte $28
-    .byte $0c
     .byte $30
-    .byte $14
-    .byte $38
-    .byte $1c
     .byte $00
-    .byte $24
-    .byte $08
-    .byte $2c
     .byte $10
-    .byte $34
-    .byte $18
-    .byte $3c
     .byte $20
-    .byte $04
-    .byte $28
-    .byte $0c
     .byte $30
-    .byte $14
-    .byte $38
-    .byte $1c
     .byte $00
-    .byte $24
-    .byte $08
-    .byte $2c
     .byte $10
-    .byte $34
-    .byte $18
-    .byte $3c
     .byte $20
-    .byte $04
-    .byte $28
-    .byte $0c
     .byte $30
-    .byte $14
-    .byte $38
-    .byte $1c
     .byte $00
-    .byte $24
-    .byte $08
-    .byte $2c
     .byte $10
-    .byte $34
-    .byte $18
-    .byte $3c
     .byte $20
-    .byte $04
-    .byte $28
-    .byte $0c
+    .byte $30
+    .byte $00
+    .byte $10
+    .byte $20
+    .byte $30
+    .byte $00
+    .byte $10
+    .byte $20
+    .byte $30
+    .byte $00
+    .byte $10
+    .byte $20
+    .byte $30
+    .byte $00
+    .byte $10
+    .byte $20
+    .byte $30
+    .byte $00
+    .byte $10
+    .byte $20
+    .byte $30
+    .byte $00
+    .byte $10
+    .byte $20
+    .byte $30
+    .byte $00
+    .byte $10
+    .byte $20
+    .byte $30
+    .byte $00
+    .byte $10
+    .byte $20
+    .byte $30
+    .byte $00
+    .byte $10
+    .byte $20
+    .byte $30
+    .byte $00
+    .byte $10
+    .byte $20
+    .byte $30
+    .byte $00
