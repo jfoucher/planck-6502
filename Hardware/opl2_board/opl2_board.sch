@@ -712,43 +712,6 @@ Wire Wire Line
 	3000 2500 3000 2300
 Connection ~ 3000 2300
 $Comp
-L Device:LED D2
-U 1 1 6049AA52
-P 3850 1250
-F 0 "D2" H 3843 1467 50  0000 C CNN
-F 1 "LED" H 3843 1376 50  0000 C CNN
-F 2 "LED_THT:LED_D3.0mm_Horizontal_O3.81mm_Z6.0mm" H 3850 1250 50  0001 C CNN
-F 3 "~" H 3850 1250 50  0001 C CNN
-	1    3850 1250
-	1    0    0    -1  
-$EndComp
-Text GLabel 3050 1250 0    50   Input ~ 0
-~SLOT_SEL~
-$Comp
-L power:+5V #PWR0123
-U 1 1 6049D7AB
-P 4000 1250
-F 0 "#PWR0123" H 4000 1100 50  0001 C CNN
-F 1 "+5V" H 4015 1423 50  0000 C CNN
-F 2 "" H 4000 1250 50  0001 C CNN
-F 3 "" H 4000 1250 50  0001 C CNN
-	1    4000 1250
-	1    0    0    -1  
-$EndComp
-$Comp
-L Device:R_Small R2
-U 1 1 604ABF00
-P 3350 1250
-F 0 "R2" H 3409 1296 50  0000 L CNN
-F 1 "330R" H 3409 1205 50  0000 L CNN
-F 2 "Resistor_THT:R_Axial_DIN0207_L6.3mm_D2.5mm_P10.16mm_Horizontal" H 3350 1250 50  0001 C CNN
-F 3 "~" H 3350 1250 50  0001 C CNN
-	1    3350 1250
-	0    -1   -1   0   
-$EndComp
-Wire Wire Line
-	3700 1250 3450 1250
-$Comp
 L Amplifier_Operational:LM358 U4
 U 1 1 604C59E9
 P 8050 2250
@@ -850,8 +813,6 @@ F 3 "" H 5250 3150 60  0000 C CNN
 $EndComp
 Wire Wire Line
 	7350 4300 6950 4300
-Wire Wire Line
-	3050 1250 3250 1250
 Wire Wire Line
 	7650 3650 7650 3750
 Connection ~ 7650 3650
