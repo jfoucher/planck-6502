@@ -15,7 +15,7 @@
 
 
 ;    $0000  +-------------------+  ram_start, zpage, user0
-;           |  User varliables  |
+;           |  User variables  |
 ;           +-------------------+  
 ;           |                   |
 ;           |                   |
@@ -136,7 +136,7 @@
 .alias VIDEO_BASE       $FFB0
 
 ; LCD board in slot 2
-.alias LCD_BASE         $FFA0
+.alias LCD_BASE         $FFD0
 
 .alias ACIA_DATA    ACIA_BASE
 .alias ACIA_STATUS  ACIA_BASE+1
@@ -257,7 +257,7 @@
 ;       s_kernel_id - The zero-terminated string printed at boot
 ;
 
-v_nmi:
+
 v_reset:
 kernel_init:
         ; """Initialize the hardware. This is called with a JMP and not
@@ -276,6 +276,8 @@ kernel_init:
         jsr delay_long
 
 
+
+
         jsr video_init
 
         
@@ -284,6 +286,8 @@ kernel_init:
         jsr Init_ACIA
 
         jsr lcd_init
+
+v_nmi:
         
         ;cli
         ; lda #$55
