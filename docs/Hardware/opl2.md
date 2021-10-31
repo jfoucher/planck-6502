@@ -12,6 +12,14 @@ This is a sound card based on the [Yamaha YM3812 chip](https://en.wikipedia.org/
 ## Prototype
 
 Great news! [The prototype is complete and working!](/news/2021/06/26/opl2-sound-card/)
+
+## Production PCB
+
+The production PCB is tested and works fine. It will soon be available for order on Tindie. However still missing is the driver code for it. As of now there is only some test code that plays simple tones.
+
+![OPL2 board image](/img/opl2-board.jpg)
+
 ## Slot placement
 
 TBD
+
