@@ -275,9 +275,6 @@ kernel_init:
         ldy #04
         jsr delay_long
 
-
-
-
         jsr video_init
 
         
@@ -286,9 +283,8 @@ kernel_init:
         jsr Init_ACIA
 
         jsr lcd_init
-
-v_nmi:
         
+v_nmi:
         ;cli
         ; lda #$55
         ; sta PORTA
@@ -301,7 +297,6 @@ v_nmi:
         inx
         bra -
 _done:
-        jsr clear_buffer
         lda #1
         sta PORTB
         jmp forth
@@ -357,7 +352,6 @@ Get_Char:
         and #$08                        ; Check if there is character in the receiver
         beq no_acia_char_available      ; Exit now if we don't get one.
         lda ACIA_DATA                   ; Load it into the accumulator
-
         sec                             ; Set Carry to show we got a character
         rts                             ; Return
       
@@ -390,14 +384,13 @@ Get_Char_Wait:
         bcc Get_Char_Wait
         rts
 
+
 kernel_putc:
         ; """Print a single character to the console. """
         ;; Send_Char - send character in A out serial port.
         ;; Uses: A (original value restored)
 Send_Char:
-        
         jsr char_out
-        
         phy
         ldy has_acia
         beq send_char_exit
@@ -414,9 +407,9 @@ Send_Char:
 
         ;jsr char_out
 send_char_exit:    
-        jsr lcd_print
+        ;jsr lcd_print
         ply
-        rts         
+        rts
 
 
 v_irq:                          ; IRQ handler

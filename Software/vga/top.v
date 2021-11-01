@@ -415,9 +415,6 @@ module vga (
             cur_px <= (char_data_line >> (XPOS & 8'h7)) & 1'b1;
         end
 
-        
-        
-        
     end
 
 

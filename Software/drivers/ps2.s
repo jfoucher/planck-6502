@@ -199,6 +199,8 @@ clear_buffer:
   dex
   bne @clear_loop
   plx
+  stz KB_BUF_R_PTR
+  stz KB_BUF_W_PTR
   rts
 
   .include "ps2_irq.s"

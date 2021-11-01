@@ -67,24 +67,30 @@ nt_bye:
         .word z_bye     ; end of code (RTS)
         .byte "bye"     ; word name, always lower case, not zero-terminated
 
+
 nt_cold:
         .byte 4, 0
         .word nt_bye, xt_cold, z_cold
         .byte "cold"
 
+nt_lcdput:
+        .byte 6, UF
+        .word nt_cold, xt_lcdput, z_lcdput
+        .byte "lcdput"
+
 nt_lcdprint:
         .byte 8, UF
-        .word nt_cold, xt_lcdprint, z_lcdprint
+        .word nt_lcdput, xt_lcdprint, z_lcdprint
         .byte "lcdprint"
 
 nt_cls:
         .byte 3, 0
-        .word nt_cold, xt_cls, z_cls
+        .word nt_lcdprint, xt_cls, z_cls
         .byte "cls"
 
 nt_ed:                  ; ed6502
         .byte 2, NN
-        .word nt_cold, xt_ed, z_ed
+        .word nt_cls, xt_ed, z_ed
         .byte "ed"
 
 nt_see: .byte 3, NN

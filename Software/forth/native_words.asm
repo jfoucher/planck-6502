@@ -11988,15 +11988,59 @@ xt_editor_o:
 
 z_editor_o:     rts
 
-; ## LCDPRINT ( s -- ) "Print to LCD"
-; ## "lcdprint" coded Custom
-xt_lcdprint:
+; ## LCDPUT ( s -- ) "Print single character to LCD"
+; ## "lcdput" coded Custom
+xt_lcdput:
                 jsr underflow_1
 
                 lda 0,x
 
                 jsr lcd_print
-z_lcdprint: rts
+z_lcdput: rts
+
+
+; ## LCDPRINT ( addr u -- ) "Print string to LCD"
+; ## "lcdprint"  coded Custom
+.scope
+xt_lcdprint:
+                jsr underflow_2
+
+                ; Save the starting address into tmp1
+                lda 2,x
+                sta tmp1
+                lda 3,x
+                sta tmp1+1
+_loop:
+                ; done if length is zero
+                lda 0,x
+                ora 1,x
+                beq _done
+
+                ; Send the current character
+                lda (tmp1)
+                jsr lcd_print      ; avoids stack foolery
+
+                ; Move the address along (in tmp1)
+                inc tmp1
+                bne +
+                inc tmp1+1
+*
+                ; Reduce the count (on the data stack)
+                lda 0,x
+                bne +
+                dec 1,x
+*
+                dec 0,x
+
+                bra _loop
+_done:
+                inx
+                inx
+                inx
+                inx
+
+z_lcdprint:         rts
+.scend
 
 
 ; ## CLS ( -- ) "clea VGA screen"

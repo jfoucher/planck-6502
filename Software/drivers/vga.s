@@ -69,6 +69,8 @@ nl:
     bra char_out_exit
 
 scroll_up:
+    jsr vga_clear
+    rts
     pha
     ; lda #1
     ; sta VIDEO_VSCROLL
@@ -111,6 +113,7 @@ inner:
 
     lda #0
     sta line
+    sta char
     lda #$00
     sta VIDEO_ADDR_HIGH
     sta VIDEO_ADDR_LOW
