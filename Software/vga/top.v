@@ -209,10 +209,10 @@ module vga (
     reg [2:0] command_reg;
     reg [7:0] command_data;
 
-    reg [10:0] command_buffer[1 << 8];
+    reg [10:0] command_buffer[1 << 10];
     reg [10:0] command;
-    reg [8:0] command_buf_r_ptr;
-    reg [8:0] command_buf_w_ptr;
+    reg [9:0] command_buf_r_ptr;
+    reg [9:0] command_buf_w_ptr;
 
     reg [2:0] read_reg;
 
@@ -233,15 +233,29 @@ module vga (
 
     //FIFO fifo ()
 
-    wire writing = (!CLK_CPU & !EN & !RW);
-    // wire writing = (CLK_CPU | EN | RW);
+    //wire writing = (!CLK_CPU & !EN & !RW);
+    wire writing = (CLK_CPU | EN | RW);
 
-    always @(negedge writing) begin
-        command_buffer[command_buf_w_ptr] <= ((REG << 8) | DATA);
-        if (command_buf_w_ptr > 8'hFE) begin
-            command_buf_w_ptr <= 0;
-        end else begin
-            command_buf_w_ptr <= command_buf_w_ptr + 1;
+    wire [7:0] cnt1 = command_buf_w_ptr - command_buf_r_ptr;
+    wire [7:0] cnt2 = command_buf_r_ptr - command_buf_w_ptr;
+
+    wire [7:0] buf_cnt = (command_buf_w_ptr >= command_buf_r_ptr) ? cnt1 : cnt2;
+
+    reg [10:0] data_tmp;
+
+    reg [4:0] did_write;
+
+    always @(negedge CLK_CPU) begin
+        if (~EN & ~RW) begin
+            data_tmp <= ((REG << 8) | DATA);
+            did_write <= 4'd0;
+            
+        end else if (did_write < 4'd4) begin
+            did_write <= did_write + 1;
+            command_buffer[command_buf_w_ptr] <= data_tmp;
+            if (did_write == 4'd0) begin
+                command_buf_w_ptr <= command_buf_w_ptr + 1;
+            end
         end
     end
 
@@ -250,12 +264,14 @@ module vga (
         case(save_state)
         `SAVE_STATE_INIT:
         begin
-            if ((command_buf_w_ptr - command_buf_r_ptr) > 0) begin
+            led <= 3'b111;
+            if (buf_cnt > 0) begin
                 if (get_command == 4'd4) begin
                     save_state <= `SAVE_STATE_SAVE;
                     command_reg <= command[10:8];
                     command_data <= command[7:0];
                     get_command <= 4'd0;
+
                 end else begin
                     command <= command_buffer[command_buf_r_ptr];
                     get_command <= get_command + 1;
@@ -264,7 +280,6 @@ module vga (
             end
             else begin
                 save_state <= `SAVE_STATE_INIT;
-                led <= 3'b111;
             end
         end
         `SAVE_STATE_SAVE:
@@ -286,15 +301,12 @@ module vga (
                         save_data <= 4'd0;
                     end else begin
                         if (address_reg == 'h17FE) begin
-                            bgcolor <= command_data;
-
-
+                            //bgcolor <= command_data;
                         end else if (address_reg == 'h17FF) begin
-                            fgcolor <= command_data;
-
+                            //fgcolor <= command_data;
                         end else if ((address_reg < SCREEN_CHARS)) begin
                             fb0[address_reg] <= command_data;
-                            led <= 3'b101;
+                            
                         end
                         save_data <= save_data + 1;
                         save_state <= `SAVE_STATE_SAVE;
@@ -303,11 +315,13 @@ module vga (
             end
             `ADDR_LOW_REG:
             begin
+                led <= 3'b110;
                 address_reg[5:0] <= command_data[5:0];
                 save_state <= `SAVE_STATE_END;
             end
             `ADDR_HIGH_REG:
             begin
+                led <= 3'b101;
                 address_reg[13:6] <= command_data;
                 save_state <= `SAVE_STATE_END;
             end
@@ -324,7 +338,6 @@ module vga (
             if (increment_neg == 1'b0) begin
                 if (address_reg < RAM_SIZE) begin
                     address_reg <= address_reg + increment;
-
                 end
                 else begin
                     address_reg <= (address_reg + increment) - RAM_SIZE;
@@ -342,14 +355,8 @@ module vga (
         end
         `SAVE_STATE_END:
         begin
-            
-                if (command_buf_r_ptr > 8'hFE) begin
-                    command_buf_r_ptr <= 0;
-                end else begin
-                    command_buf_r_ptr <= command_buf_r_ptr + 1;
-                end
-                save_state <= `SAVE_STATE_INIT;
-
+            command_buf_r_ptr <= command_buf_r_ptr + 1;
+            save_state <= `SAVE_STATE_INIT;
         end
         default:
         begin
@@ -394,16 +401,22 @@ module vga (
     //wire cur_px = (char_data_line >> (XPOS & 8'h7)) & 1'b1;
 
     reg cur_px;
+
+
     
 
     always @(posedge CLK_FAST) begin
-        char_data_line <= character_rom[((cur_char & 8'h7F) << 3) | (YPOS & 8'h7)];;
-        cur_char <= (show_cursor && (ram_add == address_reg)) ? 8 : fb0_char;
-        cur_px <= (char_data_line >> (XPOS & 8'h7)) & 1'b1;
-        
+
         if (DE) begin
             fb0_char <= fb0[ram_add];
+            cur_char <= (show_cursor && (ram_add == address_reg)) ? 8 : fb0_char;
+            char_data_line <= character_rom[((cur_char & 8'h7F) << 3) | (YPOS & 8'h7)];
+            cur_px <= (char_data_line >> (XPOS & 8'h7)) & 1'b1;
         end
+
+        
+        
+        
     end
 
 
