@@ -123,8 +123,8 @@ module vga (
         CLK_PIX <= 1'b0;
         RESET <= 1'b0;
         //save_data <= 1'b0;
-        address_reg <= 0;
-        show_cursor <= 0;
+        address_reg <= 14'd0;
+        show_cursor <= 1'd0;
         cursor_counter <= 0;
         fgcolor <= 8'h00;
         bgcolor <= 8'hFF;
@@ -264,7 +264,7 @@ module vga (
         case(save_state)
         `SAVE_STATE_INIT:
         begin
-            led <= 3'b111;
+            //led <= 3'b111;
             if (buf_cnt > 0) begin
                 if (get_command == 4'd4) begin
                     save_state <= `SAVE_STATE_SAVE;
@@ -300,10 +300,12 @@ module vga (
                         save_state <= `SAVE_STATE_INCREMENT;
                         save_data <= 4'd0;
                     end else begin
-                        if (address_reg == 'h17FE) begin
-                            //bgcolor <= command_data;
-                        end else if (address_reg == 'h17FF) begin
-                            //fgcolor <= command_data;
+                        if (address_reg == 'h1FFE) begin
+                            bgcolor <= command_data;
+                            // led <= 3'b110;
+                        end else if (address_reg == 'h1FFF) begin
+                            fgcolor <= command_data;
+                            // led <= 3'b101;
                         end else if ((address_reg < SCREEN_CHARS)) begin
                             fb0[address_reg] <= command_data;
                             
@@ -315,14 +317,13 @@ module vga (
             end
             `ADDR_LOW_REG:
             begin
-                led <= 3'b110;
-                address_reg[5:0] <= command_data[5:0];
+                
+                address_reg[4:0] <= command_data[5:0];
                 save_state <= `SAVE_STATE_END;
             end
             `ADDR_HIGH_REG:
             begin
-                led <= 3'b101;
-                address_reg[13:6] <= command_data;
+                address_reg[12:5] <= command_data;
                 save_state <= `SAVE_STATE_END;
             end
             default:
@@ -336,15 +337,15 @@ module vga (
         `SAVE_STATE_INCREMENT:
         begin
             if (increment_neg == 1'b0) begin
-                if (address_reg < RAM_SIZE) begin
+                if (address_reg < 'h2000) begin
                     address_reg <= address_reg + increment;
                 end
                 else begin
-                    address_reg <= (address_reg + increment) - RAM_SIZE;
+                    address_reg <= (address_reg + increment) - 'h2000;
                 end
             end else begin
                 if (address_reg <= increment) begin
-                    address_reg <= address_reg + RAM_SIZE - increment;
+                    address_reg <= address_reg + 'h2000 - increment;
                 end
                 else begin
                     address_reg <= address_reg - increment;

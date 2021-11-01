@@ -1,8 +1,10 @@
 video_init:
     ; set colors
-    lda #$3E
+    lda #$05
+    sta VIDEO_CTRL
+    lda #$1E
     sta VIDEO_ADDR_LOW
-    lda #$7F
+    lda #$FF
     sta VIDEO_ADDR_HIGH
     lda #$00
     sta VIDEO_DATA
@@ -12,8 +14,6 @@ video_init:
     sta VIDEO_IEN
     sta VIDEO_ADDR_LOW
     sta VIDEO_ADDR_HIGH
-    lda #$05
-    sta VIDEO_CTRL
     jsr vga_clear
     rts
 
@@ -124,126 +124,126 @@ inner:
 ; These are precalculated multiplications for ADDR_LOW and ADDR_HIGH depending on the line number
 mult_table_high:
     .byte $00
-    .byte $01
     .byte $02
-    .byte $03
     .byte $05
-    .byte $06
     .byte $07
-    .byte $08
     .byte $0a
-    .byte $0b
     .byte $0c
-    .byte $0d
     .byte $0f
-    .byte $10
     .byte $11
-    .byte $12
     .byte $14
-    .byte $15
     .byte $16
-    .byte $17
     .byte $19
-    .byte $1a
     .byte $1b
-    .byte $1c
     .byte $1e
-    .byte $1f
     .byte $20
-    .byte $21
     .byte $23
-    .byte $24
     .byte $25
-    .byte $26
     .byte $28
-    .byte $29
     .byte $2a
-    .byte $2b
     .byte $2d
-    .byte $2e
     .byte $2f
-    .byte $30
     .byte $32
-    .byte $33
     .byte $34
-    .byte $35
     .byte $37
-    .byte $38
     .byte $39
-    .byte $3a
     .byte $3c
-    .byte $3d
     .byte $3e
-    .byte $3f
     .byte $41
-    .byte $42
     .byte $43
-    .byte $44
     .byte $46
-    .byte $47
     .byte $48
-    .byte $49
     .byte $4b
+    .byte $4d
+    .byte $50
+    .byte $52
+    .byte $55
+    .byte $57
+    .byte $5a
+    .byte $5c
+    .byte $5f
+    .byte $61
+    .byte $64
+    .byte $66
+    .byte $69
+    .byte $6b
+    .byte $6e
+    .byte $70
+    .byte $73
+    .byte $75
+    .byte $78
+    .byte $7a
+    .byte $7d
+    .byte $7f
+    .byte $82
+    .byte $84
+    .byte $87
+    .byte $89
+    .byte $8c
+    .byte $8e
+    .byte $91
+    .byte $93
+    .byte $96
 
 mult_table_low:
     .byte $00
     .byte $10
-    .byte $20
-    .byte $30
     .byte $00
     .byte $10
-    .byte $20
-    .byte $30
     .byte $00
     .byte $10
-    .byte $20
-    .byte $30
     .byte $00
     .byte $10
-    .byte $20
-    .byte $30
     .byte $00
     .byte $10
-    .byte $20
-    .byte $30
     .byte $00
     .byte $10
-    .byte $20
-    .byte $30
     .byte $00
     .byte $10
-    .byte $20
-    .byte $30
     .byte $00
     .byte $10
-    .byte $20
-    .byte $30
     .byte $00
     .byte $10
-    .byte $20
-    .byte $30
     .byte $00
     .byte $10
-    .byte $20
-    .byte $30
     .byte $00
     .byte $10
-    .byte $20
-    .byte $30
     .byte $00
     .byte $10
-    .byte $20
-    .byte $30
     .byte $00
     .byte $10
-    .byte $20
-    .byte $30
     .byte $00
     .byte $10
-    .byte $20
-    .byte $30
     .byte $00
     .byte $10
-    .byte $20
-    .byte $30
+    .byte $00
+    .byte $10
+    .byte $00
+    .byte $10
+    .byte $00
+    .byte $10
+    .byte $00
+    .byte $10
+    .byte $00
+    .byte $10
+    .byte $00
+    .byte $10
+    .byte $00
+    .byte $10
+    .byte $00
+    .byte $10
+    .byte $00
+    .byte $10
+    .byte $00
+    .byte $10
+    .byte $00
+    .byte $10
+    .byte $00
+    .byte $10
+    .byte $00
+    .byte $10
+    .byte $00
+    .byte $10
+    .byte $00
+    .byte $10
     .byte $00
