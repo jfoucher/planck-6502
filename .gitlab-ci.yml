@@ -35,7 +35,7 @@ pages:
     - which ssh-keyscan
     - ssh-keyscan -p 2543 144.76.104.209 >> ~/.ssh/known_hosts
     - chmod 644 ~/.ssh/known_hosts
-    - rsync -rv -e "ssh -p 2543" ./_site/* deploy@144.76.104.209:/var/www/planck6502.com
+    - rsync -rv -e "ssh -p 2543" ../public/* deploy@144.76.104.209:/var/www/planck6502.com
 
   artifacts:
     paths:
