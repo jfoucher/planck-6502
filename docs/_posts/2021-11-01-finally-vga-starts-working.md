@@ -2,6 +2,7 @@
 layout: post
 title:  "The VGA card FINALLY starts to work"
 excerpt_separator: <!--more-->
+image: /img/vga-output.jpg
 ---
 
 It's been a long since I have started to work on a VGA card for my homebrew computers, [even before the Planck was a thing](https://github.com/jfoucher/6502-vga). I started with a cheap Gowin FPGA develoment board, but the development tools were windows only and not very reliable. 

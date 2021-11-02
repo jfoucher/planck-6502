@@ -1,11 +1,12 @@
 ---
 layout: post
 title:  "Planck computer design is in fabrication"
+image: /img/resistors.jpg
 ---
 
 The Planck computer is almost ready for the big time. I received the prototype a few days ago and the build with through hole components was fine, except I feel it takes slightly longer to solder all the components when they are through hole, because you have to cut all those spiky legs off, and my side cutters are not very sharp...
 
-Then I had to reprogram the address decoding chip that handles the extension slots, to enable the new extension slot at address `$FFD0` and the serial chip at address `$FFEF`.
+Then I had to reprogram the address decoding chip that handles the extension slots, to enable the new extension slot at address `$FFD0` and the serial chip at address `$FFE0`.
 
 I also had to had to change the code slightly to update the serial chip address to the new one, and burn it to the EEPROM.
 

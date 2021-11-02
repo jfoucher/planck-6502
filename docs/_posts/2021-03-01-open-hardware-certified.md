@@ -1,6 +1,7 @@
 ---
 layout: post
 title:  "Open Hardware certification granted!"
+image: /img/OSHW_mark_FR000013.png
 ---
 
 I am happy to announce that Planck 6502 is now Open Hardware Certified.

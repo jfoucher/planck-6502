@@ -1,6 +1,7 @@
 ---
 layout: post
 title:  "Designing a complete extensible computer"
+image: /img/cpu_backplane.png
 ---
 
 The Planck 6502 backplane can make a great retro computer if you add in the basic necessary boards. For the simplest possible configuration however, you need at least three boards : the backplane itself, the CPU board (which also contains RAM and ROM) and a serial board for I/O.

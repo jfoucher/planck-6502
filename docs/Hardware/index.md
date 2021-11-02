@@ -6,6 +6,27 @@ title: Planck 6502 hardware
 
 The Planck hardware is organized around a backplane that hosts the CPU and RAM, ROM and serial input / output as well [clock generation](#clock-generation), [board connection](#board-connection),  [expansion slot activation](#expansion-slot-activation) and [basic user IO](#basic-user-io).
 
+<div style="float:right">
+<form target="paypal" action="https://www.paypal.com/cgi-bin/webscr" method="post">
+<input type="hidden" name="cmd" value="_s-xclick">
+<input type="hidden" name="hosted_button_id" value="WNF3GUCN92CT6">
+<table style="border:none"  cellpadding="0">
+<tr>
+<td style="border:none;vertical-align:middle">
+<input type="hidden" name="on0" value="Include ICs ?">
+<select name="os0">
+	<option value="No ICs">No ICs €69,00 EUR</option>
+	<option value="All ICs">All ICs €99,00 EUR</option>
+</select>
+</td>
+<td style="border:none;vertical-align:middle"><input type="hidden" name="currency_code" value="EUR">
+<input type="image" src="https://www.paypalobjects.com/en_US/i/btn/btn_cart_LG.gif" border="0" name="submit" alt="PayPal - The safer, easier way to pay online!">
+<img alt="" border="0" src="https://www.paypalobjects.com/en_US/i/scr/pixel.gif" width="1" height="1"></td>
+</tr>
+</table>
+</form>
+</div>
+
 ## The computer
 
 [Design files](https://gitlab.com/planck-6502/planck-6502/-/tree/master/Hardware/cpu_backplane)
@@ -133,3 +154,30 @@ The 4 LEDs are connected to pins on the expansion bus, and can thus be driven by
 Finally, there is a power plug (micro USB), a power switch and a power LED.
 
 If you want to build this computer, please see the [building the computer](build) page to get more details about what to expect.
+
+## Buy it now with paypal
+
+<div>
+<form target="paypal" action="https://www.paypal.com/cgi-bin/webscr" method="post">
+<input type="hidden" name="cmd" value="_s-xclick">
+<input type="hidden" name="hosted_button_id" value="WNF3GUCN92CT6">
+<table style="border:none"  cellpadding="0">
+<tr>
+<td style="border:none;vertical-align:middle">
+<input type="hidden" name="on0" value="Include ICs ?">
+<select name="os0">
+	<option value="No ICs">No ICs €69,00 EUR</option>
+	<option value="All ICs">All ICs €99,00 EUR</option>
+</select>
+</td>
+<td style="border:none;vertical-align:middle"><input type="hidden" name="currency_code" value="EUR">
+<input type="image" src="https://www.paypalobjects.com/en_US/i/btn/btn_cart_LG.gif" border="0" name="submit" alt="PayPal - The safer, easier way to pay online!">
+<img alt="" border="0" src="https://www.paypalobjects.com/en_US/i/scr/pixel.gif" width="1" height="1"></td>
+</tr>
+</table>
+</form>
+</div>
+
+## Buy it on Tindie
+
+<a href="https://www.tindie.com/products/24831/"><img src="https://d2ss6ovg47m0r5.cloudfront.net/badges/tindie-larges.png" alt="Buy the Planck 6502 computer on Tindie" width="200" height="104"></a>

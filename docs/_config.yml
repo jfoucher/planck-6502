@@ -7,6 +7,10 @@ baseurl: "" # the subpath of your site, e.g. /blog
 url: "https://planck6502.com" # the base hostname & protocol for your site
 twitter_username: jfoucher 
 github_username:  jfoucher
+author: "Jonathan Foucher"
+
+# feed:
+#   posts_limit: 20
 
 # Build settings
 markdown: kramdown

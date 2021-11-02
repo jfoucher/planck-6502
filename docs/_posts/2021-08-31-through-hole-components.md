@@ -1,6 +1,7 @@
 ---
 layout: post
 title:  "Redesigning for through hole components"
+image: /img/io_board.png
 ---
 
 So feedback I received regarding the Planck 6502 computer is that some people are not comfortable soldering surface mount components by hand. I originally used surface mount components to save board space and because I find the larger ones reasonably easy to solder. Also, they are cheaper than through hole components.

@@ -1,6 +1,7 @@
 ---
 layout: post
 title:  "OPL2 sound card prototype"
+image: /img/opl2-sound-card.jpg
 ---
 
 I am having great trouble building a good VGA output card using either an FPGA or a microcontroller, so for a change I decided to start working on a sound card.
