@@ -38,7 +38,7 @@ The [Planck hardware pages](/Hardware) explains more about the functionality of 
 
 Of course, you can [design your own expansion boards](/Hardware/make) to make the computer do whatever **you** decide
 
-
+<!--
 ## Buy it now
 
 ### With Paypal
@@ -74,3 +74,4 @@ Currently out of stock, sorry, should be back around mid Novemeber 2021
 ### Financial stats
 
 I like openness, so I keep a [running tally of costs and income](/stats).
+-->
