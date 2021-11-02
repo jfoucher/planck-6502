@@ -157,6 +157,8 @@ If you want to build this computer, please see the [building the computer](build
 
 ## Buy it now with paypal
 
+Currently out of stock, sorry, should be back around mid Novemeber 2021
+
 <div>
 <form target="paypal" action="https://www.paypal.com/cgi-bin/webscr" method="post">
 <input type="hidden" name="cmd" value="_s-xclick">
@@ -179,5 +181,7 @@ If you want to build this computer, please see the [building the computer](build
 </div>
 
 ## Buy it on Tindie
+
+Currently out of stock, sorry, should be back around mid Novemeber 2021
 
 <a href="https://www.tindie.com/products/24831/"><img src="https://d2ss6ovg47m0r5.cloudfront.net/badges/tindie-larges.png" alt="Buy the Planck 6502 computer on Tindie" width="200" height="104"></a>
