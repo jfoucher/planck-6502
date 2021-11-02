@@ -91,44 +91,56 @@ module vga (
 
     reg [7:0] data_out;
 
-    parameter MEM_INIT_FILE = "char_data.mem";
+    parameter CHAR_INIT_FILE = "char_data.mem";
+    parameter MEM_INIT_FILE = "start_data.mem";
 
     reg [7:0] character_rom['h400-1:0];
     //reg [7:0] character_ram['h400-1:0];
     reg [7:0] fb0[RAM_SIZE-1:0];
 
+    reg [13:0] move_pos;
+    reg [7:0] move_tmp;
+    reg [7:0] do_scroll;
+    reg move_state;
+
     reg [7:0] bgcolor;
     reg [7:0] fgcolor;
 
-    integer i;
-    // initial begin
-    //     address_reg <= 0;
-
-    //     for (i = 2; i < RAM_SIZE; i = i + 1) begin
-    //         fb0[i] <= 8'h20;
-    //     end
-    // end
-
     reg RESET;
 
+    integer i;
+
+
     initial begin
-        RESET <= 1;
+        RESET <= 1'b1;
+        // address_reg <= 0;
+
+        // for (i = 0; i < RAM_SIZE; i = i + 1) begin
+        //     fb0[i] <= 8'h20;
+        // end
+        if (CHAR_INIT_FILE != "") begin
+            $readmemh(CHAR_INIT_FILE, character_rom);
+
+        end
         if (MEM_INIT_FILE != "") begin
-            $readmemh(MEM_INIT_FILE, character_rom);
-            //$readmemh(MEM_INIT_FILE, character_ram);
+            $readmemh(MEM_INIT_FILE, fb0);
+
         end
     end
 
     initial begin
         CLK_PIX <= 1'b0;
         RESET <= 1'b0;
+        move_pos <= 8'h0;
+        move_state <= 1'b0;
         //save_data <= 1'b0;
         address_reg <= 14'd0;
         show_cursor <= 1'd0;
         cursor_counter <= 0;
-        fgcolor <= 8'h00;
-        bgcolor <= 8'hFF;
+        fgcolor <= 8'hE0;
+        bgcolor <= 8'h00;
         led <= 3'b111;
+        do_scroll <= 1'b0;
         save_state <= `SAVE_STATE_INIT;
         //read_state <= `READ_STATE_INIT;
         //read_data <= 1'b0;
@@ -245,6 +257,8 @@ module vga (
 
     reg [4:0] did_write;
 
+
+
     always @(negedge CLK_CPU) begin
         if (~EN & ~RW) begin
             data_tmp <= ((REG << 8) | DATA);
@@ -280,6 +294,11 @@ module vga (
             end
             else begin
                 save_state <= `SAVE_STATE_INIT;
+
+                if (do_scroll && !DE) begin
+                    // fb0[move_pos] <= move_tmp;
+                    // move_pos <= move_pos + 1;
+                end
             end
         end
         `SAVE_STATE_SAVE:
@@ -324,6 +343,11 @@ module vga (
             `ADDR_HIGH_REG:
             begin
                 address_reg[12:5] <= command_data;
+                save_state <= `SAVE_STATE_END;
+            end
+            `VSCROLL_REG:
+            begin
+                do_scroll <= command_data;
                 save_state <= `SAVE_STATE_END;
             end
             default:
@@ -389,11 +413,12 @@ module vga (
 
     // RAM address to get character from
     wire [6:0] line = (YPOS >> 3);
-    wire [6:0] char = ((XPOS+1) >> 3);
+    wire [6:0] char = ((XPOS+2) >> 3);
     wire [12:0] next_line_addr = (YPOS > V_RES) ? 0 : ((line+1) * H_CHAR_HIRES);
     wire [12:0] this_line_addr = ((line * H_CHAR_HIRES) + char);
     wire [12:0] ram_add = DE ? this_line_addr : next_line_addr;
 
+    //reg [12:0] ram_add;
 
 
     reg [7:0] char_data_line;
@@ -409,24 +434,18 @@ module vga (
     always @(posedge CLK_FAST) begin
 
         if (DE) begin
+            //ram_add <= ((line * H_CHAR_HIRES) + char);
             fb0_char <= fb0[ram_add];
             cur_char <= (show_cursor && (ram_add == address_reg)) ? 8 : fb0_char;
             char_data_line <= character_rom[((cur_char & 8'h7F) << 3) | (YPOS & 8'h7)];
             cur_px <= (char_data_line >> (XPOS & 8'h7)) & 1'b1;
+        end else if (do_scroll) begin
+
+            //move_tmp <= fb0[move_pos + do_scroll * V_CHAR_HIRES];
+
         end
 
     end
-
-
-    // always @(posedge CLK_FAST) begin
-    // //     //ram_add <= (YPOS >> 3)* H_CHAR_HIRES +(XPOS >> 3);
-    //     //if (DE) begin
-    //         //cur_char <= /*current_fb ? fb1_char : */fb0_char;
-    //         // next_char_data_line <= character_rom[((cur_char & 8'h7F) << 3) + (YPOS & 8'h7)];
-    //         // char_data_line <= next_char_data_line;
-    // //         //ram_char <= character_ram[((fb0_char & 8'h7F) << 3) + (YPOS & 8'h7)];
-    //     //end
-    // end
 
     always @(posedge CLK_PIX) begin
         
