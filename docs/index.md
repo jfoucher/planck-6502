@@ -1,7 +1,7 @@
 ---
 layout: page
+title: An open-hardware, extensible 65c02-based computer
 ---
-# An open-hardware, extensible 65c02-based computer
 
 ![General view](img/1.jpg){: width="800" }{: height="600" }
 

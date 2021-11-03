@@ -106,13 +106,13 @@ Most pins on this extension consist of the 65C02 signals, such as 16 address lin
 | 39 | BE | Processor input pin. when low the processor releases the bus |
 | 40 | LED4 | Connected to one of the backplane LEDs |
 | 41 | CLK | Main computer clock. Can be stretched or not depending on the state of the <span class="overline">SLOW</span> signal. |
-| 42 | CLK_12M | Stable clock for e.g. VIA timers. **Not connected to slot 0** |
+| 42 | CLK_12M | Stable clock for e.g. VIA timers. |
 | 43 | R<span class="overline">W</span> | CPU read / write pin |
-| 44 | EX2 | Extra signal 2. **Not connected to slot 0** |
+| 44 | EX2 | Extra signal 2.  |
 | 45 | <span class="overline">IRQ</span> | This goes low when an interrupt request has occured, active low |
-| 46 | EX3 | Extra signal 3. **Not connected to slot 0** |
+| 46 | EX3 | Extra signal 3.  |
 | 47 | SYNC | CPU output. Indicates when the CPU is fetching an opcode |
-| 48 | <span class="overline">SLOT_IRQ</span> | Used by expansion cards to signal an interrupt request to the processor board, active low  |
+| 48 | <span class="overline">SLOT_IRQ</span> | Used by expansion cards to signal an interrupt request to the processor, active low  |
 | 49 | <span class="overline">RESET</span> | Reset signal trigered by the button on the backplane, active low |
 | 50 | <span class="overline">NMI</span> | non maskable interrupt signal trigered by the button on the backplane, active low |
 

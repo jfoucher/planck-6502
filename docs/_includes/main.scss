@@ -130,7 +130,14 @@ h2.logo {
                 position: relative;
             }
         }
-        
+
+        a {
+            text-decoration: none;
+        }
+        &.active a {
+            color:rgb(124, 124, 124);
+            text-decoration:underline;
+        }
     }
 
     &.level-2 {
