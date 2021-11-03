@@ -9,6 +9,7 @@
     <div class="nav">
         <nav>
           {%assign splitUrl = page.url | split: '/' %}
+          {{splitUrl[1]}}
           <!-- {% for member in splitUrl %}
   {{ member }}<br>
 {% endfor %}
@@ -52,6 +53,6 @@
     
     if ((now - postDate) < 7*3600*24*1000) {
       var news = document.getElementById('news');
-      news.className = 'notif'
+      news.className += ' notif'
     }
   </script>
