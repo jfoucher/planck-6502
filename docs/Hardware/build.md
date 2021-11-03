@@ -32,5 +32,5 @@ Now that everything is soldered up, all that's left to do is to plug the chips i
 
 First check with a multimeter that you do not have a short between ground and VCC. Give a thorough visual inspection to the board to make sure that all solder joints are ok and that no bridging between pins occurs. Touch up where necessary.
 
-Then if everything looks ok, you are ready to power up the board and test it's functionality. It's time to head on over to [the software part of this documentation](/Software)
+Then if everything looks ok, you are ready to power up the board and test its functionality. It's time to head on over to [the software part of this documentation](/Software)
 

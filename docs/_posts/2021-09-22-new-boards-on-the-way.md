@@ -25,4 +25,4 @@ All existing cards seem to work just fine in the new computer, which is expected
 
 As  of right now, the final revision is in production, as well as three other boards, two of which I only have built on the prototype boards until now : the [OPL2 board](/Hardware/opl2/) and the [LCD board](/Hardware/lcd/). The third one is the through hole version of the [I/O board](/Hardware/io/)
 
-Next, I am planning on designing a board to interact with an SD card. This board will plug into the back of the I/O  board with a ribbon cable to use it's SPI capability. I will have to research some simple filesystems to use, because even implementing FAT16 in 6502 assembly seems like a daunting challenge.
+Next, I am planning on designing a board to interact with an SD card. This board will plug into the back of the I/O  board with a ribbon cable to use its SPI capability. I will have to research some simple filesystems to use, because even implementing FAT16 in 6502 assembly seems like a daunting challenge.

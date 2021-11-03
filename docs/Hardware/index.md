@@ -47,7 +47,7 @@ This counter makes possible the clock stretching that will be required by slow p
 Let me explain this schematic: 
 The 24Mhz output from the oscillator goes to the clock input of the binary counter.
 The Q0 output of the counter changes at every positive clock edge, so it is a square wave of half the frequency of the oscillator clock. This signal is fed to the expansion bus under the name CLK_12M. It is thus a non stretched clock that is used for things that require precises and consistent timings, such as VIA timers for example.
-Q3 is low when the counter is less than 8 and causes the counter to load it's current count from the input.
+Q3 is low when the counter is less than 8 and causes the counter to load its current count from the input.
 By default if the <span class="overline">SLOW</span> signal is high, then the counter will immediately load 15 and resume counting, which will take it back to zero, which will trigger the load again.
 
 It that case the counter oscillates between 15 (all output high) and 0 (all outputs low) which causes CLK and CLK_12M to oscillate at the same frequency.
@@ -101,7 +101,7 @@ Most pins on this extension consist of the 65C02 signals, such as 16 address lin
 | 34 | LED1 | Connected to one of the backplane LEDs |
 | 35 | A15 | Processor address bus pin 15 |
 | 36 | LED2 | Connected to one of the backplane LEDs |
-| 37 | RDY | Processor I/O pin. When low, the processor waits in it's curent state |
+| 37 | RDY | Processor I/O pin. When low, the processor waits in its curent state |
 | 38 | LED3 | Connected to one of the backplane LEDs |
 | 39 | BE | Processor input pin. when low the processor releases the bus |
 | 40 | LED4 | Connected to one of the backplane LEDs |

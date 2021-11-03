@@ -112,7 +112,7 @@ Below are the pins that are specific to the expansion bus:
 
 
 
-
+The Planck 6502 computer is a single board computer that communicates over serial, or can be a standalone computer by adding expansion cards to one of the 6 slots present on the motherboard.
 
 
 

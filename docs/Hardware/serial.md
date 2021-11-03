@@ -7,7 +7,7 @@ order: 996
 ---
 
 
-This board provides a WDC6551 ACIA chip and it's associated oscillator. A socket is provided to plug in the USB to serial adapter of your choice. This allows you to connect the Planck computer to your laptop or desktop computer and interact with via software such as putty or coolTerm.
+This board provides a WDC6551 ACIA chip and its associated oscillator. A socket is provided to plug in the USB to serial adapter of your choice. This allows you to connect the Planck computer to your laptop or desktop computer and interact with via software such as putty or coolTerm.
 
 ![Serial board photo](/img/serial_board.jpg)
 

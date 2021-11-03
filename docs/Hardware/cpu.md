@@ -15,7 +15,7 @@ The ROM placement on the board can accomodate a ZIF socket to allow the user to 
 
 ![CPU board](/img/cpu_board.jpg)
 
-In this picture, you can see the 32k ROM chip in it's ZIF socket at the top left.
+In this picture, you can see the 32k ROM chip in its ZIF socket at the top left.
 
 At the top right is the RAM. As you can see, an additional row of holes are provided to accomodate a wide socket in case that is the RAM you have.
 

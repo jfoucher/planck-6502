@@ -1,7 +1,7 @@
 ---
 layout: page
 ---
-# An open hardware, extensible 65c02 based computer
+# An open-hardware, extensible 65c02-based computer
 
 ![General view](img/1.jpg)
 
@@ -15,7 +15,7 @@ Planck is a new variant on this type of expandable machines with a different set
 
 ### Contraints and requirements
 
-The constraints for it's design were the following:
+The constraints for its design were the following:
 
   - Minimum board size, 2 layers, as that is what is cheapest to have fabricated.
   - Easily extensible with for example:
