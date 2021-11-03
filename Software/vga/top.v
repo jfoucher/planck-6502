@@ -137,6 +137,7 @@ module vga (
         address_reg <= 14'd0;
         show_cursor <= 1'd0;
         cursor_counter <= 0;
+        char_write <= 1'b1;
         fgcolor <= 8'hE0;
         bgcolor <= 8'h00;
         led <= 3'b111;
@@ -185,7 +186,7 @@ module vga (
     wire [9:0] XPOS;
     wire [9:0] YPOS;
 
-    reg [6:0] cursor_counter;
+    reg [7:0] cursor_counter;
     reg show_cursor;
 
     // CLK_PIX is CLK_FAST divided by 8
@@ -203,9 +204,17 @@ module vga (
 
     // hardware cursor
     always @(posedge VSYNC) begin
-        cursor_counter <= cursor_counter + 1;
-        if  (cursor_counter == 0) begin
-            show_cursor <= ~show_cursor;
+        if (char_write == 1'b0) begin
+            cursor_stopped <= 0;
+            cursor_counter <= cursor_counter + 1;
+            if  (cursor_counter == 0) begin
+                show_cursor <= ~show_cursor;
+            end
+        end else begin
+            // Show cursor when a character was recently written
+            cursor_counter <= 1;
+            show_cursor <= 1;
+            cursor_stopped <= 1;
         end
     end
     
@@ -230,6 +239,8 @@ module vga (
 
     reg [3:0] get_command;
     reg [3:0] save_data;
+
+
 
     // always @(posedge CLK_12M) begin
     //     if ((EN == 1'b0) && (RW == 1'b1) && (read_data == 1'b0)) begin
@@ -257,6 +268,9 @@ module vga (
 
     reg [4:0] did_write;
 
+    reg char_write;
+    reg cursor_stopped;
+
 
 
     always @(negedge CLK_CPU) begin
@@ -275,11 +289,14 @@ module vga (
 
 
     always @(posedge CLK_FAST) begin
+        if (cursor_stopped) begin
+            char_write <= 0;
+        end
         case(save_state)
         `SAVE_STATE_INIT:
         begin
-            //led <= 3'b111;
             if (buf_cnt > 0) begin
+                //
                 if (get_command == 4'd4) begin
                     save_state <= `SAVE_STATE_SAVE;
                     command_reg <= command[10:8];
@@ -293,8 +310,9 @@ module vga (
                 end
             end
             else begin
-                save_state <= `SAVE_STATE_INIT;
 
+                save_state <= `SAVE_STATE_INIT;
+                //char_write <= 1'b0;
                 if (do_scroll && !DE) begin
                     // fb0[move_pos] <= move_tmp;
                     // move_pos <= move_pos + 1;
@@ -327,7 +345,7 @@ module vga (
                             // led <= 3'b101;
                         end else if ((address_reg < SCREEN_CHARS)) begin
                             fb0[address_reg] <= command_data;
-                            
+                            char_write <= 1;
                         end
                         save_data <= save_data + 1;
                         save_state <= `SAVE_STATE_SAVE;
