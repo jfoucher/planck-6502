@@ -1,7 +1,7 @@
  8000  D8        CLD  
- 8001  A9 02     LDA  #$02
+ 8001  A9 FF     LDA  #$FF
  8003  85 10     STA  $10
- 8005  A9 E7     LDA  #$E7
+ 8005  A9 E6     LDA  #$E6
  8007  85 11     STA  $11
  8009  A2 21     LDX  #$21
  800B  BD C5 80  LDA  $80C5, X
@@ -97,7 +97,7 @@
  80C0  20 88 DB  JSR  $DB88
  80C3  80 CF     BRA  $8094
  80C5  FF 07 7B CD 00 00 00 00 00 02 00 00 00 00 00 00  |..{.............|
- 80D5  02 E7 FC E6 00 00 00 00 0A 00 14 00 00 00 FF 02  |................|
+ 80D5  FF E6 F9 E6 00 00 00 00 0A 00 14 00 00 00 FF 02  |................|
  80E5  00 00 00 00 00 00 00 04 7B CD 0F CE 18 CE B7 CD  |........{.......|
  80F5  00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  |................|
  8105  01 00 00 00 00 00 00 00 00 00 FF 03 00 00 00 00  |................|
@@ -611,7 +611,7 @@
  85E8  69 00     ADC  #$00
  85EA  95 01     STA  $01, X
  85EC  60        RTS  
- 85ED  4C A7 E6  JMP  $E6A7
+ 85ED  4C A4 E6  JMP  $E6A4
  85F0  20 42 DB  JSR  $DB42
  85F3  B5 00     LDA  $00, X
  85F5  20 F5 D9  JSR  $D9F5
@@ -5261,7 +5261,7 @@
  A89B  60        RTS  
  A89C  20 42 DB  JSR  $DB42
  A89F  B5 00     LDA  $00, X
- A8A1  20 25 E4  JSR  $E425
+ A8A1  20 21 E4  JSR  $E421
  A8A4  60        RTS  
  A8A5  20 47 DB  JSR  $DB47
  A8A8  B5 02     LDA  $02, X
@@ -5272,7 +5272,7 @@
  A8B2  15 01     ORA  $01, X
  A8B4  F0 15     BEQ  $A8CB
  A8B6  B2 24     LDA  ($24)
- A8B8  20 25 E4  JSR  $E425
+ A8B8  20 21 E4  JSR  $E421
  A8BB  E6 24     INC  $24
  A8BD  D0 02     BNE  $A8C1
  A8BF  E6 25     INC  $25
@@ -5286,7 +5286,7 @@
  A8CD  E8        INX  
  A8CE  E8        INX  
  A8CF  60        RTS  
- A8D0  20 C7 E5  JSR  $E5C7
+ A8D0  20 C3 E5  JSR  $E5C3
  A8D3  60        RTS  
  A8D4  A9 69     LDA  #$69
  A8D6  4C 2F AC  JMP  $AC2F
@@ -7441,7 +7441,7 @@
  E02E  A2 00     LDX  #$00
  E030  BD 3B E0  LDA  $E03B, X
  E033  F0 1A     BEQ  $E04F
- E035  20 02 E7  JSR  $E702
+ E035  20 FF E6  JSR  $E6FF
  E038  E8        INX  
  E039  80 F5     BRA  $E030
  E03B  44 65 74 65 63 74 69 6E 67 20 6B 65 79 62 6F 61  |Detecting keyboa|
@@ -7513,7 +7513,7 @@
  E0D3  A2 00     LDX  #$00
  E0D5  BD E0 E0  LDA  $E0E0, X
  E0D8  F0 C4     BEQ  $E09E
- E0DA  20 02 E7  JSR  $E702
+ E0DA  20 FF E6  JSR  $E6FF
  E0DD  E8        INX  
  E0DE  80 F5     BRA  $E0D5
  E0E0  4E 6F 20 6B 65 79 62 6F 61 72 64 20 63 6F 6E 6E  |No keyboard conn|
@@ -7570,970 +7570,969 @@
  E159  CA        DEX  
  E15A  D0 FA     BNE  $E156
  E15C  FA        PLX  
- E15D  64 90     STZ  $90
- E15F  64 8F     STZ  $8F
- E161  60        RTS  
- E162  48        PHA  
- E163  DA        PHX  
- E164  A5 8C     LDA  $8C
- E166  D0 21     BNE  $E189
- E168  A5 8D     LDA  $8D
- E16A  C9 00     CMP  #$00
- E16C  F0 0F     BEQ  $E17D
- E16E  C9 01     CMP  #$01
- E170  F0 1A     BEQ  $E18C
- E172  C9 02     CMP  #$02
- E174  F0 31     BEQ  $E1A7
- E176  C9 03     CMP  #$03
- E178  F0 33     BEQ  $E1AD
- E17A  4C E4 E1  JMP  $E1E4
- E17D  A9 01     LDA  #$01
- E17F  85 8D     STA  $8D
- E181  A9 00     LDA  #$00
- E183  85 8E     STA  $8E
- E185  85 92     STA  $92
- E187  80 5B     BRA  $E1E4
- E189  4C 19 E2  JMP  $E219
- E18C  AD 80 FF  LDA  $FF80
- E18F  29 80     AND  #$80
- E191  05 8E     ORA  $8E
- E193  85 8E     STA  $8E
- E195  E6 92     INC  $92
- E197  A5 92     LDA  $92
- E199  C9 08     CMP  #$08
- E19B  F0 04     BEQ  $E1A1
- E19D  46 8E     LSR  $8E
- E19F  80 43     BRA  $E1E4
- E1A1  A9 02     LDA  #$02
- E1A3  85 8D     STA  $8D
- E1A5  80 3D     BRA  $E1E4
- E1A7  A9 03     LDA  #$03
- E1A9  85 8D     STA  $8D
- E1AB  80 37     BRA  $E1E4
- E1AD  A9 00     LDA  #$00
- E1AF  85 8D     STA  $8D
- E1B1  A5 96     LDA  $96
- E1B3  D0 42     BNE  $E1F7
- E1B5  A6 8E     LDX  $8E
- E1B7  E0 AA     CPX  #$AA
- E1B9  F0 32     BEQ  $E1ED
- E1BB  E0 FA     CPX  #$FA
+ E15D  60        RTS  
+ E15E  48        PHA  
+ E15F  DA        PHX  
+ E160  A5 8C     LDA  $8C
+ E162  D0 21     BNE  $E185
+ E164  A5 8D     LDA  $8D
+ E166  C9 00     CMP  #$00
+ E168  F0 0F     BEQ  $E179
+ E16A  C9 01     CMP  #$01
+ E16C  F0 1A     BEQ  $E188
+ E16E  C9 02     CMP  #$02
+ E170  F0 31     BEQ  $E1A3
+ E172  C9 03     CMP  #$03
+ E174  F0 33     BEQ  $E1A9
+ E176  4C E0 E1  JMP  $E1E0
+ E179  A9 01     LDA  #$01
+ E17B  85 8D     STA  $8D
+ E17D  A9 00     LDA  #$00
+ E17F  85 8E     STA  $8E
+ E181  85 92     STA  $92
+ E183  80 5B     BRA  $E1E0
+ E185  4C 15 E2  JMP  $E215
+ E188  AD 80 FF  LDA  $FF80
+ E18B  29 80     AND  #$80
+ E18D  05 8E     ORA  $8E
+ E18F  85 8E     STA  $8E
+ E191  E6 92     INC  $92
+ E193  A5 92     LDA  $92
+ E195  C9 08     CMP  #$08
+ E197  F0 04     BEQ  $E19D
+ E199  46 8E     LSR  $8E
+ E19B  80 43     BRA  $E1E0
+ E19D  A9 02     LDA  #$02
+ E19F  85 8D     STA  $8D
+ E1A1  80 3D     BRA  $E1E0
+ E1A3  A9 03     LDA  #$03
+ E1A5  85 8D     STA  $8D
+ E1A7  80 37     BRA  $E1E0
+ E1A9  A9 00     LDA  #$00
+ E1AB  85 8D     STA  $8D
+ E1AD  A5 96     LDA  $96
+ E1AF  D0 42     BNE  $E1F3
+ E1B1  A6 8E     LDX  $8E
+ E1B3  E0 AA     CPX  #$AA
+ E1B5  F0 32     BEQ  $E1E9
+ E1B7  E0 FA     CPX  #$FA
+ E1B9  F0 2E     BEQ  $E1E9
+ E1BB  E0 F0     CPX  #$F0
  E1BD  F0 2E     BEQ  $E1ED
- E1BF  E0 F0     CPX  #$F0
- E1C1  F0 2E     BEQ  $E1F1
- E1C3  E0 12     CPX  #$12
- E1C5  F0 4A     BEQ  $E211
- E1C7  E0 59     CPX  #$59
- E1C9  F0 46     BEQ  $E211
- E1CB  A5 97     LDA  $97
- E1CD  29 01     AND  #$01
- E1CF  D0 09     BNE  $E1DA
- E1D1  BD 8C E2  LDA  $E28C, X
- E1D4  C9 1B     CMP  #$1B
- E1D6  F0 12     BEQ  $E1EA
- E1D8  80 03     BRA  $E1DD
- E1DA  BD 0C E3  LDA  $E30C, X
- E1DD  A6 8F     LDX  $8F
- E1DF  9D 01 7B  STA  $7B01, X
- E1E2  E6 8F     INC  $8F
- E1E4  2C 80 FF  BIT  $FF80
- E1E7  FA        PLX  
- E1E8  68        PLA  
- E1E9  60        RTS  
- E1EA  4C 71 E6  JMP  $E671
- E1ED  86 95     STX  $95
- E1EF  80 F3     BRA  $E1E4
- E1F1  A9 01     LDA  #$01
- E1F3  85 96     STA  $96
- E1F5  80 ED     BRA  $E1E4
- E1F7  A6 8E     LDX  $8E
- E1F9  E0 12     CPX  #$12
- E1FB  F0 0A     BEQ  $E207
- E1FD  E0 59     CPX  #$59
- E1FF  F0 06     BEQ  $E207
- E201  A9 00     LDA  #$00
- E203  85 96     STA  $96
- E205  80 DD     BRA  $E1E4
+ E1BF  E0 12     CPX  #$12
+ E1C1  F0 4A     BEQ  $E20D
+ E1C3  E0 59     CPX  #$59
+ E1C5  F0 46     BEQ  $E20D
+ E1C7  A5 97     LDA  $97
+ E1C9  29 01     AND  #$01
+ E1CB  D0 09     BNE  $E1D6
+ E1CD  BD 88 E2  LDA  $E288, X
+ E1D0  C9 1B     CMP  #$1B
+ E1D2  F0 12     BEQ  $E1E6
+ E1D4  80 03     BRA  $E1D9
+ E1D6  BD 08 E3  LDA  $E308, X
+ E1D9  A6 8F     LDX  $8F
+ E1DB  9D 01 7B  STA  $7B01, X
+ E1DE  E6 8F     INC  $8F
+ E1E0  2C 80 FF  BIT  $FF80
+ E1E3  FA        PLX  
+ E1E4  68        PLA  
+ E1E5  60        RTS  
+ E1E6  4C 6D E6  JMP  $E66D
+ E1E9  86 95     STX  $95
+ E1EB  80 F3     BRA  $E1E0
+ E1ED  A9 01     LDA  #$01
+ E1EF  85 96     STA  $96
+ E1F1  80 ED     BRA  $E1E0
+ E1F3  A6 8E     LDX  $8E
+ E1F5  E0 12     CPX  #$12
+ E1F7  F0 0A     BEQ  $E203
+ E1F9  E0 59     CPX  #$59
+ E1FB  F0 06     BEQ  $E203
+ E1FD  A9 00     LDA  #$00
+ E1FF  85 96     STA  $96
+ E201  80 DD     BRA  $E1E0
+ E203  A9 00     LDA  #$00
+ E205  85 96     STA  $96
  E207  A9 00     LDA  #$00
- E209  85 96     STA  $96
- E20B  A9 00     LDA  #$00
- E20D  85 97     STA  $97
- E20F  80 D3     BRA  $E1E4
- E211  A5 97     LDA  $97
- E213  09 01     ORA  #$01
- E215  85 97     STA  $97
- E217  80 CB     BRA  $E1E4
- E219  A5 8D     LDA  $8D
- E21B  C9 01     CMP  #$01
- E21D  F0 0A     BEQ  $E229
- E21F  C9 02     CMP  #$02
- E221  F0 2E     BEQ  $E251
- E223  C9 03     CMP  #$03
- E225  F0 4E     BEQ  $E275
- E227  80 BB     BRA  $E1E4
- E229  A5 8C     LDA  $8C
- E22B  29 01     AND  #$01
- E22D  F0 0C     BEQ  $E23B
- E22F  AD 80 FF  LDA  $FF80
- E232  09 80     ORA  #$80
- E234  8D 80 FF  STA  $FF80
- E237  E6 91     INC  $91
- E239  80 08     BRA  $E243
- E23B  AD 80 FF  LDA  $FF80
- E23E  29 7F     AND  #$7F
- E240  8D 80 FF  STA  $FF80
- E243  E6 92     INC  $92
- E245  A5 92     LDA  $92
- E247  C9 08     CMP  #$08
- E249  4C A1 E1  JMP  $E1A1
- E24C  46 8C     LSR  $8C
- E24E  18        CLC  
- E24F  80 93     BRA  $E1E4
- E251  A5 91     LDA  $91
- E253  29 01     AND  #$01
- E255  F0 0F     BEQ  $E266
- E257  AD 80 FF  LDA  $FF80
- E25A  09 80     ORA  #$80
- E25C  8D 80 FF  STA  $FF80
- E25F  A9 03     LDA  #$03
- E261  85 8D     STA  $8D
- E263  4C E4 E1  JMP  $E1E4
- E266  AD 80 FF  LDA  $FF80
- E269  29 7F     AND  #$7F
- E26B  8D 80 FF  STA  $FF80
- E26E  A9 03     LDA  #$03
- E270  85 8D     STA  $8D
- E272  4C E4 E1  JMP  $E1E4
+ E209  85 97     STA  $97
+ E20B  80 D3     BRA  $E1E0
+ E20D  A5 97     LDA  $97
+ E20F  09 01     ORA  #$01
+ E211  85 97     STA  $97
+ E213  80 CB     BRA  $E1E0
+ E215  A5 8D     LDA  $8D
+ E217  C9 01     CMP  #$01
+ E219  F0 0A     BEQ  $E225
+ E21B  C9 02     CMP  #$02
+ E21D  F0 2E     BEQ  $E24D
+ E21F  C9 03     CMP  #$03
+ E221  F0 4E     BEQ  $E271
+ E223  80 BB     BRA  $E1E0
+ E225  A5 8C     LDA  $8C
+ E227  29 01     AND  #$01
+ E229  F0 0C     BEQ  $E237
+ E22B  AD 80 FF  LDA  $FF80
+ E22E  09 80     ORA  #$80
+ E230  8D 80 FF  STA  $FF80
+ E233  E6 91     INC  $91
+ E235  80 08     BRA  $E23F
+ E237  AD 80 FF  LDA  $FF80
+ E23A  29 7F     AND  #$7F
+ E23C  8D 80 FF  STA  $FF80
+ E23F  E6 92     INC  $92
+ E241  A5 92     LDA  $92
+ E243  C9 08     CMP  #$08
+ E245  4C 9D E1  JMP  $E19D
+ E248  46 8C     LSR  $8C
+ E24A  18        CLC  
+ E24B  80 93     BRA  $E1E0
+ E24D  A5 91     LDA  $91
+ E24F  29 01     AND  #$01
+ E251  F0 0F     BEQ  $E262
+ E253  AD 80 FF  LDA  $FF80
+ E256  09 80     ORA  #$80
+ E258  8D 80 FF  STA  $FF80
+ E25B  A9 03     LDA  #$03
+ E25D  85 8D     STA  $8D
+ E25F  4C E0 E1  JMP  $E1E0
+ E262  AD 80 FF  LDA  $FF80
+ E265  29 7F     AND  #$7F
+ E267  8D 80 FF  STA  $FF80
+ E26A  A9 03     LDA  #$03
+ E26C  85 8D     STA  $8D
+ E26E  4C E0 E1  JMP  $E1E0
+ E271  A9 00     LDA  #$00
+ E273  85 8D     STA  $8D
  E275  A9 00     LDA  #$00
- E277  85 8D     STA  $8D
- E279  A9 00     LDA  #$00
- E27B  85 8C     STA  $8C
- E27D  85 92     STA  $92
- E27F  85 91     STA  $91
- E281  AD 82 FF  LDA  $FF82
- E284  29 7F     AND  #$7F
- E286  8D 82 FF  STA  $FF82
- E289  4C E4 E1  JMP  $E1E4
- E28C  00 89 87 85 83 81 82 8C 00 8A 88 86 84 09 60 8F  |..............`.|
- E29C  03 A0 00 E0 00 71 31 00 00 00 7A 73 61 77 32 A1  |.....q1...zsaw2.|
- E2AC  02 63 78 64 65 34 33 A2 00 20 76 66 74 72 35 A3  |.cxde43.. vftr5.|
- E2BC  00 6E 62 68 67 79 36 00 00 00 6D 6A 75 37 38 00  |.nbhgy6...mju78.|
- E2CC  00 2C 6B 69 6F 30 39 00 00 2E 2F 6C 3B 70 2D 00  |.,kio09.../l;p-.|
- E2DC  00 00 27 00 5B 3D 00 00 00 00 0D 5D 00 5C 00 00  |..'.[=.....].\..|
- E2EC  00 00 00 00 00 00 08 00 00 31 2F 34 37 00 00 00  |.........1/47...|
- E2FC  30 2E 32 35 36 38 1B 00 8B 2B 33 2D 2A 39 8D 00  |0.2568...+3-*9..|
- E30C  00 C9 C7 C5 C3 C1 C2 CC 00 CA C8 C6 C4 09 7E CF  |..............~.|
- E31C  03 A0 00 E0 00 51 21 00 00 00 5A 53 41 57 40 E1  |.....Q!...ZSAW@.|
- E32C  02 43 58 44 45 24 23 E2 00 20 56 46 54 52 25 E3  |.CXDE$#.. VFTR%.|
- E33C  00 4E 42 48 47 59 5E 00 00 00 4D 4A 55 26 2A 00  |.NBHGY^...MJU&*.|
- E34C  00 3C 4B 49 4F 29 28 00 00 3E 3F 4C 3A 50 5F 00  |.<KIO)(..>?L:P_.|
- E35C  00 00 22 00 7B 2B 00 00 00 00 0D 7D 00 7C 00 00  |..".{+.....}.|..|
- E36C  00 00 00 00 00 00 08 00 00 91 2F 94 97 00 00 00  |........../.....|
- E37C  90 7F 92 95 96 98 1B 00 CB 2B 93 2D 2A 99 CD     |.........+.-*.. |
- E38B  AD 8E FF  LDA  $FF8E
- E38E  09 C0     ORA  #$C0
- E390  8D 8E FF  STA  $FF8E
- E393  A9 40     LDA  #$40
- E395  8D 8B FF  STA  $FF8B
- E398  A9 60     LDA  #$60
- E39A  8D 84 FF  STA  $FF84
- E39D  A9 EA     LDA  #$EA
- E39F  8D 85 FF  STA  $FF85
- E3A2  A9 00     LDA  #$00
- E3A4  85 82     STA  $82
- E3A6  85 83     STA  $83
- E3A8  85 84     STA  $84
- E3AA  85 85     STA  $85
- E3AC  58        CLI  
- E3AD  60        RTS  
- E3AE  E6 82     INC  $82
- E3B0  F0 04     BEQ  $E3B6
- E3B2  20 28 E1  JSR  $E128
- E3B5  60        RTS  
- E3B6  E6 83     INC  $83
- E3B8  F0 02     BEQ  $E3BC
- E3BA  80 F6     BRA  $E3B2
- E3BC  E6 84     INC  $84
- E3BE  F0 02     BEQ  $E3C2
- E3C0  80 F0     BRA  $E3B2
- E3C2  E6 85     INC  $85
- E3C4  80 EC     BRA  $E3B2
- E3C6  20 25 E5  JSR  $E525
- E3C9  A9 00     LDA  #$00
- E3CB  85 9F     STA  $9F
- E3CD  85 9B     STA  $9B
- E3CF  85 9C     STA  $9C
- E3D1  85 A0     STA  $A0
- E3D3  A0 FF     LDY  #$FF
- E3D5  20 00 E0  JSR  $E000
- E3D8  A9 38     LDA  #$38
- E3DA  20 01 E4  JSR  $E401
- E3DD  A0 FF     LDY  #$FF
- E3DF  20 00 E0  JSR  $E000
- E3E2  A9 0F     LDA  #$0F
- E3E4  20 01 E4  JSR  $E401
- E3E7  A9 06     LDA  #$06
- E3E9  20 01 E4  JSR  $E401
- E3EC  A9 01     LDA  #$01
- E3EE  20 01 E4  JSR  $E401
- E3F1  A0 FF     LDY  #$FF
- E3F3  20 00 E0  JSR  $E000
- E3F6  A9 80     LDA  #$80
- E3F8  20 01 E4  JSR  $E401
- E3FB  A0 FF     LDY  #$FF
- E3FD  20 00 E0  JSR  $E000
- E400  60        RTS  
- E401  5A        PHY  
- E402  8D D1 FF  STA  $FFD1
- E405  A0 02     LDY  #$02
- E407  20 20 E0  JSR  $E020
- E40A  8D D0 FF  STA  $FFD0
- E40D  A0 20     LDY  #$20
- E40F  20 20 E0  JSR  $E020
- E412  7A        PLY  
- E413  60        RTS  
- E414  8D D3 FF  STA  $FFD3
- E417  A0 02     LDY  #$02
- E419  20 20 E0  JSR  $E020
- E41C  8D D2 FF  STA  $FFD2
- E41F  A0 20     LDY  #$20
- E421  20 20 E0  JSR  $E020
- E424  60        RTS  
- E425  5A        PHY  
- E426  DA        PHX  
- E427  48        PHA  
- E428  C9 0A     CMP  #$0A
- E42A  F0 67     BEQ  $E493
- E42C  C9 0D     CMP  #$0D
- E42E  F0 63     BEQ  $E493
- E430  C9 08     CMP  #$08
- E432  F0 1F     BEQ  $E453
- E434  20 14 E4  JSR  $E414
- E437  A6 A0     LDX  $A0
- E439  9D 82 7A  STA  $7A82, X
- E43C  E8        INX  
- E43D  86 A0     STX  $A0
- E43F  E0 14     CPX  #$14
- E441  F0 2A     BEQ  $E46D
- E443  E0 28     CPX  #$28
- E445  F0 31     BEQ  $E478
- E447  E0 3C     CPX  #$3C
- E449  F0 38     BEQ  $E483
- E44B  E0 50     CPX  #$50
- E44D  F0 3F     BEQ  $E48E
- E44F  68        PLA  
- E450  FA        PLX  
- E451  7A        PLY  
- E452  60        RTS  
- E453  A9 10     LDA  #$10
- E455  20 01 E4  JSR  $E401
- E458  A9 20     LDA  #$20
- E45A  20 14 E4  JSR  $E414
- E45D  A9 10     LDA  #$10
- E45F  20 01 E4  JSR  $E401
- E462  C6 A0     DEC  $A0
- E464  A6 A0     LDX  $A0
- E466  A9 20     LDA  #$20
- E468  9D 82 7A  STA  $7A82, X
- E46B  80 E2     BRA  $E44F
- E46D  A9 14     LDA  #$14
- E46F  85 A0     STA  $A0
- E471  A9 C0     LDA  #$C0
- E473  20 01 E4  JSR  $E401
- E476  80 D7     BRA  $E44F
- E478  A9 28     LDA  #$28
- E47A  85 A0     STA  $A0
- E47C  A9 94     LDA  #$94
- E47E  20 01 E4  JSR  $E401
- E481  80 CC     BRA  $E44F
- E483  A9 3C     LDA  #$3C
- E485  85 A0     STA  $A0
- E487  A9 D4     LDA  #$D4
- E489  20 01 E4  JSR  $E401
- E48C  80 C1     BRA  $E44F
- E48E  20 B2 E4  JSR  $E4B2
- E491  80 BC     BRA  $E44F
- E493  A6 A0     LDX  $A0
- E495  E0 50     CPX  #$50
- E497  F0 F5     BEQ  $E48E
- E499  E0 3C     CPX  #$3C
- E49B  F0 E6     BEQ  $E483
- E49D  E0 28     CPX  #$28
- E49F  F0 D7     BEQ  $E478
- E4A1  E0 14     CPX  #$14
- E4A3  F0 C8     BEQ  $E46D
- E4A5  E8        INX  
- E4A6  86 A0     STX  $A0
- E4A8  A9 20     LDA  #$20
- E4AA  20 14 E4  JSR  $E414
- E4AD  9D 82 7A  STA  $7A82, X
- E4B0  80 E1     BRA  $E493
- E4B2  48        PHA  
- E4B3  5A        PHY  
- E4B4  DA        PHX  
- E4B5  A9 80     LDA  #$80
- E4B7  20 01 E4  JSR  $E401
- E4BA  A2 14     LDX  #$14
- E4BC  BD 82 7A  LDA  $7A82, X
- E4BF  20 14 E4  JSR  $E414
- E4C2  A8        TAY  
- E4C3  E0 4F     CPX  #$4F
- E4C5  F0 4A     BEQ  $E511
- E4C7  E0 3B     CPX  #$3B
- E4C9  F0 3F     BEQ  $E50A
- E4CB  E0 27     CPX  #$27
- E4CD  F0 34     BEQ  $E503
- E4CF  8A        TXA  
- E4D0  38        SEC  
- E4D1  E9 14     SBC  #$14
- E4D3  AA        TAX  
- E4D4  98        TYA  
- E4D5  9D 82 7A  STA  $7A82, X
- E4D8  8A        TXA  
- E4D9  18        CLC  
- E4DA  69 14     ADC  #$14
- E4DC  AA        TAX  
- E4DD  E8        INX  
- E4DE  E0 50     CPX  #$50
- E4E0  90 DA     BCC  $E4BC
- E4E2  A9 D4     LDA  #$D4
- E4E4  20 01 E4  JSR  $E401
- E4E7  A9 20     LDA  #$20
- E4E9  A2 3C     LDX  #$3C
- E4EB  9D 82 7A  STA  $7A82, X
- E4EE  20 14 E4  JSR  $E414
- E4F1  E8        INX  
- E4F2  E0 50     CPX  #$50
- E4F4  90 F5     BCC  $E4EB
- E4F6  A9 3C     LDA  #$3C
- E4F8  85 A0     STA  $A0
- E4FA  A9 D4     LDA  #$D4
- E4FC  20 01 E4  JSR  $E401
- E4FF  FA        PLX  
- E500  7A        PLY  
- E501  68        PLA  
- E502  60        RTS  
- E503  A9 C0     LDA  #$C0
- E505  20 01 E4  JSR  $E401
- E508  80 C5     BRA  $E4CF
- E50A  A9 94     LDA  #$94
- E50C  20 01 E4  JSR  $E401
- E50F  80 BE     BRA  $E4CF
- E511  A9 D4     LDA  #$D4
- E513  20 01 E4  JSR  $E401
- E516  80 B7     BRA  $E4CF
- E518  48        PHA  
- E519  A9 01     LDA  #$01
- E51B  20 01 E4  JSR  $E401
- E51E  A9 80     LDA  #$80
- E520  20 01 E4  JSR  $E401
- E523  68        PLA  
- E524  60        RTS  
- E525  48        PHA  
- E526  DA        PHX  
- E527  A2 80     LDX  #$80
- E529  A9 20     LDA  #$20
- E52B  9D 82 7A  STA  $7A82, X
- E52E  CA        DEX  
- E52F  D0 FA     BNE  $E52B
- E531  FA        PLX  
- E532  68        PLA  
- E533  60        RTS  
- E534  A9 05     LDA  #$05
- E536  8D B0 FF  STA  $FFB0
- E539  A9 1E     LDA  #$1E
- E53B  8D B1 FF  STA  $FFB1
- E53E  A9 FF     LDA  #$FF
- E540  8D B2 FF  STA  $FFB2
- E543  A9 00     LDA  #$00
- E545  8D B3 FF  STA  $FFB3
- E548  A9 F0     LDA  #$F0
- E54A  8D B3 FF  STA  $FFB3
- E54D  A9 00     LDA  #$00
- E54F  8D B4 FF  STA  $FFB4
- E552  8D B1 FF  STA  $FFB1
- E555  8D B2 FF  STA  $FFB2
- E558  20 C7 E5  JSR  $E5C7
- E55B  60        RTS  
- E55C  48        PHA  
- E55D  DA        PHX  
- E55E  5A        PHY  
- E55F  C9 0D     CMP  #$0D
- E561  F0 34     BEQ  $E597
- E563  C9 0A     CMP  #$0A
- E565  F0 30     BEQ  $E597
- E567  C9 08     CMP  #$08
- E569  F0 0F     BEQ  $E57A
- E56B  8D B3 FF  STA  $FFB3
- E56E  E6 9E     INC  $9E
- E570  A6 9E     LDX  $9E
- E572  E0 64     CPX  #$64
- E574  F0 21     BEQ  $E597
- E576  7A        PLY  
- E577  FA        PLX  
- E578  68        PLA  
- E579  60        RTS  
- E57A  C6 9E     DEC  $9E
- E57C  A9 85     LDA  #$85
- E57E  8D B0 FF  STA  $FFB0
- E581  A9 20     LDA  #$20
- E583  8D B3 FF  STA  $FFB3
- E586  A9 01     LDA  #$01
- E588  8D B0 FF  STA  $FFB0
- E58B  A9 20     LDA  #$20
- E58D  8D B3 FF  STA  $FFB3
- E590  A9 05     LDA  #$05
- E592  8D B0 FF  STA  $FFB0
- E595  80 DF     BRA  $E576
- E597  E6 9D     INC  $9D
- E599  64 9E     STZ  $9E
- E59B  A6 9D     LDX  $9D
- E59D  E0 4B     CPX  #$4B
- E59F  90 05     BCC  $E5A6
- E5A1  20 B4 E5  JSR  $E5B4
- E5A4  80 D0     BRA  $E576
- E5A6  BD F7 E5  LDA  $E5F7, X
- E5A9  8D B2 FF  STA  $FFB2
- E5AC  BD 34 E6  LDA  $E634, X
- E5AF  8D B1 FF  STA  $FFB1
- E5B2  80 C2     BRA  $E576
- E5B4  20 C7 E5  JSR  $E5C7
- E5B7  60        RTS  
- E5B8  48        PHA  
- E5B9  A9 00     LDA  #$00
- E5BB  8D B2 FF  STA  $FFB2
- E5BE  8D B1 FF  STA  $FFB1
- E5C1  85 9E     STA  $9E
- E5C3  85 9D     STA  $9D
- E5C5  68        PLA  
- E5C6  60        RTS  
- E5C7  48        PHA  
- E5C8  DA        PHX  
- E5C9  5A        PHY  
+ E277  85 8C     STA  $8C
+ E279  85 92     STA  $92
+ E27B  85 91     STA  $91
+ E27D  AD 82 FF  LDA  $FF82
+ E280  29 7F     AND  #$7F
+ E282  8D 82 FF  STA  $FF82
+ E285  4C E0 E1  JMP  $E1E0
+ E288  00 89 87 85 83 81 82 8C 00 8A 88 86 84 09 60 8F  |..............`.|
+ E298  03 A0 00 E0 00 71 31 00 00 00 7A 73 61 77 32 A1  |.....q1...zsaw2.|
+ E2A8  02 63 78 64 65 34 33 A2 00 20 76 66 74 72 35 A3  |.cxde43.. vftr5.|
+ E2B8  00 6E 62 68 67 79 36 00 00 00 6D 6A 75 37 38 00  |.nbhgy6...mju78.|
+ E2C8  00 2C 6B 69 6F 30 39 00 00 2E 2F 6C 3B 70 2D 00  |.,kio09.../l;p-.|
+ E2D8  00 00 27 00 5B 3D 00 00 00 00 0D 5D 00 5C 00 00  |..'.[=.....].\..|
+ E2E8  00 00 00 00 00 00 08 00 00 31 2F 34 37 00 00 00  |.........1/47...|
+ E2F8  30 2E 32 35 36 38 1B 00 8B 2B 33 2D 2A 39 8D 00  |0.2568...+3-*9..|
+ E308  00 C9 C7 C5 C3 C1 C2 CC 00 CA C8 C6 C4 09 7E CF  |..............~.|
+ E318  03 A0 00 E0 00 51 21 00 00 00 5A 53 41 57 40 E1  |.....Q!...ZSAW@.|
+ E328  02 43 58 44 45 24 23 E2 00 20 56 46 54 52 25 E3  |.CXDE$#.. VFTR%.|
+ E338  00 4E 42 48 47 59 5E 00 00 00 4D 4A 55 26 2A 00  |.NBHGY^...MJU&*.|
+ E348  00 3C 4B 49 4F 29 28 00 00 3E 3F 4C 3A 50 5F 00  |.<KIO)(..>?L:P_.|
+ E358  00 00 22 00 7B 2B 00 00 00 00 0D 7D 00 7C 00 00  |..".{+.....}.|..|
+ E368  00 00 00 00 00 00 08 00 00 91 2F 94 97 00 00 00  |........../.....|
+ E378  90 7F 92 95 96 98 1B 00 CB 2B 93 2D 2A 99 CD     |.........+.-*.. |
+ E387  AD 8E FF  LDA  $FF8E
+ E38A  09 C0     ORA  #$C0
+ E38C  8D 8E FF  STA  $FF8E
+ E38F  A9 40     LDA  #$40
+ E391  8D 8B FF  STA  $FF8B
+ E394  A9 60     LDA  #$60
+ E396  8D 84 FF  STA  $FF84
+ E399  A9 EA     LDA  #$EA
+ E39B  8D 85 FF  STA  $FF85
+ E39E  A9 00     LDA  #$00
+ E3A0  85 82     STA  $82
+ E3A2  85 83     STA  $83
+ E3A4  85 84     STA  $84
+ E3A6  85 85     STA  $85
+ E3A8  58        CLI  
+ E3A9  60        RTS  
+ E3AA  E6 82     INC  $82
+ E3AC  F0 04     BEQ  $E3B2
+ E3AE  20 28 E1  JSR  $E128
+ E3B1  60        RTS  
+ E3B2  E6 83     INC  $83
+ E3B4  F0 02     BEQ  $E3B8
+ E3B6  80 F6     BRA  $E3AE
+ E3B8  E6 84     INC  $84
+ E3BA  F0 02     BEQ  $E3BE
+ E3BC  80 F0     BRA  $E3AE
+ E3BE  E6 85     INC  $85
+ E3C0  80 EC     BRA  $E3AE
+ E3C2  20 21 E5  JSR  $E521
+ E3C5  A9 00     LDA  #$00
+ E3C7  85 9F     STA  $9F
+ E3C9  85 9B     STA  $9B
+ E3CB  85 9C     STA  $9C
+ E3CD  85 A0     STA  $A0
+ E3CF  A0 FF     LDY  #$FF
+ E3D1  20 00 E0  JSR  $E000
+ E3D4  A9 38     LDA  #$38
+ E3D6  20 FD E3  JSR  $E3FD
+ E3D9  A0 FF     LDY  #$FF
+ E3DB  20 00 E0  JSR  $E000
+ E3DE  A9 0F     LDA  #$0F
+ E3E0  20 FD E3  JSR  $E3FD
+ E3E3  A9 06     LDA  #$06
+ E3E5  20 FD E3  JSR  $E3FD
+ E3E8  A9 01     LDA  #$01
+ E3EA  20 FD E3  JSR  $E3FD
+ E3ED  A0 FF     LDY  #$FF
+ E3EF  20 00 E0  JSR  $E000
+ E3F2  A9 80     LDA  #$80
+ E3F4  20 FD E3  JSR  $E3FD
+ E3F7  A0 FF     LDY  #$FF
+ E3F9  20 00 E0  JSR  $E000
+ E3FC  60        RTS  
+ E3FD  5A        PHY  
+ E3FE  8D D1 FF  STA  $FFD1
+ E401  A0 02     LDY  #$02
+ E403  20 20 E0  JSR  $E020
+ E406  8D D0 FF  STA  $FFD0
+ E409  A0 20     LDY  #$20
+ E40B  20 20 E0  JSR  $E020
+ E40E  7A        PLY  
+ E40F  60        RTS  
+ E410  8D D3 FF  STA  $FFD3
+ E413  A0 02     LDY  #$02
+ E415  20 20 E0  JSR  $E020
+ E418  8D D2 FF  STA  $FFD2
+ E41B  A0 20     LDY  #$20
+ E41D  20 20 E0  JSR  $E020
+ E420  60        RTS  
+ E421  5A        PHY  
+ E422  DA        PHX  
+ E423  48        PHA  
+ E424  C9 0A     CMP  #$0A
+ E426  F0 67     BEQ  $E48F
+ E428  C9 0D     CMP  #$0D
+ E42A  F0 63     BEQ  $E48F
+ E42C  C9 08     CMP  #$08
+ E42E  F0 1F     BEQ  $E44F
+ E430  20 10 E4  JSR  $E410
+ E433  A6 A0     LDX  $A0
+ E435  9D 82 7A  STA  $7A82, X
+ E438  E8        INX  
+ E439  86 A0     STX  $A0
+ E43B  E0 14     CPX  #$14
+ E43D  F0 2A     BEQ  $E469
+ E43F  E0 28     CPX  #$28
+ E441  F0 31     BEQ  $E474
+ E443  E0 3C     CPX  #$3C
+ E445  F0 38     BEQ  $E47F
+ E447  E0 50     CPX  #$50
+ E449  F0 3F     BEQ  $E48A
+ E44B  68        PLA  
+ E44C  FA        PLX  
+ E44D  7A        PLY  
+ E44E  60        RTS  
+ E44F  A9 10     LDA  #$10
+ E451  20 FD E3  JSR  $E3FD
+ E454  A9 20     LDA  #$20
+ E456  20 10 E4  JSR  $E410
+ E459  A9 10     LDA  #$10
+ E45B  20 FD E3  JSR  $E3FD
+ E45E  C6 A0     DEC  $A0
+ E460  A6 A0     LDX  $A0
+ E462  A9 20     LDA  #$20
+ E464  9D 82 7A  STA  $7A82, X
+ E467  80 E2     BRA  $E44B
+ E469  A9 14     LDA  #$14
+ E46B  85 A0     STA  $A0
+ E46D  A9 C0     LDA  #$C0
+ E46F  20 FD E3  JSR  $E3FD
+ E472  80 D7     BRA  $E44B
+ E474  A9 28     LDA  #$28
+ E476  85 A0     STA  $A0
+ E478  A9 94     LDA  #$94
+ E47A  20 FD E3  JSR  $E3FD
+ E47D  80 CC     BRA  $E44B
+ E47F  A9 3C     LDA  #$3C
+ E481  85 A0     STA  $A0
+ E483  A9 D4     LDA  #$D4
+ E485  20 FD E3  JSR  $E3FD
+ E488  80 C1     BRA  $E44B
+ E48A  20 AE E4  JSR  $E4AE
+ E48D  80 BC     BRA  $E44B
+ E48F  A6 A0     LDX  $A0
+ E491  E0 50     CPX  #$50
+ E493  F0 F5     BEQ  $E48A
+ E495  E0 3C     CPX  #$3C
+ E497  F0 E6     BEQ  $E47F
+ E499  E0 28     CPX  #$28
+ E49B  F0 D7     BEQ  $E474
+ E49D  E0 14     CPX  #$14
+ E49F  F0 C8     BEQ  $E469
+ E4A1  E8        INX  
+ E4A2  86 A0     STX  $A0
+ E4A4  A9 20     LDA  #$20
+ E4A6  20 10 E4  JSR  $E410
+ E4A9  9D 82 7A  STA  $7A82, X
+ E4AC  80 E1     BRA  $E48F
+ E4AE  48        PHA  
+ E4AF  5A        PHY  
+ E4B0  DA        PHX  
+ E4B1  A9 80     LDA  #$80
+ E4B3  20 FD E3  JSR  $E3FD
+ E4B6  A2 14     LDX  #$14
+ E4B8  BD 82 7A  LDA  $7A82, X
+ E4BB  20 10 E4  JSR  $E410
+ E4BE  A8        TAY  
+ E4BF  E0 4F     CPX  #$4F
+ E4C1  F0 4A     BEQ  $E50D
+ E4C3  E0 3B     CPX  #$3B
+ E4C5  F0 3F     BEQ  $E506
+ E4C7  E0 27     CPX  #$27
+ E4C9  F0 34     BEQ  $E4FF
+ E4CB  8A        TXA  
+ E4CC  38        SEC  
+ E4CD  E9 14     SBC  #$14
+ E4CF  AA        TAX  
+ E4D0  98        TYA  
+ E4D1  9D 82 7A  STA  $7A82, X
+ E4D4  8A        TXA  
+ E4D5  18        CLC  
+ E4D6  69 14     ADC  #$14
+ E4D8  AA        TAX  
+ E4D9  E8        INX  
+ E4DA  E0 50     CPX  #$50
+ E4DC  90 DA     BCC  $E4B8
+ E4DE  A9 D4     LDA  #$D4
+ E4E0  20 FD E3  JSR  $E3FD
+ E4E3  A9 20     LDA  #$20
+ E4E5  A2 3C     LDX  #$3C
+ E4E7  9D 82 7A  STA  $7A82, X
+ E4EA  20 10 E4  JSR  $E410
+ E4ED  E8        INX  
+ E4EE  E0 50     CPX  #$50
+ E4F0  90 F5     BCC  $E4E7
+ E4F2  A9 3C     LDA  #$3C
+ E4F4  85 A0     STA  $A0
+ E4F6  A9 D4     LDA  #$D4
+ E4F8  20 FD E3  JSR  $E3FD
+ E4FB  FA        PLX  
+ E4FC  7A        PLY  
+ E4FD  68        PLA  
+ E4FE  60        RTS  
+ E4FF  A9 C0     LDA  #$C0
+ E501  20 FD E3  JSR  $E3FD
+ E504  80 C5     BRA  $E4CB
+ E506  A9 94     LDA  #$94
+ E508  20 FD E3  JSR  $E3FD
+ E50B  80 BE     BRA  $E4CB
+ E50D  A9 D4     LDA  #$D4
+ E50F  20 FD E3  JSR  $E3FD
+ E512  80 B7     BRA  $E4CB
+ E514  48        PHA  
+ E515  A9 01     LDA  #$01
+ E517  20 FD E3  JSR  $E3FD
+ E51A  A9 80     LDA  #$80
+ E51C  20 FD E3  JSR  $E3FD
+ E51F  68        PLA  
+ E520  60        RTS  
+ E521  48        PHA  
+ E522  DA        PHX  
+ E523  A2 80     LDX  #$80
+ E525  A9 20     LDA  #$20
+ E527  9D 82 7A  STA  $7A82, X
+ E52A  CA        DEX  
+ E52B  D0 FA     BNE  $E527
+ E52D  FA        PLX  
+ E52E  68        PLA  
+ E52F  60        RTS  
+ E530  A9 05     LDA  #$05
+ E532  8D B0 FF  STA  $FFB0
+ E535  A9 1E     LDA  #$1E
+ E537  8D B1 FF  STA  $FFB1
+ E53A  A9 FF     LDA  #$FF
+ E53C  8D B2 FF  STA  $FFB2
+ E53F  A9 00     LDA  #$00
+ E541  8D B3 FF  STA  $FFB3
+ E544  A9 F0     LDA  #$F0
+ E546  8D B3 FF  STA  $FFB3
+ E549  A9 00     LDA  #$00
+ E54B  8D B4 FF  STA  $FFB4
+ E54E  8D B1 FF  STA  $FFB1
+ E551  8D B2 FF  STA  $FFB2
+ E554  20 C3 E5  JSR  $E5C3
+ E557  60        RTS  
+ E558  48        PHA  
+ E559  DA        PHX  
+ E55A  5A        PHY  
+ E55B  C9 0D     CMP  #$0D
+ E55D  F0 34     BEQ  $E593
+ E55F  C9 0A     CMP  #$0A
+ E561  F0 30     BEQ  $E593
+ E563  C9 08     CMP  #$08
+ E565  F0 0F     BEQ  $E576
+ E567  8D B3 FF  STA  $FFB3
+ E56A  E6 9E     INC  $9E
+ E56C  A6 9E     LDX  $9E
+ E56E  E0 64     CPX  #$64
+ E570  F0 21     BEQ  $E593
+ E572  7A        PLY  
+ E573  FA        PLX  
+ E574  68        PLA  
+ E575  60        RTS  
+ E576  C6 9E     DEC  $9E
+ E578  A9 85     LDA  #$85
+ E57A  8D B0 FF  STA  $FFB0
+ E57D  A9 20     LDA  #$20
+ E57F  8D B3 FF  STA  $FFB3
+ E582  A9 01     LDA  #$01
+ E584  8D B0 FF  STA  $FFB0
+ E587  A9 20     LDA  #$20
+ E589  8D B3 FF  STA  $FFB3
+ E58C  A9 05     LDA  #$05
+ E58E  8D B0 FF  STA  $FFB0
+ E591  80 DF     BRA  $E572
+ E593  E6 9D     INC  $9D
+ E595  64 9E     STZ  $9E
+ E597  A6 9D     LDX  $9D
+ E599  E0 4B     CPX  #$4B
+ E59B  90 05     BCC  $E5A2
+ E59D  20 B0 E5  JSR  $E5B0
+ E5A0  80 D0     BRA  $E572
+ E5A2  BD F3 E5  LDA  $E5F3, X
+ E5A5  8D B2 FF  STA  $FFB2
+ E5A8  BD 30 E6  LDA  $E630, X
+ E5AB  8D B1 FF  STA  $FFB1
+ E5AE  80 C2     BRA  $E572
+ E5B0  20 C3 E5  JSR  $E5C3
+ E5B3  60        RTS  
+ E5B4  48        PHA  
+ E5B5  A9 00     LDA  #$00
+ E5B7  8D B2 FF  STA  $FFB2
+ E5BA  8D B1 FF  STA  $FFB1
+ E5BD  85 9E     STA  $9E
+ E5BF  85 9D     STA  $9D
+ E5C1  68        PLA  
+ E5C2  60        RTS  
+ E5C3  48        PHA  
+ E5C4  DA        PHX  
+ E5C5  5A        PHY  
+ E5C6  A9 00     LDA  #$00
+ E5C8  85 9D     STA  $9D
  E5CA  A9 00     LDA  #$00
- E5CC  85 9D     STA  $9D
- E5CE  A9 00     LDA  #$00
- E5D0  8D B2 FF  STA  $FFB2
- E5D3  8D B1 FF  STA  $FFB1
- E5D6  A9 20     LDA  #$20
- E5D8  A0 64     LDY  #$64
- E5DA  A2 4B     LDX  #$4B
- E5DC  8D B3 FF  STA  $FFB3
- E5DF  CA        DEX  
- E5E0  D0 FA     BNE  $E5DC
- E5E2  88        DEY  
- E5E3  D0 F5     BNE  $E5DA
- E5E5  A9 00     LDA  #$00
- E5E7  85 9D     STA  $9D
- E5E9  85 9E     STA  $9E
- E5EB  A9 00     LDA  #$00
- E5ED  8D B2 FF  STA  $FFB2
- E5F0  8D B1 FF  STA  $FFB1
- E5F3  7A        PLY  
- E5F4  FA        PLX  
- E5F5  68        PLA  
- E5F6  60        RTS  
- E5F7  00 02 05 07 0A 0C 0F 11 14 16 19 1B 1E 20 23 25  |............. #%|
- E607  28 2A 2D 2F 32 34 37 39 3C 3E 41 43 46 48 4B 4D  |(*-/2479<>ACFHKM|
- E617  50 52 55 57 5A 5C 5F 61 64 66 69 6B 6E 70 73 75  |PRUWZ\_adfiknpsu|
- E627  78 7A 7D 7F 82 84 87 89 8C 8E 91 93 96 00 10 00  |xz}.............|
- E637  10 00 10 00 10 00 10 00 10 00 10 00 10 00 10 00  |................|
- E647  10 00 10 00 10 00 10 00 10 00 10 00 10 00 10 00  |................|
- E657  10 00 10 00 10 00 10 00 10 00 10 00 10 00 10 00  |................|
- E667  10 00 10 00 10 00 10 00 10 00                    |..........      |
- E671  A9 01     LDA  #$01
- E673  8D 81 FF  STA  $FF81
- E676  A9 FF     LDA  #$FF
- E678  8D 83 FF  STA  $FF83
- E67B  8D 82 FF  STA  $FF82
- E67E  A0 04     LDY  #$04
- E680  20 0F E0  JSR  $E00F
- E683  20 34 E5  JSR  $E534
- E686  20 2D E0  JSR  $E02D
- E689  20 8B E3  JSR  $E38B
- E68C  20 AA E6  JSR  $E6AA
- E68F  20 C6 E3  JSR  $E3C6
- E692  A2 00     LDX  #$00
- E694  BD 46 E7  LDA  $E746, X
- E697  F0 06     BEQ  $E69F
- E699  20 02 E7  JSR  $E702
- E69C  E8        INX  
- E69D  80 F5     BRA  $E694
- E69F  A9 01     LDA  #$01
- E6A1  8D 80 FF  STA  $FF80
- E6A4  4C 00 80  JMP  $8000
- E6A7  4C 71 E6  JMP  $E671
- E6AA  8D E1 FF  STA  $FFE1
- E6AD  64 A1     STZ  $A1
- E6AF  A9 0B     LDA  #$0B
- E6B1  8D E2 FF  STA  $FFE2
- E6B4  AD E2 FF  LDA  $FFE2
- E6B7  C9 0B     CMP  #$0B
- E6B9  D0 10     BNE  $E6CB
- E6BB  AD E1 FF  LDA  $FFE1
- E6BE  29 60     AND  #$60
- E6C0  D0 09     BNE  $E6CB
- E6C2  A9 01     LDA  #$01
- E6C4  85 A1     STA  $A1
- E6C6  A9 10     LDA  #$10
- E6C8  8D E3 FF  STA  $FFE3
- E6CB  A0 14     LDY  #$14
- E6CD  AD E1 FF  LDA  $FFE1
- E6D0  AD E0 FF  LDA  $FFE0
- E6D3  88        DEY  
- E6D4  D0 F7     BNE  $E6CD
- E6D6  60        RTS  
- E6D7  A5 A1     LDA  $A1
- E6D9  F0 0C     BEQ  $E6E7
- E6DB  AD E1 FF  LDA  $FFE1
- E6DE  29 08     AND  #$08
- E6E0  F0 05     BEQ  $E6E7
- E6E2  AD E0 FF  LDA  $FFE0
- E6E5  38        SEC  
- E6E6  60        RTS  
- E6E7  DA        PHX  
- E6E8  A6 90     LDX  $90
- E6EA  BD 01 7B  LDA  $7B01, X
- E6ED  F0 08     BEQ  $E6F7
- E6EF  9E 01 7B  STZ  $7B01, X
- E6F2  E6 90     INC  $90
- E6F4  38        SEC  
- E6F5  FA        PLX  
- E6F6  60        RTS  
- E6F7  E6 90     INC  $90
- E6F9  FA        PLX  
- E6FA  18        CLC  
- E6FB  60        RTS  
- E6FC  20 D7 E6  JSR  $E6D7
- E6FF  90 FB     BCC  $E6FC
- E701  60        RTS  
- E702  20 5C E5  JSR  $E55C
- E705  5A        PHY  
- E706  A4 A1     LDY  $A1
- E708  F0 08     BEQ  $E712
- E70A  8D E0 FF  STA  $FFE0
- E70D  A0 20     LDY  #$20
- E70F  20 20 E0  JSR  $E020
- E712  7A        PLY  
- E713  60        RTS  
- E714  48        PHA  
- E715  5A        PHY  
- E716  AD 8D FF  LDA  $FF8D
- E719  10 28     BPL  $E743
- E71B  29 08     AND  #$08
- E71D  D0 09     BNE  $E728
- E71F  AD 8D FF  LDA  $FF8D
- E722  29 40     AND  #$40
- E724  D0 17     BNE  $E73D
- E726  80 1B     BRA  $E743
- E728  A5 82     LDA  $82
- E72A  85 86     STA  $86
- E72C  A5 83     LDA  $83
- E72E  85 87     STA  $87
- E730  A5 84     LDA  $84
- E732  85 88     STA  $88
- E734  A5 85     LDA  $85
- E736  85 89     STA  $89
- E738  20 62 E1  JSR  $E162
- E73B  80 06     BRA  $E743
- E73D  AD 84 FF  LDA  $FF84
- E740  20 AE E3  JSR  $E3AE
- E743  7A        PLY  
- E744  68        PLA  
- E745  40        RTI  
- E746  54 61 6C 69 20 46 6F 72 74 68 20 32 20 64 65 66  |Tali Forth 2 def|
- E756  61 75 6C 74 20 6B 65 72 6E 65 6C 20 66 6F 72 20  |ault kernel for |
- E766  50 6C 61 6E 63 6B 20 36 35 30 32 20 28 32 37 2F  |Planck 6502 (27/|
- E776  30 38 2F 32 30 32 31 29 0A 00 00 00 00 00 00 00  |08/2021)........|
- E786  00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  |................|
- E796  00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  |................|
- E7A6  00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  |................|
- E7B6  00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  |................|
- E7C6  00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  |................|
- E7D6  00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  |................|
- E7E6  00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  |................|
- E7F6  00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  |................|
- E806  00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  |................|
- E816  00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  |................|
- E826  00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  |................|
- E836  00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  |................|
- E846  00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  |................|
- E856  00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  |................|
- E866  00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  |................|
- E876  00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  |................|
- E886  00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  |................|
- E896  00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  |................|
- E8A6  00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  |................|
- E8B6  00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  |................|
- E8C6  00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  |................|
- E8D6  00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  |................|
- E8E6  00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  |................|
- E8F6  00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  |................|
- E906  00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  |................|
- E916  00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  |................|
- E926  00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  |................|
- E936  00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  |................|
- E946  00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  |................|
- E956  00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  |................|
- E966  00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  |................|
- E976  00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  |................|
- E986  00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  |................|
- E996  00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  |................|
- E9A6  00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  |................|
- E9B6  00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  |................|
- E9C6  00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  |................|
- E9D6  00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  |................|
- E9E6  00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  |................|
- E9F6  00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  |................|
- EA06  00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  |................|
- EA16  00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  |................|
- EA26  00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  |................|
- EA36  00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  |................|
- EA46  00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  |................|
- EA56  00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  |................|
- EA66  00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  |................|
- EA76  00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  |................|
- EA86  00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  |................|
- EA96  00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  |................|
- EAA6  00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  |................|
- EAB6  00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  |................|
- EAC6  00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  |................|
- EAD6  00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  |................|
- EAE6  00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  |................|
- EAF6  00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  |................|
- EB06  00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  |................|
- EB16  00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  |................|
- EB26  00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  |................|
- EB36  00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  |................|
- EB46  00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  |................|
- EB56  00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  |................|
- EB66  00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  |................|
- EB76  00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  |................|
- EB86  00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  |................|
- EB96  00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  |................|
- EBA6  00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  |................|
- EBB6  00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  |................|
- EBC6  00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  |................|
- EBD6  00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  |................|
- EBE6  00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  |................|
- EBF6  00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  |................|
- EC06  00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  |................|
- EC16  00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  |................|
- EC26  00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  |................|
- EC36  00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  |................|
- EC46  00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  |................|
- EC56  00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  |................|
- EC66  00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  |................|
- EC76  00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  |................|
- EC86  00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  |................|
- EC96  00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  |................|
- ECA6  00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  |................|
- ECB6  00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  |................|
- ECC6  00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  |................|
- ECD6  00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  |................|
- ECE6  00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  |................|
- ECF6  00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  |................|
- ED06  00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  |................|
- ED16  00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  |................|
- ED26  00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  |................|
- ED36  00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  |................|
- ED46  00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  |................|
- ED56  00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  |................|
- ED66  00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  |................|
- ED76  00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  |................|
- ED86  00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  |................|
- ED96  00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  |................|
- EDA6  00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  |................|
- EDB6  00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  |................|
- EDC6  00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  |................|
- EDD6  00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  |................|
- EDE6  00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  |................|
- EDF6  00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  |................|
- EE06  00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  |................|
- EE16  00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  |................|
- EE26  00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  |................|
- EE36  00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  |................|
- EE46  00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  |................|
- EE56  00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  |................|
- EE66  00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  |................|
- EE76  00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  |................|
- EE86  00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  |................|
- EE96  00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  |................|
- EEA6  00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  |................|
- EEB6  00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  |................|
- EEC6  00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  |................|
- EED6  00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  |................|
- EEE6  00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  |................|
- EEF6  00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  |................|
- EF06  00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  |................|
- EF16  00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  |................|
- EF26  00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  |................|
- EF36  00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  |................|
- EF46  00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  |................|
- EF56  00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  |................|
- EF66  00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  |................|
- EF76  00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  |................|
- EF86  00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  |................|
- EF96  00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  |................|
- EFA6  00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  |................|
- EFB6  00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  |................|
- EFC6  00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  |................|
- EFD6  00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  |................|
- EFE6  00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  |................|
- EFF6  00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  |................|
- F006  00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  |................|
- F016  00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  |................|
- F026  00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  |................|
- F036  00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  |................|
- F046  00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  |................|
- F056  00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  |................|
- F066  00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  |................|
- F076  00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  |................|
- F086  00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  |................|
- F096  00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  |................|
- F0A6  00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  |................|
- F0B6  00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  |................|
- F0C6  00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  |................|
- F0D6  00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  |................|
- F0E6  00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  |................|
- F0F6  00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  |................|
- F106  00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  |................|
- F116  00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  |................|
- F126  00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  |................|
- F136  00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  |................|
- F146  00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  |................|
- F156  00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  |................|
- F166  00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  |................|
- F176  00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  |................|
- F186  00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  |................|
- F196  00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  |................|
- F1A6  00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  |................|
- F1B6  00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  |................|
- F1C6  00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  |................|
- F1D6  00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  |................|
- F1E6  00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  |................|
- F1F6  00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  |................|
- F206  00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  |................|
- F216  00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  |................|
- F226  00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  |................|
- F236  00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  |................|
- F246  00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  |................|
- F256  00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  |................|
- F266  00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  |................|
- F276  00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  |................|
- F286  00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  |................|
- F296  00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  |................|
- F2A6  00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  |................|
- F2B6  00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  |................|
- F2C6  00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  |................|
- F2D6  00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  |................|
- F2E6  00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  |................|
- F2F6  00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  |................|
- F306  00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  |................|
- F316  00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  |................|
- F326  00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  |................|
- F336  00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  |................|
- F346  00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  |................|
- F356  00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  |................|
- F366  00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  |................|
- F376  00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  |................|
- F386  00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  |................|
- F396  00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  |................|
- F3A6  00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  |................|
- F3B6  00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  |................|
- F3C6  00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  |................|
- F3D6  00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  |................|
- F3E6  00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  |................|
- F3F6  00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  |................|
- F406  00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  |................|
- F416  00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  |................|
- F426  00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  |................|
- F436  00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  |................|
- F446  00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  |................|
- F456  00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  |................|
- F466  00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  |................|
- F476  00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  |................|
- F486  00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  |................|
- F496  00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  |................|
- F4A6  00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  |................|
- F4B6  00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  |................|
- F4C6  00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  |................|
- F4D6  00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  |................|
- F4E6  00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  |................|
- F4F6  00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  |................|
- F506  00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  |................|
- F516  00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  |................|
- F526  00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  |................|
- F536  00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  |................|
- F546  00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  |................|
- F556  00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  |................|
- F566  00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  |................|
- F576  00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  |................|
- F586  00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  |................|
- F596  00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  |................|
- F5A6  00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  |................|
- F5B6  00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  |................|
- F5C6  00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  |................|
- F5D6  00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  |................|
- F5E6  00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  |................|
- F5F6  00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  |................|
- F606  00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  |................|
- F616  00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  |................|
- F626  00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  |................|
- F636  00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  |................|
- F646  00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  |................|
- F656  00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  |................|
- F666  00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  |................|
- F676  00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  |................|
- F686  00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  |................|
- F696  00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  |................|
- F6A6  00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  |................|
- F6B6  00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  |................|
- F6C6  00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  |................|
- F6D6  00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  |................|
- F6E6  00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  |................|
- F6F6  00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  |................|
- F706  00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  |................|
- F716  00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  |................|
- F726  00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  |................|
- F736  00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  |................|
- F746  00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  |................|
- F756  00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  |................|
- F766  00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  |................|
- F776  00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  |................|
- F786  00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  |................|
- F796  00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  |................|
- F7A6  00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  |................|
- F7B6  00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  |................|
- F7C6  00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  |................|
- F7D6  00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  |................|
- F7E6  00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  |................|
- F7F6  00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  |................|
- F806  00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  |................|
- F816  00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  |................|
- F826  00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  |................|
- F836  00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  |................|
- F846  00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  |................|
- F856  00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  |................|
- F866  00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  |................|
- F876  00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  |................|
- F886  00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  |................|
- F896  00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  |................|
- F8A6  00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  |................|
- F8B6  00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  |................|
- F8C6  00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  |................|
- F8D6  00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  |................|
- F8E6  00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  |................|
- F8F6  00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  |................|
- F906  00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  |................|
- F916  00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  |................|
- F926  00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  |................|
- F936  00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  |................|
- F946  00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  |................|
- F956  00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  |................|
- F966  00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  |................|
- F976  00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  |................|
- F986  00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  |................|
- F996  00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  |................|
- F9A6  00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  |................|
- F9B6  00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  |................|
- F9C6  00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  |................|
- F9D6  00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  |................|
- F9E6  00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  |................|
- F9F6  00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  |................|
- FA06  00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  |................|
- FA16  00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  |................|
- FA26  00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  |................|
- FA36  00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  |................|
- FA46  00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  |................|
- FA56  00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  |................|
- FA66  00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  |................|
- FA76  00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  |................|
- FA86  00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  |................|
- FA96  00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  |................|
- FAA6  00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  |................|
- FAB6  00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  |................|
- FAC6  00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  |................|
- FAD6  00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  |................|
- FAE6  00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  |................|
- FAF6  00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  |................|
- FB06  00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  |................|
- FB16  00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  |................|
- FB26  00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  |................|
- FB36  00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  |................|
- FB46  00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  |................|
- FB56  00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  |................|
- FB66  00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  |................|
- FB76  00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  |................|
- FB86  00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  |................|
- FB96  00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  |................|
- FBA6  00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  |................|
- FBB6  00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  |................|
- FBC6  00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  |................|
- FBD6  00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  |................|
- FBE6  00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  |................|
- FBF6  00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  |................|
- FC06  00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  |................|
- FC16  00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  |................|
- FC26  00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  |................|
- FC36  00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  |................|
- FC46  00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  |................|
- FC56  00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  |................|
- FC66  00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  |................|
- FC76  00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  |................|
- FC86  00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  |................|
- FC96  00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  |................|
- FCA6  00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  |................|
- FCB6  00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  |................|
- FCC6  00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  |................|
- FCD6  00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  |................|
- FCE6  00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  |................|
- FCF6  00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  |................|
- FD06  00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  |................|
- FD16  00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  |................|
- FD26  00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  |................|
- FD36  00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  |................|
- FD46  00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  |................|
- FD56  00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  |................|
- FD66  00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  |................|
- FD76  00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  |................|
- FD86  00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  |................|
- FD96  00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  |................|
- FDA6  00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  |................|
- FDB6  00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  |................|
- FDC6  00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  |................|
- FDD6  00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  |................|
- FDE6  00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  |................|
- FDF6  00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  |................|
- FE06  00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  |................|
- FE16  00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  |................|
- FE26  00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  |................|
- FE36  00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  |................|
- FE46  00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  |................|
- FE56  00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  |................|
- FE66  00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  |................|
- FE76  00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  |................|
- FE86  00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  |................|
- FE96  00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  |................|
- FEA6  00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  |................|
- FEB6  00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  |................|
- FEC6  00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  |................|
- FED6  00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  |................|
- FEE6  00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  |................|
- FEF6  00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  |................|
- FF06  00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  |................|
- FF16  00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  |................|
- FF26  00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  |................|
- FF36  00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  |................|
- FF46  00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  |................|
- FF56  00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  |................|
- FF66  00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  |................|
- FF76  00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  |................|
- FF86  00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  |................|
- FF96  00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  |................|
- FFA6  00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  |................|
- FFB6  00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  |................|
- FFC6  00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  |................|
- FFD6  00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  |................|
- FFE6  00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  |................|
- FFF6  00 00 00 00 92 E6 71 E6 14 E7                    |......q...      |
+ E5CC  8D B2 FF  STA  $FFB2
+ E5CF  8D B1 FF  STA  $FFB1
+ E5D2  A9 20     LDA  #$20
+ E5D4  A0 64     LDY  #$64
+ E5D6  A2 4B     LDX  #$4B
+ E5D8  8D B3 FF  STA  $FFB3
+ E5DB  CA        DEX  
+ E5DC  D0 FA     BNE  $E5D8
+ E5DE  88        DEY  
+ E5DF  D0 F5     BNE  $E5D6
+ E5E1  A9 00     LDA  #$00
+ E5E3  85 9D     STA  $9D
+ E5E5  85 9E     STA  $9E
+ E5E7  A9 00     LDA  #$00
+ E5E9  8D B2 FF  STA  $FFB2
+ E5EC  8D B1 FF  STA  $FFB1
+ E5EF  7A        PLY  
+ E5F0  FA        PLX  
+ E5F1  68        PLA  
+ E5F2  60        RTS  
+ E5F3  00 02 05 07 0A 0C 0F 11 14 16 19 1B 1E 20 23 25  |............. #%|
+ E603  28 2A 2D 2F 32 34 37 39 3C 3E 41 43 46 48 4B 4D  |(*-/2479<>ACFHKM|
+ E613  50 52 55 57 5A 5C 5F 61 64 66 69 6B 6E 70 73 75  |PRUWZ\_adfiknpsu|
+ E623  78 7A 7D 7F 82 84 87 89 8C 8E 91 93 96 00 10 00  |xz}.............|
+ E633  10 00 10 00 10 00 10 00 10 00 10 00 10 00 10 00  |................|
+ E643  10 00 10 00 10 00 10 00 10 00 10 00 10 00 10 00  |................|
+ E653  10 00 10 00 10 00 10 00 10 00 10 00 10 00 10 00  |................|
+ E663  10 00 10 00 10 00 10 00 10 00                    |..........      |
+ E66D  A9 01     LDA  #$01
+ E66F  8D 81 FF  STA  $FF81
+ E672  A9 FF     LDA  #$FF
+ E674  8D 83 FF  STA  $FF83
+ E677  8D 82 FF  STA  $FF82
+ E67A  A0 04     LDY  #$04
+ E67C  20 0F E0  JSR  $E00F
+ E67F  20 30 E5  JSR  $E530
+ E682  20 2D E0  JSR  $E02D
+ E685  20 87 E3  JSR  $E387
+ E688  20 A7 E6  JSR  $E6A7
+ E68B  20 C2 E3  JSR  $E3C2
+ E68E  58        CLI  
+ E68F  A2 00     LDX  #$00
+ E691  BD 43 E7  LDA  $E743, X
+ E694  F0 06     BEQ  $E69C
+ E696  20 FF E6  JSR  $E6FF
+ E699  E8        INX  
+ E69A  80 F5     BRA  $E691
+ E69C  A9 01     LDA  #$01
+ E69E  8D 80 FF  STA  $FF80
+ E6A1  4C 00 80  JMP  $8000
+ E6A4  4C 6D E6  JMP  $E66D
+ E6A7  8D E1 FF  STA  $FFE1
+ E6AA  64 A1     STZ  $A1
+ E6AC  A9 0B     LDA  #$0B
+ E6AE  8D E2 FF  STA  $FFE2
+ E6B1  AD E2 FF  LDA  $FFE2
+ E6B4  C9 0B     CMP  #$0B
+ E6B6  D0 10     BNE  $E6C8
+ E6B8  AD E1 FF  LDA  $FFE1
+ E6BB  29 60     AND  #$60
+ E6BD  D0 09     BNE  $E6C8
+ E6BF  A9 01     LDA  #$01
+ E6C1  85 A1     STA  $A1
+ E6C3  A9 10     LDA  #$10
+ E6C5  8D E3 FF  STA  $FFE3
+ E6C8  A0 14     LDY  #$14
+ E6CA  AD E1 FF  LDA  $FFE1
+ E6CD  AD E0 FF  LDA  $FFE0
+ E6D0  88        DEY  
+ E6D1  D0 F7     BNE  $E6CA
+ E6D3  60        RTS  
+ E6D4  A5 A1     LDA  $A1
+ E6D6  F0 0C     BEQ  $E6E4
+ E6D8  AD E1 FF  LDA  $FFE1
+ E6DB  29 08     AND  #$08
+ E6DD  F0 05     BEQ  $E6E4
+ E6DF  AD E0 FF  LDA  $FFE0
+ E6E2  38        SEC  
+ E6E3  60        RTS  
+ E6E4  DA        PHX  
+ E6E5  A6 90     LDX  $90
+ E6E7  BD 01 7B  LDA  $7B01, X
+ E6EA  F0 08     BEQ  $E6F4
+ E6EC  9E 01 7B  STZ  $7B01, X
+ E6EF  E6 90     INC  $90
+ E6F1  38        SEC  
+ E6F2  FA        PLX  
+ E6F3  60        RTS  
+ E6F4  E6 90     INC  $90
+ E6F6  FA        PLX  
+ E6F7  18        CLC  
+ E6F8  60        RTS  
+ E6F9  20 D4 E6  JSR  $E6D4
+ E6FC  90 FB     BCC  $E6F9
+ E6FE  60        RTS  
+ E6FF  20 58 E5  JSR  $E558
+ E702  5A        PHY  
+ E703  A4 A1     LDY  $A1
+ E705  F0 08     BEQ  $E70F
+ E707  8D E0 FF  STA  $FFE0
+ E70A  A0 20     LDY  #$20
+ E70C  20 20 E0  JSR  $E020
+ E70F  7A        PLY  
+ E710  60        RTS  
+ E711  48        PHA  
+ E712  5A        PHY  
+ E713  AD 8D FF  LDA  $FF8D
+ E716  10 28     BPL  $E740
+ E718  29 08     AND  #$08
+ E71A  D0 09     BNE  $E725
+ E71C  AD 8D FF  LDA  $FF8D
+ E71F  29 40     AND  #$40
+ E721  D0 17     BNE  $E73A
+ E723  80 1B     BRA  $E740
+ E725  A5 82     LDA  $82
+ E727  85 86     STA  $86
+ E729  A5 83     LDA  $83
+ E72B  85 87     STA  $87
+ E72D  A5 84     LDA  $84
+ E72F  85 88     STA  $88
+ E731  A5 85     LDA  $85
+ E733  85 89     STA  $89
+ E735  20 5E E1  JSR  $E15E
+ E738  80 06     BRA  $E740
+ E73A  AD 84 FF  LDA  $FF84
+ E73D  20 AA E3  JSR  $E3AA
+ E740  7A        PLY  
+ E741  68        PLA  
+ E742  40        RTI  
+ E743  54 61 6C 69 20 46 6F 72 74 68 20 32 20 64 65 66  |Tali Forth 2 def|
+ E753  61 75 6C 74 20 6B 65 72 6E 65 6C 20 66 6F 72 20  |ault kernel for |
+ E763  50 6C 61 6E 63 6B 20 36 35 30 32 20 28 32 37 2F  |Planck 6502 (27/|
+ E773  30 38 2F 32 30 32 31 29 0A 00 00 00 00 00 00 00  |08/2021)........|
+ E783  00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  |................|
+ E793  00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  |................|
+ E7A3  00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  |................|
+ E7B3  00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  |................|
+ E7C3  00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  |................|
+ E7D3  00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  |................|
+ E7E3  00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  |................|
+ E7F3  00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  |................|
+ E803  00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  |................|
+ E813  00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  |................|
+ E823  00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  |................|
+ E833  00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  |................|
+ E843  00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  |................|
+ E853  00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  |................|
+ E863  00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  |................|
+ E873  00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  |................|
+ E883  00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  |................|
+ E893  00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  |................|
+ E8A3  00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  |................|
+ E8B3  00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  |................|
+ E8C3  00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  |................|
+ E8D3  00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  |................|
+ E8E3  00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  |................|
+ E8F3  00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  |................|
+ E903  00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  |................|
+ E913  00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  |................|
+ E923  00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  |................|
+ E933  00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  |................|
+ E943  00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  |................|
+ E953  00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  |................|
+ E963  00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  |................|
+ E973  00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  |................|
+ E983  00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  |................|
+ E993  00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  |................|
+ E9A3  00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  |................|
+ E9B3  00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  |................|
+ E9C3  00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  |................|
+ E9D3  00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  |................|
+ E9E3  00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  |................|
+ E9F3  00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  |................|
+ EA03  00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  |................|
+ EA13  00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  |................|
+ EA23  00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  |................|
+ EA33  00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  |................|
+ EA43  00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  |................|
+ EA53  00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  |................|
+ EA63  00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  |................|
+ EA73  00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  |................|
+ EA83  00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  |................|
+ EA93  00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  |................|
+ EAA3  00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  |................|
+ EAB3  00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  |................|
+ EAC3  00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  |................|
+ EAD3  00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  |................|
+ EAE3  00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  |................|
+ EAF3  00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  |................|
+ EB03  00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  |................|
+ EB13  00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  |................|
+ EB23  00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  |................|
+ EB33  00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  |................|
+ EB43  00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  |................|
+ EB53  00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  |................|
+ EB63  00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  |................|
+ EB73  00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  |................|
+ EB83  00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  |................|
+ EB93  00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  |................|
+ EBA3  00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  |................|
+ EBB3  00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  |................|
+ EBC3  00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  |................|
+ EBD3  00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  |................|
+ EBE3  00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  |................|
+ EBF3  00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  |................|
+ EC03  00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  |................|
+ EC13  00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  |................|
+ EC23  00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  |................|
+ EC33  00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  |................|
+ EC43  00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  |................|
+ EC53  00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  |................|
+ EC63  00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  |................|
+ EC73  00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  |................|
+ EC83  00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  |................|
+ EC93  00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  |................|
+ ECA3  00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  |................|
+ ECB3  00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  |................|
+ ECC3  00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  |................|
+ ECD3  00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  |................|
+ ECE3  00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  |................|
+ ECF3  00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  |................|
+ ED03  00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  |................|
+ ED13  00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  |................|
+ ED23  00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  |................|
+ ED33  00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  |................|
+ ED43  00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  |................|
+ ED53  00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  |................|
+ ED63  00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  |................|
+ ED73  00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  |................|
+ ED83  00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  |................|
+ ED93  00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  |................|
+ EDA3  00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  |................|
+ EDB3  00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  |................|
+ EDC3  00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  |................|
+ EDD3  00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  |................|
+ EDE3  00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  |................|
+ EDF3  00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  |................|
+ EE03  00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  |................|
+ EE13  00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  |................|
+ EE23  00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  |................|
+ EE33  00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  |................|
+ EE43  00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  |................|
+ EE53  00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  |................|
+ EE63  00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  |................|
+ EE73  00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  |................|
+ EE83  00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  |................|
+ EE93  00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  |................|
+ EEA3  00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  |................|
+ EEB3  00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  |................|
+ EEC3  00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  |................|
+ EED3  00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  |................|
+ EEE3  00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  |................|
+ EEF3  00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  |................|
+ EF03  00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  |................|
+ EF13  00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  |................|
+ EF23  00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  |................|
+ EF33  00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  |................|
+ EF43  00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  |................|
+ EF53  00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  |................|
+ EF63  00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  |................|
+ EF73  00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  |................|
+ EF83  00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  |................|
+ EF93  00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  |................|
+ EFA3  00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  |................|
+ EFB3  00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  |................|
+ EFC3  00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  |................|
+ EFD3  00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  |................|
+ EFE3  00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  |................|
+ EFF3  00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  |................|
+ F003  00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  |................|
+ F013  00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  |................|
+ F023  00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  |................|
+ F033  00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  |................|
+ F043  00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  |................|
+ F053  00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  |................|
+ F063  00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  |................|
+ F073  00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  |................|
+ F083  00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  |................|
+ F093  00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  |................|
+ F0A3  00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  |................|
+ F0B3  00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  |................|
+ F0C3  00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  |................|
+ F0D3  00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  |................|
+ F0E3  00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  |................|
+ F0F3  00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  |................|
+ F103  00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  |................|
+ F113  00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  |................|
+ F123  00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  |................|
+ F133  00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  |................|
+ F143  00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  |................|
+ F153  00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  |................|
+ F163  00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  |................|
+ F173  00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  |................|
+ F183  00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  |................|
+ F193  00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  |................|
+ F1A3  00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  |................|
+ F1B3  00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  |................|
+ F1C3  00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  |................|
+ F1D3  00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  |................|
+ F1E3  00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  |................|
+ F1F3  00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  |................|
+ F203  00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  |................|
+ F213  00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  |................|
+ F223  00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  |................|
+ F233  00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  |................|
+ F243  00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  |................|
+ F253  00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  |................|
+ F263  00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  |................|
+ F273  00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  |................|
+ F283  00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  |................|
+ F293  00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  |................|
+ F2A3  00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  |................|
+ F2B3  00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  |................|
+ F2C3  00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  |................|
+ F2D3  00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  |................|
+ F2E3  00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  |................|
+ F2F3  00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  |................|
+ F303  00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  |................|
+ F313  00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  |................|
+ F323  00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  |................|
+ F333  00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  |................|
+ F343  00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  |................|
+ F353  00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  |................|
+ F363  00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  |................|
+ F373  00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  |................|
+ F383  00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  |................|
+ F393  00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  |................|
+ F3A3  00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  |................|
+ F3B3  00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  |................|
+ F3C3  00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  |................|
+ F3D3  00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  |................|
+ F3E3  00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  |................|
+ F3F3  00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  |................|
+ F403  00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  |................|
+ F413  00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  |................|
+ F423  00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  |................|
+ F433  00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  |................|
+ F443  00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  |................|
+ F453  00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  |................|
+ F463  00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  |................|
+ F473  00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  |................|
+ F483  00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  |................|
+ F493  00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  |................|
+ F4A3  00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  |................|
+ F4B3  00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  |................|
+ F4C3  00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  |................|
+ F4D3  00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  |................|
+ F4E3  00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  |................|
+ F4F3  00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  |................|
+ F503  00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  |................|
+ F513  00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  |................|
+ F523  00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  |................|
+ F533  00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  |................|
+ F543  00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  |................|
+ F553  00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  |................|
+ F563  00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  |................|
+ F573  00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  |................|
+ F583  00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  |................|
+ F593  00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  |................|
+ F5A3  00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  |................|
+ F5B3  00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  |................|
+ F5C3  00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  |................|
+ F5D3  00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  |................|
+ F5E3  00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  |................|
+ F5F3  00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  |................|
+ F603  00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  |................|
+ F613  00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  |................|
+ F623  00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  |................|
+ F633  00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  |................|
+ F643  00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  |................|
+ F653  00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  |................|
+ F663  00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  |................|
+ F673  00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  |................|
+ F683  00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  |................|
+ F693  00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  |................|
+ F6A3  00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  |................|
+ F6B3  00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  |................|
+ F6C3  00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  |................|
+ F6D3  00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  |................|
+ F6E3  00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  |................|
+ F6F3  00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  |................|
+ F703  00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  |................|
+ F713  00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  |................|
+ F723  00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  |................|
+ F733  00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  |................|
+ F743  00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  |................|
+ F753  00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  |................|
+ F763  00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  |................|
+ F773  00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  |................|
+ F783  00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  |................|
+ F793  00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  |................|
+ F7A3  00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  |................|
+ F7B3  00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  |................|
+ F7C3  00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  |................|
+ F7D3  00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  |................|
+ F7E3  00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  |................|
+ F7F3  00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  |................|
+ F803  00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  |................|
+ F813  00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  |................|
+ F823  00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  |................|
+ F833  00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  |................|
+ F843  00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  |................|
+ F853  00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  |................|
+ F863  00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  |................|
+ F873  00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  |................|
+ F883  00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  |................|
+ F893  00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  |................|
+ F8A3  00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  |................|
+ F8B3  00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  |................|
+ F8C3  00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  |................|
+ F8D3  00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  |................|
+ F8E3  00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  |................|
+ F8F3  00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  |................|
+ F903  00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  |................|
+ F913  00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  |................|
+ F923  00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  |................|
+ F933  00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  |................|
+ F943  00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  |................|
+ F953  00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  |................|
+ F963  00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  |................|
+ F973  00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  |................|
+ F983  00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  |................|
+ F993  00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  |................|
+ F9A3  00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  |................|
+ F9B3  00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  |................|
+ F9C3  00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  |................|
+ F9D3  00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  |................|
+ F9E3  00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  |................|
+ F9F3  00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  |................|
+ FA03  00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  |................|
+ FA13  00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  |................|
+ FA23  00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  |................|
+ FA33  00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  |................|
+ FA43  00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  |................|
+ FA53  00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  |................|
+ FA63  00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  |................|
+ FA73  00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  |................|
+ FA83  00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  |................|
+ FA93  00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  |................|
+ FAA3  00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  |................|
+ FAB3  00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  |................|
+ FAC3  00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  |................|
+ FAD3  00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  |................|
+ FAE3  00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  |................|
+ FAF3  00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  |................|
+ FB03  00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  |................|
+ FB13  00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  |................|
+ FB23  00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  |................|
+ FB33  00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  |................|
+ FB43  00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  |................|
+ FB53  00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  |................|
+ FB63  00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  |................|
+ FB73  00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  |................|
+ FB83  00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  |................|
+ FB93  00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  |................|
+ FBA3  00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  |................|
+ FBB3  00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  |................|
+ FBC3  00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  |................|
+ FBD3  00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  |................|
+ FBE3  00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  |................|
+ FBF3  00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  |................|
+ FC03  00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  |................|
+ FC13  00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  |................|
+ FC23  00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  |................|
+ FC33  00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  |................|
+ FC43  00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  |................|
+ FC53  00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  |................|
+ FC63  00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  |................|
+ FC73  00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  |................|
+ FC83  00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  |................|
+ FC93  00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  |................|
+ FCA3  00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  |................|
+ FCB3  00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  |................|
+ FCC3  00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  |................|
+ FCD3  00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  |................|
+ FCE3  00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  |................|
+ FCF3  00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  |................|
+ FD03  00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  |................|
+ FD13  00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  |................|
+ FD23  00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  |................|
+ FD33  00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  |................|
+ FD43  00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  |................|
+ FD53  00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  |................|
+ FD63  00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  |................|
+ FD73  00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  |................|
+ FD83  00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  |................|
+ FD93  00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  |................|
+ FDA3  00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  |................|
+ FDB3  00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  |................|
+ FDC3  00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  |................|
+ FDD3  00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  |................|
+ FDE3  00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  |................|
+ FDF3  00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  |................|
+ FE03  00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  |................|
+ FE13  00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  |................|
+ FE23  00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  |................|
+ FE33  00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  |................|
+ FE43  00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  |................|
+ FE53  00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  |................|
+ FE63  00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  |................|
+ FE73  00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  |................|
+ FE83  00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  |................|
+ FE93  00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  |................|
+ FEA3  00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  |................|
+ FEB3  00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  |................|
+ FEC3  00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  |................|
+ FED3  00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  |................|
+ FEE3  00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  |................|
+ FEF3  00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  |................|
+ FF03  00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  |................|
+ FF13  00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  |................|
+ FF23  00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  |................|
+ FF33  00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  |................|
+ FF43  00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  |................|
+ FF53  00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  |................|
+ FF63  00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  |................|
+ FF73  00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  |................|
+ FF83  00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  |................|
+ FF93  00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  |................|
+ FFA3  00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  |................|
+ FFB3  00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  |................|
+ FFC3  00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  |................|
+ FFD3  00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  |................|
+ FFE3  00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  |................|
+ FFF3  00 00 00 00 00 00 00 8E E6 6D E6 11 E7           |.........m...   |

@@ -283,9 +283,9 @@ kernel_init:
         jsr Init_ACIA
 
         jsr lcd_init
-        
+
 v_nmi:
-        ;cli
+        cli
         ; lda #$55
         ; sta PORTA
         ; We've successfully set everything up, so print the kernel
