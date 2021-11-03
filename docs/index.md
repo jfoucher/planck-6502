@@ -22,7 +22,7 @@ The constraints for its design were the following:
   - Easily extensible with for example:
     - Serial port
     - Parallel port
-    - SPI / SPI65B port
+    - SPI / [65SIB](http://forum.6502.org/viewtopic.php?p=10957#p10957) port
     - PS/2 port for keyboard
     - Sound card
     - eventually VGA out
