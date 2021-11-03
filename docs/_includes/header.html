@@ -9,12 +9,6 @@
     <div class="nav">
         <nav>
           {%assign splitUrl = page.url | split: '/' %}
-          {{splitUrl[1]}}
-          <!-- {% for member in splitUrl %}
-  {{ member }}<br>
-{% endfor %}
-0 {{ splitUrl[0] }}<br>
-1 {{ splitUrl[1] }}<br> -->
           <ul class="level-1">
             <li {% if "/" == page.url %}class="active"{% endif %}><a href="{{ "/" | prepend: site.baseurl }}">Home</a></li>
             <li {% if "Hardware" == splitUrl[1] %}class="active"{% endif %}><a href="{{ "/Hardware" | prepend: site.baseurl }}">Hardware</a></li>
