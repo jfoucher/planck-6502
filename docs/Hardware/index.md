@@ -4,7 +4,7 @@ title: Planck 6502 hardware
 ---
 
 
-The Planck hardware is organized around a backplane that hosts the CPU and RAM, ROM and serial input / output as well [clock generation](#clock-generation), [board connection](#board-connection),  [expansion slot activation](#expansion-slot-activation) and [basic user IO](#basic-user-io).
+The Planck hardware is organized around a motherboard that hosts the CPU and RAM, ROM and serial input / output as well as [clock generation](#clock-generation), [board connection](#board-connection), [expansion slot activation](#expansion-slot-activation) and [basic user IO](#basic-user-io).
 
 <!--
 <div style="float:right">
@@ -46,19 +46,19 @@ This counter makes possible the clock stretching that will be required by slow p
 
 Let me explain this schematic: 
 The 24Mhz output from the oscillator goes to the clock input of the binary counter.
-The Q0 output of the counter changes at every positive clock edge, so it is a square wave of half the frequency of the oscillator clock. This signal is fed to the expansion bus under the name CLK_12M. It is thus a non stretched clock that is used for things that require precises and consistent timings, such as VIA timers for example.
+The Q0 output of the counter changes at every positive clock edge, so it is a square wave of half the frequency of the oscillator clock. This signal is fed to the expansion bus under the name CLK_12M. It is thus a non stretched clock that is used for things that require precise and consistent timings, such as VIA timers for example.
 Q3 is low when the counter is less than 8 and causes the counter to load its current count from the input.
 By default if the <span class="overline">SLOW</span> signal is high, then the counter will immediately load 15 and resume counting, which will take it back to zero, which will trigger the load again.
 
-It that case the counter oscillates between 15 (all output high) and 0 (all outputs low) which causes CLK and CLK_12M to oscillate at the same frequency.
+It that case the counter oscillates between 15 (all outputs high) and 0 (all outputs low) which causes CLK and CLK_12M to oscillate at the same frequency.
 
-However, if the <span class="overline">SLOW</span> signal is asserted (low) than a number less than 15 will be loaded in the counter, which mean the Q2 (CLK signal) will toggle at a reduced frequency.
+However, if the <span class="overline">SLOW</span> signal is asserted (low) than a number less than 15 will be loaded in the counter, which means the Q2 (CLK signal) will toggle at a reduced frequency.
 
 So this simple circuit generates two clock signals : one that is slow enough for the currently addressed peripheral, and one that is stable for timing sensitive peripherals. This also means that any timing sensitive peripherals MUST be able to run at the main (CLK_12M) frequency.
 
 ### Board connection
 
-The main purpose on the backplane is to connect all daughter boards together. It does this by means of an extension bus connector based on a 2.54mm 2x25 pins socket. These connectors are cheap, reliable and easy to obtain. The female connector is placed on the backplane and a right angle male connector on each expansion board.
+One of the purposes of the motherboard is to connect all daughter boards together. It does this by means of an extension bus connector based on a 2.54mm 2x25 pins socket. These connectors are cheap, reliable and easy to obtain. The female connector is placed on the backplane and a right angle male connector on each expansion board.
 
 Most pins on this extension consist of the 65C02 signals, such as 16 address lines, 8 data lines, and a smattering of control lines. The complete bus pinout is detailed below:
 
@@ -118,17 +118,19 @@ Most pins on this extension consist of the 65C02 signals, such as 16 address lin
 
 ### Expansion slot activation
 
-The 65C02 works with memory mapped input/output. This means that the CPU does not care what device is responding to what address range. To it, when it asks for data from a certain address, it's all the same whether that data comes from RAM, ROM, a temperature sensor or whetever else.
+The 65C02 CPU works with memory mapped input/output. This means that the CPU does not care what device is responding to what address range. To it, when it asks for data from a certain address, it's all the same whether that data comes from RAM, ROM, a temperature sensor or whetever else.
 This means that we need some external logic to activate certain devices when the CPU requests data from an address where we want that device to take control.
 
-In our case, the backplane has some logic that tells one of the expansion slots to activate when a certain address range is requested by the CPU. This address decoding, as it is called is taken care of by an ATF22V10, a [programmable logic chip](https://en.wikipedia.org/wiki/Programmable_logic_device) that can be thought of as an ancestor to FPGAs.
+In our case, the motherboard has some logic that tells one of the expansion slots to activate when a certain address range is requested by the CPU. This address decoding, as it is called is taken care of by an ATF22V10, a [programmable logic chip](https://en.wikipedia.org/wiki/Programmable_logic_device) that can be thought of as an ancestor to FPGAs.
 
 This functionality could also be built from discrete logic chips, but using a PLD chip does three things for us:
 - First it saves board space. The functionality this single chip provides would need at least two or three chips to replicate with discrete logic
 - Secondly, it speeds up the response time. Each time a signal passes through a chip, it incurs a slight delay. So the fewer chips are on the path, the faster our computer can run.
 - Finally, it allows us to reprogram it to easily change the memory map of the system.
 
-In the default case, slot 0 responds in the address range `$FF80` to `$FF8F`, slot 1 to `$FF90` to `$FF9F`, etc until slot 5 at `$FFD0` to `$FFDF`. This address decoding can be reconfigured by simply reprogramming the PLD, giving quite a lot of flexibility to the system.
+In the default case, slot 0 responds in the address range `$FF80` to `$FF8F`, slot 1 to `$FF90` to `$FF9F`, etc until slot 5 at `$FFD0` to `$FFDF`. This address decoding can be reconfigured by simply reprogramming the PLD, giving quite a lot of flexibility to the system. 
+
+You could for example assign a whole page (256 bytes) or more to each expansion slot, allowing the extension cards to have their driver in an on-board ROM.
 
 Here is the default expansion memory map in table form
 
@@ -149,7 +151,7 @@ Here is the default expansion memory map in table form
 
 The computer provides some basic user input and output in the form of two buttons and 4 leds.
 
-The two buttons are a reset button and an NMI (non maskable interrupt) buttons. The reset button triggers a hard reset of the processor, whereas the NMI button provides a non maskable interrupt to the code that can be handled as a soft reset by the code.
+The two buttons are a reset button and an NMI (non maskable interrupt) buttons. The reset button triggers a hard reset of the processor, whereas the NMI button provides a non maskable interrupt to the code that can be handled (for example) as a soft reset.
 
 The 4 LEDs are connected to pins on the expansion bus, and can thus be driven by any card that wants to signal something to the user. You have to be mindful in your code not to drive a led low while another card is trying to drive it high, as that would cause very high current to flow into / from your peripherals.
 

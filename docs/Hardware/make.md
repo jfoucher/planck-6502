@@ -18,6 +18,6 @@ Actually I would strongly recommend you do that before having your PCB fabricate
 
 Alternatively, you could also get a few [prototype boards](/Hardware/proto) fabricated to be able to create many boards or refine designs to your heart's content.
 
-For example, here is the prototype of the [LCD board](/Hardware/lcd)
+For example, here is the prototype of the [OPL2 board](/Hardware/opl2)
 
-![LCD board prototype](/img/lcd_board.jpg)
+![LCD board prototype](/img/opl2-sound-card.jpg)
