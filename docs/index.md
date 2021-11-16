@@ -3,7 +3,7 @@ layout: page
 title: An open-hardware, extensible 65c02-based computer
 ---
 
-![General view](img/1.jpg){: width="800" }{: height="600" }
+![General view](img/1.jpg)
 
 
 This is a hobby computer based on the 65C02 processor. (I use 6502 and 65C02 interchangeably in this document, but [there are some differences](http://wilsonminesco.com/NMOS-CMOSdif/))
