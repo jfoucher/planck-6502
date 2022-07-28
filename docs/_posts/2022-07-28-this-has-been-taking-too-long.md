@@ -5,8 +5,9 @@ excerpt_separator: <!--more-->
 ---
 
 It's been a while, the waitlist [on Tindie](https://www.tindie.com/products/jfoucher/planck-6502-computer/) keeps growing and there's not much I've been able to do about. Apart from supply chain issues for electronic, which may imply a new board revision in the near future, I have also moved to a house that has needed way more work done than expected. It's been over 6 months and not everything is ready yet.
+<!--more-->
 
-I do not to store components and prepare packages in a space that is often full of dust and other worksite inconveniences.
+I do not want to store components and prepare packages in a space that is often full of dust and other worksite inconveniences.
 
 However, I am hopefull the next few weeks will let me finally have a space to store everything I need and to prepare orders. So keep an eye on the Tindie listing if you are interested.
 
