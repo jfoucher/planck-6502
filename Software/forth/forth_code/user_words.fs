@@ -135,16 +135,24 @@ maxcol mincol do
 i dorow cr 
 loop ; 
 
+\ IO board constants
+65408 constant portb
+65409 constant porta
+65410 constant ddrb
+65411 constant ddra
+
 : uptime  130 @ 132 @ 200 um/mod s>d 60 um/mod s>d 60 um/mod cr . ." h " . ." m " . ." ," 2/ . ." s" cr ;
-: l 256 0 do i 65409 ! loop ;
+: l 256 0 do i porta c! loop ;
 : lights 0 do l loop ;
 
 : delay 0 do loop ;
 : delay_long 0 do 255 delay loop ;
-: sl 256 0 do 255 delay i 65409 ! loop ;
+: sl 256 0 do 255 delay i porta c! loop ;
 : slights 0 do sl loop ;
-: vsl 256 0 do 10 delay_long i 65409 ! loop ;
-: vslights 0 do sll loop ;
+: vsl 256 0 do 10 delay_long i porta c! loop ;
+: vslights 0 do vsl loop ;
+
+
 
 \ : cmandel scale_factor @ 0 = if 20 scale_factor ! then cls mandelbrot ;
 
