@@ -136,13 +136,15 @@ i dorow cr
 loop ; 
 
 : uptime  130 @ 132 @ 200 um/mod s>d 60 um/mod s>d 60 um/mod cr . ." h " . ." m " . ." ," 2/ . ." s" cr ;
-: l 256 0 do i 65425 ! loop ;
+: l 256 0 do i 65409 ! loop ;
 : lights 0 do l loop ;
 
 : delay 0 do loop ;
 : delay_long 0 do 255 delay loop ;
-: sl 256 0 do 255 delay i 65425 ! loop ;
+: sl 256 0 do 255 delay i 65409 ! loop ;
 : slights 0 do sl loop ;
+: vsl 256 0 do 10 delay_long i 65409 ! loop ;
+: vslights 0 do sll loop ;
 
 \ : cmandel scale_factor @ 0 = if 20 scale_factor ! then cls mandelbrot ;
 

@@ -353,6 +353,7 @@ Get_Char:
         beq no_acia_char_available      ; Exit now if we don't get one.
         lda ACIA_DATA                   ; Load it into the accumulator
         sec                             ; Set Carry to show we got a character
+        jsr check_ctrl_c
         rts                             ; Return
       
 no_acia_char_available:                 ; no ACIA char available
@@ -365,6 +366,7 @@ no_acia_char_available:                 ; no ACIA char available
 
         sec                             ; mark character present
         plx                             ; restore X
+        jsr check_ctrl_c
         rts                             ; return
 no_ps2_char_available:                  ; no keyboard char
         inc KB_BUF_R_PTR                ; increment read pointer for next time
@@ -384,6 +386,14 @@ Get_Char_Wait:
         bcc Get_Char_Wait
         rts
 
+check_ctrl_c:
+        ;; Check if we have ctrl-C character, if so jump to nmi
+        cmp #$03
+        bne exit_ctrl_c
+        jmp v_nmi
+exit_ctrl_c:
+        sec
+        rts
 
 kernel_putc:
         ; """Print a single character to the console. """
@@ -448,6 +458,7 @@ v_ps2:
 v_timer:
         lda T1CL
         jsr timer_irq
+        jsr Get_Char ; Check if a char is waiting to be able to break on CTRL-C
         ; check if there is a char waiting to be printed to the lcd
         ; lda lcd_char
         ; beq v_exit
@@ -463,7 +474,7 @@ v_exit:
 ; is easier to see where the kernel ends in hex dumps. This string is
 ; displayed after a successful boot
 s_kernel_id: 
-        .byte "Tali Forth 2 default kernel for Planck 6502 (27/08/2021)", AscLF, 0
+        .byte "Tali Forth 2 for Planck 6502 (27/08/2021)", AscLF, 0
 
 
 
