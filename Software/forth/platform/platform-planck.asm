@@ -81,15 +81,22 @@
 
 
 
+
 .alias KB_BUF    hist_buff - $ff
-.alias LCD_BUF    KB_BUF - $7f
-.alias LINE_BUF    LCD_BUF - $7f
+.alias LCD_BUF   KB_BUF - $7f
+.alias LINE_BUF  LCD_BUF - $7f
+.alias SD_CRC    LINE_BUF - $1
+.alias SD_SLAVE  SD_CRC - $1
+.alias SD_TMP  SD_SLAVE - $1
+.alias SD_ARG    SD_TMP - $4
+.alias SD_BUF    SD_ARG - $1ff
 .alias user0     zpage          ; user and system variables
+
 .alias rsp0      $ff            ; initial Return Stack Pointer (65c02 stack)
 .alias bsize     $ff            ; size of input/output buffers
 .alias buffer0   stack0+$100    ; input buffer ($0200-$027f)
 .alias cp0       buffer0+bsize  ; Dictionary starts after last buffer
-.alias cp_end    LINE_BUF         ; Last RAM byte available for code
+.alias cp_end    SD_BUF         ; Last RAM byte available for code
 .alias padoffset $ff            ; offset from CP to PAD (holds number strings)
 
 
@@ -198,39 +205,53 @@
 
 .alias TIMER_DELAY $C4
 
+; SPI defines
+
+.alias SS $07   ; Slave Select with lowest 3 bits
+.alias SCK $08   ; Clock on bit 3
+.alias MISO $10  ; MISO on bit 4
+.alias MOSI $20  ; MOSI on bit 5
+.alias CONF $40  ; CONF on bit 6
+
 ; Zero page variables
 
-.alias stack_p          $80
-.alias time             $82
-.alias last_ps2_time    $86
+.alias stack_p          dsp0
+.alias time             dsp0+2
+.alias last_ps2_time    dsp0+6
 
-.alias to_send          $8C
-.alias KB_STATE         $8D
-.alias KB_TEMP          $8E
+.alias to_send          dsp0+10
+.alias KB_STATE         dsp0+11
+.alias KB_TEMP          dsp0+11
 
-.alias KB_BUF_W_PTR     $8F
-.alias KB_BUF_R_PTR   $90
-.alias KB_PARITY        $91
-.alias KB_BIT           $92
-.alias KB_INIT_STATE    $93
-.alias KB_INIT_WAIT    $94
+.alias KB_BUF_W_PTR     dsp0+12
+.alias KB_BUF_R_PTR     dsp0+13
+.alias KB_PARITY        dsp0+14
+.alias KB_BIT           dsp0+15
+.alias KB_INIT_STATE    dsp0+16
+.alias KB_INIT_WAIT     dsp0+17
 
-.alias ready            $95
+.alias ready            dsp0+18
 
-.alias ignore_next      $96
-.alias control_keys     $97
+.alias ignore_next      dsp0+19
+.alias control_keys     dsp0+20
 
-.alias character        $98
-.alias debug            $99
+.alias character        dsp0+21
+.alias debug            dsp0+22
 
-.alias temp_bits        $9A
-.alias LCD_BUF_W_PTR    $9B
-.alias LCD_BUF_R_PTR    $9C
-.alias line             $9D
-.alias char             $9E
-.alias lcd_absent       $9F
-.alias lcd_pos          $A0
-.alias has_acia         $A1
+.alias temp_bits        dsp0+23
+.alias LCD_BUF_W_PTR    dsp0+24
+.alias LCD_BUF_R_PTR    dsp0+25
+.alias line             dsp0+26
+.alias char             dsp0+27
+.alias lcd_absent       dsp0+28
+.alias lcd_pos          dsp0+29
+.alias has_acia         dsp0+30
+.alias spi_tmp          dsp0+31
+.alias spi_tmp2         dsp0+32
+.alias spi_slave        dsp0+33
+
+
+
 
 
 
@@ -240,6 +261,8 @@
 .require "../../drivers/timer.s"
 .require "../../drivers/lcd.s"
 .require "../../drivers/vga.s"
+.require "../../drivers/spi.s"
+.require "../../drivers/sd.s"
 
 ; Default kernel file for Tali Forth 2 
 ; Scot W. Stevenson <scot.stevenson@gmail.com>
@@ -385,12 +408,15 @@ Get_Char_Wait:
         jsr Get_Char
         bcc Get_Char_Wait
         rts
-
+        
 check_ctrl_c:
         ;; Check if we have ctrl-C character, if so jump to nmi
         cmp #$03
         bne exit_ctrl_c
-        jmp v_nmi
+
+
+        jmp xt_abort
+
 exit_ctrl_c:
         sec
         rts

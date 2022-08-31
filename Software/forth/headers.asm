@@ -88,9 +88,35 @@ nt_cls:
         .word nt_lcdprint, xt_cls, z_cls
         .byte "cls"
 
+nt_spi_init:
+        .byte 8, 0
+        .word nt_cls, xt_spi_init, z_spi_init
+        .byte "spi_init"
+
+
+nt_spi_clk_toggle:
+        .byte 14, 0
+        .word nt_spi_init, xt_spi_clk_toggle, z_spi_clk_toggle
+        .byte "spi_clk_toggle"
+
+nt_spi_select:
+        .byte 10, 0
+        .word nt_spi_clk_toggle, xt_spi_select, z_spi_select
+        .byte "spi_select"
+
+nt_spi_transceive:
+        .byte 14, 0
+        .word nt_spi_select, xt_spi_transceive, z_spi_transceive
+        .byte "spi_transceive"
+
+nt_sd_init:
+        .byte 7, 0
+        .word nt_spi_transceive, xt_sd_init, z_sd_init
+        .byte "sd_init"
+
 nt_ed:                  ; ed6502
         .byte 2, NN
-        .word nt_cls, xt_ed, z_ed
+        .word nt_sd_init, xt_ed, z_ed
         .byte "ed"
 
 nt_see: .byte 3, NN

@@ -141,7 +141,7 @@ loop ;
 65410 constant ddrb
 65411 constant ddra
 
-: uptime  130 @ 132 @ 200 um/mod s>d 60 um/mod s>d 60 um/mod cr . ." h " . ." m " . ." ," 2/ . ." s" cr ;
+: uptime  122 @ 124 @ 200 um/mod s>d 60 um/mod s>d 60 um/mod cr . ." h " . ." m " . ." ," 2/ . ." s" cr ;
 : l 256 0 do i porta c! loop ;
 : lights 0 do l loop ;
 
@@ -167,7 +167,6 @@ loop ;
 : tmultimandel 18 scale_factor ! 0 do scale_factor @ 1+ 1+ scale_factor ! tmandel loop ;
 
 \ : tcmultimandel 18 scale_factor ! 0 do scale_factor @ 1+ 1+ scale_factor ! tcmandel loop ;
-
 
 
 \ cr .( Welcome to Planck 6502 ) cr

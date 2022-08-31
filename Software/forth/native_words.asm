@@ -11996,6 +11996,8 @@ xt_lcdput:
                 lda 0,x
 
                 jsr lcd_print
+                inx
+                inx
 z_lcdput: rts
 
 
@@ -12050,4 +12052,58 @@ xt_cls:
                 
 z_cls: rts
 
+
+; ## SPI_INIT ( -- ) "Init SPI system"
+; ## "spi_init" coded Custom
+xt_spi_init:
+                jsr spi_init  
+z_spi_init: rts
+
+
+; ## SPI_CLK_TOGGLE ( -- ) "Toggle SPI clock"
+; ## "spi_clk_toggle" coded Custom
+xt_spi_clk_toggle:
+                jsr spi_clk_toggle  
+z_spi_clk_toggle: rts
+
+; ## SPI_SELECT ( s -- ) "Select SPI slave"
+; ## "spi_select" coded Custom
+xt_spi_select:
+                jsr underflow_1
+
+                lda 0,x
+                
+                jsr spi_select          
+                inx
+                inx
+z_spi_select: rts
+
+; ## SPI_TRANSCEIVE ( s -- u ) "Send and receive spi data"
+; ## "spi_transceive" coded Custom
+xt_spi_transceive:
+                jsr underflow_1
+
+                lda 0,x
+                
+                jsr spi_transceive
+                sta 0,x         ; put return value in TOS
+                stz 1,X         ;reset value there
+z_spi_transceive: rts
+
+; ## SD_INIT ( s -- u ) "Send and receive spi data"
+; ## "spi_trasceive" coded Custom
+xt_sd_init:
+                jsr underflow_1
+
+                lda 0,x
+                
+                jsr sd_init
+                sta 0,x         ; put return value in TOS
+                stz 1,X         ;reset value there
+z_sd_init: rts
+
+; TODO add routine to send a block of data in memory via SPI
+; similar to lcdprint
+
 ; END
+
