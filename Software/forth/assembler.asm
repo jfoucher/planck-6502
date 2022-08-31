@@ -935,7 +935,7 @@ z_asm_tya:
 ; ASSEMBLER HELPER FUNCTIONS
 
 asm_common:
-.scope
+
 
         ; """Common routine for all opcodes. We arrive here with the opcode in
         ; A. We do not need to check for the correct values because we are
@@ -958,9 +958,9 @@ asm_common:
 
                 tya             ; retrieve opcode
                 asl             ; times two for offset
-                bcc+
+                bcc @1
                 inc tmp2+1
-*
+@1:
                 tay             ; use Y as the index
 
                 ; Get address of the entry in the opcode table. We put it in
@@ -984,7 +984,7 @@ asm_common:
 
                 ; One byte means no operand, we're done. Use DEY as CPY #1
                 dey
-                beq _done
+                beq @done
 
                 ; We have an operand which must be TOS
                 jsr underflow_1
@@ -999,18 +999,18 @@ asm_common:
                 ; here, we've already decremented Y by one, so this is
                 ; the equivalent to CPY #2
                 dey
-                beq _done_drop
+                beq @done_drop
 
                 ; This must be a three-byte instruction, get the MSB.
                 lda 1,x
-                jsr cmpl_a      ; Fall through to _done_drop
+                jsr cmpl_a      ; Fall through to @done_drop
 
-_done_drop:
+@done_drop:
                 inx
-                inx             ; Fall through to _done
-_done:
+                inx             ; Fall through to @done
+@done:
                 rts             ; Returns to original caller
-.scend
+
 
 
 ; ==========================================================
@@ -1021,24 +1021,24 @@ xt_asm_push_a:
         ; data stack as the TOS. This is a convience routine that encodes the
         ; instructions  DEX  DEX  STA 0,X  STZ 1,X
         ; """
-.scope
+
                 ldy #0
-_loop:
+@loop:
                 lda _data,y
                 cmp #$FF
-                beq _done
+                beq @done
 
                 jsr cmpl_a      ; does not change Y
                 iny
-                bra _loop
-_done:
+                bra @loop
+@done:
 z_asm_push_a:
                 rts
 _data:
         ; We can't use 00 as a terminator because STA 0,X assembles to 95 00
         .byte $CA, $CA, $95, 00, $74, $01
         .byte $FF               ; terminator
-.scend
+
 
 
 ; ==========================================================

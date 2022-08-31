@@ -33,16 +33,22 @@ clean:
 	$(RM) *.bin *.prg
 
 taliforth-%.bin: platform/platform-%.asm $(COMMON_SOURCES)
-	ophis -l docs/$*-listing.txt \
-	-m docs/$*-labelmap.txt \
+	cl65 --listing docs/$*-listing.txt \
+	--mapfile docs/$*-labelmap.txt \
+	--config platform/platform-$*.cfg \
+	--target none \
+	--cpu 65C02 \
 	-o $@ \
-	-c $<
+	$<
 
 taliforth-%.prg: platform/platform-%.asm $(COMMON_SOURCES)
-	ophis -l docs/$*-listing.txt \
-	-m docs/$*-labelmap.txt \
+	cl65 --listing docs/$*-listing.txt \
+	--mapfile docs/$*-labelmap.txt \
+	--config platform/platform-$*.cfg
+	--target none \
+	--cpu 65C02 \
 	-o $@ \
-	-c $<
+	$<
 
 # Convert the high-level Forth words to ASCII files that Ophis can include
 %.asc: forth_code/%.fs

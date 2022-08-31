@@ -140,7 +140,7 @@ ps2_irq:
 
 @shift_pressed:
     lda control_keys
-    ora #shift
+    ora #SHIFT
     sta control_keys
     bra @exit
 

@@ -1,4 +1,4 @@
-.org $8000
+.segment "CODE"
 
 ; I/O facilities are handled in the separate kernel files because of their
 ; hardware dependencies. See docs/memorymap.txt for a discussion of Tali's
@@ -6,6 +6,7 @@
 
 
 ; MEMORY MAP OF RAM
+
 
 ; Drawing is not only very ugly, but also not to scale. See the manual for 
 ; details on the memory map. Note that some of the values are hard-coded in
@@ -62,12 +63,12 @@
 ; these for easier comparisons with Liara Forth's structure and to 
 ; help people new to these things.
 
-.alias ram_start $0000          ; start of installed 32 KiB of RAM
-.alias ram_end   $8000-1        ; end of installed RAM
-.alias zpage     ram_start      ; begin of Zero Page ($0000-$00ff)
-.alias zpage_end $7F            ; end of Zero Page used ($0000-$007f)	
-.alias stack0    $0100          ; begin of Return Stack ($0100-$01ff)
-.alias hist_buff ram_end-$03ff  ; begin of history buffers
+ram_start = $0000          ; start of installed 32 KiB of RAM
+ram_end =   $8000-1        ; end of installed RAM
+zpage =     ram_start      ; begin of Zero Page ($0000-$00ff)
+zpage_end = $7F            ; end of Zero Page used ($0000-$007f)	
+stack0 =    $0100          ; begin of Return Stack ($0100-$01ff)
+hist_buff = ram_end-$03ff  ; begin of history buffers
             
 
 
@@ -82,29 +83,29 @@
 
 
 
-.alias KB_BUF    hist_buff - $ff
-.alias LCD_BUF   KB_BUF - $7f
-.alias LINE_BUF  LCD_BUF - $7f
-.alias SD_CRC    LINE_BUF - $1
-.alias SD_SLAVE  SD_CRC - $1
-.alias SD_TMP  SD_SLAVE - $1
-.alias SD_ARG    SD_TMP - $4
-.alias SD_BUF    SD_ARG - $1ff
-.alias user0     zpage          ; user and system variables
+KB_BUF =    hist_buff - $ff
+LCD_BUF =   KB_BUF - $7f
+LINE_BUF =  LCD_BUF - $7f
+SD_CRC =    LINE_BUF - $1
+SD_SLAVE =  SD_CRC - $1
+SD_TMP =  SD_SLAVE - $1
+SD_ARG =    SD_TMP - $4
+SD_BUF =    SD_ARG - $1ff
+user0 =     zpage          ; user and system variables
 
-.alias rsp0      $ff            ; initial Return Stack Pointer (65c02 stack)
-.alias bsize     $ff            ; size of input/output buffers
-.alias buffer0   stack0+$100    ; input buffer ($0200-$027f)
-.alias cp0       buffer0+bsize  ; Dictionary starts after last buffer
-.alias cp_end    SD_BUF         ; Last RAM byte available for code
-.alias padoffset $ff            ; offset from CP to PAD (holds number strings)
-
-
+rsp0 =      $ff            ; initial Return Stack Pointer (65c02 stack)
+bsize =     $ff            ; size of input/output buffers
+buffer0 =   stack0+$100    ; input buffer ($0200-$027f)
+cp0 =       buffer0+bsize  ; Dictionary starts after last buffer
+cp_end =    SD_BUF         ; Last RAM byte available for code
+padoffset = $ff            ; offset from CP to PAD (holds number strings)
 
 
 
 
-.require "../taliforth.asm" ; Top-level definitions, memory map
+
+
+.include "../taliforth.asm" ; Top-level definitions, memory map
 
 ; =====================================================================
 ; FINALLY
@@ -130,139 +131,139 @@
 ;
 ;
 
-.advance $e000
+.segment "KERNEL"
 ; clock speed of main oscillator in hertz
 ; used by drivers/timer.s to set proper via timing interval
-.alias CLOCK_SPEED 24000000      
+CLOCK_SPEED = 24000000      
 ; I/O board in slot 0
-.alias VIA1_BASE        $FF80
+VIA1_BASE =        $FF80
 ; Serial chip at this address
-.alias ACIA_BASE        $FFE0
+ACIA_BASE =        $FFE0
 
 ; VIDEO board in slot 3
-.alias VIDEO_BASE       $FFB0
+VIDEO_BASE =       $FFB0
 
 ; LCD board in slot 2
-.alias LCD_BASE         $FFD0
+LCD_BASE =         $FFD0
 
-.alias ACIA_DATA    ACIA_BASE
-.alias ACIA_STATUS  ACIA_BASE+1
-.alias ACIA_COMMAND ACIA_BASE+2
-.alias ACIA_CTRL    ACIA_BASE+3
+ACIA_DATA =    ACIA_BASE
+ACIA_STATUS =  ACIA_BASE+1
+ACIA_COMMAND = ACIA_BASE+2
+ACIA_CTRL =    ACIA_BASE+3
 
-.alias LCD_ADDR_DISABLED LCD_BASE
-.alias LCD_ADDR_ENABLED LCD_BASE + 1
-.alias LCD_DATA_DISABLED LCD_BASE + 2
-.alias LCD_DATA_ENABLED LCD_BASE + 3
+LCD_ADDR_DISABLED = LCD_BASE
+LCD_ADDR_ENABLED = LCD_BASE + 1
+LCD_DATA_DISABLED = LCD_BASE + 2
+LCD_DATA_ENABLED = LCD_BASE + 3
 
-.alias PORTB  VIA1_BASE
-.alias PORTA   VIA1_BASE+1
-.alias DDRB  VIA1_BASE+2
-.alias DDRA  VIA1_BASE+3
+PORTB =  VIA1_BASE
+PORTA =   VIA1_BASE+1
+DDRB =  VIA1_BASE+2
+DDRA =  VIA1_BASE+3
 
-.alias T1CL  VIA1_BASE + 4
-.alias T1CH  VIA1_BASE + 5
-.alias T1LL  VIA1_BASE + 6
-.alias T1LH  VIA1_BASE + 7
-.alias ACR  VIA1_BASE + 11
-.alias PCR  VIA1_BASE + 12
-.alias IFR  VIA1_BASE + 13
-.alias IER  VIA1_BASE + 14
+T1CL =  VIA1_BASE + 4
+T1CH =  VIA1_BASE + 5
+T1LL =  VIA1_BASE + 6
+T1LH =  VIA1_BASE + 7
+ACR =  VIA1_BASE + 11
+PCR =  VIA1_BASE + 12
+IFR =  VIA1_BASE + 13
+IER =  VIA1_BASE + 14
 
 
-.alias VIDEO_CTRL VIDEO_BASE       ;// Formatted as follows |INCR_5|INCR_4|INCR_3|INCR_2|INCR_1|INCR_0|MODE_1|MODE_0|  default to LORES
-.alias VIDEO_ADDR_LOW VIDEO_BASE + 1   ;//  ||||ADDR4|ADDR_3|ADDR_2|ADDR_1|ADDR_0|
-.alias VIDEO_ADDR_HIGH VIDEO_BASE + 2
-.alias VIDEO_DATA VIDEO_BASE + 3
-.alias VIDEO_IEN VIDEO_BASE + 4    ;// formatted as follows |VSYNC| | | | | | |HSYNC|
-.alias VIDEO_INTR VIDEO_BASE + 5   ;// formatted as follows |VSYNC| | | | | | |HSYNC|
-.alias VIDEO_HSCROLL VIDEO_BASE + 6
-.alias VIDEO_VSCROLL VIDEO_BASE + 7
-.alias VIDEO_HIRES_HCHARS 100
-.alias VIDEO_HIRES_VCHARS 75
+VIDEO_CTRL = VIDEO_BASE       ;// Formatted as follows |INCR_5|INCR_4|INCR_3|INCR_2|INCR_1|INCR_0|MODE_1|MODE_0|  default to LORES
+VIDEO_ADDR_LOW = VIDEO_BASE + 1   ;//  ||||ADDR4|ADDR_3|ADDR_2|ADDR_1|ADDR_0|
+VIDEO_ADDR_HIGH = VIDEO_BASE + 2
+VIDEO_DATA = VIDEO_BASE + 3
+VIDEO_IEN = VIDEO_BASE + 4    ;// formatted as follows |VSYNC| | | | | | |HSYNC|
+VIDEO_INTR = VIDEO_BASE + 5   ;// formatted as follows |VSYNC| | | | | | |HSYNC|
+VIDEO_HSCROLL = VIDEO_BASE + 6
+VIDEO_VSCROLL = VIDEO_BASE + 7
+VIDEO_HIRES_HCHARS = 100
+VIDEO_HIRES_VCHARS = 75
 
 ; ps2 defines
 
-.alias DATA $80   ; Data is in bit 7 of PORTB
+DATA = $80   ; Data is in bit 7 of PORTB
 ; clock is on CB2
-.alias SHIFT $1
-.alias ALT $2
+SHIFT = $1
+ALT = $2
 
-.alias KB_STATE_START $0
-.alias KB_STATE_DATA $1
-.alias KB_STATE_PARITY $2
-.alias KB_STATE_STOP $3
+KB_STATE_START = $0
+KB_STATE_DATA = $1
+KB_STATE_PARITY = $2
+KB_STATE_STOP = $3
 
-.alias KB_INIT_STATE_RESET $0
-.alias KB_INIT_STATE_RESET_ACK $1
-.alias KB_INIT_STATE_LEDS $2
-.alias KB_INIT_STATE_LEDS_ACK $3
-.alias KB_INIT_STATE_LEDS_DATA $4
-.alias KB_INIT_STATE_LEDS_DATA_ACK $5
+KB_INIT_STATE_RESET = $0
+KB_INIT_STATE_RESET_ACK = $1
+KB_INIT_STATE_LEDS = $2
+KB_INIT_STATE_LEDS_ACK = $3
+KB_INIT_STATE_LEDS_DATA = $4
+KB_INIT_STATE_LEDS_DATA_ACK = $5
 
-.alias LSHIFT_KEY $12
-.alias RSHIFT_KEY $59
+LSHIFT_KEY = $12
+RSHIFT_KEY = $59
 
-.alias TIMER_DELAY $C4
+TIMER_DELAY = $C4
 
 ; SPI defines
 
-.alias SS $07   ; Slave Select with lowest 3 bits
-.alias SCK $08   ; Clock on bit 3
-.alias MISO $10  ; MISO on bit 4
-.alias MOSI $20  ; MOSI on bit 5
-.alias CONF $40  ; CONF on bit 6
+SS = $07   ; Slave Select with lowest 3 bits
+SCK = $08   ; Clock on bit 3
+MISO = $10  ; MISO on bit 4
+MOSI = $20  ; MOSI on bit 5
+CONF = $40  ; CONF on bit 6
 
 ; Zero page variables
 
-.alias stack_p          dsp0
-.alias time             dsp0+2
-.alias last_ps2_time    dsp0+6
+stack_p =          dsp0
+time =             dsp0+2
+last_ps2_time =    dsp0+6
 
-.alias to_send          dsp0+10
-.alias KB_STATE         dsp0+11
-.alias KB_TEMP          dsp0+11
+to_send =          dsp0+10
+KB_STATE =         dsp0+11
+KB_TEMP =          dsp0+11
 
-.alias KB_BUF_W_PTR     dsp0+12
-.alias KB_BUF_R_PTR     dsp0+13
-.alias KB_PARITY        dsp0+14
-.alias KB_BIT           dsp0+15
-.alias KB_INIT_STATE    dsp0+16
-.alias KB_INIT_WAIT     dsp0+17
+KB_BUF_W_PTR =     dsp0+12
+KB_BUF_R_PTR =     dsp0+13
+KB_PARITY =        dsp0+14
+KB_BIT =           dsp0+15
+KB_INIT_STATE =    dsp0+16
+KB_INIT_WAIT =     dsp0+17
 
-.alias ready            dsp0+18
+ready =            dsp0+18
 
-.alias ignore_next      dsp0+19
-.alias control_keys     dsp0+20
+ignore_next =      dsp0+19
+control_keys =     dsp0+20
 
-.alias character        dsp0+21
-.alias debug            dsp0+22
+character =        dsp0+21
+debug =            dsp0+22
 
-.alias temp_bits        dsp0+23
-.alias LCD_BUF_W_PTR    dsp0+24
-.alias LCD_BUF_R_PTR    dsp0+25
-.alias line             dsp0+26
-.alias char             dsp0+27
-.alias lcd_absent       dsp0+28
-.alias lcd_pos          dsp0+29
-.alias has_acia         dsp0+30
-.alias spi_tmp          dsp0+31
-.alias spi_tmp2         dsp0+32
-.alias spi_slave        dsp0+33
-
-
+temp_bits =        dsp0+23
+LCD_BUF_W_PTR =    dsp0+24
+LCD_BUF_R_PTR =    dsp0+25
+line =             dsp0+26
+char =             dsp0+27
+lcd_absent =       dsp0+28
+lcd_pos =          dsp0+29
+has_acia =         dsp0+30
+spi_tmp =          dsp0+31
+spi_tmp2 =         dsp0+32
+spi_slave =        dsp0+33
 
 
 
 
-.require "../../drivers/delayroutines.s"
-.require "../../drivers/ps2.s"
-.require "../../drivers/ps2_irq.s"
-.require "../../drivers/timer.s"
-.require "../../drivers/lcd.s"
-.require "../../drivers/vga.s"
-.require "../../drivers/spi.s"
-.require "../../drivers/sd.s"
+
+
+.include "../../drivers/delayroutines.s"
+.include "../../drivers/ps2.s"
+
+.include "../../drivers/timer.s"
+.include "../../drivers/lcd.s"
+.include "../../drivers/vga.s"
+.include "../../drivers/spi.s"
+.include "../../drivers/sd.s"
 
 ; Default kernel file for Tali Forth 2 
 ; Scot W. Stevenson <scot.stevenson@gmail.com>
@@ -288,7 +289,7 @@ kernel_init:
         ; py65mon, of course, this is really easy. -- At the end, we JMP
         ; back to the label forth to start the Forth system.
         ; """
-.scope
+
         lda #1
         sta PORTA
         lda #$FF
@@ -314,16 +315,17 @@ v_nmi:
         ; We've successfully set everything up, so print the kernel
         ; string
         ldx #0
-*       lda s_kernel_id,x
-        beq _done
+@loop:
+        lda s_kernel_id,x
+        beq @done
         jsr kernel_putc
         inx
-        bra -
-_done:
+        bra @loop
+@done:
         lda #1
         sta PORTB
         jmp forth
-.scend
+
 
 
 ; The Planck computer runs Tali Forth 2 as the OS, to there is nowhere to go back to.
@@ -505,7 +507,7 @@ s_kernel_id:
 
 
 ; Add the interrupt vectors 
-.advance $fffa
+.segment "VECTORS"
 
 .word v_nmi
 .word v_reset

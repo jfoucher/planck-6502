@@ -1,11 +1,11 @@
 spi_init: 
     lda PORTB               ; load current port B
-    and #[DATA | MISO]      ; set everything to zero except for PS2 DATA and MISO
+    and #(DATA | MISO)      ; set everything to zero except for PS2 DATA and MISO
     ora #CONF               ; set CONF high
     sta PORTB               ; save to PORTB
     lda DDRB                ; get current direction register
-    ora #[MOSI | CONF | SCK | SS] ; set MOSI, CONF, SCK and SS as outputs
-    and #[$FF^MISO]                 ; set MISO as input        
+    ora #(MOSI | CONF | SCK | SS) ; set MOSI, CONF, SCK and SS as outputs
+    and #($FF^MISO)                 ; set MISO as input        
     sta DDRB
 
     rts
@@ -41,11 +41,11 @@ spi_send_loop:
     bcc bit_unset
 bit_set: 
     lda PORTB
-    ora #[MOSI | CONF]
+    ora #(MOSI | CONF)
     jmp clock_on
 bit_unset:
     lda PORTB
-    and #[[$FF^MOSI] | CONF]
+    and #(($FF^MOSI) | CONF)
 clock_on:
     ; set data bit
     ora spi_slave
@@ -58,7 +58,7 @@ clock_on:
     nop
     nop
     ; set clock on
-    ora #[SCK | CONF]
+    ora #(SCK | CONF)
     ora spi_slave
     sta PORTB
 
@@ -84,7 +84,7 @@ spi_bit_set:
 
 clock_off:
     lda PORTB
-    and #[[$FF^SCK] | CONF]
+    and #(($FF^SCK) | CONF)
     nop
     nop
     nop
@@ -101,7 +101,7 @@ end_loop:
     jsr delay_short
     lda PORTB
     ora spi_slave
-    and #[[$FF^MOSI] | CONF]
+    and #(($FF^MOSI) | CONF)
     sta PORTB
     lda spi_tmp2
     plx

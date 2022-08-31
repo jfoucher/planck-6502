@@ -1,6 +1,6 @@
 
 
-.alias COUNTER CLOCK_SPEED/400        ; n/s
+COUNTER = CLOCK_SPEED/400        ; n/s
 
 
 timer_init:

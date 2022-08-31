@@ -143,7 +143,7 @@ prepare_send:
   ; delay end
   ; pull data low now
   lda PORTB
-  and #[$FF^DATA]
+  and #($FF^DATA)
   sta PORTB
   lda DDRB
   ora #DATA   ;data as output to set it low

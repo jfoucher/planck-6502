@@ -23,7 +23,7 @@ clear_sd_buf_loop1:
     bne clear_sd_buf_loop1
     ldx #$FF
 clear_sd_buf_loop2:
-    stz [SD_BUF+256], X
+    stz SD_BUF+256, x
     dex
     bne clear_sd_buf_loop2
 
@@ -81,11 +81,12 @@ sd_init_loop2:
     beq force_block_size    ; CCS bit is unset, force block addressing
 sd_init_exit_success:
     ldx #0
-*   lda sd_init_success_message,x
+@1:
+    lda sd_init_success_message,x
     beq sd_init_exit
     jsr kernel_putc
     inx
-    bra -
+    bra @1
 sd_init_exit:
     plx
     rts
@@ -102,11 +103,12 @@ force_block_size:
 sd_error:
     ; print error message
     ldx #0
-*   lda sd_init_error_message,x
+@1:
+    lda sd_init_error_message,x
     beq sd_init_exit
     jsr kernel_putc
     inx
-    bra -
+    bra @1
 
     jmp sd_init_exit
 
