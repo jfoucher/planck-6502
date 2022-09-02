@@ -103,35 +103,8 @@ padoffset = $ff            ; offset from CP to PAD (holds number strings)
 
 
 
+;PLANCK DEFINITIONS
 
-
-.include "../taliforth.asm" ; Top-level definitions, memory map
-
-; =====================================================================
-; FINALLY
-
-; Of the 32 KiB we use, 24 KiB are reserved for Tali (from $8000 to $DFFF)
-; and the last eight (from $E000 to $FFFF) are left for whatever the user
-; wants to use them for.
-
-
-; ******************************************************************
-; *  Hardware definitions for Planck 6502 computer                 *
-; *  Change these depending on the slot in which                   *
-; *  you want to put each card                                     *
-; *  As a reminder here are the addresses for each slot:           *
-; *                                                                *
-; * START ADDRESS    |   END ADDRESS       |     DESCRIPTION       *
-; * 0xFF80           |   0xFF8F            | SLOT1 Selected        *
-; * 0xFF90           |   0xFF9F            | SLOT2 Selected        *
-; * 0xFFA0           |   0xFFAF            | SLOT3 Selected        *
-; * 0xFFB0           |   0xFFBF            | SLOT4 Selected        *
-; * 0xFFC0           |   0xFFCF            | SLOT5 Selected        *
-; ******************************************************************
-;
-;
-
-.segment "KERNEL"
 ; clock speed of main oscillator in hertz
 ; used by drivers/timer.s to set proper via timing interval
 CLOCK_SPEED = 24000000      
@@ -206,14 +179,6 @@ RSHIFT_KEY = $59
 
 TIMER_DELAY = $C4
 
-; SPI defines
-
-SS = $07   ; Slave Select with lowest 3 bits
-SCK = $08   ; Clock on bit 3
-MISO = $10  ; MISO on bit 4
-MOSI = $20  ; MOSI on bit 5
-CONF = $40  ; CONF on bit 6
-
 ; Zero page variables
 
 stack_p =          dsp0
@@ -255,15 +220,42 @@ spi_slave =        dsp0+33
 
 
 
-
+.include "../../drivers/spi.s"
 .include "../../drivers/delayroutines.s"
 .include "../../drivers/ps2.s"
 
 .include "../../drivers/timer.s"
 .include "../../drivers/lcd.s"
 .include "../../drivers/vga.s"
-.include "../../drivers/spi.s"
+
 .include "../../drivers/sd.s"
+.include "../taliforth.asm" ; Top-level definitions, memory map
+
+; =====================================================================
+; FINALLY
+
+; Of the 32 KiB we use, 24 KiB are reserved for Tali (from $8000 to $DFFF)
+; and the last eight (from $E000 to $FFFF) are left for whatever the user
+; wants to use them for.
+
+
+; ******************************************************************
+; *  Hardware definitions for Planck 6502 computer                 *
+; *  Change these depending on the slot in which                   *
+; *  you want to put each card                                     *
+; *  As a reminder here are the addresses for each slot:           *
+; *                                                                *
+; * START ADDRESS    |   END ADDRESS       |     DESCRIPTION       *
+; * 0xFF80           |   0xFF8F            | SLOT1 Selected        *
+; * 0xFF90           |   0xFF9F            | SLOT2 Selected        *
+; * 0xFFA0           |   0xFFAF            | SLOT3 Selected        *
+; * 0xFFB0           |   0xFFBF            | SLOT4 Selected        *
+; * 0xFFC0           |   0xFFCF            | SLOT5 Selected        *
+; ******************************************************************
+;
+;
+
+.segment "KERNEL"
 
 ; Default kernel file for Tali Forth 2 
 ; Scot W. Stevenson <scot.stevenson@gmail.com>
@@ -401,6 +393,9 @@ no_char_available:
         rts                             ; return
 
 
+
+
+
 kernel_getc:
         ; """Get a single character from the keyboard (waits for key). 
         ; """
@@ -502,7 +497,7 @@ v_exit:
 ; is easier to see where the kernel ends in hex dumps. This string is
 ; displayed after a successful boot
 s_kernel_id: 
-        .byte "Tali Forth 2 for Planck 6502 (27/08/2021)", AscLF, 0
+        .byte "Tali Forth 2.1 for Planck 6502", 0
 
 
 
