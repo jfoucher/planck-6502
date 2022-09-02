@@ -27,12 +27,13 @@ endif
 
 COMMON_SOURCES=taliforth.asm definitions.asm native_words.asm headers.asm strings.asm forth_words.asc user_words.asc disassembler.asm ed.asm assembler.asm
 TEST_SOURCES=tests/core_a.fs tests/core_b.fs tests/core_c.fs tests/string.fs tests/double.fs tests/facility.fs tests/tali.fs tests/tools.fs tests/block.fs tests/user.fs tests/cycles.fs tests/talitest.py tests/ed.fs tests/search.fs tests/asm.fs
+DRIVERS=../drivers/acia.s ../drivers/delayroutines.s ../drivers/spi.s ../drivers/spi.s
 
 all: taliforth-py65mon.bin docs/WORDLIST.md
 clean:
 	$(RM) *.bin *.prg
 
-taliforth-%.bin: platform/platform-%.asm $(COMMON_SOURCES)
+taliforth-%.bin: platform/platform-%.asm platform/platform-%.cfg $(COMMON_SOURCES) $(DRIVERS)
 	cl65 --listing docs/$*-listing.txt \
 	--mapfile docs/$*-labelmap.txt \
 	--config platform/platform-$*.cfg \
@@ -49,6 +50,7 @@ taliforth-%.prg: platform/platform-%.asm $(COMMON_SOURCES)
 	--cpu 65C02 \
 	-o $@ \
 	$<
+
 
 # Convert the high-level Forth words to ASCII files that Ophis can include
 %.asc: forth_code/%.fs

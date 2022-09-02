@@ -25,7 +25,7 @@
 \ cr .( Tali Forth 2 comes with absolutely NO WARRANTY)
 \ cr .( Type 'bye' to exit) cr
 
-cr .( Welcome to Planck 6502 ) cr
+cr .( Ready ) cr
 
 \ END
 

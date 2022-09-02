@@ -78,7 +78,7 @@ variable s_escape
 ( translate escape cnt to ascii greyscale )
 : .char
 \ s" ..,'~!^:;[/<&?oxox#  " 
-s"    ,-!:=;*/I3X6A8%NW  "
+s"   .,-!:=;*/I3X6A8%NW  "
 drop + 1 
 type ; 
 
@@ -156,7 +156,7 @@ loop ;
 
 \ : cmandel scale_factor @ 0 = if 20 scale_factor ! then cls mandelbrot ;
 
-: mandel scale_factor @ 0 = if 20 scale_factor ! then mandelbrot ;
+: mandel scale_factor @ 0 = if 10 scale_factor ! then mandelbrot ;
 
 : tmandel uptime mandel uptime ;
 

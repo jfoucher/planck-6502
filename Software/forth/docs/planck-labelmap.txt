@@ -1,8 +1,8 @@
 Modules list:
 -------------
 platform-planck.o:
-    CODE              Offs=000000  Size=005CC7  Align=00001  Fill=0000
-    KERNEL            Offs=000000  Size=0009A2  Align=00001  Fill=0000
+    CODE              Offs=000000  Size=0065C0  Align=00001  Fill=0000
+    KERNEL            Offs=000000  Size=000107  Align=00001  Fill=0000
     VECTORS           Offs=000000  Size=000006  Align=00001  Fill=0000
 
 
@@ -10,8 +10,8 @@ Segment list:
 -------------
 Name                   Start     End    Size  Align
 ----------------------------------------------------
-CODE                  008000  00DCC6  005CC7  00001
-KERNEL                00E000  00E9A1  0009A2  00001
+CODE                  008000  00E5BF  0065C0  00001
+KERNEL                00FD00  00FE06  000107  00001
 VECTORS               00FFFA  00FFFF  000006  00001
 
 

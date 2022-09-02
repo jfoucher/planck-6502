@@ -2,6 +2,7 @@
 Scot W. Stevenson <scot.stevenson@gmail.com>   
 First version: (Tali Forth 1 ) 19. Jan 2014
 This version: (Version 1.0 ) 25. Jan 2020
+Conversion to ca65 assembler by Jonathan Foucher <jfoucher@6px.eu> Sept 2022
 
 ## Dude, I am the very model of a Salarian scientist, just let me start!
 

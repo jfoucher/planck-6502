@@ -381,7 +381,7 @@ xt_accept:
                 inx
                 stz 0,x
                 stz 1,x
-                
+
                 jmp accept_done
 
 @not_zero:
@@ -11996,8 +11996,9 @@ xt_lcdput:
                 jsr underflow_1
 
                 lda 0,x
-
+        .ifdef lcd_print
                 jsr lcd_print
+        .endif
                 inx
                 inx
 z_lcdput: rts
@@ -12022,8 +12023,9 @@ xt_lcdprint:
 
                 ; Send the current character
                 lda (tmp1)
+        .ifdef lcd_print
                 jsr lcd_print      ; avoids stack foolery
-
+        .endif
                 ; Move the address along (in tmp1)
                 inc tmp1
                 bne @1
@@ -12050,7 +12052,9 @@ z_lcdprint:         rts
 ; ## CLS ( -- ) "clea VGA screen"
 ; ## "cls" coded Custom
 xt_cls:
+        .ifdef vga_clear
                 jsr vga_clear
+        .endif
                 
 z_cls: rts
 
@@ -12058,14 +12062,18 @@ z_cls: rts
 ; ## SPI_INIT ( -- ) "Init SPI system"
 ; ## "spi_init" coded Custom
 xt_spi_init:
-                jsr spi_init  
+        .ifdef spi_init
+                jsr spi_init 
+        .endif 
 z_spi_init: rts
 
 
 ; ## SPI_CLK_TOGGLE ( -- ) "Toggle SPI clock"
 ; ## "spi_clk_toggle" coded Custom
 xt_spi_clk_toggle:
+        .ifdef spi_clk_toggle
                 jsr spi_clk_toggle  
+        .endif
 z_spi_clk_toggle: rts
 
 ; ## SPI_SELECT ( s -- ) "Select SPI slave"
@@ -12074,8 +12082,9 @@ xt_spi_select:
                 jsr underflow_1
 
                 lda 0,x
-                
-                jsr spi_select          
+        .ifdef spi_select
+                jsr spi_select   
+        .endif       
                 inx
                 inx
 z_spi_select: rts
@@ -12086,8 +12095,9 @@ xt_spi_transceive:
                 jsr underflow_1
 
                 lda 0,x
-                
+        .ifdef spi_transceive
                 jsr spi_transceive
+        .endif
                 sta 0,x         ; put return value in TOS
                 stz 1,X         ;reset value there
 z_spi_transceive: rts
@@ -12098,8 +12108,9 @@ xt_sd_init:
                 jsr underflow_1
 
                 lda 0,x
-                
+        .ifdef sd_init
                 jsr sd_init
+        .endif
                 sta 0,x         ; put return value in TOS
                 stz 1,X         ;reset value there
 z_sd_init: rts

@@ -1,3 +1,11 @@
+; SPI defines
+
+SS = $07   ; Slave Select with lowest 3 bits
+SCK = $08   ; Clock on bit 3
+MISO = $10  ; MISO on bit 4
+MOSI = $20  ; MOSI on bit 5
+CONF = $40  ; CONF on bit 6
+
 spi_init: 
     lda PORTB               ; load current port B
     and #(DATA | MISO)      ; set everything to zero except for PS2 DATA and MISO
@@ -7,6 +15,9 @@ spi_init:
     ora #(MOSI | CONF | SCK | SS) ; set MOSI, CONF, SCK and SS as outputs
     and #($FF^MISO)                 ; set MISO as input        
     sta DDRB
+    lda #$FF
+    sta DDRA
+    sta PORTA
 
     rts
 
@@ -14,6 +25,7 @@ spi_select:
     ; selected slave in A
     and #SS                 ; mask slave select bits
     sta PORTB               ; set everything low except for SS bits
+    sta PORTA
     sta spi_slave
     phy
     ldy #$1
@@ -50,25 +62,13 @@ clock_on:
     ; set data bit
     ora spi_slave
     sta PORTB
-    ; delay
-    nop
-    nop
-    nop
-    nop
-    nop
-    nop
+
     ; set clock on
     ora #(SCK | CONF)
     ora spi_slave
     sta PORTB
 
     ; read bit from slave, maybe add slight delay here ?
-    nop
-    nop
-    nop
-    nop
-    nop
-    nop
     lda PORTB
     and #MISO           ; mask miso bit
     bne spi_bit_set      ; bit is set
@@ -85,12 +85,6 @@ spi_bit_set:
 clock_off:
     lda PORTB
     and #(($FF^SCK) | CONF)
-    nop
-    nop
-    nop
-    nop
-    nop
-    nop
     ora spi_slave
     sta PORTB
 end_loop: 
