@@ -7,8 +7,10 @@ ram_end = $8000
 .include "drivers/ps2.inc"
 .include "drivers/lcd.inc"
 .include "drivers/vga.inc"
+.include "drivers/keyboard.inc"
 
 .include "drivers/zp.s"
+
 
 
 .segment "BSS"
@@ -61,6 +63,7 @@ v_reset:
 
 .include "drivers/acia.s"
 .include "drivers/timer.s"
+.include "drivers/keyboard.s"
 ; .include "drivers/ps2.s"
 .include "drivers/delayroutines.s"
 ; .include "drivers/lcd.s"
@@ -70,8 +73,6 @@ v_reset:
 .include "drivers/fat32.s"
 
 .include "../../forth.s"
-
-
 
 kernel_init:
 v_nmi:
@@ -84,15 +85,22 @@ v_nmi:
     jsr video_init
 .endif
 .ifdef ps2_init
-    jsr ps2_init
+    ; jsr ps2_init
 .endif
 .ifdef timer_init
     jsr timer_init
 .endif
     jsr acia_init
 .ifdef lcd_init
-    jsr lcd_init
+    ; jsr lcd_init
 .endif
+.ifdef spi_init
+    ; jsr spi_init
+.endif
+.ifdef kb_init
+    jsr kb_init
+.endif
+
 
 
     printascii welcome_message
@@ -101,6 +109,7 @@ v_nmi:
 
 platform_bye:   
     jmp platform_bye
+
 
 kernel_putc:
     ; """Print a single character to the console. """
@@ -135,23 +144,20 @@ Get_Char:
     rts                             ; Return
     
 get_ps2_char:                       ; no ACIA char available, try to get from KB buffer
-
-.ifdef ps2_init
-    phx                             ; save X
-    ldx KB_BUF_R_PTR                ; check the keyboard buffer
-    lda KB_BUF, x                   
-    beq no_ps2_char_available       ; exit if nothing found
-    stz KB_BUF, x                   ; if there was a character, reset this buffer cell
-    inc KB_BUF_R_PTR                ; and increment the read pointer
-
-    sec                             ; mark character present
-    plx                             ; restore X
-    jsr check_ctrl_c
-    rts                             ; return
-no_ps2_char_available:                  ; no keyboard char
-    inc KB_BUF_R_PTR                ; increment read pointer for next time
-    plx                             ; restore X
+.ifdef ps2_get_char
+    jsr ps2_get_char
 .endif
+    bcc get_kb_char
+    sec
+
+    rts
+get_kb_char:
+    .ifdef kb_get_char
+        jsr kb_get_char
+    .endif
+    bcc no_char_available
+    sec
+    rts
 no_char_available:
     clc                             ; Indicate no char available.
     rts                             ; return
@@ -185,13 +191,18 @@ v_irq:                          ; IRQ handler
         phy
         ; check if bit 7 of IFR is set
         lda IFR
-        bpl v_irq_exit  ; Interrupt not from VIA, exit
+        bpl v_kb_irq  ; Interrupt not from VIA, exit
 
         and #$08        ; ps2 has priority
         bne v_irq_ps2
         lda IFR
         and #$40
         bne v_irq_timer
+v_kb_irq:
+        lda KB_IFR
+        bpl v_irq_exit
+        and #$40
+        bne v_kb_irq_timer
         bra v_irq_exit
 
 
@@ -218,7 +229,8 @@ v_irq_ps2:
         bra v_irq_exit
     
 v_irq_timer:
-        lda T1CL
+        lda T1CL  
+        ; clear timer interrupt
     .ifdef timer_irq
         jsr timer_irq
     .endif
@@ -229,10 +241,15 @@ v_irq_timer:
         ; jsr lcd_print
         ; stz lcd_char
 
+
+        bra v_irq_exit
+v_kb_irq_timer:
+    lda KB_T1CL ; clear timer interrupt
+    jsr kb_scan
 v_irq_exit:
-        ply
-        pla
-        rti
+    ply
+    pla
+    rti
 
 .segment "RODATA"
 

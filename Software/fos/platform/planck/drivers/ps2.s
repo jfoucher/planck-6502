@@ -201,4 +201,23 @@ clear_buffer:
   plx
   rts
 
+
+ps2_get_char:
+
+    phx                             ; save X
+    ldx KB_BUF_R_PTR                ; check the keyboard buffer
+    lda KB_BUF, x                   
+    beq no_ps2_char_available       ; exit if nothing found
+    stz KB_BUF, x                   ; if there was a character, reset this buffer cell
+    inc KB_BUF_R_PTR                ; and increment the read pointer
+
+    sec                             ; mark character present
+    plx                             ; restore X
+    jsr check_ctrl_c
+    rts                             ; return
+no_ps2_char_available:                  ; no keyboard char
+    inc KB_BUF_R_PTR                ; increment read pointer for next time
+    plx                             ; restore X
+    clc
+    rts
   .include "ps2_irq.s"

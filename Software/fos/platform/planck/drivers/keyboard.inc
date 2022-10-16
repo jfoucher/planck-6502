@@ -16,26 +16,19 @@
 ; OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER 
 ; DEALINGS IN THE SOFTWARE.
 
-; next_addr: .res 1
+
+KB_VIA_BASE   = $FF90
+KB_PORTB = KB_VIA_BASE
+KB_PORTA  = KB_VIA_BASE+1
+KB_DDRB = KB_VIA_BASE+2
+KB_DDRA = KB_VIA_BASE+3
 
 
-
-
-.segment "ZEROPAGE": zeropage
-
-stack_p: .res 2
-time: .res 4
-last_ps2_time: .res 4
-
-KB_BUF_W_PTR: .res 1
-KB_BUF_R_PTR: .res 1
-control_keys: .res 1
-character: .res 1
-debug: .res 1
-sd_buffer_address: .res 2
-temp_bits: .res 1
-LCD_BUF_W_PTR: .res 1
-LCD_BUF_R_PTR: .res 1
-fat32_filenamepointer: .res 2
-kb_temp_var: .res 1
-kb_temp_var2: .res 1
+KB_T1CL = KB_VIA_BASE + 4
+KB_T1CH = KB_VIA_BASE + 5
+KB_T1LL = KB_VIA_BASE + 6
+KB_T1LH = KB_VIA_BASE + 7
+KB_ACR = KB_VIA_BASE + 11
+KB_PCR = KB_VIA_BASE + 12
+KB_IFR = KB_VIA_BASE + 13
+KB_IER = KB_VIA_BASE + 14
