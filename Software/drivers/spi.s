@@ -97,7 +97,7 @@ end_loop:
     ora spi_slave
     and #(($FF^MOSI) | CONF)
     sta PORTB
-    lda spi_tmp2
     plx
     ply
+    lda spi_tmp2
     rts

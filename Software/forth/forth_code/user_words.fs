@@ -168,6 +168,7 @@ loop ;
 
 \ : tcmultimandel 18 scale_factor ! 0 do scale_factor @ 1+ 1+ scale_factor ! tcmandel loop ;
 
+: init_sd 7 sd_init if ." sd init ok " else 7 sd_init if ." sd init ok 2 " else ." sd init fail " then then ;
 
 \ cr .( Welcome to Planck 6502 ) cr
 \ END 

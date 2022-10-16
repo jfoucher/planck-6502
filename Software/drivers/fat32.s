@@ -22,6 +22,7 @@ fat32_address           = FAT_VARS + $0e  ; 2 bytes
 fat32_nextcluster       = FAT_VARS + $10  ; 4 bytes
 fat32_bytesremaining    = line; FAT_VARS + $14  ; 4 bytes 
 
+fat32_filenamepointer   = fat32_bytesremaining  ; only used when searching for a file
 
 
 fat32_init:
@@ -189,7 +190,6 @@ fat32_init:
 
 
 fat32_seekcluster:
-    phy
     ; Gets ready to read fat32_nextcluster, and advances it according to the FAT
     
     ; FAT sector = (cluster*4) / 512 = (cluster*2) / 256
@@ -318,7 +318,6 @@ fat32_seekcluster:
     ; It's the end of the chain, set the top bits so that we can tell this later on
     sta fat32_nextcluster+3
 @notendofchain:
-    ply
     rts
 
 
@@ -395,7 +394,6 @@ fat32_openroot:
 
 
 fat32_opendirent:
-    phy
     ; Prepare to read from a file or directory based on a dirent
     ;
     ; Point sd_buffer_address at the dirent
@@ -433,7 +431,7 @@ fat32_opendirent:
     ; Set the pointer to a large value so we always read a sector the first time through
     ; lda #$ff
     ; sta sd_buffer_address+1
-    ply
+
     rts
 
 
@@ -443,13 +441,12 @@ fat32_readdirent:
     ; On exit the carry is set if there were no more directory entries.
     ;
     ; Otherwise, A is set to the file's attribute byte and
-    ; sd_buffer_address points at the returned directory entry.
+    ; zp_sd_address points at the returned directory entry.
     ; LFNs and empty entries are ignored automatically.
 
     ; Increment pointer by 32 to point to next entry
     lda #'1'
     jsr kernel_putc
-    phy
     clc
     lda sd_buffer_address
     adc #32
@@ -457,26 +454,39 @@ fat32_readdirent:
     lda sd_buffer_address+1
     adc #0
     sta sd_buffer_address+1
-    sta PORTA
 
     ; If it's not at the end of the buffer, we have data already
     cmp #>(fat32_readbuffer+$200)
     bcc @gotdata
+
+    lda #'2'
+    jsr kernel_putc
 
     ; Read another sector
     lda #<fat32_readbuffer
     sta fat32_address
     lda #>fat32_readbuffer
     sta fat32_address+1
+    lda #'3'
+    jsr kernel_putc
     jsr fat32_readnextsector
     bcc @gotdata
 
 @endofdirectory:
-    ply
+    lda #'4'
+    jsr kernel_putc
     sec
     rts
 
 @gotdata:
+    ldy #0
+@printfname:
+    lda (sd_buffer_address),y
+    jsr kernel_putc
+    iny
+    cpy #11
+    bcc @printfname
+
     ; Check first character
     ldy #0
     lda (sd_buffer_address),y
@@ -501,7 +511,6 @@ fat32_readdirent:
     lda #'6'
     jsr kernel_putc
     ; Yield this result
-    ply
     clc
     rts
 
@@ -516,12 +525,12 @@ fat32_finddirent:
     jsr fat32_readdirent
     ldy #10
     bcc @comparenameloop
-    ply
     lda #1
     rts ; return not found
 
 @comparenameloop:
     lda (sd_buffer_address),y
+    jsr kernel_putc
     cmp (fat32_filenamepointer),y
     bne @direntloop ; no match
     dey
@@ -576,10 +585,9 @@ fat32_file_readbyte:
     bcs @rts                    ; this shouldn't happen
 
 @gotdata:
-    phy
     ldy #0
     lda (sd_buffer_address),y
-    ply
+
     inc sd_buffer_address
     bne @rts
     inc sd_buffer_address+1

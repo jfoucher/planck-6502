@@ -12187,21 +12187,57 @@ z_fat32_init: rts
 ; ## "fat32_root" coded Custom
 xt_fat32_root:
 
+        dex
+        dex
         .ifdef fat32_openroot
                 jsr fat32_openroot
-                ; beq @end
+                beq @end
         .endif
-
+        ; .ifdef fat32_readdirent
+        ;         jsr fat32_readdirent
+        ;         bcc @end
+        ; .endif
+                
+@error:
+        lda #1
 @end:
-                dex
-                dex
-                sta 0,x         ; put return value in TOS
-                stz 1,X         ;reset value there
+                
+        sta 0,x         ; put return value in TOS
+        stz 1,X         ;reset value there
 z_fat32_root: rts
 
 ; ## FAT32_FIND ( addr u -- u ) "Open file from initialized fat32 FS"
 ; ## "fat32_find" coded Custom
 xt_fat32_find:
+textfile:  .byte "FILE.TXT   ", 0
+                lda #<textfile
+                sta fat32_filenamepointer
+                lda #>textfile
+                sta fat32_filenamepointer+1
+        .ifdef fat32_finddirent
+                jsr fat32_finddirent    ; find the file from its name
+                bne @error
+        .endif
+                jsr fat32_file_read
+                bne @error
+                dex
+                dex
+                lda sd_buffer_address
+                sta 0,x
+                lda sd_buffer_address+1
+                sta 1, x
+;                 phy
+;         ldy #0
+; @printloop:
+;         lda (sd_buffer_address),y
+;         beq @ex
+;         jsr kernel_putc
+; @ex:
+;         ply
+        jmp @end
+        
+                jmp @end
+
                 jsr underflow_2
                 phy
                 ldy 0,x ; length of string

@@ -114,9 +114,26 @@ nt_sd_init:
         .word nt_spi_transceive, xt_sd_init, z_sd_init
         .byte "sd_init"
 
+
+nt_sd_readsector:
+        .byte 13, 0
+        .word nt_sd_init, xt_sd_readsector, z_sd_readsector
+        .byte "sd_readsector"
+
+
+nt_fat32_init:
+        .byte 10, 0
+        .word nt_sd_readsector, xt_fat32_init, z_fat32_init
+        .byte "fat32_init"
+
+nt_fat32_find:
+        .byte 10, 0
+        .word nt_fat32_init, xt_fat32_find, z_fat32_find
+        .byte "fat32_find"
+
 nt_ed:                  ; ed6502
         .byte 2, NN
-        .word nt_sd_init, xt_ed, z_ed
+        .word nt_fat32_find, xt_ed, z_ed
         .byte "ed"
 
 nt_see: .byte 3, NN

@@ -21,15 +21,14 @@ clear_sd_buf_loop1:
     stz SD_BUF, X
     dex
     bne clear_sd_buf_loop1
-    ldx #$FF
+
+    dex
 clear_sd_buf_loop2:
     stz SD_BUF+256, x
     dex
     bne clear_sd_buf_loop2
 
     ; send 10 bytes of $FF With SD card deselected
-    lda #$31
-    jsr kernel_putc
     
     ldx #10
 init_loop:
@@ -38,21 +37,14 @@ init_loop:
     dex
     bne init_loop
 
-    lda #$32
-    jsr kernel_putc
-
     jsr sd_cmd_0            ; set SD card idle state
     cmp #$01                ; Check for idle state
     bne sd_error
-    lda #$33
-    jsr kernel_putc
     jsr sd_cmd_8            ; SEND_IF_COND	For only SDC V2. Check voltage range.
     cmp #$01                ; Check for idle state
     bne sd_error
     ; TODO check if long response is $01AA
 
-    lda #$34
-    jsr kernel_putc
     ; wait for card to be initialized
     ldx #$ff    ; Max times to loop
     stz SD_ARG
@@ -62,17 +54,15 @@ init_loop:
 sd_init_loop2:
     dex
     beq sd_error
-    stz SD_ARG
+    stz SD_ARG+3
     lda #55
     jsr sd_command
     lda #$40
-    sta SD_ARG
+    sta SD_ARG+3
     lda #41
     jsr sd_command
     
     bne sd_init_loop2
-    lda #$35
-    jsr kernel_putc
 
     lda #58
     jsr sd_command
@@ -80,15 +70,10 @@ sd_init_loop2:
     and #$40
     beq force_block_size    ; CCS bit is unset, force block addressing
 sd_init_exit_success:
-    ldx #0
-@1:
-    lda sd_init_success_message,x
-    beq sd_init_exit
-    jsr kernel_putc
-    inx
-    bra @1
-sd_init_exit:
     plx
+    stz SD_CRC              ; reset CRC to zero
+    lda #0
+    
     rts
 
 force_block_size:
@@ -97,20 +82,14 @@ force_block_size:
     lda #$2
     sta SD_ARG+2
     stz SD_ARG+3    ; set block size to $200 (512 bytes)
+    lda #$10
     jsr sd_command
-    jmp sd_init_exit
+    jmp sd_init_exit_success
 
 sd_error:
-    ; print error message
-    ldx #0
-@1:
-    lda sd_init_error_message,x
-    beq sd_init_exit
-    jsr kernel_putc
-    inx
-    bra @1
-
-    jmp sd_init_exit
+    plx
+    lda #1
+    rts
 
 sd_command:         ; command index is in A
     and #$3F        ; only keep low 6 bits
@@ -122,13 +101,14 @@ sd_command:         ; command index is in A
 
     jsr spi_transceive  ; send command index
     ; command argument is in SD_ARG
-    lda SD_ARG
-    jsr spi_transceive
-    lda SD_ARG+1
+    ; SPI is big endian, so reverse argument order
+    lda SD_ARG + 3
     jsr spi_transceive
     lda SD_ARG+2
     jsr spi_transceive
-    lda SD_ARG+3
+    lda SD_ARG+1
+    jsr spi_transceive
+    lda SD_ARG
     jsr spi_transceive
     lda SD_CRC          ; send hardcoded CRC if available
     jsr spi_transceive
@@ -149,9 +129,12 @@ sd_response_wait_loop:
     beq long_response
     cmp #58
     beq long_response
+    cmp #$11
+    beq sd_command_exit_no_end
 
 sd_command_exit:
     jsr sd_command_end
+sd_command_exit_no_end:
     pla
     ; return the response
     rts
@@ -187,12 +170,14 @@ sd_cmd_0:
 sd_cmd_8:
     lda #$87
     sta SD_CRC
-    stz SD_ARG
-    stz SD_ARG+1
+    ; store in little endian
+    ; will be converted to big endian when sending command
+    stz SD_ARG+3
+    stz SD_ARG+2
     lda #1
-    sta SD_ARG+2
+    sta SD_ARG+1
     lda #$AA
-    sta SD_ARG+3
+    sta SD_ARG
     lda #$48
     jsr sd_command
 
@@ -201,7 +186,6 @@ sd_cmd_8:
 sd_command_start:
     pha                         ; Save A
     lda SD_SLAVE
-    jsr kernel_putc
     jsr spi_select
     pla                         ; Restore A
     rts
@@ -215,8 +199,70 @@ sd_command_end:
     pla
     rts
 
+
+sd_readsector:
+    ; Read a sector from the SD card.  A sector is 512 bytes.
+    ;
+    ; Parameters:
+    ;    sd_sector   32-bit sector number
+    ;    sd_buffer_address     address of buffer to receive data
+    phx
+    jsr sd_command_start
+    ; Command 17, arg is sector number, crc not checked
+    lda #$11                    ; CMD17 - READ_SINGLE_BLOCK
+    jsr sd_command
+
+    cmp #0              ; Check if command accepted by card
+    bne @fail
+    ldx #$FF
+@feloop:
+    dex
+    beq @fail           ; the card took too long to get ready
+    lda #$FF
+    jsr spi_transceive
+    cmp #$FE            ; are we about to receive data ?
+    bne @feloop
+
+    ; Read page by page
+    jsr readpage
+    inc sd_buffer_address+1
+    jsr readpage
+    dec sd_buffer_address+1
+
+    lda #$FF
+    jsr spi_transceive      ; read and discard CRC
+    lda #$FF
+    jsr spi_transceive      
+    jsr sd_command_end
+    plx
+    lda #0
+    rts
+
+@fail:
+    ; return 1 means fail
+    jsr sd_command_end
+    plx
+    lda #1
+    rts
+
+readpage:
+    ; Read 256 bytes to the address at zp_sd_address
+    phy
+    ldy #0
+@readloop:
+    lda #$FF
+    jsr spi_transceive
+    sta (sd_buffer_address),y
+    iny
+    bne @readloop
+    ply
+    rts
+
 sd_init_success_message:
     .byte $0D,"SD init OK", $0D, 0
 
 sd_init_error_message:
     .byte $0D,"SD init FAIL", $0D, 7, 0
+
+sd_read_error_message:
+    .byte $0D,"SD read FAIL", $0D, 7, 0

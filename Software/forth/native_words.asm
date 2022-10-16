@@ -12103,7 +12103,7 @@ xt_spi_transceive:
 z_spi_transceive: rts
 
 ; ## SD_INIT ( s -- u ) "Send and receive spi data"
-; ## "spi_trasceive" coded Custom
+; ## "spi_transceive" coded Custom
 xt_sd_init:
                 jsr underflow_1
 
@@ -12114,6 +12114,97 @@ xt_sd_init:
                 sta 0,x         ; put return value in TOS
                 stz 1,X         ;reset value there
 z_sd_init: rts
+
+; ## SD_READSECTOR ( addr d -- u ) "Read SD sector"
+; ## "sd_readsector" coded Custom
+xt_sd_readsector:
+                jsr underflow_3
+        .ifdef sd_readsector
+                ; get and save storage address 
+                lda 0,x
+                sta sd_buffer_address
+                lda 1, x
+                sta sd_buffer_address + 1
+                ; get and save sector number (32 bit number, double)
+                lda 2, X
+                sta SD_ARG + 3
+                lda 3, X
+                sta SD_ARG + 2
+                lda 4, X
+                sta SD_ARG + 1
+                lda 5, X
+                sta SD_ARG
+                lda #1
+                sta SD_CRC
+        
+                jsr sd_readsector
+        .endif
+                sta 0,x         ; put return value in TOS
+                stz 1,X         ;reset value there
+
+                inx
+                inx
+                inx
+                inx
+
+z_sd_readsector: rts
+
+
+; ## FAT32_INIT ( u -- u ) "initialize FAT32 file system on passed spi drive address"
+; ## "fat32_init" coded Custom
+xt_fat32_init:
+                jsr underflow_1
+
+                lda 0,x
+        .ifdef sd_init
+                jsr sd_init
+                bne @error
+        .endif
+        .ifdef fat32_init
+                jsr fat32_init
+        .endif
+        .ifdef fat32_openroot
+                jsr fat32_openroot
+                beq @end
+        .endif
+@error:
+                lda #1
+@end:
+                sta 0,x         ; put return value in TOS
+                stz 1,X         ;reset value there
+z_fat32_init: rts
+
+
+; ## FAT32_FIND ( addr u -- u ) "Open file from initialized fat32 FS"
+; ## "fat32_find" coded Custom
+xt_fat32_find:
+                jsr underflow_2
+                phy
+                ldy 0,x ; length of string
+                lda #0
+@reset_loop:
+                sta (fat32_filenamepointer),y
+                iny
+                cpy #11
+                bcc @reset_loop
+                inx     ; get address
+                inx
+                lda 0,x
+                sta fat32_filenamepointer
+                lda 1,x
+                sta fat32_filenamepointer+1
+
+                ply
+
+                jsr fat32_finddirent    ; open root file system
+                beq @end
+
+@error:
+                lda #1
+@end:
+                sta 0,x         ; put return value in TOS
+                stz 1,X         ;reset value there
+z_fat32_find: rts
 
 ; TODO add routine to send a block of data in memory via SPI
 ; similar to lcdprint

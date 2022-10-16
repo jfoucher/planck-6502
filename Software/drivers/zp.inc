@@ -21,25 +21,19 @@
 
 
 
-
+.segment "ZEROPAGE": zeropage
 
 stack_p: .res 2
-;temp: .res 1
+time: .res 4
+last_ps2_time: .res 4
 
-ADRESS: .res 2
-NUMBER: .res 2
+KB_BUF_W_PTR: .res 1
+KB_BUF_R_PTR: .res 1
+control_keys: .res 1
+character: .res 1
+debug: .res 1
 
-
-
-KB_BUF: .res 1
-
-to_send: .res 1
-line: .res 1
-char: .res 1
-line_buf: .res 80
-wline: .res 1
-
-; these are only used at stratup, so might as well reuse some existing space
-ptr1 = NUMBER
-ptr2 = ADRESS
-tmp1 = to_send
+temp_bits: .res 1
+LCD_BUF_W_PTR: .res 1
+LCD_BUF_R_PTR: .res 1
+sd_buffer_address: .res 2

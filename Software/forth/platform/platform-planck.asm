@@ -1,4 +1,4 @@
-.segment "CODE"
+
 
 ; I/O facilities are handled in the separate kernel files because of their
 ; hardware dependencies. See docs/memorymap.txt for a discussion of Tali's
@@ -90,7 +90,9 @@ SD_CRC =    LINE_BUF - $1
 SD_SLAVE =  SD_CRC - $1
 SD_TMP =  SD_SLAVE - $1
 SD_ARG =    SD_TMP - $4
-SD_BUF =    SD_ARG - $1ff
+FAT_VARS = SD_ARG - $20
+SD_BUF =    FAT_VARS - 16*$200-1   ; reserve space for 16 sectors
+
 user0 =     zpage          ; user and system variables
 
 rsp0 =      $ff            ; initial Return Stack Pointer (65c02 stack)
@@ -215,10 +217,10 @@ has_acia =         dsp0+30
 spi_tmp =          dsp0+31
 spi_tmp2 =         dsp0+32
 spi_slave =        dsp0+33
+sd_sector =        dsp0+34
+sd_buffer_address = dsp0+38
 
-
-
-
+.segment "CODE"
 
 .include "../../drivers/spi.s"
 .include "../../drivers/delayroutines.s"
@@ -229,6 +231,8 @@ spi_slave =        dsp0+33
 .include "../../drivers/vga.s"
 
 .include "../../drivers/sd.s"
+.include "../../drivers/fat32.s"
+
 .include "../taliforth.asm" ; Top-level definitions, memory map
 
 ; =====================================================================
@@ -423,6 +427,7 @@ kernel_putc:
         ;; Send_Char - send character in A out serial port.
         ;; Uses: A (original value restored)
 Send_Char:
+        pha
         jsr char_out
         phy
         ldy has_acia
@@ -442,6 +447,7 @@ Send_Char:
 send_char_exit:    
         ;jsr lcd_print
         ply
+        pla
         rts
 
 

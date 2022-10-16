@@ -27,7 +27,7 @@ endif
 
 COMMON_SOURCES=taliforth.asm definitions.asm native_words.asm headers.asm strings.asm forth_words.asc user_words.asc disassembler.asm ed.asm assembler.asm
 TEST_SOURCES=tests/core_a.fs tests/core_b.fs tests/core_c.fs tests/string.fs tests/double.fs tests/facility.fs tests/tali.fs tests/tools.fs tests/block.fs tests/user.fs tests/cycles.fs tests/talitest.py tests/ed.fs tests/search.fs tests/asm.fs
-DRIVERS=../drivers/acia.s ../drivers/delayroutines.s ../drivers/spi.s ../drivers/spi.s
+DRIVERS=../drivers/acia.s ../drivers/delayroutines.s ../drivers/spi.s ../drivers/sd.s ../drivers/fat32.s
 
 all: taliforth-py65mon.bin docs/WORDLIST.md
 clean:
