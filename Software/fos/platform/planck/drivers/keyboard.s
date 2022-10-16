@@ -23,6 +23,9 @@ K_CTL = 3;
 K_ALT = 4;
 K_CAPS = 5;
 K_BSPC = $08;
+K_BSLH = $5C;
+K_EQL = $3D
+K_SPC = $20;
 K_GRV = $60;
 K_COM = $2C;
 K_SCLN = $3B;
@@ -70,7 +73,7 @@ K_Z = $7A;
 KB_COUNTER = CLOCK_SPEED/512
 
 keymap:
-.byte K_NO, $5C, $3D,   $20, K_GUI,  K_CTL, K_NO, K_ALT
+.byte K_NO, K_BSLH, K_EQL, K_SPC, K_GUI,  K_CTL, K_NO, K_ALT
 .byte K_N, K_SFT, K_DOT, K_B, K_COM, K_V, K_M  , K_C
 .byte K_J, K_ENT, K_SCLN, K_H, K_L, K_G, K_K, K_F
 .byte K_U, K_ENT, K_P, K_Y, K_O, K_T, K_I, K_R
@@ -78,9 +81,21 @@ keymap:
 .byte K_W, K_3, K_2, K_E, K_1, K_Q, K_ESC, K_TAB
 .byte K_Z,   K_D,   K_S, K_X, K_A, K_GRV, K_CAPS, K_SFT
 
+shifted_keymap:
+.byte K_BSLH, K_EQL, K_SPC, K_GUI,  K_CTL, K_NO, K_ALT
+.byte K_N-$20, K_SFT, K_DOT, K_B-$20, K_COM, K_V-$20, K_M-$20  , K_C-$20
+.byte K_J-$20, K_ENT, K_SCLN, K_H-$20, K_L-$20, K_G-$20, K_K-$20, K_F-$20
+.byte K_U-$20, K_ENT, K_P-$20, K_Y-$20, K_O-$20, K_T-$20, K_I-$20, K_R-$20
+.byte K_7, K_BSPC, K_0, K_6, K_9, K_5, K_8, K_4
+.byte K_W-$20, K_3, K_2, K_E-$20, K_1, K_Q-$20, K_ESC, K_TAB
+.byte K_NO, K_Z-$20,   K_D-$20,   K_S-$20, K_X-$20, K_A-$20, K_GRV, K_CAPS, K_SFT
+
+KB_SHIFT_MASK = 1
+KB_ALT_MASK = 2
+KB_CTL_MASK = 4
 kb_pressed_keys: .res 8
 kb_pressed_keys_ptr: .res 1
-kb_control_keys: .res 1
+kb_control_keys_mask: .res 1
 kb_time: .res 1
 kb_prev_char: .res 1
 kb_keypressed: .res 1
@@ -148,9 +163,10 @@ kb_scan:
   pha
   lda KB_PORTB
   beq @row_empty
-  sta kb_keypressed
+
   ; we have the current column in X and the row data in A
   jsr save_pressed_keys
+  inc kb_pressed_keys_ptr
 @row_empty:
   inx
   pla
@@ -159,11 +175,7 @@ kb_scan:
   bne @scan_col
 
 @exit:
-  ; is no pressed key, reset prev key
-  lda kb_keypressed
-  bne @exit_nokey
-  stz kb_prev_char
-  stz PORTA
+
 @exit_nokey:
   ply
   plx
@@ -177,7 +189,7 @@ save_pressed_keys:
   ; current col is in X
   ; current row data is in A
   ; multiply X by 8 while ror A carry is unset
-
+  clc
   stx kb_temp_var ; save original column number
   ldx #$FF          ; start with row -1 so that the first time through it gets to 0
 @ror_loop:
@@ -198,28 +210,127 @@ save_pressed_keys:
   inc kb_pressed_keys_ptr
   rts
 
-kb_get_char:
-  phx
-  ; for each position in kb_pressed_keys
-  ; check if it is a control character
+control_key_mask:
+; for each position in kb_pressed_keys
+; check if it is a control character
+  stz kb_control_keys_mask
+  ldx #0
+@control_loop:
+  ; stz kb_pressed_keys, x
+  ; bra @no_control_key
+  ldy kb_pressed_keys, x
+  beq @no_control_key
+  lda keymap, y
+  cmp #K_SFT
+  bne @no_control_key
+  stz kb_pressed_keys, x
+  sta PORTB
+  pha
+  lda #KB_SHIFT_MASK
+  ora kb_control_keys_mask
+  sta kb_control_keys_mask
+  pla
+  bra @no_control_key
+@no_shift_key:
+  cmp #K_ALT
+  bne @no_alt_key
+  pha
+  lda #KB_ALT_MASK
+  ora kb_control_keys_mask
+  sta kb_control_keys_mask
+  stz kb_pressed_keys, x
+  pla
+  bra @no_control_key
+@no_alt_key:
+  cmp #K_CTL
+  bne @no_control_key
+  pha
+  lda #KB_CTL_MASK
+  ora kb_control_keys_mask
+  sta kb_control_keys_mask
+  stz kb_pressed_keys, x
+  pla
+@no_control_key:
+  inx
+  cpx #8
+  bcc @control_loop
+  rts
+
+kb_clear_prev_char:
+  pha
+  ; if no pressed key, reset prev key
+  lda kb_pressed_keys
+  bne @exit
+  lda kb_pressed_keys+1
+  bne @exit
+  lda kb_pressed_keys+2
+  bne @exit
+  lda kb_pressed_keys+3
+  bne @exit
+  lda kb_pressed_keys+4
+  bne @exit
+  lda kb_pressed_keys+5
+  bne @exit
+  lda kb_pressed_keys+6
+  bne @exit
+  lda kb_pressed_keys+7
+  bne @exit
+  lda kb_pressed_keys+8
+  bne @exit
+  stz kb_prev_char
   
+@exit: 
+  pla
+  rts
+
+kb_get_char:
+  sei     ; prevent interrupts from hitting in the middle of this routine
+  phx
+  phy
+
+
+  jsr control_key_mask
+  ; set control keys mask
+  jsr kb_clear_prev_char
+
+; We now have the control keys in kb_control_keys_mask
+; Loop again, using other keycode tables
+
   ; TEST
-  ; if we have something in the first element of the buffer, set carry and put it in A
-  ldx kb_pressed_keys
+  ; if we have something in the element of the buffer, set carry and put it in A
+  ldx #0
+@output_loop:
+  ldy kb_pressed_keys, x
   beq @no_key
-  lda keymap, x
+  lda kb_control_keys_mask
+  and #KB_SHIFT_MASK
+  beq @normal_char
+  lda shifted_keymap, y
+  bra @shifted_char
+@normal_char:
+  lda keymap, y
+@shifted_char:
   cmp kb_prev_char  ; if it's the same as a previous character
   beq @no_char      ; do not output
   sta kb_prev_char
-  sta PORTA
-  stz kb_pressed_keys
+  stz kb_pressed_keys, x
   stz kb_time
+  ply
   plx
+  cli
   sec
   rts
-@no_key:        ; no key is pressed, unset kb_prev_char
+@no_key:
 @no_char:
-  stz kb_pressed_keys
+  stz kb_pressed_keys, x
+  inx
+  cpx #8
+  bcc @output_loop
+
+@no_char_exit:
+  ply
   plx
+  cli
   clc
   rts
+

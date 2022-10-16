@@ -85,17 +85,17 @@ v_nmi:
     jsr video_init
 .endif
 .ifdef ps2_init
-    ; jsr ps2_init
+    jsr ps2_init
 .endif
 .ifdef timer_init
     jsr timer_init
 .endif
     jsr acia_init
 .ifdef lcd_init
-    ; jsr lcd_init
+    jsr lcd_init
 .endif
 .ifdef spi_init
-    ; jsr spi_init
+    jsr spi_init
 .endif
 .ifdef kb_init
     jsr kb_init
