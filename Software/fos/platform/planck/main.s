@@ -11,8 +11,6 @@ ram_end = $8000
 
 .include "drivers/zp.s"
 
-
-
 .segment "BSS"
 LCD_BUF: .res 128
 KB_BUF: .res 128
@@ -153,13 +151,13 @@ get_ps2_char:                       ; no ACIA char available, try to get from KB
     rts
 get_kb_char:
     .ifdef kb_get_char
-        jsr kb_get_char
+    ; phy
+    ; ldy #5
+    ; jsr delay_short
+    ; ply
+        jsr kb_get_char_2
     .endif
-    bcc no_char_available
-    sec
-    rts
-no_char_available:
-    clc                             ; Indicate no char available.
+exit:                         ; Indicate no char available.
     rts                             ; return
 
 
@@ -245,7 +243,7 @@ v_irq_timer:
         bra v_irq_exit
 v_kb_irq_timer:
     lda KB_T1CL ; clear timer interrupt
-    jsr kb_scan
+    ;jsr kb_scan
 v_irq_exit:
     ply
     pla

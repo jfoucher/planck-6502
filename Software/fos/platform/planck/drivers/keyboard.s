@@ -23,106 +23,43 @@ K_CTL = 3;
 K_ALT = 4;
 K_CAPS = 5;
 K_BSPC = $08;
-K_BSLH = $5C;
-K_SLASH = $2F;
-K_INT = $3F;
-K_EQL = $3D
-K_SPC = $20;
-K_GRV = $60;
-K_COM = $2C;
-K_SCLN = $3B;
-K_ESC = $1B;
-K_ENT = $0A
 K_TAB = 9;
-K_DOT = $2E
-K_0 = $30;
-K_1 = $31;
-K_2 = $32;
-K_3 = $33;
-K_4 = $34;
-K_5 = $35;
-K_6 = $36;
-K_7 = $37;
-K_8 = $38;
-K_9 = $39;
-K_A = $61;
-K_B = $62;
-K_C = $63;
-K_D = $64
-K_E = $65
-K_F = $66
-K_G = $67
-K_H = $68
-K_I = $69
-K_J = $6A
-K_K = $6B
-K_L = $6C
-K_M = $6D
-K_N = $6E;
-K_O = $6F
-K_P = $70
-K_Q = $71
-K_R = $72
-K_S = $73
-K_T = $74
-K_U = $75
-K_V = $76;
-K_W = $77;
-K_X = $78
-K_Y = $79
-K_Z = $7A;
+K_ENT = $0A
+K_ESC = $1B;
 
-K_LBRAC = $28;
-K_RBRAC = $29;
-K_STAR = $2A
-K_AMP = $26
-K_CIRC = $5E
-K_PERC = $25
-K_DOL = $24
-K_HASH = $23
-K_AT = $40
-K_EXCL = $21
-K_INF = $3C
-K_SUP = $3E
-K_COL = $3A
-K_PLUS = $2B
 
-KB_COUNTER = CLOCK_SPEED/512
+KB_COUNTER = CLOCK_SPEED/2048
 
-keymap:
-.byte K_NO, K_EQL, K_SLASH, K_SPC, K_ALT,  K_CTL, K_NO, K_GUI
-.byte K_N, K_SFT, K_DOT, K_B, K_COM, K_V, K_M  , K_C
-.byte K_J, K_ENT, K_SCLN, K_H, K_L, K_G, K_K, K_F
-.byte K_U, K_ENT, K_P, K_Y, K_O, K_T, K_I, K_R
-.byte K_7, K_BSPC, K_0, K_6, K_9, K_5, K_8, K_4
-.byte K_W, K_3, K_2, K_E, K_1, K_Q, K_ESC, K_TAB
-.byte K_Z,   K_D,   K_S, K_X, K_A, K_GRV, K_CAPS, K_SFT
+; keymap:
+; .byte K_NO, '=', '/', ' ', K_ALT,  K_CTL, K_NO, K_GUI
+; .byte 'n', K_SFT, '.', 'b', ',', 'v', 'm'  , 'c'
+; .byte 'j', K_ENT, ';', 'h', 'l', 'g', 'k', 'f'
+; .byte 'u', K_ENT, 'p', 'y', 'o', 't', 'i', 'r'
+; .byte '7', K_BSPC, '0', '6', '9', '5', '8', '4'
+; .byte 'w', '3', '2', 'e', '1', 'q', K_ESC, K_TAB
+; .byte 'z',   'd',   's', 'x', 'a', '`', K_CAPS, K_SFT
 
-shifted_keymap:
-.byte K_NO, K_PLUS, K_INT, K_SPC, K_ALT,  K_CTL, K_NO, K_GUI
-.byte K_N-$20, K_SFT, K_SUP, K_B-$20, K_INF, K_V-$20, K_M-$20  , K_C-$20
-.byte K_J-$20, K_ENT, K_COL, K_H-$20, K_L-$20, K_G-$20, K_K-$20, K_F-$20
-.byte K_U-$20, K_ENT, K_P-$20, K_Y-$20, K_O-$20, K_T-$20, K_I-$20, K_R-$20
-.byte K_AMP, K_BSPC, K_RBRAC, K_CIRC, K_LBRAC, K_PERC, K_STAR, K_DOL
-.byte K_W-$20, K_HASH, K_AT, K_E-$20, K_EXCL, K_Q-$20, K_ESC, K_TAB
-.byte K_Z-$20,   K_D-$20,   K_S-$20, K_X-$20, K_A-$20, K_GRV, K_CAPS, K_SFT
-; .byte K_BSLH, K_EQL, K_SPC, K_GUI,  K_CTL, K_NO, K_ALT
-; .byte K_N-$20, K_SFT, K_DOT, K_B-$20, K_COM, K_V-$20, K_M-$20  , K_C-$20
-; .byte K_J-$20, K_ENT, K_SCLN, K_H-$20, K_L-$20, K_G-$20, K_K-$20, K_F-$20
-; .byte K_U-$20, K_ENT, K_P-$20, K_Y-$20, K_O-$20, K_T-$20, K_I-$20, K_R-$20
-; .byte K_7, K_BSPC, K_0, K_6, K_9, K_5, K_8, K_4
-; .byte K_W-$20, K_3, K_2, K_E-$20, K_1, K_Q-$20, K_ESC, K_TAB
-; .byte K_NO, K_Z-$20,   K_D-$20,   K_S-$20, K_X-$20, K_A-$20, K_GRV, K_CAPS, K_SFT
+; shifted_keymap:
+; .byte K_NO, '+', '?', ' ', K_ALT,  K_CTL, K_NO, K_GUI
+; .byte 'N', K_SFT, '>', 'B', '<', 'V', 'M'  , 'C'
+; .byte 'J', K_ENT, ':', 'H', 'L', 'G', 'K', 'F'
+; .byte 'U', K_ENT, 'P', 'Y', 'O', 'T', 'I', 'R'
+; .byte '&', K_BSPC, ')', '^', '(', '%', '*', '$'
+; .byte 'W', '#', '@', 'E', '!', 'Q', K_ESC, K_TAB
+; .byte 'Z',   'D',   'S', 'X', 'A', '~', K_CAPS, K_SFT
+
 
 KB_SHIFT_MASK = 1
 KB_ALT_MASK = 2
 KB_CTL_MASK = 4
-kb_pressed_keys: .res 8
+kb_pressed_keys: .res 64
 kb_pressed_keys_ptr: .res 1
 kb_control_keys_mask: .res 1
 kb_time: .res 1
 kb_prev_char: .res 8
 kb_keypressed: .res 1
+
+kb_buffer_write_pointer: .res 1
 
 ;Initialize the VIA for keyboard scanning
 kb_init:
@@ -133,15 +70,14 @@ kb_init:
   ; Set PORTB as input for rows
   stz KB_DDRB
   ; reset key buffer
+
   stz kb_pressed_keys_ptr
-  stz kb_pressed_keys
-  stz kb_pressed_keys+1
-  stz kb_pressed_keys+2
-  stz kb_pressed_keys+3
-  stz kb_pressed_keys+4
-  stz kb_pressed_keys+5
-  stz kb_pressed_keys+6
-  stz kb_pressed_keys+7
+  ldx #$40
+@reset_loop:
+  stz kb_pressed_keys, x
+  dex
+  bne @reset_loop
+  
   stz kb_time
   stz kb_prev_char
   stz kb_prev_char+1
@@ -188,7 +124,9 @@ kb_scan:
   ; set pressed keys pointer to zero
   ;stz kb_pressed_keys_ptr
   inc kb_time               ; increment elasped time
-  bpl @repeat_not_expired
+  lda kb_time
+  cmp #$20
+  bcc @repeat_not_expired
   ; if enough time has passed (kb_time > 128), erase prev char
   stz kb_prev_char
   stz kb_prev_char+1
@@ -208,7 +146,7 @@ kb_scan:
   sta KB_PORTA
   pha
   lda KB_PORTB
-  beq @row_empty
+  ;beq @row_empty
 
   ; we have the current column in X and the row data in A
   jsr save_pressed_keys
@@ -227,6 +165,7 @@ kb_scan:
   ; but only if the previous character is different,
   ; or all non modifier keys have been released,
   ; or the timer has elapsed
+
 
 @exit_nokey:
   ply
@@ -255,13 +194,12 @@ save_pressed_keys:
   bcc @ror_loop   ; we don't have a keypress yet, keep looping
 
 ; we have a key pressed on col X and row Y
-; multiply row by 8
+
   pha
   txa
   jsr save_pressed_key ; restores X
-  stx PORTA
   pla   ; restore what is left of current row data
-  ; ; if x if less than 8, keep going to see if other keys are pressed on this column
+  ; if x if less than 8, keep going to see if other keys are pressed on this column
   cpx #7
   bcc @ror_loop
 @exit:
@@ -270,6 +208,9 @@ save_pressed_keys:
   rts
 
 save_pressed_key:
+  ; Current row is in A
+  ; current col is in kb_temp_var
+  ; multiply row by 8
   phx
   clc
   asl
@@ -277,14 +218,10 @@ save_pressed_key:
   asl   ; A now contains row * 8
   clc
   adc kb_temp_var  ; add current column to it
-  ldx kb_pressed_keys_ptr
-  cpx #7
-  bcc @1
-  ldx #0
-  stz kb_pressed_keys_ptr
-@1:
+
+  ; A now contains the character position in the keymap
+  tax
   sta kb_pressed_keys, x  ; save current key position in keymap
-  inc kb_pressed_keys_ptr
   plx
   rts
 
@@ -449,3 +386,303 @@ kb_get_char:
   clc
   rts
 
+max_key_rollover = 4
+
+.segment "ZEROPAGE": zeropage
+new_keys: .byte 0, 0, 0, 0
+key_quantity: .res 1
+buffer_quantity: .byte $ff
+keys: .byte 0, 0, 0, 0
+.segment "DATA"
+
+old_keys: .byte 0, 0, 0, 0
+
+
+scan_result: .res 8
+too_many_keys: .res 1
+simultaneous_keys: .res 1
+
+nothing_pressed:
+  ;stz PORTA
+  stz old_keys
+  stz old_keys+1
+  stz old_keys+2
+  stz old_keys+3
+  stz too_many_keys
+  lda #0
+  ply
+  plx
+  clc
+  rts
+
+
+keymap:
+.byte K_NO, K_NO, K_TAB, '4', 'r', 'f', 'c', K_NO  ; COL 1
+.byte K_NO, K_ESC, K_TAB, '8', 'i', 'k', 'm', K_NO   ; COL 2
+.byte K_NO, '`', 'q', '5', 't', 'g', 'v', K_NO, K_NO   ; COL 3
+.byte K_NO, 'x', 'e', '6', 'y', 'h', 'b', ' ', K_NO   ; COL 4
+.byte K_NO, 'x', 'e', '6', 'y', 'h', 'b', ' ', K_NO   ; COL 5
+.byte K_NO, 'x', 'e', '6', 'y', 'h', 'b', ' ', K_NO   ; COL 6
+.byte K_NO, 'x', 'e', '6', 'y', 'h', 'b', ' ', K_NO   ; COL 7
+.byte K_NO, 'x', 'e', '6', 'y', 'h', 'b', ' ', K_NO   ; COL 8
+
+shifted_keymap:
+.byte K_NO, K_NO, K_TAB, '$', 'R', 'F', 'C', K_NO   ; COL 1
+.byte K_NO, K_ESC, K_TAB, '*', 'I', 'K', 'M', K_NO   ; COL 2
+
+kb_get_char_2:
+  phx
+  phy
+  
+  ; check if anything is pressed
+  lda #$FF
+  
+  sta KB_PORTA
+  lda KB_PORTB
+  beq nothing_pressed
+  ;sta PORTA
+  ; make sure we don't have too many keys pressed at once
+  lda too_many_keys
+  beq @go
+  lda #0
+  ply
+  plx
+  clc
+  rts
+@go:
+  ; scan matrix
+  lda #1
+  sta KB_PORTA
+  ldy KB_PORTB
+  sty scan_result+7
+  asl
+  sta KB_PORTA
+  ldy KB_PORTB
+  sty scan_result+6
+  asl
+  sta KB_PORTA
+  ldy KB_PORTB
+  sty scan_result+5
+  asl
+  sta KB_PORTA
+  ldy KB_PORTB
+  sty scan_result+4
+  asl
+  sta KB_PORTA
+  ldy KB_PORTB
+  sty scan_result+3
+  asl
+  sta KB_PORTA
+  ldy KB_PORTB
+  sty scan_result+2
+  asl
+  sta KB_PORTA
+  ldy KB_PORTB
+  sty scan_result+1
+  asl
+  sta KB_PORTA
+  ldy KB_PORTB
+  sty scan_result
+  ;reset read buffer
+  stz new_keys
+  stz new_keys+1
+  stz new_keys+2
+  stz new_keys+3
+  ; set max allowed keys presses
+  lda #max_key_rollover
+  sta key_quantity
+
+  lda #($FF - (max_key_rollover-1))
+  sta simultaneous_keys
+  ; Scan complete
+  ; TODO check for control keys
+  ; lda scan_result+7
+  ; and #$1
+  ; beq @no_shift
+  ; sta kb_control_keys_mask
+
+@no_shift:
+  ;
+
+  lda scan_result+7
+  beq @1
+  ldx #0
+  jsr keys_in_row
+@1:
+  lda scan_result+6
+  beq @2
+  ldx #8
+  jsr keys_in_row
+@2:
+  lda scan_result+5
+  beq @3
+  ldx #16
+  jsr keys_in_row
+@3:
+  lda scan_result+4
+  beq @4
+  ldx #24
+  jsr keys_in_row
+@4:
+  lda scan_result+3
+  beq @5
+  ldx #32
+  jsr keys_in_row
+@5:
+  lda scan_result+2
+  beq @6
+  ldx #40
+  jsr keys_in_row
+@6:
+  lda scan_result+1
+  beq @7
+  ldx #48
+  jsr keys_in_row
+@7:
+  lda scan_result
+  beq @8
+  ldx #56
+  jsr keys_in_row
+@8:
+
+
+
+;~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+; Key Scan Completed
+
+; Put any new key (not in old scan) into buffer
+  ldx #max_key_rollover-1
+next_key:
+  lda new_keys, x
+  beq @exist        ; Handle 'null' values
+  cmp old_keys
+  beq @exist
+  cmp old_keys+1
+  beq @exist
+  cmp old_keys+2
+  beq @exist
+  cmp old_keys+3
+  beq @exist
+  ; New Key Detected
+  inc buffer_quantity
+  ldy buffer_quantity
+  sta keys,y
+  ; Keep track of how many new Alphanumeric keys are detected
+  inc simultaneous_keys
+  beq too_many_new_keys
+@exist:
+  dex
+  bpl next_key
+
+  ; Anything in Buffer?
+  ldy buffer_quantity
+  bmi buffer_empty
+  ; Yes: Then return it and tidy up the buffer
+  dec buffer_quantity
+  lda keys
+  ldx keys+1
+  stx keys
+  ldx keys+2
+  stx keys+1
+  ldx keys+3
+  stx keys+2
+  ; cmp kb_prev_char
+  ; beq buffer_empty
+  sec
+  bra return
+
+
+buffer_empty:  ;No new Alphanumeric keys to handle.
+  lda #0
+  clc
+
+return: 
+  ; sta kb_prev_char
+; Copy BufferNew to BufferOld
+  ldx new_keys
+  stx old_keys
+  ldx new_keys+1
+  stx old_keys+1
+  ldx new_keys+2
+  stx old_keys+2
+  ldx new_keys+3
+  stx old_keys+3
+  ply
+  plx
+  rts
+
+too_many_new_keys:
+    clc
+    lda #$ff
+    sta buffer_quantity
+    sta simultaneous_keys
+    lda #$0
+    ply
+    plx
+    rts
+
+keys_in_row:
+  asl
+  bcc @1
+  jsr key_found
+@1:
+  inx
+  asl
+  bcc @2
+  jsr key_found
+@2:
+  inx
+  asl
+  bcc @3
+  jsr key_found
+@3:
+  inx
+  asl
+  bcc @4
+  jsr key_found
+@4:
+  inx
+  asl
+  bcc @5
+  jsr key_found
+@5:
+  inx
+  asl
+  bcc @6
+  jsr key_found
+@6:
+  inx
+  asl
+  bcc @7
+  jsr key_found
+@7:
+  inx
+  asl
+  bcc @8
+  jsr key_found
+@8:
+
+  rts
+
+key_found:
+  phx
+  dec key_quantity
+  bmi overflow
+  pha
+  ;txa
+  ldy keymap,x
+  ldx key_quantity
+  sty new_keys,x
+  ;sta new_keys,x
+  pla
+  plx
+  rts
+
+overflow:
+  pla  ; Dirty hack to handle 2 layers of JSR
+  pla
+  pla
+  pla
+  lda #0
+  clc
+  rts
