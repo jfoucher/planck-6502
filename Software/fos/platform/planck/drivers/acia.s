@@ -48,18 +48,3 @@ acia_getc:
 @no_char:
     clc
     rts
-
-acia_irq:
-    pha
-    bit ACIA_STATUS
-    bpl @exit
-@irq_receive:
-    ; we now have the byte, we need to add it to the keyboard buffer
-    lda ACIA_DATA
-
-    sta KB_BUF
-    ;sta ACIA1_DATA
-    
-@exit:
-    pla
-    rts

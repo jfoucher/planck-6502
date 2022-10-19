@@ -16,6 +16,31 @@
 ; OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER 
 ; DEALINGS IN THE SOFTWARE.
 
+.segment "ZEROPAGE": zeropage
+
+last_ps2_time: .res 4
+KB_BUF_W_PTR: .res 1
+KB_BUF_R_PTR: .res 1
+control_keys: .res 1
+character: .res 1
+
+.segment "BSS"
+KB_BUF: .res 128
+KB_STATE: .res 1
+KB_TEMP: .res 1
+KB_PARITY: .res 1
+KB_BIT: .res 1
+KB_INIT_STATE: .res 1
+KB_INIT_WAIT: .res 1
+ready: .res 1
+to_send: .res 1
+ignore_next: .res 1
+
+.segment "RODATA"
+
+.include "drivers/keycodes.s"
+
+.segment "DATA"
 
 ps2_init:
   sei ; prevent interrupts while initializing

@@ -2,6 +2,10 @@
 
 COUNTER = CLOCK_SPEED/400        ; n/s
 
+.segment "ZEROPAGE": zeropage
+time: .res 4
+
+.segment "DATA"
 
 timer_init:
     lda IER

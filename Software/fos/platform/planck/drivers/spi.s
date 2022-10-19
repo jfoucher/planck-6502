@@ -6,6 +6,13 @@ MISO = $10  ; MISO on bit 4
 MOSI = $20  ; MOSI on bit 5
 CONF = $40  ; CONF on bit 6
 
+.segment "BSS"
+spi_tmp: .res 1
+spi_tmp2: .res 1
+spi_slave: .res 1
+
+.segment "DATA"
+
 spi_init: 
     lda PORTB               ; load current port B
     and #(DATA | MISO)      ; set everything to zero except for PS2 DATA and MISO

@@ -1,3 +1,12 @@
+.segment "ZEROPAGE": zeropage
+LCD_BUF_W_PTR: .res 1
+LCD_BUF_R_PTR: .res 1
+lcd_pos: .res 1
+
+.segment "BSS"
+LCD_BUF: .res 128
+
+.segment "DATA"
 
 ; initialize the LCD in 8 bit mode
 lcd_init:

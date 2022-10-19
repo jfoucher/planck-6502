@@ -12,42 +12,13 @@ ram_end = $8000
 .include "drivers/zp.s"
 
 .segment "BSS"
-LCD_BUF: .res 128
-KB_BUF: .res 128
 
-FAT_VARS: .res 24
-SD_TMP: .res 2
-
-SD_CRC: .res 1
-SD_SLAVE: .res 1
-SD_ARG: .res 4
-
-line: .res 1
-char: .res 1
 lcd_absent: .res 1
-lcd_pos: .res 1
+
 has_acia: .res 1
-spi_tmp: .res 1
-spi_tmp2: .res 1
-spi_slave: .res 1
-sd_sector: .res 1
 
-to_send: .res 1
-KB_STATE: .res 1
-KB_TEMP: .res 1
-KB_PARITY: .res 1
-KB_BIT: .res 1
-KB_INIT_STATE: .res 1
-KB_INIT_WAIT: .res 1
-
-ready: .res 1
-
-ignore_next: .res 1
-SD_BUF: .res $800
 
 .segment "RODATA"
-
-.include "drivers/keycodes.s"
 
 .import    copydata
 
@@ -64,7 +35,7 @@ v_reset:
 .include "drivers/keyboard.s"
 ; .include "drivers/ps2.s"
 .include "drivers/delayroutines.s"
-; .include "drivers/lcd.s"
+.include "drivers/lcd.s"
 .include "drivers/spi.s"
 .include "drivers/sd.s"
 ; .include "drivers/vga.s"
@@ -151,16 +122,15 @@ get_ps2_char:                       ; no ACIA char available, try to get from KB
     rts
 get_kb_char:
     .ifdef kb_get_char
-    ; phy
+    
     ; ldy #5
     ; jsr delay_short
     ; ply
         jsr kb_get_char_2
+        
     .endif
 exit:                         ; Indicate no char available.
     rts                             ; return
-
-
 
 kernel_getc:
     ; """Get a single character from the keyboard (waits for key). 
@@ -243,6 +213,8 @@ v_irq_timer:
         bra v_irq_exit
 v_kb_irq_timer:
     lda KB_T1CL ; clear timer interrupt
+    inc kb_time
+    bne v_irq_exit
     ;jsr kb_scan
 v_irq_exit:
     ply

@@ -33,7 +33,7 @@ control_keys: .res 1
 character: .res 1
 debug: .res 1
 sd_buffer_address: .res 1
-temp_bits: .res 1
+
 LCD_BUF_W_PTR: .res 1
 LCD_BUF_R_PTR: .res 1
 fat32_filenamepointer: .res 2

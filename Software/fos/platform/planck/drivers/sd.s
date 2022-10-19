@@ -3,6 +3,20 @@
 ; SD card initialization routine
 ; http://elm-chan.org/docs/mmc/mmc_e.html#spiinit
 
+.segment "ZEROPAGE": zeropage
+sd_buffer_address: .res 2
+
+.segment "BSS"
+sd_sector: .res 1
+SD_TMP: .res 2
+
+SD_CRC: .res 1
+SD_SLAVE: .res 1
+SD_ARG: .res 4
+SD_BUF: .res $800
+
+.segment "DATA"
+
 sd_init:                    ; slave address in A
     sta SD_SLAVE             ; save slave address for later use
     phx

@@ -13,16 +13,23 @@ FSTYPE_FAT32 = $0B
 FSTYPE_FAT32_1 = $0C
 fat32_readbuffer = SD_BUF
 
-fat32_fatstart          = FAT_VARS + $00  ; 4 bytes
-fat32_datastart         = FAT_VARS + $04  ; 4 bytes
-fat32_rootcluster       = FAT_VARS + $08  ; 4 bytes
-fat32_sectorspercluster = FAT_VARS + $0c  ; 1 byte
-fat32_pendingsectors    = FAT_VARS + $0d  ; 1 byte
-fat32_address           = FAT_VARS + $0e  ; 2 bytes
-fat32_nextcluster       = FAT_VARS + $10  ; 4 bytes
-fat32_bytesremaining    = line; FAT_VARS + $14  ; 4 bytes 
 
 
+.segment "ZEROPAGE": zeropage
+fat32_filenamepointer: .res 2
+
+.segment "BSS"
+fat32_fatstart: .res 4
+fat32_datastart: .res 4
+fat32_rootcluster: .res 4
+fat32_sectorspercluster: .res 1
+fat32_pendingsectors: .res 1
+fat32_address: .res 2
+fat32_nextcluster: .res 1
+fat32_bytesremaining: .res 1
+
+
+.segment "DATA"
 
 fat32_init:
     ; Initialize the module - read the MBR etc, find the partition,

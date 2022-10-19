@@ -1,63 +1,28 @@
 Modules list:
 -------------
 main.o:
-    RODATA            Offs=000000  Size=00013A  Align=00001  Fill=0000
-    BSS               Offs=000000  Size=000E32  Align=00001  Fill=0000
-    DATA              Offs=000000  Size=004C52  Align=00001  Fill=0000
-    ZEROPAGE          Offs=000000  Size=0000D6  Align=00001  Fill=0000
+    RODATA            Offs=000000  Size=0000BB  Align=00001  Fill=0000
+    BSS               Offs=000000  Size=000DA3  Align=00001  Fill=0000
+    DATA              Offs=000000  Size=004EFF  Align=00001  Fill=0000
+    ZEROPAGE          Offs=000000  Size=0000EE  Align=00001  Fill=0000
     STARTUP           Offs=000000  Size=000006  Align=00001  Fill=0000
     DICTIONARY        Offs=000000  Size=001000  Align=00001  Fill=0000
     VECTORS           Offs=000000  Size=000006  Align=00001  Fill=0000
 /opt/homebrew/Cellar/cc65/2.19/share/cc65/lib/none.lib(copydata.o):
     CODE              Offs=000000  Size=00002D  Align=00001  Fill=0000
 /opt/homebrew/Cellar/cc65/2.19/share/cc65/lib/none.lib(zeropage.o):
-    ZEROPAGE          Offs=0000D6  Size=00001A  Align=00001  Fill=0000
+    ZEROPAGE          Offs=0000EE  Size=00001A  Align=00001  Fill=0000
 
 
 Segment list:
 -------------
 Name                   Start     End    Size  Align
 ----------------------------------------------------
-ZEROPAGE              000000  0000EF  0000F0  00001
-DATA                  000200  004E51  004C52  00001
-BSS                   004E52  005C83  000E32  00001
-DICTIONARY            005C84  006C83  001000  00001
-STARTUP               00CC52  00CC57  000006  00001
-CODE                  00CC58  00CC84  00002D  00001
-RODATA                00CC85  00CDBE  00013A  00001
+ZEROPAGE              000000  000107  000108  00001
+DATA                  000200  0050FE  004EFF  00001
+BSS                   0050FF  005EA1  000DA3  00001
+DICTIONARY            005EA2  006EA1  001000  00001
+STARTUP               00CEFF  00CF04  000006  00001
+CODE                  00CF05  00CF31  00002D  00001
+RODATA                00CF32  00CFEC  0000BB  00001
 VECTORS               00FFFA  00FFFF  000006  00001
-
-
-Exports list by name:
----------------------
-__DATA_LOAD__             008000 RLA    __DATA_RUN__              000200 RLA    
-__DATA_SIZE__             004C52 REA    copydata                  00CC58 RLA    
-ptr1                      0000DE RLZ    ptr2                      0000E0 RLZ    
-tmp1                      0000E6 RLZ    
-
-
-Exports list by value:
-----------------------
-ptr1                      0000DE RLZ    ptr2                      0000E0 RLZ    
-tmp1                      0000E6 RLZ    __DATA_RUN__              000200 RLA    
-__DATA_SIZE__             004C52 REA    __DATA_LOAD__             008000 RLA    
-copydata                  00CC58 RLA    
-
-
-Imports list:
--------------
-__DATA_LOAD__ ([linker generated]):
-    copydata.o                common/copydata.s(8)
-__DATA_RUN__ ([linker generated]):
-    copydata.o                common/copydata.s(8)
-__DATA_SIZE__ ([linker generated]):
-    copydata.o                common/copydata.s(8)
-copydata (copydata.o):
-    main.o                    platform/planck/main.s(54)
-ptr1 (zeropage.o):
-    copydata.o                common/copydata.s(9)
-ptr2 (zeropage.o):
-    copydata.o                common/copydata.s(9)
-tmp1 (zeropage.o):
-    copydata.o                common/copydata.s(9)
-

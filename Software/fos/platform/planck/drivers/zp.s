@@ -24,18 +24,4 @@
 .segment "ZEROPAGE": zeropage
 
 stack_p: .res 2
-time: .res 4
-last_ps2_time: .res 4
 
-KB_BUF_W_PTR: .res 1
-KB_BUF_R_PTR: .res 1
-control_keys: .res 1
-character: .res 1
-debug: .res 1
-sd_buffer_address: .res 2
-temp_bits: .res 1
-LCD_BUF_W_PTR: .res 1
-LCD_BUF_R_PTR: .res 1
-fat32_filenamepointer: .res 2
-kb_temp_var: .res 1
-kb_temp_var2: .res 1

@@ -12,3 +12,4 @@ taliforth-py65mon.bin
 tests/*.o
 Software/tests/*.o
 Software/tests/*.lst
+*.o

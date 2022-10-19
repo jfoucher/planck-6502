@@ -3,7 +3,7 @@ COMMON_SOURCES=macros.s forth.s native_words.s headers.s strings.s forth_code/us
 clean:
 	$(RM) *.bin *.o platform/*.o platform/*/*.o *labelmap.txt *listing.txt forth_code/user_words.asc forth_code/forth_words.asc
 
-fos-%.bin: platform/%/main.s platform/%/memory.cfg $(wildcard platform/%/drivers/*) $(COMMON_SOURCES)
+fos-%.bin: platform/%/main.s platform/%/*/*.s platform/%/memory.cfg $(COMMON_SOURCES)
 	cl65 --listing $*-listing.txt \
 	--mapfile $*-labelmap.txt \
 	--config platform/$*/memory.cfg \
