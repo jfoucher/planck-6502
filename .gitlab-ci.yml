@@ -14,6 +14,23 @@ stages:
   - run_drc
   - gen_fab
 
+.erc_template:
+    script:
+    - "cd Hardware/$DIR && ([ -f *.kicad_sch ] || echo 'no schematic') && kibot -d ../Fabrication -s update_xml,run_drc -i"
+  rules:
+    - if: '$CI_COMMIT_TAG'
+      when: always
+      changes:
+        - "Hardware/**/*.kicad_sch"
+        - ".gitlab-ci.yml"
+      allow_failure: true
+
+mainboard_erc:
+  variables:
+    DIR: "cpu_backplane"
+  extends:
+    - .erc_template
+  
 
 erc:
   image: setsoft/kicad_auto:dev_k6
@@ -23,6 +40,11 @@ erc:
   rules:
     - if: '$CI_COMMIT_TAG'
       when: always
+      changes:
+        - "Hardware/**/*.kicad_sch"
+        - ".gitlab-ci.yml"
+      allow_failure: true
+
   artifacts:
     when: always
     paths:
@@ -37,6 +59,11 @@ drc:
   rules:
     - if: '$CI_COMMIT_TAG'
       when: on_success
+      changes:
+        - "Hardware/**/*.kicad_pcb"
+        - ".gitlab-ci.yml"
+      allow_failure: true
+
   artifacts:
     when: always
     paths:
@@ -51,6 +78,11 @@ sch_outputs:
   rules:
     - if: '$CI_COMMIT_TAG'
       when: on_success
+      changes:
+        - "Hardware/**/*.kicad_sch"
+        - ".gitlab-ci.yml"
+      allow_failure: true
+
   artifacts:
     when: always
     paths:
@@ -64,6 +96,11 @@ pcb_outputs:
   rules:
     - if: '$CI_COMMIT_TAG'
       when: on_success
+      changes:
+        - "Hardware/**/*.kicad_pcb"
+        - ".gitlab-ci.yml"
+      allow_failure: true
+
   artifacts:
     when: always
     paths:

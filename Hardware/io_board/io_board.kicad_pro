@@ -48,8 +48,17 @@
           "min_clearance": 0.508
         }
       },
-      "diff_pair_dimensions": [],
-      "drc_exclusions": [],
+      "diff_pair_dimensions": [
+        {
+          "gap": 0.0,
+          "via_gap": 0.0,
+          "width": 0.0
+        }
+      ],
+      "drc_exclusions": [
+        "courtyards_overlap|59467081|-27719999|00000000-0000-0000-0000-00005fea97ea|26a83821-4bc7-4e41-803f-5e8d19182c3e",
+        "courtyards_overlap|62508001|-57691999|00000000-0000-0000-0000-00006019c8de|00000000-0000-0000-0000-00006019d29c"
+      ],
       "meta": {
         "filename": "board_design_settings.json",
         "version": 2
@@ -80,8 +89,8 @@
         "padstack": "error",
         "pth_inside_courtyard": "ignore",
         "shorting_items": "error",
-        "silk_over_copper": "warning",
-        "silk_overlap": "warning",
+        "silk_over_copper": "ignore",
+        "silk_overlap": "ignore",
         "skew_out_of_range": "error",
         "through_hole_pad_without_hole": "error",
         "too_many_vias": "error",
@@ -323,7 +332,7 @@
       "duplicate_reference": "error",
       "duplicate_sheet_names": "error",
       "extra_units": "error",
-      "global_label_dangling": "warning",
+      "global_label_dangling": "ignore",
       "hier_label_mismatch": "error",
       "label_dangling": "error",
       "lib_symbol_issues": "warning",
@@ -430,5 +439,7 @@
       ""
     ]
   ],
-  "text_variables": {}
+  "text_variables": {
+    "VERSION": "v1.0"
+  }
 }

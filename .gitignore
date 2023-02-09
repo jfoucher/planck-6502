@@ -16,3 +16,4 @@ Software/tests/*.lst
 Hardware/cpu_backplane/cpu_backplane-backups
 Hardware/io_board/io_board-backups
 Software/cos
+Hardware/proto_board/planck_board-backups

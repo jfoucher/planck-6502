@@ -33,9 +33,9 @@
         "other_text_thickness": 0.15,
         "other_text_upright": false,
         "pads": {
-          "drill": 0.7,
-          "height": 1.4,
-          "width": 1.4
+          "drill": 1.0,
+          "height": 1.7,
+          "width": 1.7
         },
         "silk_line_width": 0.12,
         "silk_text_italic": false,
@@ -48,26 +48,8 @@
           "min_clearance": 0.508
         }
       },
-      "diff_pair_dimensions": [
-        {
-          "gap": 0.0,
-          "via_gap": 0.0,
-          "width": 0.0
-        }
-      ],
-      "drc_exclusions": [
-        "courtyards_overlap|104210001|88438001|00000000-0000-0000-0000-00005fd9311c|00000000-0000-0000-0000-0000604178f1",
-        "courtyards_overlap|106704001|85310001|00000000-0000-0000-0000-0000604178f1|00000000-0000-0000-0000-00006149ffc7",
-        "courtyards_overlap|107254001|6316001|00000000-0000-0000-0000-00006043abd1|00000000-0000-0000-0000-000061305f0a",
-        "courtyards_overlap|108923512|21660001|00000000-0000-0000-0000-0000604133be|00000000-0000-0000-0000-00006043abd1",
-        "courtyards_overlap|114578001|83786001|00000000-0000-0000-0000-0000604178f1|00000000-0000-0000-0000-0000612e30e8",
-        "courtyards_overlap|126516001|83786001|00000000-0000-0000-0000-0000604178f1|00000000-0000-0000-0000-0000612e310e",
-        "courtyards_overlap|129564001|83786001|00000000-0000-0000-0000-0000604178f1|00000000-0000-0000-0000-000060471d17",
-        "courtyards_overlap|132612001|83786001|00000000-0000-0000-0000-0000604178f1|00000000-0000-0000-0000-0000612d2cf6",
-        "courtyards_overlap|133246745|47014001|00000000-0000-0000-0000-000060413e95|00000000-0000-0000-0000-00006043581d",
-        "courtyards_overlap|47457217|71444001|00000000-0000-0000-0000-00005ff7d964|00000000-0000-0000-0000-00006048049b",
-        "courtyards_overlap|90390001|93288001|00000000-0000-0000-0000-00006042add7|00000000-0000-0000-0000-000060480857"
-      ],
+      "diff_pair_dimensions": [],
+      "drc_exclusions": [],
       "meta": {
         "filename": "board_design_settings.json",
         "version": 2
@@ -126,16 +108,17 @@
         "min_microvia_drill": 0.09999999999999999,
         "min_silk_clearance": 0.0,
         "min_through_hole_diameter": 0.3,
-        "min_track_width": 0.154,
+        "min_track_width": 0.19999999999999998,
         "min_via_annular_width": 0.049999999999999996,
         "min_via_diameter": 0.39999999999999997,
         "use_height_for_length_calcs": true
       },
       "track_widths": [
         0.0,
-        0.154,
         0.5,
-        1.0
+        1.0,
+        1.5,
+        2.0
       ],
       "via_dimensions": [
         {
@@ -145,6 +128,10 @@
         {
           "diameter": 0.6,
           "drill": 0.3
+        },
+        {
+          "diameter": 1.7,
+          "drill": 0.95
         }
       ],
       "zones_allow_external_fillets": false,
@@ -352,7 +339,7 @@
       "no_connect_dangling": "warning",
       "pin_not_connected": "error",
       "pin_not_driven": "error",
-      "pin_to_pin": "warning",
+      "pin_to_pin": "error",
       "power_pin_not_driven": "error",
       "similar_labels": "warning",
       "unannotated": "error",
@@ -366,14 +353,14 @@
     "pinned_symbol_libs": []
   },
   "meta": {
-    "filename": "cpu_backplane.kicad_pro",
+    "filename": "planck_board.kicad_pro",
     "version": 1
   },
   "net_settings": {
     "classes": [
       {
         "bus_width": 12.0,
-        "clearance": 0.154,
+        "clearance": 0.2,
         "diff_pair_gap": 0.25,
         "diff_pair_via_gap": 0.25,
         "diff_pair_width": 0.2,
@@ -400,7 +387,7 @@
       "idf": "",
       "netlist": "",
       "specctra_dsn": "",
-      "step": "cpu_backplane.step",
+      "step": "",
       "vrml": ""
     },
     "page_layout_descr_file": ""
@@ -445,7 +432,7 @@
   },
   "sheets": [
     [
-      "477892a1-722e-4cda-bb6c-fcdb8ba5f93e",
+      "ea5106dd-abc3-4911-830b-10bb7ac35182",
       ""
     ]
   ],
