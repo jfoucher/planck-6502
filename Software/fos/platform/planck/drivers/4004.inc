@@ -1,0 +1,18 @@
+
+; HD 44780 driver
+; all pins on VIA PORTA, 4 bit mode
+
+; PORTA0 is free
+LCD_BASE = $FFC0
+LCD_RS = 1
+LCD_E1 = 2
+LCD_E2 = 4
+
+LCD_DATA = LCD_BASE | LCD_RS
+LCD_ADDR = LCD_BASE & ($FF ^ LCD_RS)
+LCD1_ENABLED = (LCD_BASE | LCD_E1)
+LCD2_ENABLED = (LCD_BASE | LCD_E2)
+LCD_DISABLED = LCD_BASE
+; A0: RS
+; A1: E1
+; A2: E2

@@ -13,3 +13,6 @@ tests/*.o
 Software/tests/*.o
 Software/tests/*.lst
 *.o
+Hardware/cpu_backplane/cpu_backplane-backups
+Hardware/io_board/io_board-backups
+Software/cos

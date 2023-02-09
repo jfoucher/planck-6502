@@ -9,15 +9,72 @@ variables:
 
 stages:
   - test
-  - deploy
+  - deploy_pages
+  - run_erc
+  - run_drc
+  - gen_fab
 
-before_script:
-  - gem install bundler
-  - cd docs && bundle install && cd ../
+
+erc:
+  image: setsoft/kicad_auto:dev_k6
+  stage: run_erc
+  script:
+    - "cd Hardware && for dir in cpu_backplane digit_board io_board lcd_board opl2_board proc_board proto_board ram_board serial_board; do cd $dir && ([ -f *.kicad_sch ] || echo 'no schematic') && kibot -d ../Fabrication -s update_xml,run_drc -i || cd ..; done"
+  rules:
+    - if: '$CI_COMMIT_TAG'
+      when: always
+  artifacts:
+    when: always
+    paths:
+      - Hardware/Fabrication/
+
+
+drc:
+  image: setsoft/kicad_auto:dev_k6
+  stage: run_drc
+  script:
+    - "cd Hardware && for dir in cpu_backplane digit_board io_board lcd_board opl2_board proc_board proto_board ram_board serial_board; do cd $dir &&  ([ -f *.kicad_pcb ] || echo 'no PCB file') && kibot -d ../Fabrication -s update_xml,run_erc -i || cd ..; done"
+  rules:
+    - if: '$CI_COMMIT_TAG'
+      when: on_success
+  artifacts:
+    when: always
+    paths:
+      - Hardware/Fabrication/
+
+
+sch_outputs:
+  image: setsoft/kicad_auto:dev_k6
+  stage: gen_fab
+  script:
+    - "cd Hardware && for dir in cpu_backplane digit_board io_board lcd_board opl2_board proc_board proto_board ram_board serial_board; do cd $dir && ([ -f *.kicad_sch ] || echo 'no schematic') && kibot -d ../Fabrication -s run_drc,run_erc print_sch || cd ..; done"
+  rules:
+    - if: '$CI_COMMIT_TAG'
+      when: on_success
+  artifacts:
+    when: always
+    paths:
+      - Hardware/Fabrication/
+
+pcb_outputs:
+  image: setsoft/kicad_auto:dev_k6
+  stage: gen_fab
+  script:
+    - "cd Hardware && for dir in cpu_backplane digit_board io_board lcd_board opl2_board proc_board proto_board ram_board serial_board; do cd $dir && ([ -f *.kicad_pcb ] || echo 'no PCB file') && (kibot -d ../Fabrication -s run_drc,run_erc print_front gerbers drill zip render && rm -rf ../Fabrication/Gerbers) || cd ..; done"
+  rules:
+    - if: '$CI_COMMIT_TAG'
+      when: on_success
+  artifacts:
+    when: always
+    paths:
+      - Hardware/Fabrication/
+
 
 test:
   stage: test
   script:
+    - gem install bundler
+    - cd docs && bundle install && cd ../
     - cd docs && bundle exec jekyll build -d ../test
   artifacts:
     paths:
@@ -26,8 +83,10 @@ test:
     - master
 
 pages:
-  stage: deploy
+  stage: deploy_pages
   script:
+    - gem install bundler
+    - cd docs && bundle install && cd ../
     - cd docs && bundle exec jekyll build -d ../public
     - apt-get update -yqq && apt-get install -y -qq git curl unzip gnupg rsync
     - ls -la

@@ -70,6 +70,25 @@ keymap:
 ; $38
 .byte K_NO, 'z', 'w', '7', 'u', 'j', 'n', K_NO   ; COL 8
 
+
+fn_keymap:
+          ; SHIFT                             CTRL
+.byte K_NO, K_NO,  K_TAB, '4', 'r', 'f', 'c', K_NO  ; COL 1
+          ; CAPS
+.byte K_NO, K_NO, K_ESC, '8', 'i', 'k', 'm', K_NO   ; COL 2
+; $10                                     WIN
+.byte K_NO, '`', 'q', '5', 't', 'g', 'v', K_NO   ; COL 3
+; $18                                      ALT
+.byte K_NO, 'a', '1', '9', 'o', 'l', ',',  K_NO   ; COL 4
+; $20
+.byte K_NO, 'x', 'e', '6', 'y', 'h', 'b', ' '   ; COL 5
+;$28
+.byte K_NO, 's', '2', '0', 'p', K_SCLN, '.', '/'   ; COL 6
+; $30                                      RSHIFT FN
+.byte K_NO, 'd', '3', K_BSPC, K_ENT, K_NO, K_NO, K_NO   ; COL 7
+; $38
+.byte K_NO, 'z', 'w', '7', 'u', 'j', 'n', K_NO   ; COL 8
+
 shifted_keymap:
           ; SHIFT                             CTRL
 .byte K_NO, K_NO,  K_TAB, '$', 'R', 'F', 'C', K_NO  ; COL 1
@@ -149,7 +168,7 @@ nothing_pressed:
   clc
   rts
 
-kb_get_char_2:
+kb_get_char:
   phx
   phy
   ; ldy #$40

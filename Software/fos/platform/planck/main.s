@@ -5,7 +5,8 @@ ram_end = $8000
 .include "drivers/acia.inc"
 .include "drivers/via.inc"
 .include "drivers/ps2.inc"
-.include "drivers/lcd.inc"
+.include "drivers/4004.inc"
+; .include "drivers/lcd.inc"
 .include "drivers/vga.inc"
 .include "drivers/keyboard.inc"
 
@@ -35,11 +36,12 @@ v_reset:
 .include "drivers/keyboard.s"
 ; .include "drivers/ps2.s"
 .include "drivers/delayroutines.s"
-.include "drivers/lcd.s"
-.include "drivers/spi.s"
-.include "drivers/sd.s"
+.include "drivers/4004.s"
+; .include "drivers/lcd.s"
+; .include "drivers/spi.s"
+; .include "drivers/sd.s"
 ; .include "drivers/vga.s"
-.include "drivers/fat32.s"
+; .include "drivers/fat32.s"
 
 .include "../../forth.s"
 
@@ -94,7 +96,7 @@ send_char:
     .endif
 send_char_exit:    
 .ifdef lcd_print
-    jsr lcd_print
+    ; jsr lcd_print
 .endif
     pla
     rts
@@ -126,7 +128,7 @@ get_kb_char:
     ; ldy #5
     ; jsr delay_short
     ; ply
-        jsr kb_get_char_2
+        jsr kb_get_char
         
     .endif
 exit:                         ; Indicate no char available.

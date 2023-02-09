@@ -1,0 +1,29 @@
+{
+    // See https://go.microsoft.com/fwlink/?LinkId=733558
+    // for the documentation about the tasks.json format
+    "version": "2.0.0",
+    "tasks": [
+        {
+            "label": "Make",
+            "type": "shell",
+            "command": "make fos-planck.bin",
+            "options": {
+                "cwd": "./Software/fos"
+            },
+            "problemMatcher": []
+        },
+        {
+            "label": "Make and Burn",
+            "type": "shell",
+            "command": "make fos-planck.bin && minipro -p AT28C256 -w fos-planck.bin",
+            "problemMatcher": [],
+            "group": {
+                "kind": "build",
+                "isDefault": true
+            },
+            "options": {
+                "cwd": "./Software/fos"
+            }
+        }
+    ]  
+}

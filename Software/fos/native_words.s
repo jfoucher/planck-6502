@@ -12209,15 +12209,16 @@ z_fat32_root: rts
 ; ## FAT32_FIND ( addr u -- u ) "Open file from initialized fat32 FS"
 ; ## "fat32_find" coded Custom
 xt_fat32_find:
+.ifdef fat32_finddirent
 textfile:  .byte "FILE.TXT   ", 0
                 lda #<textfile
                 sta fat32_filenamepointer
                 lda #>textfile
                 sta fat32_filenamepointer+1
-        .ifdef fat32_finddirent
+        
                 jsr fat32_finddirent    ; find the file from its name
                 bne @error
-        .endif
+        
                 jsr fat32_file_read
                 bne @error
                 dex
@@ -12263,7 +12264,7 @@ textfile:  .byte "FILE.TXT   ", 0
                 jsr fat32_finddirent    ; find the file from its name
                 beq @end
             .endif
-
+.endif
 @error:
                 lda #1
 @end:
