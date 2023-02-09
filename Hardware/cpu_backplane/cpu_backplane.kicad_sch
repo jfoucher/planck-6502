@@ -9,6 +9,7 @@
     (date "2023-02-09")
     (rev "${VERSION}")
     (company "Six Pixels")
+    (comment 1 "Updated power supply to 5.5mm jack")
   )
 
   (lib_symbols
@@ -8308,7 +8309,7 @@
     (uuid 00000000-0000-0000-0000-000060031505)
     (property "Reference" "SW1" (id 0) (at 48.26 20.701 0))
     (property "Value" "SW" (id 1) (at 48.26 23.0124 0))
-    (property "Footprint" "Button_Switch_THT:SW_E-Switch_EG1271_DPDT" (id 2) (at 48.26 26.67 0)
+    (property "Footprint" "Button_Switch_THT:SW_E-Switch_EG1271_SPDT" (id 2) (at 48.26 26.67 0)
       (effects (font (size 1.27 1.27)) hide)
     )
     (property "Datasheet" "~" (id 3) (at 48.26 26.67 0)
@@ -10007,7 +10008,7 @@
     (uuid 62ec5163-e7ef-4606-8bc5-277e683662d5)
     (property "Reference" "J1" (id 0) (at 20.32 21.7002 0))
     (property "Value" "Barrel_Jack" (id 1) (at 20.32 24.2371 0))
-    (property "Footprint" "Connector_BarrelJack:BarrelJack_Horizontal" (id 2) (at 21.59 30.226 0)
+    (property "Footprint" "w_conn_av:BarrelJack_Horizontal" (id 2) (at 21.59 30.226 0)
       (effects (font (size 1.27 1.27)) hide)
     )
     (property "Datasheet" "~" (id 3) (at 21.59 30.226 0)
@@ -10481,7 +10482,7 @@
       (reference "IC2") (unit 1) (value "DS1813") (footprint "Package_TO_SOT_THT:TO-92_Inline")
     )
     (path "/62ec5163-e7ef-4606-8bc5-277e683662d5"
-      (reference "J1") (unit 1) (value "Barrel_Jack") (footprint "Connector_BarrelJack:BarrelJack_Horizontal")
+      (reference "J1") (unit 1) (value "Barrel_Jack") (footprint "w_conn_av:BarrelJack_Horizontal")
     )
     (path "/00000000-0000-0000-0000-000060150e99"
       (reference "J2") (unit 1) (value "Conn_02x02_Odd_Even") (footprint "Connector_PinHeader_2.54mm:PinHeader_2x02_P2.54mm_Vertical")
@@ -10604,7 +10605,7 @@
       (reference "SLOT5") (unit 1) (value "Conn_01x40") (footprint "Connector_PinSocket_2.54mm:PinSocket_2x25_P2.54mm_Vertical")
     )
     (path "/00000000-0000-0000-0000-000060031505"
-      (reference "SW1") (unit 1) (value "SW") (footprint "Button_Switch_THT:SW_E-Switch_EG1271_DPDT")
+      (reference "SW1") (unit 1) (value "SW") (footprint "Button_Switch_THT:SW_E-Switch_EG1271_SPDT")
     )
     (path "/00000000-0000-0000-0000-00005ff93a76"
       (reference "U1") (unit 1) (value "74AC161") (footprint "Package_DIP:DIP-16_W7.62mm_Socket")

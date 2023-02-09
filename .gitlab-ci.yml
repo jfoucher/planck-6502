@@ -1,125 +1,205 @@
-# This file is a template, and might need editing before it works on your project.
-# Template project: https://gitlab.com/pages/jekyll
-# Docs: https://docs.gitlab.com/ee/pages/
-image: ruby:2.6
 
-variables:
-  JEKYLL_ENV: production
-  LC_ALL: C.UTF-8
 
 stages:
-  - test
-  - deploy_pages
   - run_erc
   - run_drc
   - gen_fab
+  - deploy_pages
 
 .erc_template:
-    script:
-    - "cd Hardware/$DIR && ([ -f *.kicad_sch ] || echo 'no schematic') && kibot -d ../Fabrication -s update_xml,run_drc -i"
-  rules:
-    - if: '$CI_COMMIT_TAG'
-      when: always
-      changes:
-        - "Hardware/**/*.kicad_sch"
-        - ".gitlab-ci.yml"
-      allow_failure: true
+  image: setsoft/kicad_auto:dev_k6
+  stage: run_erc
+  script:
+    - "cd Hardware/$DIR && ls -la && ls -la ../ && [ -f *.kicad_sch ] && kibot -c ../.kibot.yaml -d ../Fabrication -s update_xml,run_drc -i"
+  
+  artifacts:
+    when: always
+    paths:
+      - Hardware/Fabrication/
+
+.drc_template:
+  image: setsoft/kicad_auto:dev_k6
+  stage: run_drc
+  script:
+    - "cd Hardware/$DIR && [ -f *.kicad_pcb ] && kibot -c ../.kibot.yaml -d ../Fabrication -s update_xml,run_erc -i"
+  artifacts:
+    when: always
+    paths:
+      - Hardware/Fabrication/
+
+.output_template:
+  image: setsoft/kicad_auto:dev_k6
+  stage: gen_fab
+  script:
+    - "cd Hardware/$DIR && [ -f *.kicad_pcb ] && kibot -d ../Fabrication -c ../.kibot.yaml --skip-pre update_xml,run_drc,run_erc print_front gerbers drill zip render print_sch"
+  artifacts:
+    when: always
+    paths:
+      - Hardware/Fabrication/
+
+
 
 mainboard_erc:
   variables:
     DIR: "cpu_backplane"
   extends:
     - .erc_template
-  
-
-erc:
-  image: setsoft/kicad_auto:dev_k6
-  stage: run_erc
-  script:
-    - "cd Hardware && for dir in cpu_backplane digit_board io_board lcd_board opl2_board proc_board proto_board ram_board serial_board; do cd $dir && ([ -f *.kicad_sch ] || echo 'no schematic') && kibot -d ../Fabrication -s update_xml,run_drc -i || cd ..; done"
   rules:
     - if: '$CI_COMMIT_TAG'
       when: always
       changes:
-        - "Hardware/**/*.kicad_sch"
-        - ".gitlab-ci.yml"
-      allow_failure: true
+        paths:
+          - "Hardware/cpu_backplane/cpu_backplane.kicad_sch"
+        compare_to: 'main'
 
-  artifacts:
-    when: always
-    paths:
-      - Hardware/Fabrication/
+io_erc:
+  variables:
+    DIR: "io_board"
+  extends:
+    - .erc_template
+  rules:
+    - if: '$CI_COMMIT_TAG'
+      when: always
+      changes:
+        paths:
+          - "Hardware/io_board/**.kicad_sch"
+        compare_to: 'main'
+opl_erc:
+  variables:
+    DIR: "opl2_board"
+  extends:
+    - .erc_template
+  rules:
+    - if: '$CI_COMMIT_TAG'
+      when: always
+      changes:
+        paths:
+          - "Hardware/opl2_board/**.kicad_sch"
+        compare_to: 'main'
+proto_erc:
+  variables:
+    DIR: "proto_board"
+  extends:
+    - .erc_template
+  rules:
+    - if: '$CI_COMMIT_TAG'
+      when: always
+      changes:
+        paths:
+          - "Hardware/proto_board/**.kicad_sch"
+        compare_to: 'main'
+  
 
-
-drc:
-  image: setsoft/kicad_auto:dev_k6
-  stage: run_drc
-  script:
-    - "cd Hardware && for dir in cpu_backplane digit_board io_board lcd_board opl2_board proc_board proto_board ram_board serial_board; do cd $dir &&  ([ -f *.kicad_pcb ] || echo 'no PCB file') && kibot -d ../Fabrication -s update_xml,run_erc -i || cd ..; done"
+mainboard_drc:
+  variables:
+    DIR: "cpu_backplane"
+  extends:
+    - .drc_template
   rules:
     - if: '$CI_COMMIT_TAG'
       when: on_success
       changes:
-        - "Hardware/**/*.kicad_pcb"
-        - ".gitlab-ci.yml"
-      allow_failure: true
+        paths:
+          - "Hardware/cpu_backplane/**.kicad_pcb"
+        compare_to: 'main'
 
-  artifacts:
-    when: always
-    paths:
-      - Hardware/Fabrication/
-
-
-sch_outputs:
-  image: setsoft/kicad_auto:dev_k6
-  stage: gen_fab
-  script:
-    - "cd Hardware && for dir in cpu_backplane digit_board io_board lcd_board opl2_board proc_board proto_board ram_board serial_board; do cd $dir && ([ -f *.kicad_sch ] || echo 'no schematic') && kibot -d ../Fabrication -s run_drc,run_erc print_sch || cd ..; done"
+io_drc:
+  variables:
+    DIR: "io_board"
+  extends:
+    - .drc_template
   rules:
     - if: '$CI_COMMIT_TAG'
       when: on_success
       changes:
-        - "Hardware/**/*.kicad_sch"
-        - ".gitlab-ci.yml"
-      allow_failure: true
-
-  artifacts:
-    when: always
-    paths:
-      - Hardware/Fabrication/
-
-pcb_outputs:
-  image: setsoft/kicad_auto:dev_k6
-  stage: gen_fab
-  script:
-    - "cd Hardware && for dir in cpu_backplane digit_board io_board lcd_board opl2_board proc_board proto_board ram_board serial_board; do cd $dir && ([ -f *.kicad_pcb ] || echo 'no PCB file') && (kibot -d ../Fabrication -s run_drc,run_erc print_front gerbers drill zip render && rm -rf ../Fabrication/Gerbers) || cd ..; done"
+        paths:
+          - "Hardware/io_board/**.kicad_pcb"
+        compare_to: 'main'
+opl_drc:
+  variables:
+    DIR: "opl2_board"
+  extends:
+    - .drc_template
   rules:
     - if: '$CI_COMMIT_TAG'
       when: on_success
       changes:
-        - "Hardware/**/*.kicad_pcb"
-        - ".gitlab-ci.yml"
-      allow_failure: true
+        paths:
+          - "Hardware/opl2_board/**.kicad_pcb"
+        compare_to: 'main'
+proto_drc:
+  variables:
+    DIR: "proto_board"
+  extends:
+    - .drc_template
+  rules:
+    - if: '$CI_COMMIT_TAG'
+      when: on_success
+      changes:
+        paths: 
+          - "Hardware/proto_board/**.kicad_pcb"
+        compare_to: 'main'
 
-  artifacts:
-    when: always
-    paths:
-      - Hardware/Fabrication/
+mainboard_out:
+  variables:
+    DIR: "cpu_backplane"
+  extends:
+    - .output_template
+  rules:
+    - if: '$CI_COMMIT_TAG'
+      when: on_success
+      changes:
+        paths: 
+          - "Hardware/cpu_backplane/**.kicad_sch"
+          - "Hardware/proto_board/**.kicad_pcb"
+        compare_to: 'main'
 
-
-test:
-  stage: test
-  script:
-    - gem install bundler
-    - cd docs && bundle install && cd ../
-    - cd docs && bundle exec jekyll build -d ../test
-  artifacts:
-    paths:
-      - test
-  except:
-    - master
-
+io_out:
+  variables:
+    DIR: "io_board"
+  extends:
+    - .output_template
+  rules:
+    - if: '$CI_COMMIT_TAG'
+      when: on_success
+      changes:
+        paths:
+          - "Hardware/io_board/**.kicad_pcb"
+          - "Hardware/io_board/**.kicad_sch"
+        compare_to: 'main'
+opl_out:
+  variables:
+    DIR: "opl2_board"
+  extends:
+    - .output_template
+  rules:
+    - if: '$CI_COMMIT_TAG'
+      when: on_success
+      changes:
+        paths:
+          - "Hardware/opl2_board/**.kicad_pcb"
+          - "Hardware/opl2_board/**.kicad_sch"
+        compare_to: 'main'
+proto_out:
+  variables:
+    DIR: "proto_board"
+  extends:
+    - .output_template
+  rules:
+    - if: '$CI_COMMIT_TAG'
+      when: on_success
+      changes:
+        paths:
+          - "Hardware/proto_board/**.kicad_pcb"
+          - "Hardware/proto_board/**.kicad_sch"
+        compare_to: 'main'
+  
+  
 pages:
+  image: ruby:2.6
+  variables:
+    JEKYLL_ENV: production
+    LC_ALL: C.UTF-8
   stage: deploy_pages
   script:
     - gem install bundler
@@ -140,5 +220,10 @@ pages:
   artifacts:
     paths:
       - public
-  only:
-    - master
+  rules:
+    - if: '$CI_COMMIT_TAG'
+      when: on_success
+      changes:
+        paths:
+          - "docs/**/*"
+        compare_to: $CI_DEFAULT_BRANCH

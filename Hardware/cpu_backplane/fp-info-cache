@@ -1,4 +1,4 @@
-21985552932433883
+21987228981335580
 Audio_Module
 Reverb_BTDR-1H
 Digital Reverberation Unit, http://www.belton.co.kr/inc/downfile.php?seq=17&file=pdf (footprint from http://www.uk-electronic.de/PDF/BTDR-1.pdf)
@@ -92091,6 +92091,13 @@ XY-016
 0
 4
 4
+w_conn_av
+BarrelJack_Horizontal
+DC Barrel Jack
+Power Jack
+0
+3
+3
 w_conn_av
 SCART
 SCART socket, Tyco P/N 1483465-1
