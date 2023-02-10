@@ -49,7 +49,7 @@ mainboard_erc:
       when: always
       changes:
         paths:
-          - "Hardware/cpu_backplane/mainboard.kicad_sch"
+          - "Hardware/mainboard/mainboard.kicad_sch"
         compare_to: 'main'
 
 io_erc:
@@ -62,7 +62,7 @@ io_erc:
       when: always
       changes:
         paths:
-          - "Hardware/io_board/**.kicad_sch"
+          - "Hardware/io_board/io_board.kicad_sch"
         compare_to: 'main'
 opl_erc:
   variables:
@@ -74,7 +74,7 @@ opl_erc:
       when: always
       changes:
         paths:
-          - "Hardware/opl2_board/**.kicad_sch"
+          - "Hardware/opl2_board/opl2_board.kicad_sch"
         compare_to: 'main'
 proto_erc:
   variables:
@@ -86,7 +86,7 @@ proto_erc:
       when: always
       changes:
         paths:
-          - "Hardware/proto_board/**.kicad_sch"
+          - "Hardware/proto_board/proto_board.kicad_sch"
         compare_to: 'main'
   
 
@@ -100,7 +100,7 @@ mainboard_drc:
       when: on_success
       changes:
         paths:
-          - "Hardware/mainboard/**.kicad_pcb"
+          - "Hardware/mainboard/mainboard.kicad_pcb"
         compare_to: 'main'
 
 io_drc:
@@ -113,7 +113,7 @@ io_drc:
       when: on_success
       changes:
         paths:
-          - "Hardware/io_board/**.kicad_pcb"
+          - "Hardware/io_board/io_board.kicad_pcb"
         compare_to: 'main'
 opl_drc:
   variables:
@@ -125,7 +125,7 @@ opl_drc:
       when: on_success
       changes:
         paths:
-          - "Hardware/opl2_board/**.kicad_pcb"
+          - "Hardware/opl2_board/opl2_board.kicad_pcb"
         compare_to: 'main'
 proto_drc:
   variables:
@@ -137,7 +137,7 @@ proto_drc:
       when: on_success
       changes:
         paths: 
-          - "Hardware/proto_board/**.kicad_pcb"
+          - "Hardware/proto_board/proto_board.kicad_pcb"
         compare_to: 'main'
 
 mainboard_out:
@@ -150,8 +150,8 @@ mainboard_out:
       when: on_success
       changes:
         paths: 
-          - "Hardware/mainboard/**.kicad_sch"
-          - "Hardware/mainboard/**.kicad_pcb"
+          - "Hardware/mainboard/mainboard.kicad_sch"
+          - "Hardware/mainboard/mainboard.kicad_pcb"
         compare_to: 'main'
 
 io_out:
@@ -164,8 +164,8 @@ io_out:
       when: on_success
       changes:
         paths:
-          - "Hardware/io_board/**.kicad_pcb"
-          - "Hardware/io_board/**.kicad_sch"
+          - "Hardware/io_board/io_board.kicad_pcb"
+          - "Hardware/io_board/io_board.kicad_sch"
         compare_to: 'main'
 opl_out:
   variables:
@@ -177,8 +177,8 @@ opl_out:
       when: on_success
       changes:
         paths:
-          - "Hardware/opl2_board/**.kicad_pcb"
-          - "Hardware/opl2_board/**.kicad_sch"
+          - "Hardware/opl2_board/opl2_board.kicad_pcb"
+          - "Hardware/opl2_board/opl2_board.kicad_sch"
         compare_to: 'main'
 proto_out:
   variables:
@@ -190,8 +190,8 @@ proto_out:
       when: on_success
       changes:
         paths:
-          - "Hardware/proto_board/**.kicad_pcb"
-          - "Hardware/proto_board/**.kicad_sch"
+          - "Hardware/proto_board/proto_board.kicad_pcb"
+          - "Hardware/proto_board/proto_board.kicad_sch"
         compare_to: 'main'
   
   
@@ -227,4 +227,4 @@ pages:
       changes:
         paths:
           - "docs/**/*"
-        compare_to: $CI_DEFAULT_BRANCH
+        compare_to: 'main'
