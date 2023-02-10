@@ -31,7 +31,7 @@ The constraints for it's design were the following:
 
 ## Some details
 
-These requirements resulted in a computer based on a [motherboard](/Hardware) hosting RAM, ROM and CPU and extension slots for expansion cards to plug into.
+These requirements resulted in a computer based on a [motherboard](/Hardware/mainboard) hosting RAM, ROM and CPU and extension slots for expansion cards to plug into.
 
 The [Planck hardware pages](/Hardware) explains more about the functionality of the motherboard and of each basic extension boards.
 
@@ -110,53 +110,48 @@ Below are the pins that are specific to the expansion bus:
 
 
 
-
-
 The Planck 6502 computer is a single board computer that communicates over serial, or can be a standalone computer by adding expansion cards to one of the 6 slots present on the motherboard.
 
 
 
-
-
-
-
-
-
-
 ### Input / output
-Also present on the backplane are two buttons and 4 LEDs.
+Also present on the motherboard are two buttons and 4 LEDs.
 
 One button triggers a reset of the processor, and the other triggers an non-maskable interrupt (<span style="text-decoration:overline">NMI</span>) which can be thought of as a "soft" reset.
 
 The leds are connected to the expansion bus, and so any board can control them. They can be used as a crude debug tool, to show the status of some processing, to try out a simple blink routine or to signal an error to the user.
 
-<img src="Hardware/backplane/io.png" alt="input output" width="400" />
+<img src="Hardware/mainboard/io.png" alt="input output" width="400" />
 
 
 ### Power delivery
 
-The power to the board is provided by a micro USB plug at the bottom left. There is no regulator on the backplane so you must make sure that your power supply is regulated 5V. A USB power brick is perfect for this purpose.
+The power to the board is provided by a barrel jack at the bottom left. There is a linear regulator on the board, so the power supply voltage can be anywhere from 7V to 12V, although with the latter a heatsink may be required on the regulator.
 
 A power switch and a power LED are also provided on the backplane.
 
-<img src="Hardware/backplane/power.png" alt="Power" width="400" />
+<img src="Hardware/mainboard/power.png" alt="Power" width="400" />
 
 
 
-## CPU board
+## Available expansion boards
 
-The main board is [the CPU board](Hardware/proc_board) that provides it's own RAM and ROM (32K of each) and basic address decoding for these.
-
-## I/O board
+### I/O board
 
 [The IO board](Hardware/io_board) is based on a WDC65C22 chip and provides a keyboard PS/2 port, a parallel port and a 65SIB port (serial port similar to and compatible with SPI)
 
-## Serial board
+### Serial board
 
 [The serial board](Hardware/serial_board) is based on a WDC65C51 chip and provides serial output through a TTL serial to USB adapter. When plugging the USB cable to your PC, it may be best to unplug the power from the backplane and let the computer be powered from your PC through the USB to serial adapter.
 
 
+### OPL2 board
 
+[A sound card](Hardware/opl2_board) based on the Yamaha OPL2 chip found in the original sound blaster card for example.
+
+### LCD board
+
+[This board](Hardware/lcd_board) allow a 20x04 LCD to be connected to the computer for text output.
 
 
 

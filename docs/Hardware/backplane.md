@@ -1,20 +1,20 @@
 ---
 layout: board
-title: Backplane
+title: Main board
 order: 997
-status: deprecated
+status: prod
 ---
 
 
-The Planck hardware is organized around a backplane that hosts minimal active circuitry. The only functions it assumes are that of [clock generation](#clock-generation), [board connection](#board-connection),  [expansion slot activation](#expansion-slot-activation) and [basic user IO](#basic-user-io).
+The Planck computer is an extensible single board computer. Everything need for the computer to work is on the mainboard (Basic IO, ROM, RAM, CPU). It can be extended with up to 6 cards to make it into exactly the computer you want.
 
-## The backplane
+## The main board
 
-[Design files](https://gitlab.com/planck-6502/planck-6502/-/tree/master/Hardware/backplane)
+[Design files](https://gitlab.com/planck-6502/planck-6502/-/tree/master/Hardware/mainboard)
 
-![Backplane board fully populated](/img/backplane.jpg)
+![Main board fully populated](/img/1.jpg)
 
-The backplane is at once the heart of the computer and also the one that does the least work. Indeed it has only the following four functions:
+Here are some details about the various subsystems on the main board.
 
 ### Clock generation
 The clock generation starts with an oscillator. This oscillator should be at twice the target frequency since it is divided by two by a [74HC161 binary counter](https://assets.nexperia.com/documents/data-sheet/74HC161.pdf)
@@ -37,7 +37,7 @@ So this simple circuit generates two clock signal : one that is slow enough for 
 
 ### Board connection
 
-The main purpose on the backplane is to connect all daughter boards together. It does this by means of an extension bus connector based on a 2.54mm 2x25 pins socket. These connectors are cheap, reliable and easy to obtain. The female connector is placed on the backplane and a right angle male connector on each expansion board.
+The Planck coomputer can be easily extended. It does this by means of an extension bus connector based on a 2.54mm 2x25 pins socket. These connectors are cheap, reliable and easy to obtain. The female connector is placed on the main board and a right angle male connector on each expansion board.
 
 Most pins on this extension consist of the 65C02 signals, such as 16 address lines, 8 data lines, and a smattering of control lines. The complete bus pinout is detailed below:
 
@@ -75,7 +75,7 @@ Most pins on this extension consist of the 65C02 signals, such as 16 address lin
 | 29 | A12 | Processor address bus pin 12 |
 | 30 | <span class="overline">INH</span> | When this is active (low), processor card RAM and ROM are disabled |
 | 31 | A13 | Processor address bus pin 13 |
-| 32 | <span class="overline">SLOT_SEL</span> | Used by the backplane to signal to expansion cards when they should activate, active low |
+| 32 | <span class="overline">SLOT_SEL</span> | Used by the main board to signal to expansion cards when they should activate, active low |
 | 33 | A14 | Processor address bus pin 14 |
 | 34 | LED1 | Connected to one of the backplane LEDs |
 | 35 | A15 | Processor address bus pin 15 |
@@ -124,18 +124,20 @@ Here is the default expansion memory map in table form
 
 ### Basic user IO
 
-The backplane provides some basic user input and output in the form of two buttons and 4 leds.
+The mainboard provides some basic user input and output in the form of two buttons and 4 leds.
 
 The two buttons are a reset button and an NMI (non maskable interrupt) buttons. The reset button triggers a hard reset of the processor, whereas the NMI button provides a non maskable interrupt to the code that can be handled as a soft reset by the code.
 
 The 4 LEDs are connected to pins on the expansion bus, and can thus be driven by any card that wants to signal something to the user. You have to be midful in your code not to drive a led low while another card is trying to drive it high, as that would cause very high current to flow into / from your peripherals.
 
-Finally, there is a power plug (micro USB), a power switch and a power LED.
-
-Here are the pages with details about each individual board:
-
- - [CPU board](cpu)
- - [Serial board](serial)
- - [I/O board](io)
+Finally, there is a power plug (Barrel jack), a power switch and a power LED.
 
 If you want to build this computer, please see the [building the computer](build) page to get more details about what to expect.
+
+### Serial IO
+
+Included on the main board is a WDC 6552 serial interface. Its signals are brought out to a pin header into which a USB to serial adapter can be pluged.
+
+### RAM and ROM
+
+32K of RAM and ROM are provided. The RAM socket allows for narrow or wide ram to be used. 

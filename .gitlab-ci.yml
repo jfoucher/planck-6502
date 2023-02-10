@@ -41,7 +41,7 @@ stages:
 
 mainboard_erc:
   variables:
-    DIR: "cpu_backplane"
+    DIR: "mainboard"
   extends:
     - .erc_template
   rules:
@@ -49,7 +49,7 @@ mainboard_erc:
       when: always
       changes:
         paths:
-          - "Hardware/cpu_backplane/cpu_backplane.kicad_sch"
+          - "Hardware/cpu_backplane/mainboard.kicad_sch"
         compare_to: 'main'
 
 io_erc:
@@ -92,7 +92,7 @@ proto_erc:
 
 mainboard_drc:
   variables:
-    DIR: "cpu_backplane"
+    DIR: "mainboard"
   extends:
     - .drc_template
   rules:
@@ -100,7 +100,7 @@ mainboard_drc:
       when: on_success
       changes:
         paths:
-          - "Hardware/cpu_backplane/**.kicad_pcb"
+          - "Hardware/mainboard/**.kicad_pcb"
         compare_to: 'main'
 
 io_drc:
@@ -142,7 +142,7 @@ proto_drc:
 
 mainboard_out:
   variables:
-    DIR: "cpu_backplane"
+    DIR: "mainboard"
   extends:
     - .output_template
   rules:
@@ -150,8 +150,8 @@ mainboard_out:
       when: on_success
       changes:
         paths: 
-          - "Hardware/cpu_backplane/**.kicad_sch"
-          - "Hardware/proto_board/**.kicad_pcb"
+          - "Hardware/mainboard/**.kicad_sch"
+          - "Hardware/mainboard/**.kicad_pcb"
         compare_to: 'main'
 
 io_out:
@@ -204,6 +204,7 @@ pages:
   script:
     - gem install bundler
     - cd docs && bundle install && cd ../
+    - sed -i 's/___VERSION___/$CI_COMMIT_TAG/g'
     - cd docs && bundle exec jekyll build -d ../public
     - apt-get update -yqq && apt-get install -y -qq git curl unzip gnupg rsync
     - ls -la
