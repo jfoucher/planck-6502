@@ -10,7 +10,7 @@ This computer can run absolutely stand alone when connected via the serial port.
 
 Here is a 3D view of the board:
 
-![Planck computer](https://gitlab.com/planck-6502/planck-6502/-/jobs/artifacts/develop/raw/Hardware/Fabrication/cpu_backplane-3D_top.png?job=mainboard_out)
+![Planck computer](https://gitlab.com/planck-6502/planck-6502/-/jobs/artifacts/develop/raw/Hardware/Fabrication/mainboard-3D_top.png?job=mainboard_out)
 
 
 <a rel="license" href="http://creativecommons.org/licenses/by-sa/4.0/"><img alt="Creative Commons License" style="border-width:0" src="https://i.creativecommons.org/l/by-sa/4.0/88x31.png" /></a><br />This documentation is licensed under a <a rel="license" href="http://creativecommons.org/licenses/by-sa/4.0/">Creative Commons Attribution-ShareAlike 4.0 International License</a>.

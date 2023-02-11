@@ -18,3 +18,5 @@ Hardware/io_board/io_board-backups
 Software/cos
 Hardware/proto_board/planck_board-backups
 Hardware/lcd_board/lcd_board-backups
+Hardware/mainboard/mainboard-backups
+Hardware/opl2_board/opl2_board-backups
