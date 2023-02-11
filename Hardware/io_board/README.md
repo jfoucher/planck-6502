@@ -21,6 +21,8 @@ PB3 is the SPI clock, PB4 is MISO, PB5 is MOSI, PB6 is the <span style="text-dec
 
 This is what the board look like at the moment:
 
+![Top view](docs/img/io_board.jpg)
+
 ![3D render](https://gitlab.com/planck-6502/planck-6502/-/jobs/artifacts/develop/raw/Hardware/Fabrication/io_board-3D_top.png?job=io_out)
 
 You can [download the schematic](https://gitlab.com/planck-6502/planck-6502/-/jobs/artifacts/develop/raw/Hardware/Fabrication/Schematic.pdf?job=io_out) and the [gerber files](https://gitlab.com/planck-6502/planck-6502/-/jobs/artifacts/develop/raw/Hardware/Fabrication/gerbers.zip?job=io_out)
