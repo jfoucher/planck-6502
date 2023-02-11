@@ -29,15 +29,12 @@ outputs:
     type: pdf_sch_print
     dir: .
     options:
-      output: Schematic.pdf
       monochrome: true
 
   - name: 'print_front'
     comment: "Print F.Cu+F.SilkS"
     type: pdf_pcb_print
     dir: .
-    options:
-      output_name: PCB_Top.pdf
     layers:
       - layer: F.Cu
       - layer: F.SilkS
@@ -93,9 +90,9 @@ outputs:
     
   - name: 'zip'
     comment: "Gerbers zip file"
+    format: zip
     type: compress
     options:
-      output: gerbers.zip
       files:
         - source: Gerbers/*
         
