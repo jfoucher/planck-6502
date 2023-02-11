@@ -153,9 +153,9 @@ The computer provides some basic user input and output in the form of two button
 
 The two buttons are a reset button and an NMI (non maskable interrupt) buttons. The reset button triggers a hard reset of the processor, whereas the NMI button provides a non maskable interrupt to the code that can be handled (for example) as a soft reset.
 
-The 4 LEDs are connected to pins on the expansion bus, and can thus be driven by any card that wants to signal something to the user. You have to be mindful in your code not to drive a led low while another card is trying to drive it high, as that would cause very high current to flow into / from your peripherals.
+The 4 LEDs are connected to pins on the expansion bus, and can thus be driven by any card that wants to signal something to the user. You have to be mindful in your code not to drive a led low while another card is trying to drive it high, as that would cause high current to flow into / from your peripherals.
 
-Finally, there is a power plug (micro USB), a power switch and a power LED.
+Finally, there is a power plug (Barrel jack), a power switch and a power LED.
 
 If you want to build this computer, please see the [building the computer](build) page to get more details about what to expect.
 
