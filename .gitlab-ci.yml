@@ -242,6 +242,8 @@ pages:
     - cd docs && bundle install && cd ../
     - cd docs && find . -type f -exec sed -i 's/___VERSION___/'"$CI_COMMIT_TAG"'/g' {} \;  && cd ../
     - cd docs && bundle exec jekyll build -d ../public
+    - mkdir ../public/fabrication
+    - cp -aR ../Hardware/Fabrication/* ../public/fabrication/
     - apt-get update -yqq && apt-get install -y -qq git curl unzip gnupg rsync
     - ls -la
     - 'which ssh-agent || ( apt-get update -y && apt-get install openssh-client -y )'
