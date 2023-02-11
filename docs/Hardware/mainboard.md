@@ -37,7 +37,7 @@ So this simple circuit generates two clock signal : one that is slow enough for 
 
 ### Board connection
 
-The Planck coomputer can be easily extended. It does this by means of an extension bus connector based on a 2.54mm 2x25 pins socket. These connectors are cheap, reliable and easy to obtain. The female connector is placed on the main board and a right angle male connector on each expansion board.
+The Planck computer can be easily extended. It does this by means of an extension bus connector based on a 2.54mm 2x25 pins socket. These connectors are cheap, reliable and easy to obtain. The female connector is placed on the main board and a right angle male connector on each expansion board.
 
 Most pins on this extension consist of the 65C02 signals, such as 16 address lines, 8 data lines, and a smattering of control lines. The complete bus pinout is detailed below:
 
