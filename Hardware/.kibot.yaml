@@ -90,7 +90,6 @@ outputs:
     
   - name: 'zip'
     comment: "Gerbers zip file"
-    format: zip
     type: compress
     options:
       files:
