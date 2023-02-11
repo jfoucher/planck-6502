@@ -114,11 +114,12 @@ Here is the default expansion memory map in table form
 |-------------------------------------------------------------------|
 |  START ADDRESS    |   END ADDRESS       |     DESCRIPTION         |
 |-------------------------------------------------------------------|
-|  0xFF80           |   0xFF8F            | SLOT1 Selected          |
-|  0xFF90           |   0xFF9F            | SLOT2 Selected          |
-|  0xFFA0           |   0xFFAF            | SLOT3 Selected          |
-|  0xFFB0           |   0xFFBF            | SLOT4 Selected          |
-|  0xFFC0           |   0xFFCF            | SLOT5 Selected          |
+|  0xFF80           |   0xFF8F            | SLOT0 Selected          |
+|  0xFF90           |   0xFF9F            | SLOT1 Selected          |
+|  0xFFA0           |   0xFFAF            | SLOT2 Selected          |
+|  0xFFB0           |   0xFFBF            | SLOT3 Selected          |
+|  0xFFC0           |   0xFFCF            | SLOT4 Selected          |
+|  0xFFD0           |   0xFFDF            | SLOT5 Selected          |
 |-------------------------------------------------------------------|
 
 
