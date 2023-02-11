@@ -1,7 +1,7 @@
 ---
 layout: board
 title: Main board
-order: 997
+order: 30
 status: prod
 ---
 

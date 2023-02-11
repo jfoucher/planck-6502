@@ -64,6 +64,19 @@ io_erc:
         paths:
           - "Hardware/io_board/io_board.kicad_sch"
         compare_to: 'main'
+
+lcd_erc:
+  variables:
+    DIR: "lcd_board"
+  extends:
+    - .erc_template
+  rules:
+    - if: '$CI_COMMIT_TAG'
+      when: always
+      changes:
+        paths:
+          - "Hardware/lcd_board/lcd_board.kicad_sch"
+        compare_to: 'main'
 opl_erc:
   variables:
     DIR: "opl2_board"
@@ -102,7 +115,18 @@ mainboard_drc:
         paths:
           - "Hardware/mainboard/mainboard.kicad_pcb"
         compare_to: 'main'
-
+lcd_drc:
+  variables:
+    DIR: "lcd_board"
+  extends:
+    - .drc_template
+  rules:
+    - if: '$CI_COMMIT_TAG'
+      when: on_success
+      changes:
+        paths:
+          - "Hardware/lcd_board/lcd_board.kicad_pcb"
+        compare_to: 'main'
 io_drc:
   variables:
     DIR: "io_board"
@@ -153,7 +177,19 @@ mainboard_out:
           - "Hardware/mainboard/mainboard.kicad_sch"
           - "Hardware/mainboard/mainboard.kicad_pcb"
         compare_to: 'main'
-
+lcd_out:
+  variables:
+    DIR: "lcd_board"
+  extends:
+    - .output_template
+  rules:
+    - if: '$CI_COMMIT_TAG'
+      when: on_success
+      changes:
+        paths:
+          - "Hardware/lcd_board/lcd_board.kicad_pcb"
+          - "Hardware/lcd_board/lcd_board.kicad_sch"
+        compare_to: 'main'
 io_out:
   variables:
     DIR: "io_board"
