@@ -21,3 +21,4 @@ Hardware/lcd_board/lcd_board-backups
 Hardware/mainboard/mainboard-backups
 Hardware/opl2_board/opl2_board-backups
 fp-info-cache
+fp-lib-table
