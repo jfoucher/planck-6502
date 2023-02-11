@@ -371,7 +371,7 @@
     "pinned_symbol_libs": []
   },
   "meta": {
-    "filename": "cpu_backplane.kicad_pro",
+    "filename": "mainboard.kicad_pro",
     "version": 1
   },
   "net_settings": {
