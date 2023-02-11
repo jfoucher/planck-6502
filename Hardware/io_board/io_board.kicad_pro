@@ -55,12 +55,7 @@
           "width": 0.0
         }
       ],
-      "drc_exclusions": [
-        "courtyards_overlap|139731081|117060001|00000000-0000-0000-0000-00005fea97ea|26a83821-4bc7-4e41-803f-5e8d19182c3e",
-        "courtyards_overlap|142772001|87088001|00000000-0000-0000-0000-00006019c8de|00000000-0000-0000-0000-00006019d29c",
-        "courtyards_overlap|59467081|-27719999|00000000-0000-0000-0000-00005fea97ea|26a83821-4bc7-4e41-803f-5e8d19182c3e",
-        "courtyards_overlap|62508001|-57691999|00000000-0000-0000-0000-00006019c8de|00000000-0000-0000-0000-00006019d29c"
-      ],
+      "drc_exclusions": [],
       "meta": {
         "filename": "board_design_settings.json",
         "version": 2
@@ -69,7 +64,7 @@
         "annular_width": "error",
         "clearance": "error",
         "copper_edge_clearance": "error",
-        "courtyards_overlap": "error",
+        "courtyards_overlap": "ignore",
         "diff_pair_gap_out_of_range": "error",
         "diff_pair_uncoupled_length_too_long": "error",
         "drill_out_of_range": "error",
