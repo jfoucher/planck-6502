@@ -2,7 +2,7 @@
 layout: board
 title: CPU board
 status: deprecated
-design_files: https://gitlab.com/planck-6502/planck-6502/-/tree/master/Hardware/proc_board
+design_files: https://gitlab.com/planck-6502/planck-6502/-/tree/main/Hardware/proc_board
 order: 999
 ---
 

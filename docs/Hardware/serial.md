@@ -2,7 +2,7 @@
 layout: board
 title: Serial board
 status: prod
-design_files: https://gitlab.com/planck-6502/planck-6502/-/tree/master/Hardware/serial_board
+design_files: https://gitlab.com/planck-6502/planck-6502/-/tree/main/Hardware/serial_board
 order: 996
 ---
 
@@ -17,4 +17,4 @@ To the left of that is the 1.8432 MHz crystal (an SMD part soldered to a piece o
 
 ## Slot placement
 
-The Serial board should be inserted in SLOT 3 on the backplane, otherwise you will have to change the hardware definitions in [`platform-planck.asm`](https://gitlab.com/planck-6502/planck-6502/-/blob/master/Software/forth/platform/platform-planck.asm#L109)
+The Serial board should be inserted in SLOT 3 on the backplane, otherwise you will have to change the hardware definitions in [`platform-planck.asm`](https://gitlab.com/planck-6502/planck-6502/-/blob/main/Software/forth/platform/platform-planck.asm#L109)

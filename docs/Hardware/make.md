@@ -2,7 +2,7 @@
 layout: board
 short_title: Make your own board
 title: Make your own Planck 6502 board
-design_files: https://gitlab.com/planck-6502/planck-6502/-/tree/master/Hardware/template
+design_files: https://gitlab.com/planck-6502/planck-6502/-/tree/main/Hardware/template
 order: 999
 status: prod
 ---

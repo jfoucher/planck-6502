@@ -3,7 +3,7 @@ layout: board
 short_title: Proto board
 title: Prototyping board
 status: prod
-design_files: https://gitlab.com/planck-6502/planck-6502/-/tree/master/Hardware/proto_board
+design_files: https://gitlab.com/planck-6502/planck-6502/-/tree/main/Hardware/proto_board
 order: 100
 ---
 

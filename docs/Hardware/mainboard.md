@@ -10,7 +10,7 @@ The Planck computer is an extensible single board computer. Everything need for 
 
 ## The main board
 
-[Design files](https://gitlab.com/planck-6502/planck-6502/-/tree/master/Hardware/mainboard)
+[Design files](https://gitlab.com/planck-6502/planck-6502/-/tree/main/Hardware/mainboard)
 
 ![Main board fully populated](/img/1.jpg)
 

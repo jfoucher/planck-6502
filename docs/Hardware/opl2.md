@@ -3,7 +3,7 @@ layout: board
 title: OPL2 sound card
 short_title: OPL2 board
 status: prod
-design_files: https://gitlab.com/planck-6502/planck-6502/-/tree/master/Hardware/opl2_board
+design_files: https://gitlab.com/planck-6502/planck-6502/-/tree/main/Hardware/opl2_board
 order: 60
 ---
 
@@ -15,7 +15,7 @@ Great news! [The prototype is complete and working!](/news/2021/06/26/opl2-sound
 
 ## Production PCB
 
-The production PCB is tested and works fine. It will soon be available for order on Tindie. However still missing is the driver code for it. As of now there is only some test code that plays simple tones. You are more than welcome to [contribute some code](https://gitlab.com/planck-6502/planck-6502/-/tree/master/Software/drivers) to fix this.
+The production PCB is tested and works fine. It will soon be available for order on Tindie. However still missing is the driver code for it. As of now there is only some test code that plays simple tones. You are more than welcome to [contribute some code](https://gitlab.com/planck-6502/planck-6502/-/tree/main/Software/drivers) to fix this.
 
 ![OPL2 board image](/img/opl2-board.jpg)
 

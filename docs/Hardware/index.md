@@ -31,7 +31,7 @@ The Planck hardware is organized around a motherboard that hosts the CPU and RAM
 
 ## The computer
 
-[Design files](https://gitlab.com/planck-6502/planck-6502/-/tree/master/Hardware/cpu_backplane)
+[Design files](https://gitlab.com/planck-6502/planck-6502/-/tree/main/Hardware/cpu_backplane)
 
 ![Computer board fully populated](/img/computer.jpg)
 

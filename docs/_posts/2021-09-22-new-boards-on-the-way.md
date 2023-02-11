@@ -15,7 +15,7 @@ But after all that was done, it turns out that it works perfectly, on the first 
 
 ![Bent resistors](/img/resistors.jpg){: width="450" style="margin: 2em auto;display:block;"}
 
-This is now corrected on [the latest revision of the board](https://gitlab.com/planck-6502/planck-6502/-/tree/master/Hardware/cpu_backplane)
+This is now corrected on [the latest revision of the board](https://gitlab.com/planck-6502/planck-6502/-/tree/main/Hardware/cpu_backplane)
 
 As you can from the image below, I had initially planned to use a ZIF socket for the EEPROM on the prototype board, since the computer has no provision for in circuit programming of the EEPROM. However, I went ahead and soldered a regular socket in it, because it turns out that a zif socket can be made to fit in a regular socket just fine.
 
