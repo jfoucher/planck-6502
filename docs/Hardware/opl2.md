@@ -5,6 +5,10 @@ short_title: OPL2 board
 status: prod
 design_files: https://gitlab.com/planck-6502/planck-6502/-/tree/main/Hardware/opl2_board
 order: 60
+gerbers: https://planck6502.com/fabrication/opl2_board-zip.zip
+schematic: https://planck6502.com/fabrication/opl2_board-schematic.pdf
+html_bom: https://planck6502.com/fabrication/opl2_board-bom.html
+csv_bom: https://planck6502.com/fabrication/opl2_board-bom.csv
 ---
 
 This is a sound card based on the [Yamaha YM3812 chip](https://en.wikipedia.org/wiki/Yamaha_YM3812), also known as OPL2 chip. It was used on early PC sound cards such as the Soundblaster and Adlib and various Yamahe synthesizers.

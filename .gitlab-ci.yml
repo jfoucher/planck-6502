@@ -31,13 +31,11 @@ stages:
   image: setsoft/kicad_auto:dev_k6
   stage: gen_fab
   script:
-    - "cd Hardware/$DIR && [ -f *.kicad_pcb ] && kibot -d ../Fabrication -c ../.kibot.yaml --skip-pre update_xml,run_drc,run_erc print_front gerbers drill zip render print_sch && rm -rf ../Fabrication/Gerbers"
+    - "cd Hardware/$DIR && [ -f *.kicad_pcb ] && kibot -d ../Fabrication -c ../.kibot.yaml --skip-pre update_xml,run_drc,run_erc print_front gerbers drill zip render print_sch csv-bom html-bom && rm -rf ../Fabrication/Gerbers"
   artifacts:
     when: always
     paths:
       - Hardware/Fabrication/
-
-
 
 mainboard_erc:
   variables:

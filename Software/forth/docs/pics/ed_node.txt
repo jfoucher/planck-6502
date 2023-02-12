@@ -1,7 +1,0 @@
-                        +---------------+
-         prev node -->  |  List Link    |  ---> next node
-                        +---------------+
-                        |  String Addr  |  ---> "abcd"
-                        +---------------+
-                        |  String Len   |
-                        +---------------+

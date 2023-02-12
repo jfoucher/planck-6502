@@ -106,5 +106,27 @@ outputs:
       zoom: 2
       auto_crop: true
       ray_tracing: true
+        
+  - name: 'draw'
+    comment: "PCB 2D drawing"
+    type: pcbdraw
+    options:
+      show_components: ['all']
+        
+  - name: 'csv-bom'
+    comment: "generate BOM"
+    type: bom
+    options:
+      format: 'CSV'
+        
+  - name: 'html-bom'
+    comment: "generate BOM"
+    type: bom
+    options:
+      format: 'HTML'
+      html:
+        logo: ../../docs/img/logo.png
+        title: Bill of materials
+
     
 

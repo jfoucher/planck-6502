@@ -5,6 +5,10 @@ title: Prototyping board
 status: prod
 design_files: https://gitlab.com/planck-6502/planck-6502/-/tree/main/Hardware/proto_board
 order: 100
+gerbers: https://planck6502.com/fabrication/proto_board-zip.zip
+schematic: https://planck6502.com/fabrication/proto_board-schematic.pdf
+html_bom: https://planck6502.com/fabrication/proto_board-bom.html
+csv_bom: https://planck6502.com/fabrication/proto_board-bom.csv
 ---
 
 

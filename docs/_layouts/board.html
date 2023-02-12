@@ -19,5 +19,17 @@ layout: default
   {% if page.design_files %}
 <p>Design files: <a href="{{page.design_files }}">Gitlab</a></p>
   {% endif %}
+  {% if page.schematic %}
+<p><a href="{{page.schematic }}">Download schematic</a></p>
+  {% endif %}
+  {% if page.gerbers %}
+<p><a href="{{page.gerbers }}">Download gerber files</a></p>
+  {% endif %}
+  {% if page.html_bom %}
+<p><a href="{{page.html_bom }}">View Bill of Materials</a></p>
+  {% endif %}
+  {% if page.csv_bom %}
+<p><a href="{{page.csv_bom }}">Download Bill of Materials</a></p>
+  {% endif %}
 </div>
     {{ content }}

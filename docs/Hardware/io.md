@@ -4,6 +4,10 @@ title: I/O board
 status: prod
 design_files: https://gitlab.com/planck-6502/planck-6502/-/tree/main/Hardware/io_board
 order: 40
+gerbers: https://planck6502.com/fabrication/io_board-zip.zip
+schematic: https://planck6502.com/fabrication/io_board-schematic.pdf
+html_bom: https://planck6502.com/fabrication/io_board-bom.html
+csv_bom: https://planck6502.com/fabrication/io_board-bom.csv
 ---
 
 

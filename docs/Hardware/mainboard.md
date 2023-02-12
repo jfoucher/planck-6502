@@ -6,6 +6,8 @@ status: prod
 design_files: https://gitlab.com/planck-6502/planck-6502/-/tree/main/Hardware/mainboard
 gerbers: https://planck6502.com/fabrication/mainboard-zip.zip
 schematic: https://planck6502.com/fabrication/mainboard-schematic.pdf
+html_bom: https://planck6502.com/fabrication/mainboard-bom.html
+csv_bom: https://planck6502.com/fabrication/mainboard-bom.csv
 ---
 
 
