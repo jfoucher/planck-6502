@@ -23,9 +23,9 @@ This is what the board look like at the moment:
 
 ![Top view](docs/img/io_board.jpg)
 
-![3D render](https://gitlab.com/planck-6502/planck-6502/-/jobs/artifacts/develop/raw/Hardware/Fabrication/io_board-3D_top.png?job=io_out)
+![3D render](https://planck6502.com/fabrication/io_board-3D_top.png)
 
-You can [download the schematic](https://gitlab.com/planck-6502/planck-6502/-/jobs/artifacts/develop/raw/Hardware/Fabrication/Schematic.pdf?job=io_out) and the [gerber files](https://gitlab.com/planck-6502/planck-6502/-/jobs/artifacts/develop/raw/Hardware/Fabrication/gerbers.zip?job=io_out)
+You can [download the schematic](https://planck6502.com/fabrication/io_board-schematic.pdf) and the [gerber files](https://planck6502.com/fabrication/io_board-zip.zip)
 
 [Documentation](https://planck6502.com/Hardware/io/)
 

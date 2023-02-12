@@ -4,9 +4,9 @@ This is a sound card based on the YM3892 OPL2 sound chip.
 
 ![OPL2 board](opl2-board.jpg)
 
-![3D render](https://gitlab.com/planck-6502/planck-6502/-/jobs/artifacts/develop/raw/Hardware/Fabrication/opl2_board-3D_top.png?job=opl_out)
+![3D render](https://planck6502.com/fabrication/opl2_board-3D_top.png)
 
-You can [download the schematic](https://gitlab.com/planck-6502/planck-6502/-/jobs/artifacts/develop/raw/Hardware/Fabrication/Schematic.pdf?job=opl_out) and the [gerber files](https://gitlab.com/planck-6502/planck-6502/-/jobs/artifacts/develop/raw/Hardware/Fabrication/gerbers.zip?job=opl_out)
+You can [download the schematic](https://planck6502.com/fabrication/opl2_board-schematic.pdf) and the [gerber files](https://planck6502.com/fabrication/opl2_board-zip.zip)
 
 [Documentation](https://planck6502.com/Hardware/opl2/)
 

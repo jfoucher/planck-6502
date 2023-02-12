@@ -1,5 +1,7 @@
 ## Planck CPU board
 
+# Deprecated. Please use the [mainboard](../mainboard/) instead
+
 This is the CPU board for the Planck 6502 based computer. It contains 32K of ram and 32K of rom.
 
 The RAM and ROM can be inhibited by setting the <span style="text-decoration:overline">INH</span> signal low.
