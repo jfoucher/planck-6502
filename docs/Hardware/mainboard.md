@@ -3,6 +3,9 @@ layout: board
 title: Main board
 order: 30
 status: prod
+design_files: https://gitlab.com/planck-6502/planck-6502/-/tree/main/Hardware/mainboard
+gerbers: https://planck6502.com/fabrication/mainboard-zip.zip
+schematic: https://planck6502.com/fabrication/mainboard-schematic.pdf
 ---
 
 

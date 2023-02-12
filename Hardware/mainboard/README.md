@@ -11,9 +11,9 @@ This computer can run absolutely stand alone when connected via the serial port.
 Here is a 3D view of the board:
 
 
-![3D render](https://planck-6502.com/fabrication/io_board-3D_top.png)
+![3D render](https://planck6502.com/fabrication/mainboard-3D_top.png)
 
-You can [download the schematic](https://gitlab.com/planck-6502/planck-6502/-/jobs/artifacts/develop/raw/Hardware/Fabrication/Schematic.pdf?job=io_out) and the [gerber files](https://gitlab.com/planck-6502/planck-6502/-/jobs/artifacts/develop/raw/Hardware/Fabrication/gerbers.zip?job=io_out)
+You can [download the schematic](https://planck6502.com/fabrication/mainboard-schematic.pdf) and the [gerber files](https://planck6502.com/fabrication/mainboard-zip.zip)
 
 [Documentation](https://planck6502.com/Hardware/io/)
 
