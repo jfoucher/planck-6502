@@ -62,7 +62,18 @@ io_erc:
         paths:
           - "Hardware/io_board/io_board.kicad_sch"
         compare_to: 'main'
-
+cf_erc:
+  variables:
+    DIR: "cf_board"
+  extends:
+    - .erc_template
+  rules:
+    - if: '$CI_COMMIT_TAG'
+      when: always
+      changes:
+        paths:
+          - "Hardware/cf_board/cf_board.kicad_sch"
+        compare_to: 'main'
 lcd_erc:
   variables:
     DIR: "lcd_board"
@@ -137,6 +148,19 @@ io_drc:
         paths:
           - "Hardware/io_board/io_board.kicad_pcb"
         compare_to: 'main'
+
+cf_drc:
+  variables:
+    DIR: "cf_board"
+  extends:
+    - .drc_template
+  rules:
+    - if: '$CI_COMMIT_TAG'
+      when: on_success
+      changes:
+        paths:
+          - "Hardware/cf_board/cf_board.kicad_pcb"
+        compare_to: 'main'
 opl_drc:
   variables:
     DIR: "opl2_board"
@@ -200,6 +224,19 @@ io_out:
         paths:
           - "Hardware/io_board/io_board.kicad_pcb"
           - "Hardware/io_board/io_board.kicad_sch"
+        compare_to: 'main'
+cf_out:
+  variables:
+    DIR: "cf_board"
+  extends:
+    - .output_template
+  rules:
+    - if: '$CI_COMMIT_TAG'
+      when: on_success
+      changes:
+        paths:
+          - "Hardware/cf_board/cf_board.kicad_pcb"
+          - "Hardware/cf_board/cf_board.kicad_sch"
         compare_to: 'main'
 opl_out:
   variables:
