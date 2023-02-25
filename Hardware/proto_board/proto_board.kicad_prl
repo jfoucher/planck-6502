@@ -65,7 +65,7 @@
     "zone_display_mode": 0
   },
   "meta": {
-    "filename": "planck_board.kicad_prl",
+    "filename": "proto_board.kicad_prl",
     "version": 3
   },
   "project": {
