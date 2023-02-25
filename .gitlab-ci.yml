@@ -300,4 +300,16 @@ pages:
       changes:
         paths:
           - "docs/**/*"
+          - "Hardware/proto_board/proto_board.kicad_pcb"
+          - "Hardware/proto_board/proto_board.kicad_sch"
+          - "Hardware/proto_board/opl2_board.kicad_pcb"
+          - "Hardware/proto_board/opl2_board.kicad_sch"
+          - "Hardware/proto_board/lcd_board.kicad_pcb"
+          - "Hardware/proto_board/lcd_board.kicad_sch"
+          - "Hardware/proto_board/cf_board.kicad_pcb"
+          - "Hardware/proto_board/cf_board.kicad_sch"
+          - "Hardware/proto_board/io_board.kicad_pcb"
+          - "Hardware/proto_board/io_board.kicad_sch"
+          - "Hardware/proto_board/mainboard.kicad_pcb"
+          - "Hardware/proto_board/mainboard.kicad_sch"
         compare_to: 'main'
