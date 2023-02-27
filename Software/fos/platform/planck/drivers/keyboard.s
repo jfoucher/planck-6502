@@ -41,8 +41,8 @@ keys: .byte 0, 0, 0, 0, 0, 0, 0, 0
 
 .segment "BSS"
 key_quantity: .res 1
-buffer_quantity: .byte $ff
-old_keys: .byte 0, 0, 0, 0, 0, 0, 0, 0
+buffer_quantity: .res 1
+old_keys: .res 8
 
 
 scan_result: .res 8
@@ -114,6 +114,7 @@ kb_init:
   sei
   ; Set PORTA as ouput for cols
   lda #$FF
+  sta buffer_quantity
   sta KB_DDRA
   ; Set PORTB as input for rows
   stz KB_DDRB

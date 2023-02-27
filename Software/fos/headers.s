@@ -88,6 +88,7 @@ nt_cls:
         .word nt_lcdprint, xt_cls, z_cls
         .byte "cls"
 
+.ifdef spi_init
 nt_spi_init:
         .byte 8, 0
         .word nt_cls, xt_spi_init, z_spi_init
@@ -114,10 +115,23 @@ nt_sd_init:
         .word nt_spi_transceive, xt_sd_init, z_sd_init
         .byte "sd_init"
 
+.else
+nt_sd_init:
+        .byte 7, 0
+        .word nt_cls, xt_sd_init, z_sd_init
+        .byte "sd_init"
+.endif
+
+
+
+nt_cf_readsector:
+        .byte 13, 0
+        .word nt_sd_init, xt_cf_readsector, z_cf_readsector
+        .byte "cf_readsector"
 
 nt_sd_readsector:
         .byte 13, 0
-        .word nt_sd_init, xt_sd_readsector, z_sd_readsector
+        .word nt_cf_readsector, xt_sd_readsector, z_sd_readsector
         .byte "sd_readsector"
 
 

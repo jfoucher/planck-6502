@@ -137,6 +137,7 @@ stack0 =    $0100   ; location of the stack
 .segment "BSS"
 hist_buff: .res $400
 buffer0: .res $100
+
 .segment "DICTIONARY"   ; the dictionary gets its own segment so that it uses all the space left in RAM
 dictionary: .res $1000
 

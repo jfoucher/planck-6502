@@ -10,6 +10,8 @@ ram_end = $8000
 .include "drivers/vga.inc"
 .include "drivers/keyboard.inc"
 
+.include "drivers/cf.inc"
+
 .include "drivers/zp.s"
 
 .segment "BSS"
@@ -22,21 +24,23 @@ has_acia: .res 1
 .segment "RODATA"
 
 .import    copydata
+.import zerobss
 
 .segment "STARTUP"
 
 v_reset:
     JSR     copydata
+    jsr zerobss
     jmp kernel_init
 
-.segment "DATA"
 
 .include "drivers/acia.s"
 .include "drivers/timer.s"
-.include "drivers/keyboard.s"
-; .include "drivers/ps2.s"
+; .include "drivers/keyboard.s"
+.include "drivers/ps2.s"
 .include "drivers/delayroutines.s"
-.include "drivers/4004.s"
+; .include "drivers/4004.s"
+.include "drivers/cf.s"
 ; .include "drivers/lcd.s"
 ; .include "drivers/spi.s"
 ; .include "drivers/sd.s"
@@ -44,7 +48,12 @@ v_reset:
 ; .include "drivers/fat32.s"
 
 .include "../../forth.s"
+; .include "../../ed.s"
 
+
+.segment "DATA"
+
+platform_bye:
 kernel_init:
 v_nmi:
     lda #$FF
@@ -77,9 +86,6 @@ v_nmi:
     printascii welcome_message
 
     jmp forth
-
-platform_bye:   
-    jmp platform_bye
 
 
 kernel_putc:
@@ -214,9 +220,11 @@ v_irq_timer:
 
         bra v_irq_exit
 v_kb_irq_timer:
+.ifdef kb_time
     lda KB_T1CL ; clear timer interrupt
     inc kb_time
     bne v_irq_exit
+.endif
     ;jsr kb_scan
 v_irq_exit:
     ply

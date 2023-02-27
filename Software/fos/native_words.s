@@ -12288,6 +12288,36 @@ xt_time:
 
 z_time: rts
 
+; ## cf_readsector ( u u -- addr ) "Set LBA block and read to buffer"
+; ## "cf_readsector" coded Custom
+
+xt_cf_readsector: 
+        jsr underflow_2
+        lda 0, x
+        sta CF_LBA
+        lda 1, x
+        sta CF_LBA + 1
+        lda 2, x
+        sta CF_LBA + 2
+        lda 3, x
+        sta CF_LBA + 3
+        ; LBA is set, now read sector
+        jsr cf_init
+        
+        jsr cf_read_sector
+        ; jsr cf_read
+
+        ; return buffer address
+        lda #<CF_BUF
+        sta 2, x
+        lda #>CF_BUF
+        sta 3, x
+        inx
+        inx
+
+z_cf_readsector: 
+        rts
+
 ; TODO add routine to send a block of data in memory via SPI
 ; similar to lcdprint
 

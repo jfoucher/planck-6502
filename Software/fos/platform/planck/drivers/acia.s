@@ -1,3 +1,5 @@
+.segment "DATA"
+
 acia_init:
     sta ACIA_STATUS        ; soft reset (value not important)
                             ; set specific modes and functions
