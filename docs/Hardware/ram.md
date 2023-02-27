@@ -11,8 +11,9 @@ html_bom: https://planck6502.com/fabrication/ram_board-bom.html
 csv_bom: https://planck6502.com/fabrication/ram_board-bom.csv
 ---
 
-This is a banked RAM board for the Planck 6502 computer.
+## This is a banked RAM board for the Planck 6502 computer.
 
+![3D View](https://planck6502.com/fabrication/ram_board-3D_top.png)
 
 When active, it gives access to a bank or RAM in the $8000-$BFFF address space.
 

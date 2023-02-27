@@ -15,8 +15,10 @@ csv_bom: https://planck6502.com/fabrication/cf_board-bom.csv
 ---
 
 
-This is a compact flash memory interface card to allow the Planck 6502 to save and restore data.
+## This is a compact flash memory interface card to allow the Planck 6502 to save and restore data.
 
+
+![3D View](https://planck6502.com/fabrication/cf_board-3D_top.png)
 
 ## Slot placement
 
