@@ -4982,6 +4982,7 @@
   (footprint "Custom_Footprints:SD-SMD_CFH-L3C1LBL01MN0" (layer "F.Cu")
     (tedit 0) (tstamp 513a47f5-4016-4c51-9a26-21e12c515e8c)
     (at 121.666 85.598 90)
+    (property "Link" "https://www.lcsc.com/product-detail/SD-Card-Connectors_UMAX-CFH-L3C1LBL01MN0_C444350.html")
     (property "Sheetfile" "cf_board.kicad_sch")
     (property "Sheetname" "")
     (path "/4f00b0a0-bb85-4e22-9432-3d51c475bb88")

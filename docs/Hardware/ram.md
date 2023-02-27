@@ -1,13 +1,17 @@
-## Planck 6502 RAM board
+---
+layout: board
+title: Banked RAM board
+short_title: RAM board
+status: dev
+design_files: https://gitlab.com/planck-6502/planck-6502/-/tree/main/Hardware/ram_board
+order: 60
+gerbers: https://planck6502.com/fabrication/ram_board-zip.zip
+schematic: https://planck6502.com/fabrication/ram_board-schematic.pdf
+html_bom: https://planck6502.com/fabrication/ram_board-bom.html
+csv_bom: https://planck6502.com/fabrication/ram_board-bom.csv
+---
 
 This is a banked RAM board for the Planck 6502 computer.
-
-
-![3D render](https://planck6502.com/fabrication/ram_board-3D_top.png)
-
-You can [download the schematic](https://planck6502.com/fabrication/ram_board-schematic.pdf) and the [gerber files](https://planck6502.com/fabrication/ram_board-zip.zip)
-
-[Documentation](https://planck6502.com/Hardware/ram/)
 
 
 When active, it gives access to a bank or RAM in the $8000-$BFFF address space.
@@ -34,4 +38,7 @@ For example the following code will deactivate the banked RAM and restore the RO
 lda #0
 sta $FFD0
 
-<a rel="license" href="http://creativecommons.org/licenses/by-sa/4.0/"><img alt="Creative Commons License" style="border-width:0" src="https://i.creativecommons.org/l/by-sa/4.0/88x31.png" /></a><br />This documentation is licensed under a <a rel="license" href="http://creativecommons.org/licenses/by-sa/4.0/">Creative Commons Attribution-ShareAlike 4.0 International License</a>.
+## Slot placement
+
+There is no driver for this board, you will have to develop custom code for it, so you can place it anywhere you like as long as your code looks for it in the right place.
+

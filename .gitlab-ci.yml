@@ -50,6 +50,18 @@ mainboard_erc:
           - "Hardware/mainboard/mainboard.kicad_sch"
         compare_to: 'main'
 
+ram_erc:
+  variables:
+    DIR: "ram_board"
+  extends:
+    - .erc_template
+  rules:
+    - if: '$CI_COMMIT_TAG'
+      when: always
+      changes:
+        paths:
+          - "Hardware/ram_board/ram_board.kicad_sch"
+        compare_to: 'main'
 io_erc:
   variables:
     DIR: "io_board"
@@ -135,6 +147,18 @@ lcd_drc:
       changes:
         paths:
           - "Hardware/lcd_board/lcd_board.kicad_pcb"
+        compare_to: 'main'
+ram_drc:
+  variables:
+    DIR: "ram_board"
+  extends:
+    - .drc_template
+  rules:
+    - if: '$CI_COMMIT_TAG'
+      when: on_success
+      changes:
+        paths:
+          - "Hardware/ram_board/ram_board.kicad_pcb"
         compare_to: 'main'
 io_drc:
   variables:
@@ -224,6 +248,19 @@ io_out:
         paths:
           - "Hardware/io_board/io_board.kicad_pcb"
           - "Hardware/io_board/io_board.kicad_sch"
+        compare_to: 'main'
+ram_out:
+  variables:
+    DIR: "ram_board"
+  extends:
+    - .output_template
+  rules:
+    - if: '$CI_COMMIT_TAG'
+      when: on_success
+      changes:
+        paths:
+          - "Hardware/ram_board/ram_board.kicad_pcb"
+          - "Hardware/ram_board/ram_board.kicad_sch"
         compare_to: 'main'
 cf_out:
   variables:
