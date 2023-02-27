@@ -11,16 +11,16 @@ CF_LBA: .res 4
 CF_PART_START: .res 4
 
 cf_wait: 
-    phy
+    ; phy
 @wait_loop:
-    ldy #$10
-    jsr delay_short
-    lda #'.'
-    jsr kernel_putc
+    ; ldy #$10
+    ; jsr delay_short
+    ; lda #'.'
+    ; jsr kernel_putc
     lda CF_REG_7
     and #$80
     bne @wait_loop
-    ply
+    ; ply
     rts
 
 cf_init:

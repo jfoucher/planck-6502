@@ -4,7 +4,7 @@ main.o:
     CODE              Offs=000000  Size=00002D  Align=00001  Fill=0000
     RODATA            Offs=000000  Size=00013A  Align=00001  Fill=0000
     BSS               Offs=000000  Size=00058B  Align=00001  Fill=0000
-    DATA              Offs=000000  Size=004A0F  Align=00001  Fill=0000
+    DATA              Offs=000000  Size=004A03  Align=00001  Fill=0000
     ZEROPAGE          Offs=000000  Size=0000CE  Align=00001  Fill=0000
     STARTUP           Offs=000000  Size=000009  Align=00001  Fill=0000
     DICTIONARY        Offs=000000  Size=001000  Align=00001  Fill=0000
@@ -22,7 +22,7 @@ Segment list:
 Name                   Start     End    Size  Align
 ----------------------------------------------------
 ZEROPAGE              000000  0000E7  0000E8  00001
-DATA                  000200  004C0E  004A0F  00001
+DATA                  000200  004C02  004A03  00001
 BSS                   004D00  00528A  00058B  00001
 DICTIONARY            005300  0062FF  001000  00001
 STARTUP               00CB00  00CB08  000009  00001
@@ -35,7 +35,7 @@ Exports list by name:
 ---------------------
 __BSS_RUN__               004D00 RLA    __BSS_SIZE__              00058B REA    
 __DATA_LOAD__             008000 RLA    __DATA_RUN__              000200 RLA    
-__DATA_SIZE__             004A0F REA    copydata                  00CC2D RLA    
+__DATA_SIZE__             004A03 REA    copydata                  00CC2D RLA    
 ptr1                      0000D6 RLZ    ptr2                      0000D8 RLZ    
 tmp1                      0000DE RLZ    zerobss                   00CC5A RLA    
 
@@ -45,7 +45,7 @@ Exports list by value:
 ----------------------
 ptr1                      0000D6 RLZ    ptr2                      0000D8 RLZ    
 tmp1                      0000DE RLZ    __DATA_RUN__              000200 RLA    
-__BSS_SIZE__              00058B REA    __DATA_SIZE__             004A0F REA    
+__BSS_SIZE__              00058B REA    __DATA_SIZE__             004A03 REA    
 __BSS_RUN__               004D00 RLA    __DATA_LOAD__             008000 RLA    
 copydata                  00CC2D RLA    zerobss                   00CC5A RLA    
 
