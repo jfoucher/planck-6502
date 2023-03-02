@@ -12498,7 +12498,7 @@ xt_cf_ls:
 
         ; current directory first sector is now in buffer
         ; display file names
-
+        jsr xt_cr
         printascii ls_header
         jsr xt_cr
 

@@ -1,4 +1,4 @@
-.include "macros.s"
+
 
 ; Definitions for Tali Forth 2
 ; Scot W. Stevenson <scot.stevenson@gmail.com>
@@ -153,9 +153,10 @@ bsize =     $ff
 padoffset = $ff
 
 
+
 .segment "DATA"
 
-; .include "fat16.s"
+
 
 forth:
     .include "native_words.s"     ; Native Forth words. Starts with COLD

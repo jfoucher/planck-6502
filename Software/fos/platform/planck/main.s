@@ -1,5 +1,5 @@
 
-
+.include "../../macros.s"
 CLOCK_SPEED = 24000000
 
 ram_end = $8000
@@ -33,7 +33,6 @@ v_reset:
 
 
 
-.segment "DATA"
 
 .include "drivers/acia.s"
 .include "drivers/timer.s"
@@ -47,6 +46,7 @@ v_reset:
 ; .include "drivers/sd.s"
 ; .include "drivers/vga.s"
 ; .include "drivers/fat32.s"
+.include "../../fat16.s"
 
 .include "../../forth.s"
 ; .include "../../ed.s"
@@ -103,7 +103,7 @@ send_char:
     .endif
 send_char_exit:    
 .ifdef lcd_print
-    ; jsr lcd_print
+    jsr lcd_print
 .endif
     pla
     rts
@@ -165,6 +165,8 @@ exit_ctrl_c:
 v_irq:                          ; IRQ handler
         pha
         phy
+        ; lda #'.'
+        ; jsr kernel_putc
         ; check if bit 7 of IFR is set
         lda IFR
         bpl v_kb_irq  ; Interrupt not from VIA, exit
@@ -231,24 +233,6 @@ v_irq_exit:
     pla
     rti
 
-.align  $100
-FAT_BUFFER: .res $200
-; .align  256
-;FILE_BUFFER: .res $1000
-FILE_BUFFER_END:
-lcd_absent: .res 1
-has_acia: .res 1
-CF_LBA: .res 4
-CF_PART_START: .res 4
-CF_SEC_PER_CLUS: .res 1     ; $8
-CF_CURRENT_CLUSTER: .res 2
-CF_ROOT_ENT_CNT: .res 2     ; $200
-CF_ROOT_DIR_SECS: .res 2    ; $02
-CF_FAT_SEC_CNT: .res 2      ; $F5
-CF_FIRST_DATA_SEC: .res 2   ; $020B
-CF_FIRST_ROOT_SEC: .res 2   ; $01EB
-CF_CURRENT_DIR_SEC: .res 2
-CF_CURRENT_DIR: .res 12
 
 
 .segment "RODATA"

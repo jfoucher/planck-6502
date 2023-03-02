@@ -3,8 +3,8 @@ Modules list:
 main.o:
     CODE              Offs=000000  Size=00002D  Align=00001  Fill=0000
     RODATA            Offs=000000  Size=00013A  Align=00001  Fill=0000
-    BSS               Offs=000000  Size=000589  Align=00001  Fill=0000
-    DATA              Offs=000000  Size=004E25  Align=00100  Fill=0000
+    BSS               Offs=000000  Size=000831  Align=00100  Fill=0000
+    DATA              Offs=000000  Size=004B4F  Align=00001  Fill=0000
     ZEROPAGE          Offs=000000  Size=00004C  Align=00001  Fill=0000
     STARTUP           Offs=000000  Size=000009  Align=00001  Fill=0000
     DATASTACK         Offs=000000  Size=00007F  Align=00001  Fill=0000
@@ -24,22 +24,22 @@ Name                   Start     End    Size  Align
 ----------------------------------------------------
 ZEROPAGE              000000  000065  000066  00001
 DATASTACK             000080  0000FE  00007F  00001
-DATA                  000200  005024  004E25  00100
-BSS                   005100  005688  000589  00001
+DATA                  000200  004D4E  004B4F  00001
+BSS                   004E00  005630  000831  00100
 DICTIONARY            005700  0066FF  001000  00001
-STARTUP               00CE25  00CE2D  000009  00001
-CODE                  00CE2E  00CEAA  00007D  00001
-RODATA                00CEAB  00CFE4  00013A  00001
+STARTUP               00CB4F  00CB57  000009  00001
+CODE                  00CB58  00CBD4  00007D  00001
+RODATA                00CBD5  00CD0E  00013A  00001
 VECTORS               00FFFA  00FFFF  000006  00001
 
 
 Exports list by name:
 ---------------------
-__BSS_RUN__               005100 RLA    __BSS_SIZE__              000589 REA    
+__BSS_RUN__               004E00 RLA    __BSS_SIZE__              000831 REA    
 __DATA_LOAD__             008000 RLA    __DATA_RUN__              000200 RLA    
-__DATA_SIZE__             004E25 REA    copydata                  00CE5B RLA    
+__DATA_SIZE__             004B4F REA    copydata                  00CB85 RLA    
 ptr1                      000054 RLZ    ptr2                      000056 RLZ    
-tmp1                      00005C RLZ    zerobss                   00CE88 RLA    
+tmp1                      00005C RLZ    zerobss                   00CBB2 RLA    
 
 
 
@@ -47,9 +47,9 @@ Exports list by value:
 ----------------------
 ptr1                      000054 RLZ    ptr2                      000056 RLZ    
 tmp1                      00005C RLZ    __DATA_RUN__              000200 RLA    
-__BSS_SIZE__              000589 REA    __DATA_SIZE__             004E25 REA    
-__BSS_RUN__               005100 RLA    __DATA_LOAD__             008000 RLA    
-copydata                  00CE5B RLA    zerobss                   00CE88 RLA    
+__BSS_SIZE__              000831 REA    __DATA_SIZE__             004B4F REA    
+__BSS_RUN__               004E00 RLA    __DATA_LOAD__             008000 RLA    
+copydata                  00CB85 RLA    zerobss                   00CBB2 RLA    
 
 
 

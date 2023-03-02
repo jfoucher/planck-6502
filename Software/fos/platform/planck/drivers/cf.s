@@ -7,7 +7,27 @@ CF_ADDRESS = $FFD0
 ; CF_ADDRESS: .res 2
 
 
+.segment "BSS"
 
+.align  $100
+FAT_BUFFER: .res $200
+; .align  256
+;FILE_BUFFER: .res $1000
+FILE_BUFFER_END:
+lcd_absent: .res 1
+has_acia: .res 1
+CF_LBA: .res 4
+CF_PART_START: .res 4
+CF_SEC_PER_CLUS: .res 1     ; $8
+CF_CURRENT_CLUSTER: .res 2
+CF_ROOT_ENT_CNT: .res 2     ; $200
+CF_ROOT_DIR_SECS: .res 2    ; $02
+CF_FAT_SEC_CNT: .res 2      ; $F5
+CF_FIRST_DATA_SEC: .res 2   ; $020B
+CF_FIRST_ROOT_SEC: .res 2   ; $01EB
+CF_CURRENT_DIR_SEC: .res 2
+CF_CURRENT_DIR: .res 12
+FAT_FILE_NAME_TMP: .res 12
 
 .segment "DATA"
 
@@ -81,24 +101,55 @@ cf_init:
 ; : cfread 0 buffptr ! begin cfwait cfreg7 c@ 8 and while cfreg0 c@ cfbuffer buffptr @ + c! buffptr @ 1 + buffptr ! repeat ;
 
 cf_read:
+    sei
     phx
     ldx #0
 @loop1:
-    ;jsr cf_wait
+    nop
+    nop
+    nop
+    nop
+    nop
+    nop
+    ; txa
+    ; and #32
+    ; bne @getbyte1
+
+    ; lda (CF_ADDRESS), y
     ; lda CF_ADDRESS + 7
     ; and #8
     ; beq @exit
     ; jsr cf_wait
+@getbyte1:
     lda CF_ADDRESS
     sta FAT_BUFFER, x
     inx
     bne @loop1
+@wait:
+    lda CF_ADDRESS + 7
+    and #$80
+    bne @wait
 @loop2:
-    ;jsr cf_wait
+    nop
+    nop
+    nop
+    nop
+    nop
+    nop
+    ; txa
+    ; and #32
+    ; bne @getbyte2
+    ; lda CF_ADDRESS + 7
+    ; and #$80
+    ; bne @loop2
+    ; lda CF_ADDRESS + 7
+    ; and #$80
+    ; bne @loop2
     ; lda CF_ADDRESS + 7
     ; and #8
     ; beq @exit
     ; jsr cf_wait
+@getbyte2:
     lda CF_ADDRESS
     sta FAT_BUFFER+256, x
     inx
@@ -112,6 +163,7 @@ cf_read:
     bne @loop3
 @exit:
     plx
+    cli
     rts
 
 cf_set_lba:
@@ -138,6 +190,7 @@ cf_set_lba:
     rts
 
 cf_read_sector:
+    ; sei
     ; phy
     ; buffer should be set in CF_BUF_PTR
     jsr cf_set_lba
@@ -154,6 +207,7 @@ cf_read_sector:
     jsr cf_read
     jsr cf_err
     ; ply
+    ; cli
     rts
 
 cf_err:
