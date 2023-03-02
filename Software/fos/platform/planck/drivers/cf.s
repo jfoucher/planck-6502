@@ -2,22 +2,12 @@
 CF_BUF = FAT_BUFFER
 CF_ADDRESS = $FFD0
 
-.segment "ZEROPAGE": zeropage
+; .segment "ZEROPAGE": zeropage
 ; CF_BUF_PTR: .res 2
 ; CF_ADDRESS: .res 2
 
-.segment "BSS"
 
-CF_LBA: .res 4
-CF_PART_START: .res 4
-CF_SEC_PER_CLUS: .res 1     ; $8
-CF_CURRENT_CLUSTER: .res 2
-CF_ROOT_ENT_CNT: .res 2     ; $200
-CF_ROOT_DIR_SECS: .res 2    ; $02
-CF_FAT_SEC_CNT: .res 2      ; $F5
-CF_FIRST_DATA_SEC: .res 2   ; $020B
-CF_FIRST_ROOT_SEC: .res 2   ; $01EB
-CF_CURRENT_DIR: .res 12
+
 
 .segment "DATA"
 
@@ -94,23 +84,32 @@ cf_read:
     phx
     ldx #0
 @loop1:
-    jsr cf_wait
+    ;jsr cf_wait
     ; lda CF_ADDRESS + 7
     ; and #8
     ; beq @exit
+    ; jsr cf_wait
     lda CF_ADDRESS
     sta FAT_BUFFER, x
     inx
     bne @loop1
 @loop2:
-    jsr cf_wait
+    ;jsr cf_wait
     ; lda CF_ADDRESS + 7
     ; and #8
     ; beq @exit
+    ; jsr cf_wait
     lda CF_ADDRESS
     sta FAT_BUFFER+256, x
     inx
     bne @loop2
+@loop3:
+    lda CF_ADDRESS + 7
+    and #8
+    beq @exit
+    lda CF_ADDRESS
+    inx
+    bne @loop3
 @exit:
     plx
     rts

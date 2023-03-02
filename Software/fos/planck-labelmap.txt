@@ -3,52 +3,62 @@ Modules list:
 main.o:
     CODE              Offs=000000  Size=00002D  Align=00001  Fill=0000
     RODATA            Offs=000000  Size=00013A  Align=00001  Fill=0000
-    BSS               Offs=000000  Size=00082C  Align=00001  Fill=0000
-    DATA              Offs=000000  Size=004BA0  Align=00001  Fill=0000
-    ZEROPAGE          Offs=000000  Size=00004F  Align=00001  Fill=0000
-    STARTUP           Offs=000000  Size=000006  Align=00001  Fill=0000
+    BSS               Offs=000000  Size=000589  Align=00001  Fill=0000
+    DATA              Offs=000000  Size=004E25  Align=00100  Fill=0000
+    ZEROPAGE          Offs=000000  Size=00004C  Align=00001  Fill=0000
+    STARTUP           Offs=000000  Size=000009  Align=00001  Fill=0000
     DATASTACK         Offs=000000  Size=00007F  Align=00001  Fill=0000
     DICTIONARY        Offs=000000  Size=001000  Align=00001  Fill=0000
     VECTORS           Offs=000000  Size=000006  Align=00001  Fill=0000
 /opt/homebrew/Cellar/cc65/2.19/share/cc65/lib/none.lib(copydata.o):
     CODE              Offs=00002D  Size=00002D  Align=00001  Fill=0000
+/opt/homebrew/Cellar/cc65/2.19/share/cc65/lib/none.lib(zerobss.o):
+    CODE              Offs=00005A  Size=000023  Align=00001  Fill=0000
 /opt/homebrew/Cellar/cc65/2.19/share/cc65/lib/none.lib(zeropage.o):
-    ZEROPAGE          Offs=00004F  Size=00001A  Align=00001  Fill=0000
+    ZEROPAGE          Offs=00004C  Size=00001A  Align=00001  Fill=0000
 
 
 Segment list:
 -------------
 Name                   Start     End    Size  Align
 ----------------------------------------------------
-ZEROPAGE              000000  000068  000069  00001
+ZEROPAGE              000000  000065  000066  00001
 DATASTACK             000080  0000FE  00007F  00001
-DATA                  000200  004D9F  004BA0  00001
-BSS                   004DA0  0055CB  00082C  00001
-DICTIONARY            0055CC  0065CB  001000  00001
-STARTUP               00CBA0  00CBA5  000006  00001
-CODE                  00CBA6  00CBFF  00005A  00001
-RODATA                00CC00  00CD39  00013A  00001
+DATA                  000200  005024  004E25  00100
+BSS                   005100  005688  000589  00001
+DICTIONARY            005700  0066FF  001000  00001
+STARTUP               00CE25  00CE2D  000009  00001
+CODE                  00CE2E  00CEAA  00007D  00001
+RODATA                00CEAB  00CFE4  00013A  00001
 VECTORS               00FFFA  00FFFF  000006  00001
 
 
 Exports list by name:
 ---------------------
+__BSS_RUN__               005100 RLA    __BSS_SIZE__              000589 REA    
 __DATA_LOAD__             008000 RLA    __DATA_RUN__              000200 RLA    
-__DATA_SIZE__             004BA0 REA    copydata                  00CBD3 RLA    
-ptr1                      000057 RLZ    ptr2                      000059 RLZ    
-tmp1                      00005F RLZ    
+__DATA_SIZE__             004E25 REA    copydata                  00CE5B RLA    
+ptr1                      000054 RLZ    ptr2                      000056 RLZ    
+tmp1                      00005C RLZ    zerobss                   00CE88 RLA    
+
 
 
 Exports list by value:
 ----------------------
-ptr1                      000057 RLZ    ptr2                      000059 RLZ    
-tmp1                      00005F RLZ    __DATA_RUN__              000200 RLA    
-__DATA_SIZE__             004BA0 REA    __DATA_LOAD__             008000 RLA    
-copydata                  00CBD3 RLA    
+ptr1                      000054 RLZ    ptr2                      000056 RLZ    
+tmp1                      00005C RLZ    __DATA_RUN__              000200 RLA    
+__BSS_SIZE__              000589 REA    __DATA_SIZE__             004E25 REA    
+__BSS_RUN__               005100 RLA    __DATA_LOAD__             008000 RLA    
+copydata                  00CE5B RLA    zerobss                   00CE88 RLA    
+
 
 
 Imports list:
 -------------
+__BSS_RUN__ ([linker generated]):
+    zerobss.o                 common/zerobss.s(8)
+__BSS_SIZE__ ([linker generated]):
+    zerobss.o                 common/zerobss.s(8)
 __DATA_LOAD__ ([linker generated]):
     copydata.o                common/copydata.s(8)
 __DATA_RUN__ ([linker generated]):
@@ -56,11 +66,14 @@ __DATA_RUN__ ([linker generated]):
 __DATA_SIZE__ ([linker generated]):
     copydata.o                common/copydata.s(8)
 copydata (copydata.o):
-    main.o                    platform/planck/main.s(30)
+    main.o                    platform/planck/main.s(22)
 ptr1 (zeropage.o):
+    zerobss.o                 common/zerobss.s(9)
     copydata.o                common/copydata.s(9)
 ptr2 (zeropage.o):
     copydata.o                common/copydata.s(9)
 tmp1 (zeropage.o):
     copydata.o                common/copydata.s(9)
+zerobss (zerobss.o):
+    main.o                    platform/planck/main.s(23)
 

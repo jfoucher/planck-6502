@@ -12340,6 +12340,21 @@ check_fat_sector_signature:
         jmp cf_fat_init_error
 @sigok:
 .endif
+        ; check if this is MBR or FAT start sector
+        lda FAT_BUFFER + 54
+        cmp #'F'
+        bne @read_fat_sector
+        lda FAT_BUFFER + 55
+        cmp #'A'
+        bne @read_fat_sector
+        lda FAT_BUFFER + 56
+        cmp #'T'
+        bne @read_fat_sector
+
+        bra @is_fat_sector
+
+@read_fat_sector:
+
         ; read FAT start sector
         ; and save to sector address to read
         lda FAT_BUFFER + 454
@@ -12365,11 +12380,21 @@ check_fat_sector_signature:
         bne @sigerr2
         lda FAT_BUFFER + $1FF
         cmp #$AA
-        beq @sigok2
+        beq @is_fat_sector
 @sigerr2:
         jmp cf_fat_init_error2
-@sigok2:
+@is_fat_sector:
 .endif
+        ; Check if its partition first sector
+        lda FAT_BUFFER + 54
+        cmp #'F'
+        bne @sigerr2
+        lda FAT_BUFFER + 55
+        cmp #'A'
+        bne @sigerr2
+        lda FAT_BUFFER + 56
+        cmp #'T'
+        bne @sigerr2
         ; Save FAT sectors count
         cp16 FAT_BUFFER + 22, CF_FAT_SEC_CNT
         ; Get the sectors per cluster
@@ -12403,12 +12428,16 @@ check_fat_sector_signature:
         lsr16 CF_ROOT_DIR_SECS
         lsr16 CF_ROOT_DIR_SECS
 
-        ; FirstRootDirSecNum = BPB_ResvdSecCnt + (BPB_NumFATs * BPB_FATSz16);
-        ; CF_FIRST_ROOT_SEC = 1 + 2*CF_FAT_SEC_CNT
+        ; FirstRootDirSecNum = BPB_ResvdSecCnt + (BPB_NumFATs * BPB_FATSz16) + FAT_PART_START;
+        ; CF_FIRST_ROOT_SEC = 1 + 2*CF_FAT_SEC_CNT + FAT_PART_START
+
 
         cp16 CF_FAT_SEC_CNT, CF_FIRST_ROOT_SEC
         asl16 CF_FIRST_ROOT_SEC
         inc16 CF_FIRST_ROOT_SEC
+        add16 CF_FIRST_ROOT_SEC, CF_PART_START, CF_FIRST_ROOT_SEC
+
+        cp16 CF_FIRST_ROOT_SEC, CF_CURRENT_DIR_SEC
 
         ; FirstDataSector = BPB_ResvdSecCnt + (BPB_NumFATs * FATSz) + RootDirSectors;
         ; CF_FIRST_DATA_SEC = 1 + 2*CF_FAT_SEC_CNT + CF_ROOT_DIR_SECS
@@ -12416,8 +12445,8 @@ check_fat_sector_signature:
 
         ; print volume label
         printstr FAT_BUFFER + 43, 11
-        printascii cf_fat_mounted_message
-        jsr xt_cr
+        ; printascii cf_fat_mounted_message
+        ; jsr xt_cr
 
 cf_fat_init_exit:
         dex
@@ -12440,22 +12469,133 @@ cf_fat_init_error2:
         jsr xt_cr
         jmp xt_abort
 
-cf_fat_mounted_message:
-        .asciiz " mounted"
 cf_fat_mounted_error1:
         .asciiz "Error reading boot sector"
 cf_fat_mounted_error2:
         .asciiz "Error reading FAT sector"
+fat_entry_size: .byte $20, 0
 
-
+ls_header:
+        .asciiz "NAME     EXT  TYPE  SIZE"
 xt_cf_ls:
+.ifdef cf_init
         ; read the current directory entry
         ; and save the contents to be displayed later
+
+        ; check if fat is inited
+        lda CF_SEC_PER_CLUS
+        bne @fatok
+        jsr xt_cf_fat_init
+        inx     ; drop fat_init return value
+        inx
+        jsr xt_cr
+
+@fatok:
+        cp16 CF_CURRENT_DIR_SEC, CF_LBA
+        stz CF_LBA + 2
+        stz CF_LBA + 3
+        jsr cf_read_sector
+
+        ; current directory first sector is now in buffer
+        ; display file names
+
+        printascii ls_header
+        jsr xt_cr
+
+        lda #<FAT_BUFFER
+        sta editor3
+        lda #>FAT_BUFFER
+        sta editor3 + 1
+
+        phy
+@outerloop:
+        ldy #11
+        lda (editor3), y
+        cmp #$0F                ; ignore long filenames
+        beq @next_entry
+        ldy #0
+        lda (editor3), Y       
+        beq @exit               ; if zero, it means we reached the end of the list
+        cmp #$E5                ; if $E5, it means the entry is deleted, so go to next entry
+        beq @next_entry
+@loop:
+        lda (editor3), y
+        jsr emit_a
+        iny
+        cpy #8
+        bne @check_end          ; print space after name and before extension
+        lda #' '
+        jsr emit_a
+@check_end:
+        cpy #11
+        bcc @loop
+        ; read entry type
+        lda (editor3), y
+        jsr print_entry_type
+
+        jsr print_entry_size
+        lda #$0D
+        jsr emit_a
+@next_entry:
+        add16 editor3, fat_entry_size, editor3
+        bra @outerloop
+@exit:
+        ply
+.endif
+
+        ; dex
+        ; dex
+        ; lda #<FAT_BUFFER
+        ; sta 0, x
+        ; lda #>FAT_BUFFER
+        ; sta 1, x
 
 z_cf_ls:
         rts
 
+print_entry_size:
+        phy
+
+        dex
+        dex
+        dex
+        dex
+
+        ldy #28
+        lda (editor3), y
+        sta 2,x
+        ldy #29
+        lda (editor3), y
+        sta 3,x
+
+        ldy #30
+        lda (editor3), y
+        sta 0,x
+
+        ldy #31
+        lda (editor3), y
+        sta 1,x
+        jsr xt_ud_dot
+        ply
+        rts
+
+print_entry_type:
+        and #$10
+        bne @is_dir
+        bra @is_file
+@is_dir:
+        printascii entry_type_dir
+        bra @exit
+@is_file:
+        printascii entry_type_file
+@exit:
+        rts
+
+entry_type_dir: .asciiz "   D    "
+entry_type_file: .asciiz "   F    "
+
 xt_cf_info:
+.ifdef cf_init
         jsr cf_init
         jsr cf_wait
         lda #$EC
@@ -12468,7 +12608,7 @@ xt_cf_info:
         sta 1, x
         jsr cf_read
 
-        rts
+.endif
 z_cf_info:
         rts
 

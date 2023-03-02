@@ -1,3 +1,5 @@
+
+
 CLOCK_SPEED = 24000000
 
 ram_end = $8000
@@ -14,31 +16,24 @@ ram_end = $8000
 
 .include "drivers/zp.s"
 
-.segment "BSS"
-
-lcd_absent: .res 1
-
-has_acia: .res 1
-; .align  256
-FAT_BUFFER: .res $200
-; .align  256
-;FILE_BUFFER: .res $1000
-FILE_BUFFER_END:
 
 .segment "RODATA"
 
 .import    copydata
-; .import zerobss
+.import zerobss
 
 .segment "STARTUP"
 
 v_reset:
 
     JSR     copydata
-    ; jsr zerobss
+    jsr zerobss
     
     jmp kernel_init
 
+
+
+.segment "DATA"
 
 .include "drivers/acia.s"
 .include "drivers/timer.s"
@@ -47,7 +42,7 @@ v_reset:
 .include "drivers/delayroutines.s"
 ; .include "drivers/4004.s"
 .include "drivers/cf.s"
-.include "drivers/lcd.s"
+; .include "drivers/lcd.s"
 ; .include "drivers/spi.s"
 ; .include "drivers/sd.s"
 ; .include "drivers/vga.s"
@@ -55,7 +50,6 @@ v_reset:
 
 .include "../../forth.s"
 ; .include "../../ed.s"
-
 
 .segment "DATA"
 
@@ -87,7 +81,6 @@ v_nmi:
 .ifdef kb_init
     jsr kb_init
 .endif
-
 
 
     printascii welcome_message
@@ -238,6 +231,24 @@ v_irq_exit:
     pla
     rti
 
+.align  $100
+FAT_BUFFER: .res $200
+; .align  256
+;FILE_BUFFER: .res $1000
+FILE_BUFFER_END:
+lcd_absent: .res 1
+has_acia: .res 1
+CF_LBA: .res 4
+CF_PART_START: .res 4
+CF_SEC_PER_CLUS: .res 1     ; $8
+CF_CURRENT_CLUSTER: .res 2
+CF_ROOT_ENT_CNT: .res 2     ; $200
+CF_ROOT_DIR_SECS: .res 2    ; $02
+CF_FAT_SEC_CNT: .res 2      ; $F5
+CF_FIRST_DATA_SEC: .res 2   ; $020B
+CF_FIRST_ROOT_SEC: .res 2   ; $01EB
+CF_CURRENT_DIR_SEC: .res 2
+CF_CURRENT_DIR: .res 12
 
 
 .segment "RODATA"
