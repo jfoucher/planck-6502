@@ -5,8 +5,8 @@ ram_end = $8000
 .include "drivers/acia.inc"
 .include "drivers/via.inc"
 .include "drivers/ps2.inc"
-.include "drivers/4004.inc"
-; .include "drivers/lcd.inc"
+; .include "drivers/4004.inc"
+.include "drivers/lcd.inc"
 .include "drivers/vga.inc"
 .include "drivers/keyboard.inc"
 
@@ -19,18 +19,24 @@ ram_end = $8000
 lcd_absent: .res 1
 
 has_acia: .res 1
-
+; .align  256
+FAT_BUFFER: .res $200
+; .align  256
+;FILE_BUFFER: .res $1000
+FILE_BUFFER_END:
 
 .segment "RODATA"
 
 .import    copydata
-.import zerobss
+; .import zerobss
 
 .segment "STARTUP"
 
 v_reset:
+
     JSR     copydata
-    jsr zerobss
+    ; jsr zerobss
+    
     jmp kernel_init
 
 
@@ -41,7 +47,7 @@ v_reset:
 .include "drivers/delayroutines.s"
 ; .include "drivers/4004.s"
 .include "drivers/cf.s"
-; .include "drivers/lcd.s"
+.include "drivers/lcd.s"
 ; .include "drivers/spi.s"
 ; .include "drivers/sd.s"
 ; .include "drivers/vga.s"
@@ -67,6 +73,7 @@ v_nmi:
 .ifdef ps2_init
     jsr ps2_init
 .endif
+
 .ifdef timer_init
     jsr timer_init
 .endif
@@ -84,6 +91,7 @@ v_nmi:
 
 
     printascii welcome_message
+
 
     jmp forth
 
@@ -161,7 +169,6 @@ exit_ctrl_c:
     rts
 
 
-
 v_irq:                          ; IRQ handler
         pha
         phy
@@ -230,6 +237,8 @@ v_irq_exit:
     ply
     pla
     rti
+
+
 
 .segment "RODATA"
 

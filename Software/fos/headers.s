@@ -122,16 +122,33 @@ nt_sd_init:
         .byte "sd_init"
 .endif
 
-
-
-nt_cf_readsector:
-        .byte 13, 0
+nt_cf_rs:
+        .byte 5, 0
         .word nt_sd_init, xt_cf_readsector, z_cf_readsector
-        .byte "cf_readsector"
+        .byte "cf_rs"
+
+nt_cf_init:
+        .byte 7, 0
+        .word nt_cf_rs, xt_cf_init, z_cf_init
+        .byte "cf_init"
+
+nt_cf_fat_init:
+        .byte 10, 0
+        .word nt_cf_init, xt_cf_fat_init, z_cf_fat_init
+        .byte "cf_fatinit"
+nt_cf_info:
+        .byte 6, 0
+        .word nt_cf_fat_init, xt_cf_info, z_cf_info
+        .byte "cfinfo"
+nt_cf_ls:
+        .byte 5, 0
+        .word nt_cf_info, xt_cf_ls, z_cf_ls
+        .byte "cf_ls"
+
 
 nt_sd_readsector:
         .byte 13, 0
-        .word nt_cf_readsector, xt_sd_readsector, z_sd_readsector
+        .word nt_cf_ls, xt_sd_readsector, z_sd_readsector
         .byte "sd_readsector"
 
 

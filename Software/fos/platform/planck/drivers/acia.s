@@ -34,7 +34,7 @@ acia_out:
     pha
     phy
     sta ACIA_DATA
-    ldy #$40            ;minimal delay is $02
+    ldy #$20            ;minimal delay is $02
     jsr delay_short
     ply
     pla

@@ -48,7 +48,9 @@ _loop:
 
 
 
+io_read_sector:
 
+    rts
         
 
 .segment "RODATA"

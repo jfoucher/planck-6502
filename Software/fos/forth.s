@@ -1,4 +1,4 @@
-.include "../../macros.s"
+.include "macros.s"
 
 
 ; Definitions for Tali Forth 2
@@ -10,11 +10,14 @@
 ; definitions; platform-specific definitions such as the
 ; memory map are kept in the platform folder.
 
+stack0 =    $0100   ; location of the stack
 
 ; User Variables:
 ; Block variables
 blk_offset =  0        ; BLK : UP + 0
 scr_offset =  2        ; SCR : UP + 2
+
+
 
 ; Wordlists
 current_offset =  4    ; CURRENT (byte) : UP + 4 (Compilation wordlist)
@@ -128,10 +131,13 @@ editor2: .res 2  ; temporary for editors
 editor3: .res 2  ; temporary for editors
 tohold: .res 2  ; pointer for formatted output
 scratch: .res 8  ; 8 byte scratchpad (see UM/MOD)
-dsp_start: .res 128 ; reserve 128 bytes for data stack (64 16 bit cells)
-dsp0 = $FF          ; first data stack location. Data stack grows down
-rsp0 =      $FF     ; starting stack pointer
-stack0 =    $0100   ; location of the stack
+
+.segment "DATASTACK": zeropage
+dsp_start: .res 127 ; reserve 128 bytes for data stack (64 16 bit cells)
+dsp0:          ; first data stack location. Data stack grows down
+rsp0:     ; starting stack pointer
+
+
 
 
 .segment "BSS"
@@ -149,6 +155,8 @@ padoffset = $ff
 
 
 .segment "DATA"
+
+; .include "fat16.s"
 
 forth:
     .include "native_words.s"     ; Native Forth words. Starts with COLD

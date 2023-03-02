@@ -12288,38 +12288,225 @@ xt_time:
 
 z_time: rts
 
-; ## cf_readsector ( u u -- addr ) "Set LBA block and read to buffer"
-; ## "cf_readsector" coded Custom
+xt_cf_init:
+.ifdef cf_init
+        ; jsr underflow_1
+        ; save CF card address
+        ; lda 0, x
+        ; sta CF_ADDRESS
+        ; lda 1, x
+        ; sta CF_ADDRESS + 1
+        jsr cf_init
+        ; inx
+        ; inx
+.endif
+z_cf_init:
+        rts
 
-xt_cf_readsector: 
-        jsr underflow_2
-        lda 0, x
+; ## cf_fat_init ( addr -- ) "Initialize FAT16 on CF card at specified address"
+; ## "cf_fat_init" coded Custom
+xt_cf_fat_init: 
+check_fat_sector_signature:
+
+.ifdef cf_init
+        ; jsr underflow_1
+        ; save CF card address
+        ; lda 0, x
+        ; sta CF_ADDRESS
+        ; lda 1, x
+        ; sta CF_ADDRESS + 1
+
+        ; initialize CF card
+        jsr cf_init
+        ; prepare to read first sector
+        stz CF_LBA
+        stz CF_LBA + 1
+        stz CF_LBA + 2
+        stz CF_LBA + 3
+
+
+        ; LBA is set, now read sector
+        jsr cf_read_sector
+        ; we now have the first sector in FAT_BUFFER
+.ifdef check_fat_sector_signature
+        ; check signature
+        lda FAT_BUFFER + $1FE
+        cmp #$55
+        bne @sigerr
+        lda FAT_BUFFER + $1FF
+        cmp #$AA
+        beq @sigok
+@sigerr:
+        jmp cf_fat_init_error
+@sigok:
+.endif
+        ; read FAT start sector
+        ; and save to sector address to read
+        lda FAT_BUFFER + 454
         sta CF_LBA
-        lda 1, x
+        sta CF_PART_START
+        lda FAT_BUFFER + 455
         sta CF_LBA + 1
-        lda 2, x
+        sta CF_PART_START + 1
+        lda FAT_BUFFER + 456
         sta CF_LBA + 2
-        lda 3, x
+        sta CF_PART_START + 2
+        lda FAT_BUFFER + 457
         sta CF_LBA + 3
+        sta CF_PART_START + 3
+
+        ; LBA is set, now read sector
+        jsr cf_read_sector
+        ; We now have the FAT start sector in the buffer
+.ifdef check_fat_sector_signature
+        ; check signature
+        lda FAT_BUFFER + $1FE
+        cmp #$55
+        bne @sigerr2
+        lda FAT_BUFFER + $1FF
+        cmp #$AA
+        beq @sigok2
+@sigerr2:
+        jmp cf_fat_init_error2
+@sigok2:
+.endif
+        ; Save FAT sectors count
+        cp16 FAT_BUFFER + 22, CF_FAT_SEC_CNT
+        ; Get the sectors per cluster
+        lda FAT_BUFFER + 13
+        sta CF_SEC_PER_CLUS
+        ; get the number of directory entries in the root directory
+        cp16 FAT_BUFFER + 17, CF_ROOT_ENT_CNT
+
+        ;($600 * 32 + 511) / 512
+        ; RootDirSectors = ((BPB_RootEntCnt * 32) + (BPB_BytsPerSec – 1)) / BPB_BytsPerSec;
+        cp16 CF_ROOT_ENT_CNT, CF_ROOT_DIR_SECS
+        ; multiply by 32
+        asl16 CF_ROOT_DIR_SECS
+        asl16 CF_ROOT_DIR_SECS
+        asl16 CF_ROOT_DIR_SECS
+        asl16 CF_ROOT_DIR_SECS
+        asl16 CF_ROOT_DIR_SECS
+        ; add 512
+        inc CF_ROOT_DIR_SECS+1
+        inc CF_ROOT_DIR_SECS+1
+        ; subtract 1
+        dec16 CF_ROOT_DIR_SECS
+        ; divide by 512
+        lsr16 CF_ROOT_DIR_SECS
+        lsr16 CF_ROOT_DIR_SECS
+        lsr16 CF_ROOT_DIR_SECS
+        lsr16 CF_ROOT_DIR_SECS
+        lsr16 CF_ROOT_DIR_SECS
+        lsr16 CF_ROOT_DIR_SECS
+        lsr16 CF_ROOT_DIR_SECS
+        lsr16 CF_ROOT_DIR_SECS
+        lsr16 CF_ROOT_DIR_SECS
+
+        ; FirstRootDirSecNum = BPB_ResvdSecCnt + (BPB_NumFATs * BPB_FATSz16);
+        ; CF_FIRST_ROOT_SEC = 1 + 2*CF_FAT_SEC_CNT
+
+        cp16 CF_FAT_SEC_CNT, CF_FIRST_ROOT_SEC
+        asl16 CF_FIRST_ROOT_SEC
+        inc16 CF_FIRST_ROOT_SEC
+
+        ; FirstDataSector = BPB_ResvdSecCnt + (BPB_NumFATs * FATSz) + RootDirSectors;
+        ; CF_FIRST_DATA_SEC = 1 + 2*CF_FAT_SEC_CNT + CF_ROOT_DIR_SECS
+        add16 CF_FIRST_ROOT_SEC, CF_ROOT_DIR_SECS, CF_FIRST_DATA_SEC
+
+        ; print volume label
+        printstr FAT_BUFFER + 43, 11
+        printascii cf_fat_mounted_message
+        jsr xt_cr
+
+cf_fat_init_exit:
+        dex
+        dex
+        lda #<CF_LBA
+        sta 0, x
+        lda #>CF_LBA
+        sta 1, x
+        
+.endif
+z_cf_fat_init: 
+        rts
+
+cf_fat_init_error:
+        printascii cf_fat_mounted_error1
+        jsr xt_cr
+        jmp xt_abort
+cf_fat_init_error2:
+        printascii cf_fat_mounted_error2
+        jsr xt_cr
+        jmp xt_abort
+
+cf_fat_mounted_message:
+        .asciiz " mounted"
+cf_fat_mounted_error1:
+        .asciiz "Error reading boot sector"
+cf_fat_mounted_error2:
+        .asciiz "Error reading FAT sector"
+
+
+xt_cf_ls:
+        ; read the current directory entry
+        ; and save the contents to be displayed later
+
+z_cf_ls:
+        rts
+
+xt_cf_info:
+        jsr cf_init
+        jsr cf_wait
+        lda #$EC
+        sta CF_ADDRESS + 7
+        dex
+        dex
+        lda #<FAT_BUFFER
+        sta 0, x
+        lda #>FAT_BUFFER
+        sta 1, x
+        jsr cf_read
+
+        rts
+z_cf_info:
+        rts
+
+; ## cf_readsector ( double -- addr ) "Set LBA block and read to buffer"
+; ## "cf_readsector" coded Custom
+xt_cf_readsector: 
+.ifdef cf_init
+        jsr underflow_2
+        ; most significant part is TOS
+        lda 0, x
+        sta CF_LBA + 2
+        lda 1, x
+        sta CF_LBA + 3
+        ; least significant part is NOS
+        lda 2, x
+        sta CF_LBA + 0
+        lda 3, x
+        sta CF_LBA + 1
         ; LBA is set, now read sector
         jsr cf_init
-        
+
+        lda #<FAT_BUFFER
+        sta 2, x
+
+        lda #>FAT_BUFFER
+
+        sta 3, x
+
         jsr cf_read_sector
-        ; jsr cf_read
 
         ; return buffer address
-        lda #<CF_BUF
-        sta 2, x
-        lda #>CF_BUF
-        sta 3, x
         inx
         inx
-
+.endif
 z_cf_readsector: 
         rts
 
-; TODO add routine to send a block of data in memory via SPI
-; similar to lcdprint
+        
 
 ; END
 
