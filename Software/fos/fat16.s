@@ -27,8 +27,9 @@ fat_convert_filename:
 
 @save_char:
 	sta FAT_FILE_NAME_TMP, x        ; no dot yet, copy character
-	iny
 	inx
+@avoid_dot:
+	iny
 	cpx #11
 	bcc @transform_name_loop        ; Do next character
 	bra @end_trans                  ; We have reached the 11th character for the new string
@@ -36,12 +37,15 @@ fat_convert_filename:
 @is_dot:                            ; we have a dot in the original string
 	cpx #2							; do not replace first 2 dots
 	bcc @save_char
+	cpx #7						; if the dot is in 8th place, remove it completely
+	bcs @avoid_dot
+@add_space:
 	lda #$20                        ; fill the new string until 8 characters have been done
 @dont_replace:
 	sta FAT_FILE_NAME_TMP, x
 	inx
 	cpx #8
-	bcc @is_dot                     ; if we have not reached 8 chars yet, keep adding spaces
+	bcc @add_space                     ; if we have not reached 8 chars yet, keep adding spaces
 	iny
 	bra @transform_name_loop        ; once we reached 8 characters, go back to do extension
 
@@ -144,5 +148,77 @@ fat_get_sector_for_cluster:
 	sta CF_CURRENT_DIR_SEC + 3
 
 @end:
+	rts
 
+reduce_filesize_by_one_sector:
+	lda CF_CURRENT_FILE_SIZE + 1
+    bne @skip1
+	lda CF_CURRENT_FILE_SIZE + 2
+    bne @skip2
+    dec CF_CURRENT_FILE_SIZE + 3
+@skip2:
+    dec CF_CURRENT_FILE_SIZE + 2
+@skip1:
+    dec CF_CURRENT_FILE_SIZE + 1
+
+	lda CF_CURRENT_FILE_SIZE + 1
+    bne @skip3
+	lda CF_CURRENT_FILE_SIZE + 2
+    bne @skip4
+    dec CF_CURRENT_FILE_SIZE + 3
+@skip4:
+    dec CF_CURRENT_FILE_SIZE + 2
+@skip3:
+    dec CF_CURRENT_FILE_SIZE + 1
+
+	rts
+
+output_sector:
+	phx
+	ldx #0
+@loop:
+	lda CF_CURRENT_FILE_SIZE + 3
+	bne @not_end
+	lda CF_CURRENT_FILE_SIZE + 2
+	bne @not_end
+	lda CF_CURRENT_FILE_SIZE + 1
+	bne @not_end
+	lda CF_CURRENT_FILE_SIZE
+	bne @not_end
+@not_end:
+	lda FAT_BUFFER, x
+	jsr kernel_putc
+	
+	dec CF_CURRENT_FILE_SIZE
+	bne @n
+	lda CF_CURRENT_FILE_SIZE + 1
+	beq @end
+	dec CF_CURRENT_FILE_SIZE + 1
+@n:
+	inx
+	bne @loop
+	ldx #0
+@loop2:
+	lda CF_CURRENT_FILE_SIZE + 3
+	bne @not_end2
+	lda CF_CURRENT_FILE_SIZE + 2
+	bne @not_end2
+	lda CF_CURRENT_FILE_SIZE + 1
+	bne @not_end2
+	lda CF_CURRENT_FILE_SIZE
+	bne @not_end2
+@not_end2:
+	lda FAT_BUFFER+256, x
+	jsr kernel_putc
+
+	dec CF_CURRENT_FILE_SIZE
+	bne @n2
+	lda CF_CURRENT_FILE_SIZE + 1
+	beq @end
+	dec CF_CURRENT_FILE_SIZE + 1
+@n2:
+	inx
+	bne @loop2
+@end:
+	plx
 	rts

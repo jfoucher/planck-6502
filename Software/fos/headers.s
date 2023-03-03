@@ -145,9 +145,14 @@ nt_cf_cd:
         .word nt_cf_ls, xt_cf_cd, z_cf_cd
         .byte "cd"
 
+nt_cf_cat:
+        .byte 3, 0
+        .word nt_cf_cd, xt_cf_cat, z_cf_cat
+        .byte "cat"
+
 nt_sd_readsector:
         .byte 13, 0
-        .word nt_cf_cd, xt_sd_readsector, z_sd_readsector
+        .word nt_cf_cat, xt_sd_readsector, z_sd_readsector
         .byte "sd_readsector"
 
 

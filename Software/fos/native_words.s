@@ -12647,8 +12647,9 @@ xt_cf_cd:
         inx
         jsr xt_cr
         printstr FAT_FILE_NAME_TMP, 11
-        printascii not_found_error        ; Not a directory, abort
+        printascii not_found_error        ; directory not found, abort
         jsr xt_cr
+        ply
         jsr xt_abort
 @found:
         ; check if entry is a directory
@@ -12662,6 +12663,7 @@ xt_cf_cd:
         inx
         inx
         inx
+        ply
         jsr xt_cr
         jsr xt_abort
 @is_dir:
@@ -12680,11 +12682,123 @@ xt_cf_cd:
         inx
         inx
         inx
-z_cf_cd:
         ply
+z_cf_cd:
+        
         rts
 not_dir_error: .asciiz "Not a directory"
-not_found_error: .asciiz "not found"
+not_found_error: .asciiz " not found"
+
+
+
+xt_cf_cat:
+        phy
+        ; check if fat is inited
+	lda CF_SEC_PER_CLUS
+	bne @fatok
+	jsr xt_cf_fat_init
+	inx     ; drop fat_init return value
+	inx
+@fatok:
+        lda 0, x
+        sta editor2
+        lda 1, x
+        sta editor2 + 1
+        lda 2, x
+        sta editor3
+        lda 3, x
+        sta editor3+1
+
+        jsr fat_convert_filename
+
+        jsr fat_find_file               ; after this, the pointer to the entry in FAT_BUFFER is in editor2
+        bcs @found
+        inx
+        inx
+        inx
+        inx
+        jsr xt_cr
+        printstr FAT_FILE_NAME_TMP, 11
+        printascii not_found_error        ; Not a directory, abort
+        jsr xt_cr
+        jsr xt_abort
+@found:
+        ; check if entry is a directory
+        ldy #11
+        lda (editor2), y
+        and #$10        
+        beq @is_file
+        jsr xt_cr
+        printascii not_file_error        ; Not a directory, abort
+        inx
+        inx
+        inx
+        inx
+        jsr xt_cr
+        jsr xt_abort
+@is_file:
+        ; load cluster number from dir entry
+        ldy #26
+        lda (editor2), y
+        sta CF_CURRENT_CLUSTER
+        iny
+        lda (editor2), y
+        sta CF_CURRENT_CLUSTER + 1
+        iny
+        lda (editor2), y
+        sta CF_CURRENT_FILE_SIZE
+        iny
+        lda (editor2), y
+        sta CF_CURRENT_FILE_SIZE + 1
+        iny
+        lda (editor2), y
+        sta CF_CURRENT_FILE_SIZE + 2
+        iny
+        lda (editor2), y
+        sta CF_CURRENT_FILE_SIZE + 3
+        ; convert cluster number to sector
+        cp16 CF_CURRENT_DIR_SEC, CF_TMP
+        cp16 CF_CURRENT_DIR_SEC + 2, CF_TMP + 2
+        jsr fat_get_sector_for_cluster
+        ; save sector number to CF_LBA
+        cp16 CF_CURRENT_DIR_SEC, CF_LBA
+        cp16 CF_CURRENT_DIR_SEC + 2, CF_LBA + 2
+        cp16 CF_TMP, CF_CURRENT_DIR_SEC
+        cp16 CF_TMP + 2, CF_CURRENT_DIR_SEC + 2
+
+        ; file sector number is in CF_CURRENT_FILE_SEC
+@read_next_file_sector:
+        jsr cf_read_sector
+        jsr xt_cr
+        jsr output_sector
+
+        ; jsr reduce_filesize_by_one_sector
+
+        ; ; check if filesize is zero
+        ; lda CF_CURRENT_FILE_SIZE + 3
+        ; bne @read_next_file_sector
+        ; lda CF_CURRENT_FILE_SIZE + 2
+        ; bne @read_next_file_sector
+        ; lda CF_CURRENT_FILE_SIZE + 1
+        ; bne @read_next_file_sector
+
+        ; lda CF_CURRENT_FILE_SIZE
+        ; bne @read_next_file_sector
+        
+        
+        inx
+        inx
+        inx
+        inx
+        ; lda #<CF_CURRENT_FILE_SIZE
+        ; sta 0, x
+        ; lda #>CF_CURRENT_FILE_SIZE
+        ; sta 1, x
+z_cf_cat:
+        ply
+        rts
+not_file_error: .asciiz "Not a file"
+
 ; ## cf_readsector ( double -- addr ) "Set LBA block and read to buffer"
 ; ## "cf_readsector" coded Custom
 xt_cf_readsector: 

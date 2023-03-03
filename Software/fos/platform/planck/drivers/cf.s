@@ -26,6 +26,9 @@ CF_FAT_SEC_CNT: .res 2      ; $F5
 CF_FIRST_DATA_SEC: .res 2   ; $022B
 CF_FIRST_ROOT_SEC: .res 2   ; $020B
 CF_CURRENT_DIR_SEC: .res 4
+CF_CURRENT_FILE_SIZE: .res 4
+
+CF_TMP: .res 4
 CF_CURRENT_DIR: .res 12
 FAT_FILE_NAME_TMP: .res 12
 
