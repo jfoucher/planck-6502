@@ -4,8 +4,8 @@ main.o:
     CODE              Offs=000000  Size=00002D  Align=00001  Fill=0000
     RODATA            Offs=000000  Size=00013A  Align=00001  Fill=0000
     BSS               Offs=000000  Size=000831  Align=00100  Fill=0000
-    DATA              Offs=000000  Size=004B4F  Align=00001  Fill=0000
-    ZEROPAGE          Offs=000000  Size=00004C  Align=00001  Fill=0000
+    DATA              Offs=000000  Size=004BFA  Align=00001  Fill=0000
+    ZEROPAGE          Offs=000000  Size=00004E  Align=00001  Fill=0000
     STARTUP           Offs=000000  Size=000009  Align=00001  Fill=0000
     DATASTACK         Offs=000000  Size=00007F  Align=00001  Fill=0000
     DICTIONARY        Offs=000000  Size=001000  Align=00001  Fill=0000
@@ -15,21 +15,21 @@ main.o:
 /opt/homebrew/Cellar/cc65/2.19/share/cc65/lib/none.lib(zerobss.o):
     CODE              Offs=00005A  Size=000023  Align=00001  Fill=0000
 /opt/homebrew/Cellar/cc65/2.19/share/cc65/lib/none.lib(zeropage.o):
-    ZEROPAGE          Offs=00004C  Size=00001A  Align=00001  Fill=0000
+    ZEROPAGE          Offs=00004E  Size=00001A  Align=00001  Fill=0000
 
 
 Segment list:
 -------------
 Name                   Start     End    Size  Align
 ----------------------------------------------------
-ZEROPAGE              000000  000065  000066  00001
+ZEROPAGE              000000  000067  000068  00001
 DATASTACK             000080  0000FE  00007F  00001
-DATA                  000200  004D4E  004B4F  00001
+DATA                  000200  004DF9  004BFA  00001
 BSS                   004E00  005630  000831  00100
 DICTIONARY            005700  0066FF  001000  00001
-STARTUP               00CB4F  00CB57  000009  00001
-CODE                  00CB58  00CBD4  00007D  00001
-RODATA                00CBD5  00CD0E  00013A  00001
+STARTUP               00CBFA  00CC02  000009  00001
+CODE                  00CC03  00CC7F  00007D  00001
+RODATA                00CC80  00CDB9  00013A  00001
 VECTORS               00FFFA  00FFFF  000006  00001
 
 
@@ -37,19 +37,19 @@ Exports list by name:
 ---------------------
 __BSS_RUN__               004E00 RLA    __BSS_SIZE__              000831 REA    
 __DATA_LOAD__             008000 RLA    __DATA_RUN__              000200 RLA    
-__DATA_SIZE__             004B4F REA    copydata                  00CB85 RLA    
-ptr1                      000054 RLZ    ptr2                      000056 RLZ    
-tmp1                      00005C RLZ    zerobss                   00CBB2 RLA    
+__DATA_SIZE__             004BFA REA    copydata                  00CC30 RLA    
+ptr1                      000056 RLZ    ptr2                      000058 RLZ    
+tmp1                      00005E RLZ    zerobss                   00CC5D RLA    
 
 
 
 Exports list by value:
 ----------------------
-ptr1                      000054 RLZ    ptr2                      000056 RLZ    
-tmp1                      00005C RLZ    __DATA_RUN__              000200 RLA    
-__BSS_SIZE__              000831 REA    __DATA_SIZE__             004B4F REA    
+ptr1                      000056 RLZ    ptr2                      000058 RLZ    
+tmp1                      00005E RLZ    __DATA_RUN__              000200 RLA    
+__BSS_SIZE__              000831 REA    __DATA_SIZE__             004BFA REA    
 __BSS_RUN__               004E00 RLA    __DATA_LOAD__             008000 RLA    
-copydata                  00CB85 RLA    zerobss                   00CBB2 RLA    
+copydata                  00CC30 RLA    zerobss                   00CC5D RLA    
 
 
 
@@ -66,7 +66,7 @@ __DATA_RUN__ ([linker generated]):
 __DATA_SIZE__ ([linker generated]):
     copydata.o                common/copydata.s(8)
 copydata (copydata.o):
-    main.o                    platform/planck/main.s(22)
+    main.o                    platform/planck/main.s(23)
 ptr1 (zeropage.o):
     zerobss.o                 common/zerobss.s(9)
     copydata.o                common/copydata.s(9)
@@ -75,5 +75,5 @@ ptr2 (zeropage.o):
 tmp1 (zeropage.o):
     copydata.o                common/copydata.s(9)
 zerobss (zerobss.o):
-    main.o                    platform/planck/main.s(23)
+    main.o                    platform/planck/main.s(24)
 

@@ -12612,6 +12612,26 @@ xt_cf_info:
 z_cf_info:
         rts
 
+xt_cf_cd:
+        lda 0, x
+        sta editor2
+        lda 1, x
+        sta editor2 + 1
+        lda 2, x
+        sta editor3
+        lda 3, x
+        sta editor3+1
+
+        jsr fat_convert_filename
+z_cf_cd:
+        inx
+        inx
+        lda #<FAT_FILE_NAME_TMP
+        sta 0, x
+        lda #>FAT_FILE_NAME_TMP
+        sta 1, x
+        rts
+
 ; ## cf_readsector ( double -- addr ) "Set LBA block and read to buffer"
 ; ## "cf_readsector" coded Custom
 xt_cf_readsector: 

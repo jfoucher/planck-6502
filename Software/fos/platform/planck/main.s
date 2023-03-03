@@ -4,6 +4,7 @@ CLOCK_SPEED = 24000000
 
 ram_end = $8000
 
+.include "drivers/cf.inc"
 .include "drivers/acia.inc"
 .include "drivers/via.inc"
 .include "drivers/ps2.inc"
@@ -12,7 +13,7 @@ ram_end = $8000
 .include "drivers/vga.inc"
 .include "drivers/keyboard.inc"
 
-.include "drivers/cf.inc"
+
 
 .include "drivers/zp.s"
 
@@ -40,16 +41,19 @@ v_reset:
 .include "drivers/ps2.s"
 .include "drivers/delayroutines.s"
 ; .include "drivers/4004.s"
+
 .include "drivers/cf.s"
-; .include "drivers/lcd.s"
+
 ; .include "drivers/spi.s"
 ; .include "drivers/sd.s"
 ; .include "drivers/vga.s"
 ; .include "drivers/fat32.s"
+; .include "drivers/lcd.s"
 .include "../../fat16.s"
 
 .include "../../forth.s"
 ; .include "../../ed.s"
+
 
 .segment "DATA"
 

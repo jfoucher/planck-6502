@@ -2,8 +2,8 @@
 CF_BUF = FAT_BUFFER
 CF_ADDRESS = $FFD0
 
-; .segment "ZEROPAGE": zeropage
-; CF_BUF_PTR: .res 2
+.segment "ZEROPAGE": zeropage
+CF_BUF_PTR: .res 2
 ; CF_ADDRESS: .res 2
 
 
@@ -100,60 +100,40 @@ cf_init:
  
 ; : cfread 0 buffptr ! begin cfwait cfreg7 c@ 8 and while cfreg0 c@ cfbuffer buffptr @ + c! buffptr @ 1 + buffptr ! repeat ;
 
-cf_read:
-    sei
-    phx
+.macro readsector2
+.scope
+    
+outerloop:
     ldx #0
-@loop1:
-    nop
-    nop
-    nop
-    nop
-    nop
-    nop
-    ; txa
-    ; and #32
-    ; bne @getbyte1
-
-    ; lda (CF_ADDRESS), y
-    ; lda CF_ADDRESS + 7
-    ; and #8
-    ; beq @exit
-    ; jsr cf_wait
-@getbyte1:
-    lda CF_ADDRESS
-    sta FAT_BUFFER, x
-    inx
-    bne @loop1
-@wait:
+wait:
+    ldy #0
     lda CF_ADDRESS + 7
     and #$80
-    bne @wait
-@loop2:
-    nop
-    nop
-    nop
-    nop
-    nop
-    nop
-    ; txa
-    ; and #32
-    ; bne @getbyte2
-    ; lda CF_ADDRESS + 7
-    ; and #$80
-    ; bne @loop2
-    ; lda CF_ADDRESS + 7
-    ; and #$80
-    ; bne @loop2
-    ; lda CF_ADDRESS + 7
-    ; and #8
-    ; beq @exit
-    ; jsr cf_wait
-@getbyte2:
+    bne wait
+load:
     lda CF_ADDRESS
-    sta FAT_BUFFER+256, x
+    sta (CF_BUF_PTR), y
+    iny
+    bne load
+
+    inc CF_BUF_PTR + 1
     inx
-    bne @loop2
+    cpx #2
+    bcc wait
+
+.endscope
+.endmacro
+
+cf_read:
+    sei
+    phy
+    phx
+    lda #<FAT_BUFFER
+    sta CF_BUF_PTR
+    lda #>FAT_BUFFER
+    sta CF_BUF_PTR + 1
+
+    readsector2
 @loop3:
     lda CF_ADDRESS + 7
     and #8
@@ -163,8 +143,151 @@ cf_read:
     bne @loop3
 @exit:
     plx
+    ply
     cli
     rts
+
+
+; .macro  readsector
+;     .repeat 64, I
+;         .scope
+;     ; ldx #0
+; wait:
+;     lda CF_ADDRESS + 7
+;     and #$80
+;     bne wait
+; load:
+;     lda CF_ADDRESS
+;     sta FAT_BUFFER + I * 8
+;     lda CF_ADDRESS
+;     sta FAT_BUFFER + I * 8 + 1
+;     lda CF_ADDRESS
+;     sta FAT_BUFFER + I * 8 + 2
+;     lda CF_ADDRESS
+;     sta FAT_BUFFER + I * 8 + 3
+;     lda CF_ADDRESS
+;     sta FAT_BUFFER + I * 8 + 4
+;     lda CF_ADDRESS
+;     sta FAT_BUFFER + I * 8 + 5
+;     lda CF_ADDRESS
+;     sta FAT_BUFFER + I * 8 + 6
+;     lda CF_ADDRESS
+;     sta FAT_BUFFER + I * 8 + 7
+;     ; inx
+;     ; cpx #4
+;     ; bcc load
+;         .endscope
+;     .endrep
+; .endmacro
+
+; cf_read:
+;     sei
+;     phx
+;     readsector
+; @loop3:
+;     lda CF_ADDRESS + 7
+;     and #8
+;     beq @exit
+;     lda CF_ADDRESS
+;     inx
+;     bne @loop3
+; @exit:
+;     plx
+;     cli
+;     rts
+
+; cf_read:
+;     sei
+;     phx
+;     ldx #0
+; @loop1:
+; .repeat 16
+;     lda CF_ADDRESS + 7
+;     and #$80
+;     bne @loop1
+;     lda CF_ADDRESS
+;     sta FAT_BUFFER + 16 * I, x
+;     inx
+;     bne @loop1
+; .endrepeat
+;     ; lda CF_ADDRESS + 7
+;     ; and #$80
+;     ; bne @loop1
+;     ; nop
+;     ; nop
+;     ; nop
+;     ; nop
+;     ; nop
+;     ; nop
+;     ; nop
+;     ; nop
+;     ; nop
+;     ; nop
+;     ; nop
+
+;     ; txa
+;     ; and #32
+;     ; bne @getbyte1
+
+;     ; lda (CF_ADDRESS), y
+;     ; lda CF_ADDRESS + 7
+;     ; and #8
+;     ; beq @exit
+;     ; jsr cf_wait
+; @getbyte1:
+;     lda CF_ADDRESS
+;     sta FAT_BUFFER, x
+;     inx
+;     bne @loop1
+; @wait:
+;     lda CF_ADDRESS + 7
+;     and #$80
+;     bne @wait
+; @loop2:
+;     ; lda CF_ADDRESS + 7
+;     ; and #$80
+;     ; bne @loop2
+;     ; nop
+;     ; nop
+;     ; nop
+;     ; nop
+;     ; nop
+;     ; nop
+;     ; nop
+;     ; nop
+;     ; nop
+;     ; nop
+;     ; nop
+
+;     ; txa
+;     ; and #32
+;     ; bne @getbyte2
+;     ; lda CF_ADDRESS + 7
+;     ; and #$80
+;     ; bne @loop2
+;     ; lda CF_ADDRESS + 7
+;     ; and #$80
+;     ; bne @loop2
+;     ; lda CF_ADDRESS + 7
+;     ; and #8
+;     ; beq @exit
+;     ; jsr cf_wait
+; @getbyte2:
+;     lda CF_ADDRESS
+;     sta FAT_BUFFER+256, x
+;     inx
+;     bne @loop2
+; @loop3:
+;     lda CF_ADDRESS + 7
+;     and #8
+;     beq @exit
+;     lda CF_ADDRESS
+;     inx
+;     bne @loop3
+; @exit:
+;     plx
+;     cli
+;     rts
 
 cf_set_lba:
     ; phy

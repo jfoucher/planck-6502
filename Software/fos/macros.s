@@ -38,6 +38,7 @@ jsr kernel_putc
 .endmacro
 
 .macro inc16 src
+.local @done
     inc src       ;Increment the LSB
     bne @done       ;If the result was not zero we're done
     inc src+1       ;Increment the MSB if LSB wrapped round
