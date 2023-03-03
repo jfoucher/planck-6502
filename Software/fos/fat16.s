@@ -33,8 +33,11 @@ fat_convert_filename:
 	bcc @transform_name_loop        ; Do next character
 	bra @end_trans                  ; We have reached the 11th character for the new string
 
-@is_dot:                                ; we have a dot in the original string
+@is_dot:                            ; we have a dot in the original string
+	cpx #2							; do not replace first 2 dots
+	bcc @save_char
 	lda #$20                        ; fill the new string until 8 characters have been done
+@dont_replace:
 	sta FAT_FILE_NAME_TMP, x
 	inx
 	cpx #8
@@ -100,6 +103,19 @@ fat_get_sector_for_cluster:
 	; FirstSectorofCluster = ((N – 2) * BPB_SecPerClus) + FirstDataSector;
 	; (CF_CURRENT_CLUSTER - 2) * CF_SEC_PER_CLUS + CF_FIRST_DATA_SEC
 	cp16 CF_CURRENT_CLUSTER, CF_CURRENT_DIR_SEC
+	lda CF_CURRENT_DIR_SEC
+	bne @notzero
+	lda CF_CURRENT_DIR_SEC + 1
+	bne @notzero
+	lda CF_CURRENT_DIR_SEC + 2
+	bne @notzero
+	lda CF_CURRENT_DIR_SEC + 3
+	bne @notzero
+
+	; current cluster is zero, which means the root directory
+	cp16 CF_FIRST_ROOT_SEC, CF_CURRENT_DIR_SEC
+	rts
+@notzero:
 	dec16 CF_CURRENT_DIR_SEC
 	dec16 CF_CURRENT_DIR_SEC
 	lda CF_SEC_PER_CLUS			; load sectors per cluster

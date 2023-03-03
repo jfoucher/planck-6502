@@ -12645,7 +12645,11 @@ xt_cf_cd:
         inx
         inx
         inx
-        bra z_cf_cd
+        jsr xt_cr
+        printstr FAT_FILE_NAME_TMP, 11
+        printascii not_found_error        ; Not a directory, abort
+        jsr xt_cr
+        jsr xt_abort
 @found:
         ; check if entry is a directory
         ldy #11
@@ -12672,18 +12676,15 @@ xt_cf_cd:
         jsr fat_get_sector_for_cluster
         ; save sector number to CF_CURRENT_DIR_SEC
         
-        lda editor2
-        sta 0, x
-        lda editor2 + 1
-        sta 1, x
-        lda #<CF_CURRENT_DIR_SEC
-        sta 2, x
-        lda #>CF_CURRENT_DIR_SEC
-        sta 3, x
+        inx
+        inx
+        inx
+        inx
 z_cf_cd:
         ply
         rts
 not_dir_error: .asciiz "Not a directory"
+not_found_error: .asciiz "not found"
 ; ## cf_readsector ( double -- addr ) "Set LBA block and read to buffer"
 ; ## "cf_readsector" coded Custom
 xt_cf_readsector: 

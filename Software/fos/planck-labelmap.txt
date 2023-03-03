@@ -1,19 +1,19 @@
 Modules list:
 -------------
 main.o:
-    CODE              Offs=000000  Size=000122  Align=00001  Fill=0000
+    CODE              Offs=000000  Size=000147  Align=00001  Fill=0000
     RODATA            Offs=000000  Size=00013A  Align=00001  Fill=0000
     BSS               Offs=000000  Size=000833  Align=00100  Fill=0000
-    DATA              Offs=000000  Size=004BF3  Align=00001  Fill=0000
+    DATA              Offs=000000  Size=004C49  Align=00001  Fill=0000
     ZEROPAGE          Offs=000000  Size=00004E  Align=00001  Fill=0000
     STARTUP           Offs=000000  Size=000009  Align=00001  Fill=0000
     DATASTACK         Offs=000000  Size=00007F  Align=00001  Fill=0000
     DICTIONARY        Offs=000000  Size=001000  Align=00001  Fill=0000
     VECTORS           Offs=000000  Size=000006  Align=00001  Fill=0000
 /opt/homebrew/Cellar/cc65/2.19/share/cc65/lib/none.lib(copydata.o):
-    CODE              Offs=000122  Size=00002D  Align=00001  Fill=0000
+    CODE              Offs=000147  Size=00002D  Align=00001  Fill=0000
 /opt/homebrew/Cellar/cc65/2.19/share/cc65/lib/none.lib(zerobss.o):
-    CODE              Offs=00014F  Size=000023  Align=00001  Fill=0000
+    CODE              Offs=000174  Size=000023  Align=00001  Fill=0000
 /opt/homebrew/Cellar/cc65/2.19/share/cc65/lib/none.lib(zeropage.o):
     ZEROPAGE          Offs=00004E  Size=00001A  Align=00001  Fill=0000
 
@@ -24,22 +24,22 @@ Name                   Start     End    Size  Align
 ----------------------------------------------------
 ZEROPAGE              000000  000067  000068  00001
 DATASTACK             000080  0000FE  00007F  00001
-DATA                  000200  004DF2  004BF3  00001
-BSS                   004E00  005632  000833  00100
-DICTIONARY            005700  0066FF  001000  00001
-STARTUP               00CBF3  00CBFB  000009  00001
-CODE                  00CBFC  00CD6D  000172  00001
-RODATA                00CD6E  00CEA7  00013A  00001
+DATA                  000200  004E48  004C49  00001
+BSS                   004F00  005732  000833  00100
+DICTIONARY            005800  0067FF  001000  00001
+STARTUP               00CC49  00CC51  000009  00001
+CODE                  00CC52  00CDE8  000197  00001
+RODATA                00CDE9  00CF22  00013A  00001
 VECTORS               00FFFA  00FFFF  000006  00001
 
 
 Exports list by name:
 ---------------------
-__BSS_RUN__               004E00 RLA    __BSS_SIZE__              000833 REA    
+__BSS_RUN__               004F00 RLA    __BSS_SIZE__              000833 REA    
 __DATA_LOAD__             008000 RLA    __DATA_RUN__              000200 RLA    
-__DATA_SIZE__             004BF3 REA    copydata                  00CD1E RLA    
+__DATA_SIZE__             004C49 REA    copydata                  00CD99 RLA    
 ptr1                      000056 RLZ    ptr2                      000058 RLZ    
-tmp1                      00005E RLZ    zerobss                   00CD4B RLA    
+tmp1                      00005E RLZ    zerobss                   00CDC6 RLA    
 
 
 
@@ -47,9 +47,9 @@ Exports list by value:
 ----------------------
 ptr1                      000056 RLZ    ptr2                      000058 RLZ    
 tmp1                      00005E RLZ    __DATA_RUN__              000200 RLA    
-__BSS_SIZE__              000833 REA    __DATA_SIZE__             004BF3 REA    
-__BSS_RUN__               004E00 RLA    __DATA_LOAD__             008000 RLA    
-copydata                  00CD1E RLA    zerobss                   00CD4B RLA    
+__BSS_SIZE__              000833 REA    __DATA_SIZE__             004C49 REA    
+__BSS_RUN__               004F00 RLA    __DATA_LOAD__             008000 RLA    
+copydata                  00CD99 RLA    zerobss                   00CDC6 RLA    
 
 
 
