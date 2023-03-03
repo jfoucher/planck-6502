@@ -46,6 +46,7 @@ jsr kernel_putc
 .endmacro
 
 .macro dec16 src
+.local @skip
     lda src
     bne @skip
     dec src + 1

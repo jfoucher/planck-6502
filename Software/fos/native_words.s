@@ -12323,7 +12323,12 @@ check_fat_sector_signature:
         stz CF_LBA + 1
         stz CF_LBA + 2
         stz CF_LBA + 3
-
+        stz CF_CURRENT_CLUSTER                  ; reset variables
+        stz CF_CURRENT_CLUSTER + 1
+        stz CF_CURRENT_DIR_SEC
+        stz CF_CURRENT_DIR_SEC + 1
+        stz CF_CURRENT_DIR_SEC + 2
+        stz CF_CURRENT_DIR_SEC + 3
 
         ; LBA is set, now read sector
         jsr cf_read_sector
@@ -12443,6 +12448,8 @@ check_fat_sector_signature:
         ; CF_FIRST_DATA_SEC = 1 + 2*CF_FAT_SEC_CNT + CF_ROOT_DIR_SECS
         add16 CF_FIRST_ROOT_SEC, CF_ROOT_DIR_SECS, CF_FIRST_DATA_SEC
 
+        stz CF_CURRENT_CLUSTER
+        stz CF_CURRENT_CLUSTER + 1
         ; print volume label
         printstr FAT_BUFFER + 43, 11
         ; printascii cf_fat_mounted_message
@@ -12492,8 +12499,8 @@ xt_cf_ls:
 
 @fatok:
         cp16 CF_CURRENT_DIR_SEC, CF_LBA
-        stz CF_LBA + 2
-        stz CF_LBA + 3
+        cp16 CF_CURRENT_DIR_SEC + 2, CF_LBA + 2
+
         jsr cf_read_sector
 
         ; current directory first sector is now in buffer
@@ -12613,6 +12620,14 @@ z_cf_info:
         rts
 
 xt_cf_cd:
+        phy
+        ; check if fat is inited
+	lda CF_SEC_PER_CLUS
+	bne @fatok
+	jsr xt_cf_fat_init
+	inx     ; drop fat_init return value
+	inx
+@fatok:
         lda 0, x
         sta editor2
         lda 1, x
@@ -12623,15 +12638,52 @@ xt_cf_cd:
         sta editor3+1
 
         jsr fat_convert_filename
-z_cf_cd:
-        inx
-        inx
-        lda #<FAT_FILE_NAME_TMP
-        sta 0, x
-        lda #>FAT_FILE_NAME_TMP
-        sta 1, x
-        rts
 
+        jsr fat_find_file               ; after this, the pointer to the entry in FAT_BUFFER is in editor2
+        bcs @found
+        inx
+        inx
+        inx
+        inx
+        bra z_cf_cd
+@found:
+        ; check if entry is a directory
+        ldy #11
+        lda (editor2), y
+        and #$10        
+        bne @is_dir
+        jsr xt_cr
+        printascii not_dir_error        ; Not a directory, abort
+        inx
+        inx
+        inx
+        inx
+        jsr xt_cr
+        jsr xt_abort
+@is_dir:
+        ; load cluster number from dir entry
+        ldy #26
+        lda (editor2), y
+        sta CF_CURRENT_CLUSTER
+        iny
+        lda (editor2), y
+        sta CF_CURRENT_CLUSTER + 1
+        ; convert cluster number to sector
+        jsr fat_get_sector_for_cluster
+        ; save sector number to CF_CURRENT_DIR_SEC
+        
+        lda editor2
+        sta 0, x
+        lda editor2 + 1
+        sta 1, x
+        lda #<CF_CURRENT_DIR_SEC
+        sta 2, x
+        lda #>CF_CURRENT_DIR_SEC
+        sta 3, x
+z_cf_cd:
+        ply
+        rts
+not_dir_error: .asciiz "Not a directory"
 ; ## cf_readsector ( double -- addr ) "Set LBA block and read to buffer"
 ; ## "cf_readsector" coded Custom
 xt_cf_readsector: 
