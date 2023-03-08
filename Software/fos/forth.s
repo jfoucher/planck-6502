@@ -16,8 +16,6 @@ stack0 =    $0100   ; location of the stack
 blk_offset =  0        ; BLK : UP + 0
 scr_offset =  2        ; SCR : UP + 2
 
-
-
 ; Wordlists
 current_offset =  4    ; CURRENT (byte) : UP + 4 (Compilation wordlist)
 num_wordlists_offset =  5

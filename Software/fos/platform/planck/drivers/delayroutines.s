@@ -16,7 +16,7 @@
 ; OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER 
 ; DEALINGS IN THE SOFTWARE.
 
-.segment "CODE"
+
 ; this routine delays by 2304 * y + 23 cycles
 delay:
   phx       ; 3 cycles

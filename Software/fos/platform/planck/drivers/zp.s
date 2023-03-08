@@ -21,7 +21,22 @@
 
 
 
-.segment "ZEROPAGE": zeropage
 
+tmp_var: .res 2
 stack_p: .res 2
+.ifdef VIA1_BASE
+time: .res 4
+.endif
 
+.ifdef CF_ADDRESS
+CF_POINTER: .res 2
+CF_BUF_PTR: .res 2
+
+.endif
+.if .def(CF_ADDRESS)
+FAT_PTR1: .res 2
+FAT_PTR2: .res 2
+.elseif .def(SD)
+FAT_PTR1: .res 2
+FAT_PTR2: .res 2
+.endif

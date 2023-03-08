@@ -3,6 +3,8 @@
 ; SD card initialization routine
 ; http://elm-chan.org/docs/mmc/mmc_e.html#spiinit
 
+
+
 .segment "ZEROPAGE": zeropage
 sd_buffer_address: .res 2
 
@@ -13,35 +15,24 @@ SD_TMP: .res 2
 SD_CRC: .res 1
 SD_SLAVE: .res 1
 SD_ARG: .res 4
-SD_BUF: .res $800
-
+SD_BUF: .res 4
 .segment "DATA"
 
 sd_init:                    ; slave address in A
     sta SD_SLAVE             ; save slave address for later use
+    
     phx
+    
     jsr spi_init                ; init SPI system
+
     lda #0
     jsr spi_select          ; DEselect slave
-    sta SD_ARG
-    sta SD_ARG+1            ; clear command argument
-    sta SD_ARG+2
-    sta SD_ARG+3
+    stz SD_ARG
+    stz SD_ARG+1            ; clear command argument
+    stz SD_ARG+2
+    stz SD_ARG+3
     lda #$95
     sta SD_CRC              ; set CRC for CMD0
-    ; clear SD buffer
-    ldx #$FF
-clear_sd_buf_loop1:
-    stz SD_BUF, X
-    dex
-    bne clear_sd_buf_loop1
-
-    dex
-clear_sd_buf_loop2:
-    stz SD_BUF+256, x
-    dex
-    bne clear_sd_buf_loop2
-
     ; send 10 bytes of $FF With SD card deselected
     
     ldx #10
@@ -50,7 +41,7 @@ init_loop:
     jsr spi_transceive
     dex
     bne init_loop
-
+    
     jsr sd_cmd_0            ; set SD card idle state
     cmp #$01                ; Check for idle state
     bne sd_error
@@ -58,7 +49,7 @@ init_loop:
     cmp #$01                ; Check for idle state
     bne sd_error
     ; TODO check if long response is $01AA
-
+    
     ; wait for card to be initialized
     ldx #$ff    ; Max times to loop
     stz SD_ARG
@@ -77,6 +68,8 @@ sd_init_loop2:
     jsr sd_command
     
     bne sd_init_loop2
+
+    ; jmp sd_error
 
     lda #58
     jsr sd_command
@@ -218,8 +211,21 @@ sd_readsector:
     ; Read a sector from the SD card.  A sector is 512 bytes.
     ;
     ; Parameters:
-    ;    sd_sector   32-bit sector number
-    ;    sd_buffer_address     address of buffer to receive data
+    
+    lda #<DISK_BUFFER
+    sta sd_buffer_address
+    lda #>DISK_BUFFER
+    sta sd_buffer_address + 1
+
+    lda FAT_LBA
+    sta SD_ARG
+    lda FAT_LBA + 1
+    sta SD_ARG + 1
+    lda FAT_LBA + 2
+    sta SD_ARG + 2
+    lda FAT_LBA + 2
+    sta SD_ARG + 2
+
     phx
     jsr sd_command_start
     ; Command 17, arg is sector number, crc not checked

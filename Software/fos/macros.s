@@ -13,6 +13,8 @@
     plx
 .endmacro
 
+
+
 .macro  cp16   src, dest
     lda src
     sta dest
@@ -45,13 +47,39 @@ jsr kernel_putc
 @done:
 .endmacro
 
+.macro inc32 src
+.local @done
+    inc src       ;Increment the LSB
+    bne @done       ;If the result was not zero we're done
+    inc src+1       ;Increment next byte if LSB wrapped round
+    bne @done
+    inc src+2       ;Increment the next byte the previous wrapped round
+    bne @done
+    inc src+3       ;Increment the MSB if previous wrapped round
+@done:
+.endmacro
+
 .macro dec16 src
 .local @skip
-    lda src
-    bne @skip
-    dec src + 1
+.local @end
+    lda src             ; load low byte
+    bne @skip           ; if it's not zero, just decrement it
+    dec src + 1         ; if low byte is zero decrement high byte
 @skip:
     dec src
+@end:
+.endmacro
+
+.macro dec16zero src
+.local @skip
+.local @end
+    lda src             ; load low byte
+    bne @skip           ; if it's not zero, just decrement it
+    dec src + 1         ; if low byte is zero decrement high byte
+    beq @end            ; if high byte is also zero, we reached zero, exit now
+@skip:
+    dec src
+@end:
 .endmacro
 
 .macro add16 first, second, result
@@ -64,7 +92,60 @@ jsr kernel_putc
     STA result+1       ;... and store the result
 .endmacro
 
+; compare data at two adresses for defined length
+; On exit, carry is set if there is a match
+; and unset if no match
+; length of data to check is in X
 
+.macro memcmp first, second
+.local @exit
+.local @loop
+.local @exit_fail
+@loop:
+    lda first, x
+    cmp second, x
+    bne @exit_fail
+    dex
+    bne @loop
+    lda first           ; check 0th element
+    cmp second
+    bne @exit_fail
+    sec
+    bra @exit
+@exit_fail:
+    clc
+@exit:
+.endmacro
+
+; copy data from one address to another for defined length
+; length of data to copy is in X
+.macro memcp first, second
+.local @exit
+.local @loop
+@loop:
+    lda first, x
+    sta second, x
+    dex
+    bne @loop
+    lda first           ; copy zeroth item
+    sta second
+@exit:
+.endmacro
+
+
+; calculates length of zero terminated string
+; result is in x
+.macro strlen address
+.local @loop
+.local @exit
+    ldx #0
+@loop:
+    lda address, x
+    beq @exit
+    inx
+    bra @loop
+@exit:
+.endmacro
 
 .macro push_axy
 	pha		; push accumulator to stack

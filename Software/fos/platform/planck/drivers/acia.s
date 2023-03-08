@@ -1,4 +1,4 @@
-.segment "DATA"
+ACIA_DELAY = CLOCK_SPEED / 500000
 
 acia_init:
     sta ACIA_STATUS        ; soft reset (value not important)
@@ -34,7 +34,7 @@ acia_out:
     pha
     phy
     sta ACIA_DATA
-    ldy #$20            ;minimal delay is $02
+    ldy #ACIA_DELAY            ;minimal delay is $02
     jsr delay_short
     ply
     pla

@@ -4,29 +4,65 @@ CLOCK_SPEED = 24000000
 
 ram_end = $8000
 
+; select includes to enable card drivers
+
 .include "drivers/cf.inc"
 .include "drivers/acia.inc"
 .include "drivers/via.inc"
-.include "drivers/ps2.inc"
+.include "drivers/sd.inc"
+; .include "drivers/ps2.inc"
 ; .include "drivers/4004.inc"
-.include "drivers/lcd.inc"
-.include "drivers/vga.inc"
-.include "drivers/keyboard.inc"
+; .include "drivers/lcd.inc"
+; .include "drivers/vga.inc"
+; .include "drivers/keyboard.inc"
 
-
+.segment "ZEROPAGE": zeropage
 
 .include "drivers/zp.s"
 
+.segment "BSS"
+.ifdef VIA1_BASE
+lcd_absent: .res 1
+.endif
+.ifdef ACIA_BASE
+has_acia: .res 1
+.endif
 
-.segment "RODATA"
+.ifdef CF_ADDRESS
 
-.import    copydata
-.import zerobss
+.endif
+
+
 
 .segment "STARTUP"
+.import    copydata
+.import zerobss
+zero_ram:
+    ldx #$FF
+zero_zp:
+    stz 0, x
+    dex
+    bne zero_zp
+    stz $00
+    lda #0
+    sta $01
+
+    ldx #$80
+    ldy #0
+    lda #0
+@loop:
+    sta ($0), y
+    iny
+    bne @loop
+    inc $1
+    dex
+    bne @loop
+
+    jmp ram_zeroed
 
 v_reset:
-
+    jmp zero_ram
+ram_zeroed: 
     JSR     copydata
     jsr zerobss
     
@@ -34,48 +70,87 @@ v_reset:
 
 
 
+.segment "DATA"
 
-.include "drivers/acia.s"
-.include "drivers/timer.s"
-; .include "drivers/keyboard.s"
-.include "drivers/ps2.s"
 .include "drivers/delayroutines.s"
-; .include "drivers/4004.s"
 
+.ifdef VIA1_BASE
+.include "drivers/timer.s"
+.include "drivers/spi.s"
+.endif
+
+.ifdef ACIA_BASE
+.include "drivers/acia.s"
+.endif
+
+
+.ifdef KB_VIA_BASE
+.include "drivers/keyboard.s"
+.endif
+.ifdef KB_INIT_STATE_RESET
+.include "drivers/ps2.s"
+.endif
+
+.ifdef LCD2_ENABLED
+.include "drivers/4004.s"
+.endif
+.ifdef CF_ADDRESS
 .include "drivers/cf.s"
+.endif
+.ifdef SD
+
+.include "drivers/sd.s"
+
+.endif
+
+.if .def(SD)
+.include "../../fat16.s"
+.elseif .def(CF_ADDRESS)
+.include "../../fat16.s"
+.endif
+
+.include "../../utils.s"
 
 ; .include "drivers/spi.s"
 ; .include "drivers/sd.s"
 ; .include "drivers/vga.s"
 ; .include "drivers/fat32.s"
 ; .include "drivers/lcd.s"
-.include "../../fat16.s"
+
 
 .include "../../forth.s"
-; .include "../../ed.s"
-
 
 .segment "DATA"
 
+; .include "../../ed.s"
+
+
 platform_bye:
 kernel_init:
-v_nmi:
+.ifdef VIA1_BASE
     lda #$FF
     sta DDRB
     sta DDRA
+    lda #1
+    sta PORTB
     stz PORTA
-    stz PORTB
+.endif
+.ifdef timer_init
+    stz time
+    stz time+1
+    stz time+2
+    stz time+3
+.endif
+jsr acia_init
+.ifdef timer_init
+    jsr timer_init
+.endif
 .ifdef video_init
     jsr video_init
 .endif
 .ifdef ps2_init
     jsr ps2_init
 .endif
-
-.ifdef timer_init
-    jsr timer_init
-.endif
-    jsr acia_init
 .ifdef lcd_init
     jsr lcd_init
 .endif
@@ -85,13 +160,39 @@ v_nmi:
 .ifdef kb_init
     jsr kb_init
 .endif
-
-
     printascii welcome_message
 
+    lda #<dictionary
+    sta up
+    lda #>dictionary
+    sta up + 1
+
+    jsr calculate_free_mem
+    lda tmp_var + 1
+    ldx tmp_var
+    jsr print16
+
+    printascii free_message
 
     jmp forth
 
+v_nmi:
+    
+    jsr calculate_free_mem
+    lda tmp_var + 1
+    ldx tmp_var
+    jsr print16
+
+    printascii free_message
+    printascii ready_message
+
+    jmp xt_abort
+
+
+
+
+io_read_sector:
+    jmp (io_read_sector_ptr)        ; jump to read sector routine
 
 kernel_putc:
     ; """Print a single character to the console. """
@@ -107,7 +208,7 @@ send_char:
     .endif
 send_char_exit:    
 .ifdef lcd_print
-    jsr lcd_print
+    ; jsr lcd_print
 .endif
     pla
     rts
@@ -121,7 +222,6 @@ send_char_exit:
 Get_Char:
     jsr acia_getc
     bcc get_ps2_char                ; check keyboard buffer if nothing from ACIA
-    jsr check_ctrl_c
     sec                             ; Set Carry to show we got a character
     rts                             ; Return
     
@@ -154,16 +254,6 @@ Get_Char_Wait:
     jsr Get_Char
     bcc Get_Char_Wait
     rts
-    
-check_ctrl_c:
-    ;; Check if we have ctrl-C character, if so jump to nmi
-    cmp #$03
-    bne exit_ctrl_c
-    printascii abort_message
-    jmp xt_abort
-
-exit_ctrl_c:
-    rts
 
 
 v_irq:                          ; IRQ handler
@@ -172,21 +262,25 @@ v_irq:                          ; IRQ handler
         ; lda #'.'
         ; jsr kernel_putc
         ; check if bit 7 of IFR is set
+.ifdef IFR
         lda IFR
-        bpl v_kb_irq  ; Interrupt not from VIA, exit
+        bpl irq_not_from_via  ; Interrupt not from VIA, exit
 
         and #$08        ; ps2 has priority
         bne v_irq_ps2
         lda IFR
         and #$40
         bne v_irq_timer
+irq_not_from_via:
+.endif
+.ifdef KB_IFR
 v_kb_irq:
         lda KB_IFR
         bpl v_irq_exit
         and #$40
         bne v_kb_irq_timer
         bra v_irq_exit
-
+.endif
 
 v_irq_ps2:
     .ifdef ps2_irq
@@ -198,18 +292,13 @@ v_irq_ps2:
         sta last_ps2_time+2
         lda time+3
         sta last_ps2_time+3
-        ; this delay is here to ensure we prevent desynchronization
-        ;ldy #$04         ; correct delay seems to be #$20 at 10Mhz
-        ; jsr delay_short
-        
         
         jsr ps2_irq
-        
-        ; ldy #$04         ; correct delay seems to be #$20 at 10Mhz
-        ; jsr delay_short
+
     .endif
         bra v_irq_exit
     
+.ifdef T1CL
 v_irq_timer:
         lda T1CL  
         ; clear timer interrupt
@@ -224,7 +313,20 @@ v_irq_timer:
         ; stz lcd_char
 
 
-        bra v_irq_exit
+        bcc v_irq_exit      ; no character waiting, exit normally
+        cmp #$03            ; check if CTRL-C
+        bne v_irq_exit      ; not CTRL-C, exit normally
+        printascii abort_message    ; was a CTRL_C
+        ply                         ; pull what the ISR pushed
+        pla 
+        plp                         ; pull status register
+        pla                         ; pull return address
+        pla
+        
+        cli                         ; clear interrupt diabled bit
+        jmp xt_abort
+
+.endif
 v_kb_irq_timer:
 .ifdef kb_time
     lda KB_T1CL ; clear timer interrupt
@@ -237,11 +339,9 @@ v_irq_exit:
     pla
     rti
 
-
-
-.segment "RODATA"
-
-welcome_message: .byte "Welcome to Planck 6502", $0D, "Type 'words' for available words", 0
+free_message: .byte " bytes free", $0D, 0
+ready_message: .byte "Ready", $0D, 0
+welcome_message: .byte "Welcome to Planck 6502", $0D, "Type 'words' for available words", $0D, 0
 abort_message: .byte AscCR, AscLF, 0
 
 .segment "VECTORS"

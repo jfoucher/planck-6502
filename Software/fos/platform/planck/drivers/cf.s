@@ -1,39 +1,4 @@
 
-CF_BUF = FAT_BUFFER
-CF_ADDRESS = $FFD0
-
-.segment "ZEROPAGE": zeropage
-CF_BUF_PTR: .res 2
-; CF_ADDRESS: .res 2
-
-
-.segment "BSS"
-
-.align  $100
-FAT_BUFFER: .res $200
-; .align  256
-;FILE_BUFFER: .res $1000
-FILE_BUFFER_END:
-lcd_absent: .res 1
-has_acia: .res 1
-CF_LBA: .res 4
-CF_PART_START: .res 4
-CF_SEC_PER_CLUS: .res 1     ; $8
-CF_CURRENT_CLUSTER: .res 2
-CF_ROOT_ENT_CNT: .res 2     ; $200
-CF_ROOT_DIR_SECS: .res 2    ; $02
-CF_FAT_SEC_CNT: .res 2      ; $F5
-CF_FIRST_DATA_SEC: .res 2   ; $022B
-CF_FIRST_ROOT_SEC: .res 2   ; $020B
-CF_CURRENT_DIR_SEC: .res 4
-CF_CURRENT_FILE_SIZE: .res 4
-
-CF_TMP: .res 4
-CF_CURRENT_DIR: .res 12
-FAT_FILE_NAME_TMP: .res 12
-
-.segment "DATA"
-
 
 cf_wait: 
     ; phy
@@ -103,52 +68,79 @@ cf_init:
  
 ; : cfread 0 buffptr ! begin cfwait cfreg7 c@ 8 and while cfreg0 c@ cfbuffer buffptr @ + c! buffptr @ 1 + buffptr ! repeat ;
 
-.macro readsector2
-.scope
-    
-outerloop:
-    ldx #0
-wait:
+cf_read:
+    phy
+    phx
+    ldx #2
     ldy #0
-    lda CF_ADDRESS + 7
-    and #$80
-    bne wait
-load:
+    lda #<DISK_BUFFER
+    sta CF_BUF_PTR
+    lda #>DISK_BUFFER
+    sta CF_BUF_PTR + 1
+@begin:
+    ; jsr cf_wait
+    ; lda CF_ADDRESS + 7
+    ; and #$08
+    ; beq @exit
     lda CF_ADDRESS
     sta (CF_BUF_PTR), y
     iny
-    bne load
-
+    bne @begin
     inc CF_BUF_PTR + 1
-    inx
-    cpx #2
-    bcc wait
-
-.endscope
-.endmacro
-
-cf_read:
-    sei
-    phy
-    phx
-    lda #<FAT_BUFFER
-    sta CF_BUF_PTR
-    lda #>FAT_BUFFER
-    sta CF_BUF_PTR + 1
-
-    readsector2
-@loop3:
-    lda CF_ADDRESS + 7
-    and #8
-    beq @exit
-    lda CF_ADDRESS
-    inx
-    bne @loop3
+    jsr cf_wait
+    dex
+    bne @begin
 @exit:
     plx
     ply
-    cli
     rts
+
+; .macro readsector2
+; .scope
+    
+; outerloop:
+;     ldx #0
+; wait:
+;     ldy #0
+;     lda CF_ADDRESS + 7
+;     and #$80
+;     bne wait
+; load:
+;     lda CF_ADDRESS
+;     sta (CF_BUF_PTR), y
+;     iny
+;     bne load
+
+;     inc CF_BUF_PTR + 1
+;     inx
+;     cpx #2
+;     bcc wait
+
+; .endscope
+; .endmacro
+
+; cf_read:
+;     sei
+;     phy
+;     phx
+;     lda #<DISK_BUFFER
+;     sta CF_BUF_PTR
+;     lda #>DISK_BUFFER
+;     sta CF_BUF_PTR + 1
+
+;     readsector2
+; @loop3:
+;     lda CF_ADDRESS + 7
+;     and #8
+;     beq @exit
+;     lda CF_ADDRESS
+;     inx
+;     bne @loop3
+; @exit:
+;     plx
+;     ply
+;     cli
+;     rts
 
 
 ; .macro  readsector
@@ -161,21 +153,21 @@ cf_read:
 ;     bne wait
 ; load:
 ;     lda CF_ADDRESS
-;     sta FAT_BUFFER + I * 8
+;     sta DISK_BUFFER + I * 8
 ;     lda CF_ADDRESS
-;     sta FAT_BUFFER + I * 8 + 1
+;     sta DISK_BUFFER + I * 8 + 1
 ;     lda CF_ADDRESS
-;     sta FAT_BUFFER + I * 8 + 2
+;     sta DISK_BUFFER + I * 8 + 2
 ;     lda CF_ADDRESS
-;     sta FAT_BUFFER + I * 8 + 3
+;     sta DISK_BUFFER + I * 8 + 3
 ;     lda CF_ADDRESS
-;     sta FAT_BUFFER + I * 8 + 4
+;     sta DISK_BUFFER + I * 8 + 4
 ;     lda CF_ADDRESS
-;     sta FAT_BUFFER + I * 8 + 5
+;     sta DISK_BUFFER + I * 8 + 5
 ;     lda CF_ADDRESS
-;     sta FAT_BUFFER + I * 8 + 6
+;     sta DISK_BUFFER + I * 8 + 6
 ;     lda CF_ADDRESS
-;     sta FAT_BUFFER + I * 8 + 7
+;     sta DISK_BUFFER + I * 8 + 7
 ;     ; inx
 ;     ; cpx #4
 ;     ; bcc load
@@ -209,7 +201,7 @@ cf_read:
 ;     and #$80
 ;     bne @loop1
 ;     lda CF_ADDRESS
-;     sta FAT_BUFFER + 16 * I, x
+;     sta DISK_BUFFER + 16 * I, x
 ;     inx
 ;     bne @loop1
 ; .endrepeat
@@ -239,7 +231,7 @@ cf_read:
 ;     ; jsr cf_wait
 ; @getbyte1:
 ;     lda CF_ADDRESS
-;     sta FAT_BUFFER, x
+;     sta DISK_BUFFER, x
 ;     inx
 ;     bne @loop1
 ; @wait:
@@ -277,7 +269,7 @@ cf_read:
 ;     ; jsr cf_wait
 ; @getbyte2:
 ;     lda CF_ADDRESS
-;     sta FAT_BUFFER+256, x
+;     sta DISK_BUFFER+256, x
 ;     inx
 ;     bne @loop2
 ; @loop3:
@@ -294,19 +286,19 @@ cf_read:
 
 cf_set_lba:
     ; phy
-    lda CF_LBA
+    lda FAT_LBA
     ; ldy #3
     ; sta (CF_ADDRESS),y
     sta CF_ADDRESS + 3
-    lda CF_LBA + 1
+    lda FAT_LBA + 1
     ; ldy #4
     ; sta (CF_ADDRESS), y
     sta CF_ADDRESS + 4
-    lda CF_LBA + 2
+    lda FAT_LBA + 2
     ; ldy #5
     ; sta (CF_ADDRESS), y
     sta CF_ADDRESS + 5
-    lda CF_LBA + 3
+    lda FAT_LBA + 3
     and #$0F
     ora #$E0
     ; ldy #6
@@ -315,10 +307,7 @@ cf_set_lba:
     ; ply
     rts
 
-cf_read_sector:
-    ; sei
-    ; phy
-    ; buffer should be set in CF_BUF_PTR
+cf_do_read:
     jsr cf_set_lba
     lda #1
     ; ldy #2
@@ -332,8 +321,71 @@ cf_read_sector:
     jsr cf_wait
     jsr cf_read
     jsr cf_err
-    ; ply
-    ; cli
+    rts
+
+cf_read_sector:
+    sei
+    phx
+    jsr cf_do_read
+    ldx #8
+; verify:
+;     ; ply
+;     ; copy to other buffer
+;     jsr cf_copy_buffer
+
+;     ; read sector again
+;     jsr cf_do_read
+
+;     ; compare buffers
+;     jsr cf_compare_buffers
+;     bcc @exit                   ; both buffers are the same, exit
+;     dex
+;     bne verify            ; buffers are not the same, read again
+@exit:
+    cli
+    plx
+    rts
+
+cf_compare_buffers:
+    phx
+    ldx #0
+@loop:
+    lda DISK_BUFFER, x
+    cmp FAT_BUFFER2, x
+    bne @exit_fail
+    inx
+    bne @loop
+@loop2:
+    lda DISK_BUFFER+256, x
+    cmp FAT_BUFFER2+256, x
+    bne @exit_fail
+    inx
+    bne @loop2
+    bra @exit_ok
+@exit_fail:
+    sec
+    plx
+    rts
+@exit_ok:
+    clc
+    plx
+    rts
+
+cf_copy_buffer:
+    phx
+    ldx #0
+@loop:
+    lda DISK_BUFFER, x
+    sta FAT_BUFFER2, x
+    inx
+    bne @loop
+@loop2:
+    lda DISK_BUFFER+256, x
+    sta FAT_BUFFER2+256, x
+    inx
+    bne @loop2
+
+    plx
     rts
 
 cf_err:

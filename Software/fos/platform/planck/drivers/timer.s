@@ -2,11 +2,6 @@
 
 COUNTER = CLOCK_SPEED/400        ; n/s
 
-.segment "ZEROPAGE": zeropage
-time: .res 4
-
-.segment "DATA"
-
 timer_init:
     lda IER
     ora #$C0        ;enable interrupt on timer1 timeout
@@ -18,11 +13,6 @@ timer_init:
     lda #>COUNTER       ; set timer to high byte to calculated value from defined clock speed
 
     sta T1CH        
-    lda #0              ; reset time variable
-    sta time
-    sta time+1
-    sta time+2
-    sta time+3
     cli
     rts
     

@@ -1,5 +1,7 @@
 ; SPI defines
-
+.ifndef DATA
+DATA = $80
+.endif
 SS = $07   ; Slave Select with lowest 3 bits
 SCK = $08   ; Clock on bit 3
 MISO = $10  ; MISO on bit 4
@@ -22,17 +24,15 @@ spi_init:
     ora #(MOSI | CONF | SCK | SS) ; set MOSI, CONF, SCK and SS as outputs
     and #($FF^MISO)                 ; set MISO as input        
     sta DDRB
-    lda #$FF
+    lda #$FF                ; flash leds to see what is going on
     sta DDRA
     sta PORTA
-
     rts
 
 spi_select:
     ; selected slave in A
     and #SS                 ; mask slave select bits
     sta PORTB               ; set everything low except for SS bits
-    sta PORTA
     sta spi_slave
     phy
     ldy #$1

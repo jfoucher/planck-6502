@@ -6,7 +6,7 @@ lcd_pos: .res 1
 .segment "BSS"
 LCD_BUF: .res 128
 
-.segment "DATA"
+.segment "CODE"
 
 ; initialize the LCD in 8 bit mode
 lcd_init:
