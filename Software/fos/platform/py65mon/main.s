@@ -8,6 +8,8 @@ io_buffer_ptr: .res 2
 io_read_location: .res 2
 io_sector_tmp: .res 2
 
+zp_tmp: .res 2
+
 .segment "BSS"
 current_sector: .res 2
 
@@ -78,42 +80,100 @@ v_irq:                          ; IRQ handler
     .byte "Bad superblock", AscCR,AscLF, 0
 
 
-
-
-
-    bra @forth
+    jmp @forth
 @ok:
     ; this read the root inode to 
-    jsr minix_read_root_inode
-    bcs @root_fail
+    jsr minix_read_root
+    bcc @root_ok
     jsr print_message
-    .byte "mode:  ", 0
+    .byte "RF", AscCR,AscLF, 0
+    jmp forth
+@root_ok:
+    ; jsr minix_ls
 
-    lda MINIX_INODE_MODE + 1
-    ldx MINIX_INODE_MODE
-    jsr print16
+    jsr print_message
+    .byte AscCR,AscLF, 0
 
-    jsr minix_read_inode_data
 
+    ; fill search filename with zeroes
+    ldx #30
+@l1:
+    stz MINIX_SEARCH_FILENAME, x
+    dex
+    bne @l1
+    ldx #30                 ; length of data to copy
+    ; copy search filename
+    memcp test_filename, MINIX_SEARCH_FILENAME
+
+    jsr print_message
+    .byte AscCR,AscLF, 0
+    jsr minix_find_inode_for_filename       ; search filename
+    bcs @find_fail
+
+    jsr minix_read_file
+    bcs @file_fail
+
+    jsr print_message
+    .byte "file read", AscCR,AscLF, 0
+    bra @forth
+@file_fail:
+    jsr print_message
+    .byte "Not a regular file", AscCR,AscLF, 0
+    jmp forth
+@find_fail:
     jsr print_message
     .byte AscCR,AscLF, 0
     jsr print_message
     .byte "Data: ", 0
+
+
     lda io_buffer_ptr + 1
     ldx io_buffer_ptr
     jsr print16
+
+    jsr print_message
+    .byte "NF", AscCR,AscLF, 0
     jsr print_message
     .byte AscCR,AscLF, 0
 
-
-    jsr print_message
-    .byte AscCR,AscLF, 0
-    bra @forth
-@root_fail:
-    jsr print_message
-    .byte "inode fail", AscCR,AscLF, 0
 @forth:
     jmp forth
+
+
+minix_ls:
+    phy
+    
+    ; load first entry
+    ldy #0
+@loop:
+    lda #$0D
+    jsr kernel_putc
+    lda #$0A
+    jsr kernel_putc
+    lda (io_buffer_ptr), y
+    beq @exit                   ; if this points to the 0 inode, exit now, because this file does not exist
+    ; otherwise, the file does exist, print its name
+    cp16 io_buffer_ptr, util_tmp
+    inc16 util_tmp
+    inc16 util_tmp
+    phy
+    jsr print_zp_index_string
+    ply
+    ; increase y by 20 to load next entry
+    tya
+    adc #$20
+    bcs @inchigh
+    tay
+    bra @loop
+@inchigh:
+    inc io_buffer_ptr + 1
+    tay
+    bra @loop
+@exit:
+    ply
+    rts
+
+
 
 platform_bye:   
     jmp platform_bye

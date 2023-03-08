@@ -1,4 +1,4 @@
-COMMON_SOURCES=macros.s fat16.s forth.s native_words.s headers.s strings.s forth_code/user_words.asc forth_code/forth_words.asc
+COMMON_SOURCES=macros.s fat16.s minix.s utils.s forth.s native_words.s headers.s strings.s forth_code/user_words.asc forth_code/forth_words.asc
 
 clean:
 	$(RM) *.bin *.o platform/*.o platform/*/*.o *labelmap.txt *listing.txt forth_code/user_words.asc forth_code/forth_words.asc

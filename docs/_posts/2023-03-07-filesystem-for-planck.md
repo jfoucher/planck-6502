@@ -98,3 +98,4 @@ The `ZONE N` fields gives us the location of the file data. `ZONE 0` is the firs
 With only the direct zones, each file can contain 7kb of data. With the indirect zone added, this number jumps to 7+64 or 71k, and with the double indirect zone, to over 4 Mb.
 
 
+To read a file, then we need to get it's inode. 

@@ -1,7 +1,7 @@
 
 
 ; This is a library to use a minix file system on the 65C02 CMOS processor.
-; it requires 2 bytes in zeropage, 106 bytes for variables in RAM
+; it requires 2 bytes in zeropage, 97 bytes for variables in RAM
 ; and a buffer of 1024 bytes provided by the user of this library.
 ; it also requires the caller to provide an io_read_sector subroutine
 ; with two parameters : 
@@ -30,22 +30,27 @@ MINIX_MAGIC_NUMBER = $138F		; minix fs, 30 char names
 MINIX_REGULAR_FILE = $8000
 MINIX_DIRECTORY = $4000
 
-MINIX_ROOT_INODE = 0            ; this should be one, but it seems to be zero on my FS ? 
-
+MINIX_ROOT_INODE = 1            ; inodes are 1 indexed, so inode 1 is the first one
 
 ; zeropage variables, 2 bytes required
 .segment "ZEROPAGE": zeropage
 MINIX_PTR: .res 2
 
 .segment "BSS"
-; RAM storage, 106 bytes required
-.align 16
+; RAM storage, 97 bytes required
+
 MINIX_CURRENT_BLOCK: .res 2 ; block to read
 MINIX_SECTOR: .res 4
 MINIX_CURRENT_INODE: .res 2
+MINIX_CURRENT_DIR_INODE: .res 2
+MINIX_CURRENT_FILE_INODE: .res 2
+
 MINIX_TMP: .res 2
 MINIX_FILESIZE_COMPARE: .res 2
 MINIX_ZONE_TO_READ: .res 1
+MINIX_SEARCH_INODE: .res 2
+MINIX_SEARCH_FILENAME: .res 30
+
 
 MINIX_SUPERBLOCK:
 MINIX_N_INODES: .res 2
@@ -81,6 +86,8 @@ MINIX_INODE_DOUBLE_INDIRECT: .res 2
 
 .segment "DATA"
 
+MINIX_DIRENT_JUMP: .byte $20, $0
+
 ; setup MINIX_CURRENT_BLOCK to indicate which block to read
 ; the resulting block data will be in the buffer pointed to by io_buffer_ptr
 ; he caller is reponsible for setting up io_buffer_ptr
@@ -115,19 +122,120 @@ minix_read_root_inode:
     sta MINIX_CURRENT_INODE
     stz MINIX_CURRENT_INODE + 1
 
+
     jsr minix_read_inode                ; read the inode
 
     ; check that it is a directory
     lda MINIX_INODE_MODE+1
     and #>MINIX_DIRECTORY
     beq minix_read_root_inode_fail
+    ; we have read root inode successfully
+    lda #MINIX_ROOT_INODE               ; save the root inode number to MINIX_CURRENT_DIR_INODE
+    sta MINIX_CURRENT_DIR_INODE         ; because this is the current directory
+    stz MINIX_CURRENT_DIR_INODE + 1
     clc
     rts
 minix_read_root_inode_fail:
     sec
     rts
 
+minix_read_root:
+    jsr minix_read_root_inode
+    bcs @exit_fail
+    jsr minix_read_inode_data
+    clc
+    rts
+@exit_fail:
+    sec
+    rts
+
+minix_read_file:
+    cp16 MINIX_CURRENT_FILE_INODE, MINIX_CURRENT_INODE
+    jsr minix_read_inode                ; read the inode
+
+    ; check that it is a file
+    lda MINIX_INODE_MODE+1
+    and #>MINIX_REGULAR_FILE
+    beq @exit_fail
+
+    jsr minix_read_inode_data           ; the first block of data for the file is now in the buffer
+    clc
+    rts
+@exit_fail:
+    sec
+    rts
+
+; Find the inode corresponding to the 
+minix_find_inode_for_filename:
+    ; get the data for the current dir inode
+    ; to do that, we first set MINIX_CURRENT_INODE to MINIX_CURRENT_DIR_INODE, 
+    ; which contains the inode for the current directory
+    ; then we read the inode data
+    ; and loop through it until we find the right filename
+    ; and then we set MINIX_CURRENT_INODE to the found inode
+    ; and set the carry to indicate success
+    ; otherwise, clear the carry to indicate failure
+    ; the filename to look for is in MINIX_SEARCH_FILENAME
+    ; the caller has to zero these 30 bytes before setting the filename to search
+    ; at the beginning of this buffer
+
+    cp16 MINIX_CURRENT_DIR_INODE, MINIX_CURRENT_INODE
+    jsr minix_read_inode                ; read the inode
+    jsr minix_read_inode_data                           ; the data for the directory is now in the buffer
+
+    ; loop through the buffer to check the filename
+    phy
+    cp16 io_buffer_ptr, MINIX_PTR       ; copy the current io buffer pointer to our ZP pointer
+    ; load first entry
+    ldy #0
+@loop:
+    lda (MINIX_PTR), y                    ; check low byte of inode number
+    bne @inode_not_zero                   ; if it's not 0 it means we have a file here
+    iny                                   ; check high byte of inode number
+    lda (MINIX_PTR), y                    ; do the same for the high byte of the inode number
+    bne @inode_not_zero2
+    
+    bra @exit_fail                        ; otherwise, there is nothing here nor beyond, exit now
+    
+@inode_not_zero:
+    iny             ; we get here without having incremented y, so do it twice
+@inode_not_zero2:   ; if we get here directly, y has already been incremented once
+    iny             ; increment y again to point to start of file
+    
+    ; and then check if the name corresponds
+@inner:
+    lda (MINIX_PTR), y
+    beq @exit_success                   ; we reached the end of the filename, success
+    cmp MINIX_SEARCH_FILENAME-2, y
+    bne @next
+    iny                                 ; increase y by one to check next character
+    cpy #32                             ; check if we reached the end of the filename
+    bcc @inner                          ; if not, keep checking
+    bra @exit_success                   ; file found
+@next:
+    ; increase MINIX_PTR by $20 to point to start of next entry
+    add16 MINIX_PTR, MINIX_DIRENT_JUMP, MINIX_PTR
+    ldy #0
+    bra @loop
+@exit_success:
+    ldy #0
+    lda (MINIX_PTR), y
+    sta MINIX_CURRENT_FILE_INODE          ; save low byte of inode number to MINIX_CURRENT_FILE_INODE   
+    iny
+    lda (MINIX_PTR), y
+    sta MINIX_CURRENT_FILE_INODE + 1          ; save high byte of inode number to MINIX_CURRENT_FILE_INODE 
+    ply
+    clc
+    rts
+@exit_fail:
+    ply
+    sec
+    rts
+
 ; once an inode is loaded, read the file data
+; if the carry is set on exit, it means there is data left to read, so we should call this routine again
+; if the carry is unset, we reached the end of the data and should stop reading
+
 minix_read_inode_data:
     phy
     ; check if zone to read is zero.
@@ -138,6 +246,8 @@ minix_read_inode_data:
     ; to be decremented each time we come here
 @getzone:
     lda MINIX_ZONE_TO_READ
+    cmp #7                                      ; we only handle the direct zones for now
+    bcs @exit_end                                   ; so we exit if we are trying to read zone 7 or higher
     sta MINIX_TMP                               ; copy current zone to temporary
     stz MINIX_TMP + 1
     asl MINIX_TMP                               ; multiply by two because we want the byte offset
@@ -155,44 +265,53 @@ minix_read_inode_data:
     lda (MINIX_PTR+1), y
     sta MINIX_CURRENT_BLOCK+1
 
-    jsr print_message
-    .byte AscCR,AscLF, 0
-    lda MINIX_CURRENT_BLOCK +1
-    ldx MINIX_CURRENT_BLOCK
-    
-    jsr print16
-    jsr print_message
-    .byte AscCR,AscLF, 0
     jsr minix_read_block                    ; and we read it
-    ; TODO add a check for file length
+    ; add a check for file length
     ; we should reduce it by 1024 each time this function is called
     ldy #4
 @dec_loop:
-    dec16zero MINIX_FILESIZE_COMPARE    ; decrement the two high bytes of the filesize 4 times this reduces the file size left by 1024
-    beq @end_loop                       ; 
+    dec16zero MINIX_FILESIZE_COMPARE    ; decrement the two high bytes of the filesize 4 times: this reduces the file size left by 1024
+    beq @end_loop                       ; if we reach zero on the high bytes, we have only one block left to read for the remainder of the file so exit now
     dey
     bne @dec_loop
+    
 @end_loop:
-    inc16 MINIX_ZONE_TO_READ                ; we increment MINIX_ZONE_TO_READ for the next time we get called
+    ; TODO check Y here to see if we whould read another block or not
+    ; if y is > 0 then we should read another block
+    ; otherwise, the end of the data is in the block we just read
+    cpy #1
+    bcs @exit_end
+    inc16 MINIX_ZONE_TO_READ            ; we increment MINIX_ZONE_TO_READ for the next time we get called
+    bra @exit_continue
+@exit_end:
     ply
+    clc
     rts
+@exit_continue:
+    ply
+    sec
+    rts
+
+
 
 ; read one inode entry into RAM data structure
 ; the number of the inode to read is in MINIX_CURRENT_INODE
 minix_read_inode:
     phy
-    ; MINIX_CURRENT_INODE contains a pointer to the inode we have to read to find the data zone
+    ; MINIX_CURRENT_INODE contains the number of the inode we have to read to find the data zone
     ; the blocks with inodes start at block 1 + MINIX_N_INODE_MAP_BLOCKS + MINIX_N_ZONE_MAP_BLOCKS
     cp16 MINIX_N_INODE_MAP_BLOCKS, MINIX_CURRENT_BLOCK    ; copy number of inode map blocks to temporary
     inc16 MINIX_CURRENT_BLOCK                             ; add 1 to account for superblock
     inc16 MINIX_CURRENT_BLOCK                             ; add 1 to account for blank root block
     add16 MINIX_CURRENT_BLOCK, MINIX_N_ZONE_MAP_BLOCKS, MINIX_CURRENT_BLOCK ; add the number of zone map blocks
 
+    dec16 MINIX_CURRENT_INODE       ; since inodes are 1 indexed, we need to decrement it by one
 
     ; we have the first block with inodes in MINIX_CURRENT_BLOCK
     ; now we have to add the number of blocks necessary to reach the MINIX_CURRENT_INODEth block
     ; each inode is 32 bytes, which means there are 32 in each block
     ; so let's divide MINIX_CURRENT_INODE by 32 and add it to the current block to get the real block where that inode is located
+    
     cp16 MINIX_CURRENT_INODE, MINIX_TMP
     ldy #5
 minix_read_inode_loop1:
@@ -235,6 +354,7 @@ minix_read_inode_loop3:
     ; so that when we read the data we start with zone 0
     stz MINIX_ZONE_TO_READ
     stz MINIX_ZONE_TO_READ + 1
+    inc16 MINIX_CURRENT_INODE       ; put current inode number back to what it was, in case we need ot again
     ply
     rts
 

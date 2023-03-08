@@ -79,6 +79,8 @@ jsr kernel_putc
     beq @end            ; if high byte is also zero, we reached zero, exit now
 @skip:
     dec src
+    bne @end            ; if low byte is not zero exit now
+    lda src + 1         ; if low byte is zero, load high byte to check if it's also zero
 @end:
 .endmacro
 
