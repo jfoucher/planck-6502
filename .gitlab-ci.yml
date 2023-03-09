@@ -315,6 +315,45 @@ pages:
     - cd docs && find . -type f -exec sed -i 's/___VERSION___/'"$CI_COMMIT_TAG"'/g' {} \;  && cd ../
     - cd docs && bundle exec jekyll build -d ../public
     - mkdir ../public/fabrication
+    - cp -aR ../Hardware/Fabrication/* ../public/fabrication/
+    - apt-get update -yqq && apt-get install -y -qq git curl unzip gnupg rsync
+    - ls -la
+    - 'which ssh-agent || ( apt-get update -y && apt-get install openssh-client -y )'
+    - eval $(ssh-agent -s)
+    - echo "$SSH_PRIVATE_KEY" | tr -d '\r' | ssh-add - > /dev/null
+    - mkdir -p ~/.ssh
+    - chmod 700 ~/.ssh
+    - which ssh-keyscan
+    - ssh-keyscan -p 2543 144.76.104.209 >> ~/.ssh/known_hosts
+    - chmod 644 ~/.ssh/known_hosts
+    - rsync -rv -e "ssh -p 2543" ../public/* deploy@144.76.104.209:/var/www/planck6502.com
+
+  artifacts:
+    paths:
+      - public
+  rules:
+    - if: '$CI_COMMIT_TAG'
+      when: on_success
+      changes:
+        paths:
+          - "docs/**/*"
+          - "**/*.kicad_pcb"
+          - "**/*.kicad_sch"
+        compare_to: 'main'
+
+
+manual_pages:
+  image: ruby:2.6
+  variables:
+    JEKYLL_ENV: production
+    LC_ALL: C.UTF-8
+  stage: deploy_pages
+  script:
+    - gem install bundler
+    - cd docs && bundle install && cd ../
+    - cd docs && find . -type f -exec sed -i 's/___VERSION___/'"$CI_COMMIT_TAG"'/g' {} \;  && cd ../
+    - cd docs && bundle exec jekyll build -d ../public
+    - mkdir ../public/fabrication
     - [ -d ../Hardware/Fabrication ] && cp -aR ../Hardware/Fabrication/* ../public/fabrication/
     - apt-get update -yqq && apt-get install -y -qq git curl unzip gnupg rsync
     - ls -la
