@@ -304,7 +304,7 @@ proto_out:
   
   
 pages:
-  image: ruby:2.6
+  image: ruby:3.1
   variables:
     JEKYLL_ENV: production
     LC_ALL: C.UTF-8
@@ -343,7 +343,7 @@ pages:
 
 
 manual_pages:
-  image: ruby:2.6
+  image: ruby:3.1
   variables:
     JEKYLL_ENV: production
     LC_ALL: C.UTF-8
