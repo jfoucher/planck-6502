@@ -8,10 +8,13 @@ ACIA_STATUS = ACIA_BASE + 1
 ACIA_CMD = ACIA_BASE + 2
 ACIA_CTRL = ACIA_BASE + 3
 
+.include "../fos/macros.s"
+
+
 .segment "ZEROPAGE": zeropage
 CF_POINTER: .res 2
 CF_BUF_PTR: .res 2
-
+util_tmp: .res 2
 
 
 
@@ -36,6 +39,8 @@ CF_CURRENT_DIR: .res 12
 FAT_FILE_NAME_TMP: .res 12
 
 FAT_BUFFER: .res $200
+
+LBA_SIZE: .res 4
 
 .segment "CODE"
 reset:
@@ -62,6 +67,88 @@ start:
 @done:
     lda #$0d
     jsr acia_out
+    lda #$0A
+    jsr acia_out
+    lda #$0D
+    jsr acia_out
+    lda #$0A
+    jsr acia_out
+    lda #$0D
+    jsr acia_out
+
+    ldy #$20
+    jsr delay_long
+
+    jsr cf_init
+    jsr cf_wait
+    lda #$EC
+    sta CF_ADDRESS + 7
+    jsr cf_wait
+    jsr cf_read
+
+    jsr output_fat_buffer
+
+    lda #$0A
+    jsr acia_out
+    lda #$0D
+    jsr acia_out
+    jsr output_fat_buffer_raw
+    lda #$0A
+    jsr acia_out
+    lda #$0D
+    jsr acia_out
+
+    ; print model number
+    ldx #0
+@loopp:
+    lda FAT_BUFFER+55, x
+    jsr acia_out
+    lda FAT_BUFFER+54, x
+    jsr acia_out
+    inx
+    inx
+    cpx #40
+    bcc @loopp
+
+@exit_p:
+    ; print lba size
+    lda FAT_BUFFER + 123
+    sta LBA_SIZE + 3
+    lda FAT_BUFFER + 122
+    sta LBA_SIZE + 2
+    lda FAT_BUFFER + 121
+    sta LBA_SIZE + 1
+    lda FAT_BUFFER + 120
+    sta LBA_SIZE
+
+    asl32 LBA_SIZE
+    asl32 LBA_SIZE
+    asl32 LBA_SIZE
+    asl32 LBA_SIZE
+    asl32 LBA_SIZE
+    asl32 LBA_SIZE
+    asl32 LBA_SIZE
+    asl32 LBA_SIZE
+    asl32 LBA_SIZE
+
+    jsr print_message
+    .byte $0D, $0A, 0
+
+    lda LBA_SIZE+3
+    jsr output_ascii
+
+    lda LBA_SIZE+2
+    jsr output_ascii
+
+    lda LBA_SIZE+1
+    jsr output_ascii
+
+    lda LBA_SIZE
+    jsr output_ascii
+
+    jsr print_message
+    .byte " bytes ", 0
+    jmp end
     
     jsr cf_init
     stz CF_LBA
@@ -73,8 +160,39 @@ start:
 
     jsr output_fat_buffer
 
+    lda #$0A
+    jsr acia_out
+    lda #$0D
+    jsr acia_out
+    lda #$0A
+    jsr acia_out
+    lda #$0D
+    jsr acia_out
+    lda #$0A
+    jsr acia_out
+    lda #$0D
+    jsr acia_out
+
+    
     lda #$20
     sta CF_LBA
+    
+    jsr cf_read_sector
+
+    jsr output_fat_buffer
+
+    lda #$0D
+    jsr acia_out
+    lda #$0A
+    jsr acia_out
+    lda #$0D
+    jsr acia_out
+
+    
+    lda #$0B
+    sta CF_LBA
+    lda #2
+    sta CF_LBA + 1
     
     jsr cf_read_sector
 
@@ -84,7 +202,7 @@ start:
 end:
     jmp end
 
-output_fat_buffer:
+output_fat_buffer_raw:
     ldx #0
 @loop:
     lda FAT_BUFFER, x
@@ -93,6 +211,25 @@ output_fat_buffer:
     bne @loop
 @loop2:
     lda FAT_BUFFER+256, x
+    jsr acia_out
+    inx
+    bne @loop2
+
+    rts
+
+output_fat_buffer:
+    ldx #0
+@loop:
+    lda FAT_BUFFER, x
+    jsr output_ascii
+    lda #' '
+    jsr acia_out
+    inx
+    bne @loop
+@loop2:
+    lda FAT_BUFFER+256, x
+    jsr output_ascii
+    lda #' '
     jsr acia_out
     inx
     bne @loop2
@@ -146,7 +283,7 @@ cf_read:
     lda #>FAT_BUFFER
     sta CF_BUF_PTR + 1
 @begin:
-    jsr cf_wait
+    ; jsr cf_wait
     ; lda CF_ADDRESS + 7
     ; and #$08
     ; beq @exit
@@ -158,6 +295,14 @@ cf_read:
     dex
     bne @begin
 
+@loop2:
+    jsr cf_wait
+    lda CF_ADDRESS + 7
+    and #$08
+    beq @exit
+    lda CF_ADDRESS
+    iny
+    bne @loop2 
 @exit:
     plx
     ply
@@ -169,14 +314,17 @@ cf_set_lba:
     ; ldy #3
     ; sta (CF_ADDRESS),y
     sta CF_ADDRESS + 3
+    jsr cf_wait
     lda CF_LBA + 1
     ; ldy #4
     ; sta (CF_ADDRESS), y
     sta CF_ADDRESS + 4
+    jsr cf_wait
     lda CF_LBA + 2
     ; ldy #5
     ; sta (CF_ADDRESS), y
     sta CF_ADDRESS + 5
+    jsr cf_wait
     lda CF_LBA + 3
     and #$0F
     ora #$E0
@@ -187,10 +335,11 @@ cf_set_lba:
     rts
 
 cf_read_sector:
-    sei
+    ; sei
     ; phy
     ; buffer should be set in CF_BUF_PTR
     jsr cf_set_lba
+    jsr cf_wait
     lda #1
     ; ldy #2
     ; sta (CF_ADDRESS), y
@@ -204,7 +353,7 @@ cf_read_sector:
     jsr cf_read
     jsr cf_err
     ; ply
-    cli
+    ; cli
     rts
 
 cf_err:
@@ -325,6 +474,59 @@ delay_short_loop:
   bne delay_short_loop   ; 2 or 3 cycles
   ply
   rts
+
+output_ascii:
+; """Convert byte in A to two ASCII hex digits and EMIT them"""
+    pha
+    lsr             ; convert high nibble first
+    lsr
+    lsr
+    lsr
+    jsr output_ascii_nibble_to_ascii
+    pla
+
+    ; fall through to _nibble_to_ascii
+
+output_ascii_nibble_to_ascii:
+; """Private helper function for byte_to_ascii: Print lower nibble
+; of A and and EMIT it. This does the actual work.
+; """
+    and #$0F
+    ora #'0'
+    cmp #$3A        ; '9+1
+    bcc @1
+    adc #$06
+
+@1:               
+    jsr acia_out
+    rts
+
+
+
+
+print_message:
+	pla					; get return address from stack
+	sta util_tmp
+	pla
+	sta util_tmp + 1		
+
+	bra @inc
+@print:
+	jsr acia_out
+
+@inc:
+	inc util_tmp
+	bne @inced
+	inc util_tmp + 1
+@inced:
+	lda (util_tmp)
+	bne @print
+	lda util_tmp + 1
+	pha
+	lda util_tmp
+	pha
+print_message_end:
+	rts
 
 
 .segment "ROM_VECTORS"

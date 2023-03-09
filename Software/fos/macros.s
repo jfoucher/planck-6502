@@ -34,6 +34,13 @@ jsr kernel_putc
     rol src + 1
 .endmacro
 
+.macro asl32 src 
+    asl src
+    rol src + 1
+    rol src + 2
+    rol src + 3
+.endmacro
+
 .macro lsr16 src 
     lsr src + 1
     ror src
@@ -184,13 +191,6 @@ jsr kernel_putc
 	ply
 .endmacro
 
-
-.macro mov16 SRC, DEST
-	lda SRC
-	sta DEST
-	lda SRC+1
-	sta DEST+1
-.endmacro
 
 .macro mov32 SRC, DEST
 	lda SRC

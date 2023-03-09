@@ -36,8 +36,9 @@ v_reset:
 
 .segment "DATA"
 number_string: .asciiz "000000177777"
-
+file_test_string:.asciiz "Data has been written. Did we overwrite the file?"
 test_filename: .asciiz "test.txt"
+test_filename2: .asciiz "dir"
 
 kernel_init:
 v_nmi:
@@ -86,7 +87,7 @@ v_irq:                          ; IRQ handler
     jsr minix_read_root
     bcc @root_ok
     jsr print_message
-    .byte "RF", AscCR,AscLF, 0
+    .byte "Bad root dir", AscCR,AscLF, 0
     jmp forth
 @root_ok:
     ; jsr minix_ls
@@ -104,22 +105,73 @@ v_irq:                          ; IRQ handler
     ldx #30                 ; length of data to copy
     ; copy search filename
     memcp test_filename, MINIX_SEARCH_FILENAME
+    jsr minix_find_inode_for_filename       ; search filename
+    bcc @find_ok
+    jmp forth
+@find_ok:
+    jsr minix_read_file
+    bcc @file_ok
+    jsr print_message
+    .byte "Not a regular file", AscCR,AscLF, 0
+    jmp forth
+@file_ok:
+    jsr print_message
+    .byte "file read", AscCR,AscLF, 0
+
+    ; change inode userid
+    lda #$55
+    sta MINIX_INODE_UID
+    lda #$AA
+    sta MINIX_INODE_UID + 1
+    strlen file_test_string
+    stx MINIX_INODE_FILESIZE    ; save new future file size
+    jsr minix_write_inode       
+
+    jsr minix_read_file
+
+    ldx #0
+@wloop:
+    lda file_test_string, x
+    beq @wexit
+    sta IO_BUFFER, x
+    inx
+    bra @wloop
+@wexit:
+    jsr minix_write_data
+
+    jsr print_message
+    .byte AscCR,AscLF, 0
+    ldx #30
+@l2:
+    stz MINIX_SEARCH_FILENAME, x
+    dex
+    bne @l2
+    ldx #30                 ; length of data to copy
+    ; copy search filename
+
+    memcp test_filename, MINIX_SEARCH_FILENAME
 
     jsr print_message
     .byte AscCR,AscLF, 0
     jsr minix_find_inode_for_filename       ; search filename
-    bcs @find_fail
-
-    jsr minix_read_file
-    bcs @file_fail
-
+    bcc @file_ok1
     jsr print_message
-    .byte "file read", AscCR,AscLF, 0
-    bra @forth
-@file_fail:
-    jsr print_message
-    .byte "Not a regular file", AscCR,AscLF, 0
+    .byte "file find fail", AscCR,AscLF, 0
     jmp forth
+@file_ok1:
+    jsr print_message
+    .byte "file find 2", AscCR,AscLF, 0
+    jsr minix_read_file
+    bcc @file_ok2
+    jsr print_message
+    .byte "file read fail", AscCR,AscLF, 0
+    jmp forth
+@file_ok2:
+    jsr print_message
+    .byte "file read 2", AscCR,AscLF, 0
+
+    bra @forth
+
 @find_fail:
     jsr print_message
     .byte AscCR,AscLF, 0
@@ -132,7 +184,7 @@ v_irq:                          ; IRQ handler
     jsr print16
 
     jsr print_message
-    .byte "NF", AscCR,AscLF, 0
+    .byte AscCR,AscLF,"NF", AscCR,AscLF, 0
     jsr print_message
     .byte AscCR,AscLF, 0
 
@@ -229,7 +281,40 @@ io_read_sector:
     dec io_buffer_ptr + 1       ; point back to the beginning of the buffer
     ply
     rts
-        
+
+io_write_sector:
+    ; the sector to write to is in io_current_sector
+    ; the data to write is in the buffer pointed to by io_buffer_ptr
+    phy
+    lda #<minix_data                ; load the minix data location
+    sta io_read_location            ; and store it temporarly
+    lda #>minix_data
+    sta io_read_location + 1
+    cp16 io_current_sector, io_sector_tmp   ; copy sector requested to temporary
+    ;multiply requested sector by 512 to get byte offset
+    ldy #9
+@mult:
+    asl16 io_sector_tmp
+    dey
+    bne @mult
+    add16 io_sector_tmp, io_read_location, io_sector_tmp     ; add minix data address to byte offset
+    
+    ldy #0
+@loop1:
+    lda (io_buffer_ptr), y
+    sta (io_sector_tmp), y
+    iny
+    bne @loop1
+    inc io_sector_tmp + 1       ; read next page
+    inc io_buffer_ptr + 1       ; write to next page
+@loop2:
+    lda (io_buffer_ptr), y
+    sta (io_sector_tmp), y
+    iny
+    bne @loop2
+    dec io_buffer_ptr + 1       ; point back to the beginning of the buffer
+    ply
+    rts
 
 .segment "RODATA"
 free_message: .byte " bytes free", $0D, 0

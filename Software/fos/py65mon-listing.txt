@@ -39,6 +39,13 @@ Current file: platform/py65mon/main.s
 000000r 2                   rol src + 1
 000000r 2               .endmacro
 000000r 2               
+000000r 2               .macro asl32 src
+000000r 2                   asl src
+000000r 2                   rol src + 1
+000000r 2                   rol src + 2
+000000r 2                   rol src + 3
+000000r 2               .endmacro
+000000r 2               
 000000r 2               .macro lsr16 src
 000000r 2                   lsr src + 1
 000000r 2                   ror src
@@ -17250,12 +17257,15 @@ Current file: platform/py65mon/main.s
 0043CFr 2               
 0043CFr 2               
 0043CFr 2               ; This is a library to use a minix file system on the 65C02 CMOS processor.
-0043CFr 2               ; it requires 2 bytes in zeropage, 97 bytes for variables in RAM
+0043CFr 2               ; it requires 2 bytes in zeropage, 100 bytes for variables in RAM
 0043CFr 2               ; and a buffer of 1024 bytes provided by the user of this library.
-0043CFr 2               ; it also requires the caller to provide an io_read_sector subroutine
-0043CFr 2               ; with two parameters :
-0043CFr 2               ; io_current_sector: a 4 byte variable in RAM to indicate which sector to read like LBA addressing
+0043CFr 2               ; It also requires the caller to provide two subroutines:
+0043CFr 2               ; - an io_read_sector subroutine
+0043CFr 2               ; - an io_write_sector subroutine
+0043CFr 2               ; both with the same two parameters :
+0043CFr 2               ; io_current_sector: a 4 byte variable in RAM to indicate which sector to read/write like LBA addressing
 0043CFr 2               ; io_buffer_ptr: a zeropage pointer to a buffer in RAM where the sector data will be stored
+0043CFr 2               ; or where it will be found to be written to disk
 0043CFr 2               ; This library is designed to be assembled with ca65 but it should be
 0043CFr 2               ; fairly easy to adapt to another assembler.
 0043CFr 2               
@@ -17286,7 +17296,7 @@ Current file: platform/py65mon/main.s
 00004Er 2  xx xx        MINIX_PTR: .res 2
 000050r 2               
 000050r 2               .segment "BSS"
-000904r 2               ; RAM storage, 97 bytes required
+000904r 2               ; RAM storage, 100 bytes required
 000904r 2               
 000904r 2  xx xx        MINIX_CURRENT_BLOCK: .res 2 ; block to read
 000906r 2  xx xx xx xx  MINIX_SECTOR: .res 4
@@ -17297,49 +17307,50 @@ Current file: platform/py65mon/main.s
 000910r 2  xx xx        MINIX_TMP: .res 2
 000912r 2  xx xx        MINIX_FILESIZE_COMPARE: .res 2
 000914r 2  xx           MINIX_ZONE_TO_READ: .res 1
-000915r 2  xx xx        MINIX_SEARCH_INODE: .res 2
-000917r 2  xx xx xx xx  MINIX_SEARCH_FILENAME: .res 30
-00091Br 2  xx xx xx xx  
-00091Fr 2  xx xx xx xx  
-000935r 2               
-000935r 2               
-000935r 2               MINIX_SUPERBLOCK:
-000935r 2  xx xx        MINIX_N_INODES: .res 2
-000937r 2  xx xx        MINIX_N_ZONES: .res 2
-000939r 2  xx xx        MINIX_N_INODE_MAP_BLOCKS: .res 2
-00093Br 2  xx xx        MINIX_N_ZONE_MAP_BLOCKS: .res 2
-00093Dr 2  xx xx        MINIX_FIRST_DATA_ZONE: .res 2       ;
-00093Fr 2  xx xx        MINIX_LOG_ZONE_SIZE: .res 2         ; size of a data zone = 1024 << MINIX_LOG_ZONE_SIZE
-000941r 2  xx xx xx xx  MINIX_MAX_FILE_SIZE: .res 4
-000945r 2  xx xx        MINIX_MAGIC: .res 2
-000947r 2  xx xx        MINIX_STATE: .res 2
-000949r 2               
-000949r 2               MINIX_DIRENT:
-000949r 2  xx xx        MINIX_INODE_NUMBER: .res 2
-00094Br 2  xx xx xx xx  MINIX_FILENAME: .res 30
-00094Fr 2  xx xx xx xx  
-000953r 2  xx xx xx xx  
-000969r 2               
-000969r 2               MINIX_INODE:
-000969r 2  xx xx        MINIX_INODE_MODE: .res 2
-00096Br 2  xx xx        MINIX_INODE_UID: .res 2
-00096Dr 2  xx xx xx xx  MINIX_INODE_FILESIZE: .res 4
-000971r 2  xx xx xx xx  MINIX_INODE_TIME: .res 4
-000975r 2  xx           MINIX_INODE_GID: .res 1
-000976r 2  xx           MINIX_INODE_LINKS: .res 1
-000977r 2  xx xx        MINIX_INODE_ZONE0: .res 2
-000979r 2  xx xx        MINIX_INODE_ZONE1: .res 2
-00097Br 2  xx xx        MINIX_INODE_ZONE2: .res 2
-00097Dr 2  xx xx        MINIX_INODE_ZONE3: .res 2
-00097Fr 2  xx xx        MINIX_INODE_ZONE4: .res 2
-000981r 2  xx xx        MINIX_INODE_ZONE5: .res 2
-000983r 2  xx xx        MINIX_INODE_ZONE6: .res 2
-000985r 2  xx xx        MINIX_INODE_INDIRECT: .res 2
-000987r 2  xx xx        MINIX_INODE_DOUBLE_INDIRECT: .res 2
-000989r 2               
-000989r 2               .segment "DATA"
+000915r 2  xx           MINIX_ZONE_TO_WRITE: .res 1
+000916r 2  xx xx        MINIX_SEARCH_INODE: .res 2
+000918r 2  xx xx xx xx  MINIX_SEARCH_FILENAME: .res 30
+00091Cr 2  xx xx xx xx  
+000920r 2  xx xx xx xx  
+000936r 2               
+000936r 2               
+000936r 2               MINIX_SUPERBLOCK:
+000936r 2  xx xx        MINIX_N_INODES: .res 2
+000938r 2  xx xx        MINIX_N_ZONES: .res 2
+00093Ar 2  xx xx        MINIX_N_INODE_MAP_BLOCKS: .res 2
+00093Cr 2  xx xx        MINIX_N_ZONE_MAP_BLOCKS: .res 2
+00093Er 2  xx xx        MINIX_FIRST_DATA_ZONE: .res 2       ;
+000940r 2  xx xx        MINIX_LOG_ZONE_SIZE: .res 2         ; size of a data zone = 1024 << MINIX_LOG_ZONE_SIZE
+000942r 2  xx xx xx xx  MINIX_MAX_FILE_SIZE: .res 4
+000946r 2  xx xx        MINIX_MAGIC: .res 2
+000948r 2  xx xx        MINIX_STATE: .res 2
+00094Ar 2               
+00094Ar 2               MINIX_DIRENT:
+00094Ar 2  xx xx        MINIX_INODE_NUMBER: .res 2
+00094Cr 2  xx xx xx xx  MINIX_FILENAME: .res 30
+000950r 2  xx xx xx xx  
+000954r 2  xx xx xx xx  
+00096Ar 2               
+00096Ar 2               MINIX_INODE:
+00096Ar 2  xx xx        MINIX_INODE_MODE: .res 2
+00096Cr 2  xx xx        MINIX_INODE_UID: .res 2
+00096Er 2  xx xx xx xx  MINIX_INODE_FILESIZE: .res 4
+000972r 2  xx xx xx xx  MINIX_INODE_TIME: .res 4
+000976r 2  xx           MINIX_INODE_GID: .res 1
+000977r 2  xx           MINIX_INODE_LINKS: .res 1
+000978r 2  xx xx        MINIX_INODE_ZONE0: .res 2
+00097Ar 2  xx xx        MINIX_INODE_ZONE1: .res 2
+00097Cr 2  xx xx        MINIX_INODE_ZONE2: .res 2
+00097Er 2  xx xx        MINIX_INODE_ZONE3: .res 2
+000980r 2  xx xx        MINIX_INODE_ZONE4: .res 2
+000982r 2  xx xx        MINIX_INODE_ZONE5: .res 2
+000984r 2  xx xx        MINIX_INODE_ZONE6: .res 2
+000986r 2  xx xx        MINIX_INODE_INDIRECT: .res 2
+000988r 2  xx xx        MINIX_INODE_DOUBLE_INDIRECT: .res 2
+00098Ar 2               
+00098Ar 2               .segment "DATA"
 0043CFr 2               
-0043CFr 2  20 00        MINIX_DIRENT_JUMP: .byte $20, $0
+0043CFr 2  20 00        MINIX_DIRENT_JUMP: .byte $20, $0        ; size of a directory entry
 0043D1r 2               
 0043D1r 2               ; setup MINIX_CURRENT_BLOCK to indicate which block to read
 0043D1r 2               ; the resulting block data will be in the buffer pointed to by io_buffer_ptr
@@ -17373,318 +17384,473 @@ Current file: platform/py65mon/main.s
 00440Br 2                   ; one full block is now in the buffer pointed to by io_buffer_ptr
 00440Br 2  60               rts
 00440Cr 2               
-00440Cr 2               ; read the root inode
-00440Cr 2               ;
-00440Cr 2               minix_read_root_inode:
-00440Cr 2  A9 01            lda #MINIX_ROOT_INODE               ; set inode to root inode
-00440Er 2  8D rr rr         sta MINIX_CURRENT_INODE
-004411r 2  9C rr rr         stz MINIX_CURRENT_INODE + 1
-004414r 2               
-004414r 2               
-004414r 2  20 rr rr         jsr minix_read_inode                ; read the inode
-004417r 2               
-004417r 2                   ; check that it is a directory
-004417r 2  AD rr rr         lda MINIX_INODE_MODE+1
-00441Ar 2  29 40            and #>MINIX_DIRECTORY
-00441Cr 2  F0 0A            beq minix_read_root_inode_fail
-00441Er 2                   ; we have read root inode successfully
-00441Er 2  A9 01            lda #MINIX_ROOT_INODE               ; save the root inode number to MINIX_CURRENT_DIR_INODE
-004420r 2  8D rr rr         sta MINIX_CURRENT_DIR_INODE         ; because this is the current directory
-004423r 2  9C rr rr         stz MINIX_CURRENT_DIR_INODE + 1
-004426r 2  18               clc
-004427r 2  60               rts
-004428r 2               minix_read_root_inode_fail:
-004428r 2  38               sec
-004429r 2  60               rts
-00442Ar 2               
-00442Ar 2               minix_read_root:
-00442Ar 2  20 rr rr         jsr minix_read_root_inode
-00442Dr 2  B0 05            bcs @exit_fail
-00442Fr 2  20 rr rr         jsr minix_read_inode_data
-004432r 2  18               clc
-004433r 2  60               rts
-004434r 2               @exit_fail:
-004434r 2  38               sec
-004435r 2  60               rts
-004436r 2               
-004436r 2               minix_read_file:
-004436r 2  AD rr rr 8D      cp16 MINIX_CURRENT_FILE_INODE, MINIX_CURRENT_INODE
-00443Ar 2  rr rr AD rr  
-00443Er 2  rr 8D rr rr  
-004442r 2  20 rr rr         jsr minix_read_inode                ; read the inode
-004445r 2               
-004445r 2                   ; check that it is a file
-004445r 2  AD rr rr         lda MINIX_INODE_MODE+1
-004448r 2  29 80            and #>MINIX_REGULAR_FILE
-00444Ar 2  F0 05            beq @exit_fail
-00444Cr 2               
-00444Cr 2  20 rr rr         jsr minix_read_inode_data           ; the first block of data for the file is now in the buffer
-00444Fr 2  18               clc
-004450r 2  60               rts
-004451r 2               @exit_fail:
-004451r 2  38               sec
-004452r 2  60               rts
-004453r 2               
-004453r 2               ; Find the inode corresponding to the
-004453r 2               minix_find_inode_for_filename:
-004453r 2                   ; get the data for the current dir inode
-004453r 2                   ; to do that, we first set MINIX_CURRENT_INODE to MINIX_CURRENT_DIR_INODE,
-004453r 2                   ; which contains the inode for the current directory
-004453r 2                   ; then we read the inode data
-004453r 2                   ; and loop through it until we find the right filename
-004453r 2                   ; and then we set MINIX_CURRENT_INODE to the found inode
-004453r 2                   ; and set the carry to indicate success
-004453r 2                   ; otherwise, clear the carry to indicate failure
-004453r 2                   ; the filename to look for is in MINIX_SEARCH_FILENAME
-004453r 2                   ; the caller has to zero these 30 bytes before setting the filename to search
-004453r 2                   ; at the beginning of this buffer
-004453r 2               
-004453r 2  AD rr rr 8D      cp16 MINIX_CURRENT_DIR_INODE, MINIX_CURRENT_INODE
-004457r 2  rr rr AD rr  
-00445Br 2  rr 8D rr rr  
-00445Fr 2  20 rr rr         jsr minix_read_inode                ; read the inode
-004462r 2  20 rr rr         jsr minix_read_inode_data                           ; the data for the directory is now in the buffer
+00440Cr 2               minix_write_block:
+00440Cr 2  64 rr            stz io_current_sector                   ; zero current sector to read
+00440Er 2  64 rr            stz io_current_sector + 1
+004410r 2  64 rr            stz io_current_sector + 2
+004412r 2  64 rr            stz io_current_sector + 3
+004414r 2  9C rr rr         stz MINIX_SECTOR + 2                    ; zero top bytes of sector to read
+004417r 2  9C rr rr         stz MINIX_SECTOR + 3
+00441Ar 2  AD rr rr 8D      cp16 MINIX_CURRENT_BLOCK, MINIX_SECTOR  ; copy current block number
+00441Er 2  rr rr AD rr  
+004422r 2  rr 8D rr rr  
+004426r 2  0E rr rr 2E      asl16 MINIX_SECTOR                      ; multiply by two to get first block sector number
+00442Ar 2  rr rr        
+00442Cr 2  90 02            bcc minix_write_block_noinc
+00442Er 2  E6 rr            inc io_current_sector + 2               ; increase higher byte if previous asl set the carry
+004430r 2               minix_write_block_noinc:
+004430r 2  AD rr rr 85      mov16  MINIX_SECTOR, io_current_sector  ; copy result to the sector to read
+004434r 2  rr AD rr rr  
+004438r 2  85 rr        
+00443Ar 2  20 rr rr         jsr io_write_sector          ; read first sector
+00443Dr 2               
+00443Dr 2  E6 rr            inc io_buffer_ptr + 1       ; read from next buffer 512 block to get full 1024 block
+00443Fr 2  E6 rr            inc io_current_sector       ; setup to write to next sector
+004441r 2  20 rr rr         jsr io_write_sector          ; Write next sector
+004444r 2  C6 rr            dec io_buffer_ptr + 1       ; put buffer pointer back
+004446r 2                   ; one full block has now been written to disk
+004446r 2  60               rts
+004447r 2               
+004447r 2               ; read the root inode
+004447r 2               minix_read_root_inode:
+004447r 2  A9 01            lda #MINIX_ROOT_INODE               ; set inode to root inode
+004449r 2  8D rr rr         sta MINIX_CURRENT_INODE
+00444Cr 2  9C rr rr         stz MINIX_CURRENT_INODE + 1
+00444Fr 2               
+00444Fr 2  20 rr rr         jsr minix_read_inode                ; read the inode
+004452r 2               
+004452r 2                   ; check that it is a directory
+004452r 2  AD rr rr         lda MINIX_INODE_MODE+1
+004455r 2  29 40            and #>MINIX_DIRECTORY
+004457r 2  F0 0A            beq minix_read_root_inode_fail
+004459r 2                   ; we have read root inode successfully
+004459r 2  A9 01            lda #MINIX_ROOT_INODE               ; save the root inode number to MINIX_CURRENT_DIR_INODE
+00445Br 2  8D rr rr         sta MINIX_CURRENT_DIR_INODE         ; because this is the current directory
+00445Er 2  9C rr rr         stz MINIX_CURRENT_DIR_INODE + 1
+004461r 2  18               clc
+004462r 2  60               rts
+004463r 2               minix_read_root_inode_fail:
+004463r 2  38               sec
+004464r 2  60               rts
 004465r 2               
-004465r 2                   ; loop through the buffer to check the filename
-004465r 2  5A               phy
-004466r 2  A5 rr 85 rr      cp16 io_buffer_ptr, MINIX_PTR       ; copy the current io buffer pointer to our ZP pointer
-00446Ar 2  A5 rr 85 rr  
-00446Er 2                   ; load first entry
-00446Er 2  A0 00            ldy #0
-004470r 2               @loop:
-004470r 2  B1 rr            lda (MINIX_PTR), y                    ; check low byte of inode number
-004472r 2  D0 07            bne @inode_not_zero                   ; if it's not 0 it means we have a file here
-004474r 2  C8               iny                                   ; check high byte of inode number
-004475r 2  B1 rr            lda (MINIX_PTR), y                    ; do the same for the high byte of the inode number
-004477r 2  D0 03            bne @inode_not_zero2
-004479r 2               
-004479r 2  80 35            bra @exit_fail                        ; otherwise, there is nothing here nor beyond, exit now
-00447Br 2               
-00447Br 2               @inode_not_zero:
-00447Br 2  C8               iny             ; we get here without having incremented y, so do it twice
-00447Cr 2               @inode_not_zero2:   ; if we get here directly, y has already been incremented once
-00447Cr 2  C8               iny             ; increment y again to point to start of file
-00447Dr 2               
-00447Dr 2                   ; and then check if the name corresponds
-00447Dr 2               @inner:
-00447Dr 2  B1 rr            lda (MINIX_PTR), y
-00447Fr 2  F0 1F            beq @exit_success                   ; we reached the end of the filename, success
-004481r 2  D9 rr rr         cmp MINIX_SEARCH_FILENAME-2, y
-004484r 2  D0 07            bne @next
-004486r 2  C8               iny                                 ; increase y by one to check next character
-004487r 2  C0 20            cpy #32                             ; check if we reached the end of the filename
-004489r 2  90 F2            bcc @inner                          ; if not, keep checking
-00448Br 2  80 13            bra @exit_success                   ; file found
-00448Dr 2               @next:
-00448Dr 2                   ; increase MINIX_PTR by $20 to point to start of next entry
-00448Dr 2  18 A5 rr 6D      add16 MINIX_PTR, MINIX_DIRENT_JUMP, MINIX_PTR
-004491r 2  rr rr 85 rr  
-004495r 2  A5 rr 6D rr  
-00449Cr 2  A0 00            ldy #0
-00449Er 2  80 D0            bra @loop
-0044A0r 2               @exit_success:
-0044A0r 2  A0 00            ldy #0
-0044A2r 2  B1 rr            lda (MINIX_PTR), y
-0044A4r 2  8D rr rr         sta MINIX_CURRENT_FILE_INODE          ; save low byte of inode number to MINIX_CURRENT_FILE_INODE
-0044A7r 2  C8               iny
-0044A8r 2  B1 rr            lda (MINIX_PTR), y
-0044AAr 2  8D rr rr         sta MINIX_CURRENT_FILE_INODE + 1          ; save high byte of inode number to MINIX_CURRENT_FILE_INODE
-0044ADr 2  7A               ply
-0044AEr 2  18               clc
-0044AFr 2  60               rts
-0044B0r 2               @exit_fail:
-0044B0r 2  7A               ply
-0044B1r 2  38               sec
-0044B2r 2  60               rts
-0044B3r 2               
-0044B3r 2               ; once an inode is loaded, read the file data
-0044B3r 2               ; if the carry is set on exit, it means there is data left to read, so we should call this routine again
-0044B3r 2               ; if the carry is unset, we reached the end of the data and should stop reading
-0044B3r 2               
-0044B3r 2               minix_read_inode_data:
-0044B3r 2  5A               phy
-0044B4r 2                   ; check if zone to read is zero.
-0044B4r 2  AD rr rr         lda MINIX_ZONE_TO_READ
-0044B7r 2  D0 0C            bne @getzone
-0044B9r 2                   ; if it is, copy the two high bytes of file size to a temporary space
-0044B9r 2  AD rr rr 8D      cp16 MINIX_INODE_FILESIZE, MINIX_FILESIZE_COMPARE
-0044BDr 2  rr rr AD rr  
-0044C1r 2  rr 8D rr rr  
-0044C5r 2                   ; to be decremented each time we come here
-0044C5r 2               @getzone:
-0044C5r 2  AD rr rr         lda MINIX_ZONE_TO_READ
-0044C8r 2  C9 07            cmp #7                                      ; we only handle the direct zones for now
-0044CAr 2  B0 4E            bcs @exit_end                                   ; so we exit if we are trying to read zone 7 or higher
-0044CCr 2  8D rr rr         sta MINIX_TMP                               ; copy current zone to temporary
-0044CFr 2  9C rr rr         stz MINIX_TMP + 1
-0044D2r 2  0E rr rr         asl MINIX_TMP                               ; multiply by two because we want the byte offset
-0044D5r 2  18               clc                                         ; add the zone offset to the address where zone 0 is stored
-0044D6r 2  A9 rr            lda #<MINIX_INODE_ZONE0
-0044D8r 2  6D rr rr         adc MINIX_TMP
-0044DBr 2  85 rr            sta MINIX_PTR
-0044DDr 2  A9 rr            lda #>MINIX_INODE_ZONE0
-0044DFr 2  6D rr rr         adc MINIX_TMP + 1
-0044E2r 2  85 rr            sta MINIX_PTR + 1
-0044E4r 2                   ; we now have the address where we will find the zone to read in MINIX_TMP
-0044E4r 2  A0 00            ldy #0
-0044E6r 2  B1 rr            lda (MINIX_PTR),y                 ; we copy that data to the block to read
-0044E8r 2  8D rr rr         sta MINIX_CURRENT_BLOCK
-0044EBr 2  B1 rr            lda (MINIX_PTR+1), y
-0044EDr 2  8D rr rr         sta MINIX_CURRENT_BLOCK+1
-0044F0r 2               
-0044F0r 2  20 rr rr         jsr minix_read_block                    ; and we read it
-0044F3r 2                   ; add a check for file length
-0044F3r 2                   ; we should reduce it by 1024 each time this function is called
-0044F3r 2  A0 04            ldy #4
-0044F5r 2               @dec_loop:
-0044F5r 2  AD rr rr D0      dec16zero MINIX_FILESIZE_COMPARE    ; decrement the two high bytes of the filesize 4 times: this reduces the file size left by 1024
-0044F9r 2  05 CE rr rr  
-0044FDr 2  F0 08 CE rr  
-004507r 2  F0 03            beq @end_loop                       ; if we reach zero on the high bytes, we have only one block left to read for the remainder of the file so exit now
-004509r 2  88               dey
-00450Ar 2  D0 E9            bne @dec_loop
-00450Cr 2               
-00450Cr 2               @end_loop:
-00450Cr 2                   ; TODO check Y here to see if we whould read another block or not
-00450Cr 2                   ; if y is > 0 then we should read another block
-00450Cr 2                   ; otherwise, the end of the data is in the block we just read
-00450Cr 2  C0 01            cpy #1
-00450Er 2  B0 0A            bcs @exit_end
-004510r 2  EE rr rr D0      inc16 MINIX_ZONE_TO_READ            ; we increment MINIX_ZONE_TO_READ for the next time we get called
-004514r 2  03 EE rr rr  
-004518r 2  80 03            bra @exit_continue
-00451Ar 2               @exit_end:
-00451Ar 2  7A               ply
-00451Br 2  18               clc
-00451Cr 2  60               rts
-00451Dr 2               @exit_continue:
-00451Dr 2  7A               ply
-00451Er 2  38               sec
-00451Fr 2  60               rts
-004520r 2               
-004520r 2               
-004520r 2               
-004520r 2               ; read one inode entry into RAM data structure
-004520r 2               ; the number of the inode to read is in MINIX_CURRENT_INODE
-004520r 2               minix_read_inode:
-004520r 2  5A               phy
-004521r 2                   ; MINIX_CURRENT_INODE contains the number of the inode we have to read to find the data zone
-004521r 2                   ; the blocks with inodes start at block 1 + MINIX_N_INODE_MAP_BLOCKS + MINIX_N_ZONE_MAP_BLOCKS
-004521r 2  AD rr rr 8D      cp16 MINIX_N_INODE_MAP_BLOCKS, MINIX_CURRENT_BLOCK    ; copy number of inode map blocks to temporary
-004525r 2  rr rr AD rr  
-004529r 2  rr 8D rr rr  
-00452Dr 2  EE rr rr D0      inc16 MINIX_CURRENT_BLOCK                             ; add 1 to account for superblock
-004531r 2  03 EE rr rr  
-004535r 2  EE rr rr D0      inc16 MINIX_CURRENT_BLOCK                             ; add 1 to account for blank root block
-004539r 2  03 EE rr rr  
-00453Dr 2  18 AD rr rr      add16 MINIX_CURRENT_BLOCK, MINIX_N_ZONE_MAP_BLOCKS, MINIX_CURRENT_BLOCK ; add the number of zone map blocks
-004541r 2  6D rr rr 8D  
-004545r 2  rr rr AD rr  
-004550r 2               
-004550r 2  AD rr rr D0      dec16 MINIX_CURRENT_INODE       ; since inodes are 1 indexed, we need to decrement it by one
-004554r 2  03 CE rr rr  
-004558r 2  CE rr rr     
+004465r 2               ; We read the root directory data into the memory buffer
+004465r 2               minix_read_root:
+004465r 2  20 rr rr         jsr minix_read_root_inode
+004468r 2  B0 05            bcs @exit_fail
+00446Ar 2  20 rr rr         jsr minix_read_inode_data
+00446Dr 2  18               clc
+00446Er 2  60               rts
+00446Fr 2               @exit_fail:
+00446Fr 2  38               sec
+004470r 2  60               rts
+004471r 2               
+004471r 2               minix_read_file:
+004471r 2  AD rr rr 8D      cp16 MINIX_CURRENT_FILE_INODE, MINIX_CURRENT_INODE
+004475r 2  rr rr AD rr  
+004479r 2  rr 8D rr rr  
+00447Dr 2  20 rr rr         jsr minix_read_inode                ; read the inode
+004480r 2               
+004480r 2                   ; check that it is a file
+004480r 2  AD rr rr         lda MINIX_INODE_MODE+1
+004483r 2  29 80            and #>MINIX_REGULAR_FILE
+004485r 2  F0 05            beq @exit_fail
+004487r 2               
+004487r 2  20 rr rr         jsr minix_read_inode_data           ; the first block of data for the file is now in the buffer
+00448Ar 2  18               clc
+00448Br 2  60               rts
+00448Cr 2               @exit_fail:
+00448Cr 2  38               sec
+00448Dr 2  60               rts
+00448Er 2               
+00448Er 2               ; Find the inode corresponding to the given filename
+00448Er 2               minix_find_inode_for_filename:
+00448Er 2                   ; get the data for the current dir inode
+00448Er 2                   ; to do that, we first set MINIX_CURRENT_INODE to MINIX_CURRENT_DIR_INODE,
+00448Er 2                   ; which contains the inode for the current directory
+00448Er 2                   ; then we read the inode data
+00448Er 2                   ; and loop through it until we find the right filename
+00448Er 2                   ; and then we set MINIX_CURRENT_INODE to the found inode
+00448Er 2                   ; and set the carry to indicate success
+00448Er 2                   ; otherwise, clear the carry to indicate failure
+00448Er 2                   ; the filename to look for is in MINIX_SEARCH_FILENAME
+00448Er 2                   ; the caller has to zero these 30 bytes before setting the filename to search
+00448Er 2                   ; at the beginning of this buffer
+00448Er 2               
+00448Er 2  AD rr rr 8D      cp16 MINIX_CURRENT_DIR_INODE, MINIX_CURRENT_INODE
+004492r 2  rr rr AD rr  
+004496r 2  rr 8D rr rr  
+00449Ar 2  20 rr rr         jsr minix_read_inode                ; read the inode for the directory
+00449Dr 2  20 rr rr         jsr minix_read_inode_data           ; the data for the directory is now in the buffer
+0044A0r 2                   ; loop through the buffer to check the filename
+0044A0r 2  5A               phy
+0044A1r 2  A5 rr 85 rr      cp16 io_buffer_ptr, MINIX_PTR       ; copy the current io buffer pointer to our ZP pointer
+0044A5r 2  A5 rr 85 rr  
+0044A9r 2                   ; load first entry
+0044A9r 2  A0 00            ldy #0
+0044ABr 2               @loop:
+0044ABr 2  B1 rr            lda (MINIX_PTR), y                    ; check low byte of inode number
+0044ADr 2  D0 07            bne @inode_not_zero                   ; if it's not 0 it means we have a file here
+0044AFr 2  C8               iny                                   ; check high byte of inode number
+0044B0r 2  B1 rr            lda (MINIX_PTR), y                    ; if it's not 0 it means we have a file here
+0044B2r 2  D0 03            bne @inode_not_zero2
+0044B4r 2               
+0044B4r 2  80 35            bra @exit_fail                        ; otherwise, there is nothing here nor beyond, exit now
+0044B6r 2               
+0044B6r 2               @inode_not_zero:
+0044B6r 2  C8               iny             ; we get here without having incremented y, so do it twice
+0044B7r 2               @inode_not_zero2:   ; if we get here directly, y has already been incremented once
+0044B7r 2  C8               iny             ; increment y again to point to start of file
+0044B8r 2               
+0044B8r 2                   ; and then check if the name corresponds
+0044B8r 2               @inner:
+0044B8r 2  B1 rr            lda (MINIX_PTR), y
+0044BAr 2  F0 1F            beq @exit_success                   ; we reached the end of the filename, success
+0044BCr 2  D9 rr rr         cmp MINIX_SEARCH_FILENAME-2, y
+0044BFr 2  D0 07            bne @next
+0044C1r 2  C8               iny                                 ; increase y by one to check next character
+0044C2r 2  C0 20            cpy #32                             ; check if we reached the end of the filename
+0044C4r 2  90 F2            bcc @inner                          ; if not, keep checking
+0044C6r 2  80 13            bra @exit_success                   ; file found
+0044C8r 2               @next:
+0044C8r 2                   ; increase MINIX_PTR by $20 to point to start of next entry
+0044C8r 2  18 A5 rr 6D      add16 MINIX_PTR, MINIX_DIRENT_JUMP, MINIX_PTR
+0044CCr 2  rr rr 85 rr  
+0044D0r 2  A5 rr 6D rr  
+0044D7r 2  A0 00            ldy #0
+0044D9r 2  80 D0            bra @loop
+0044DBr 2               @exit_success:
+0044DBr 2  A0 00            ldy #0
+0044DDr 2  B1 rr            lda (MINIX_PTR), y
+0044DFr 2  8D rr rr         sta MINIX_CURRENT_FILE_INODE          ; save low byte of inode number to MINIX_CURRENT_FILE_INODE
+0044E2r 2  C8               iny
+0044E3r 2  B1 rr            lda (MINIX_PTR), y
+0044E5r 2  8D rr rr         sta MINIX_CURRENT_FILE_INODE + 1          ; save high byte of inode number to MINIX_CURRENT_FILE_INODE
+0044E8r 2  7A               ply
+0044E9r 2  18               clc
+0044EAr 2  60               rts
+0044EBr 2               @exit_fail:
+0044EBr 2  7A               ply
+0044ECr 2  38               sec
+0044EDr 2  60               rts
+0044EEr 2               
+0044EEr 2               
+0044EEr 2               
+0044EEr 2               ; once an inode is loaded, read the file data
+0044EEr 2               ; if the carry is set on exit, it means there is data left to read, so we should call this routine again
+0044EEr 2               ; if the carry is unset, we reached the end of the data and should stop reading
+0044EEr 2               minix_read_inode_data:
+0044EEr 2  5A               phy
+0044EFr 2                   ; check if zone to read is zero.
+0044EFr 2  AD rr rr         lda MINIX_ZONE_TO_READ
+0044F2r 2  D0 0C            bne @getzone
+0044F4r 2                   ; if it is, copy the two high bytes of file size to a temporary space
+0044F4r 2  AD rr rr 8D      cp16 MINIX_INODE_FILESIZE, MINIX_FILESIZE_COMPARE
+0044F8r 2  rr rr AD rr  
+0044FCr 2  rr 8D rr rr  
+004500r 2                   ; to be decremented each time we come here
+004500r 2               @getzone:
+004500r 2  AD rr rr         lda MINIX_ZONE_TO_READ
+004503r 2  C9 07            cmp #7                                      ; we only handle the direct zones for now
+004505r 2  B0 4E            bcs @exit_end                                   ; so we exit if we are trying to read zone 7 or higher
+004507r 2  8D rr rr         sta MINIX_TMP                               ; copy current zone to temporary
+00450Ar 2  9C rr rr         stz MINIX_TMP + 1
+00450Dr 2  0E rr rr         asl MINIX_TMP                               ; multiply by two because we want the byte offset
+004510r 2  18               clc                                         ; add the zone offset to the address where zone 0 is stored
+004511r 2  A9 rr            lda #<MINIX_INODE_ZONE0
+004513r 2  6D rr rr         adc MINIX_TMP
+004516r 2  85 rr            sta MINIX_PTR
+004518r 2  A9 rr            lda #>MINIX_INODE_ZONE0
+00451Ar 2  6D rr rr         adc MINIX_TMP + 1
+00451Dr 2  85 rr            sta MINIX_PTR + 1
+00451Fr 2                   ; we now have the address where we will find the zone to read in MINIX_TMP
+00451Fr 2  A0 00            ldy #0
+004521r 2  B1 rr            lda (MINIX_PTR),y                 ; we copy that data to the block to read
+004523r 2  8D rr rr         sta MINIX_CURRENT_BLOCK
+004526r 2  B1 rr            lda (MINIX_PTR+1), y
+004528r 2  8D rr rr         sta MINIX_CURRENT_BLOCK+1
+00452Br 2               
+00452Br 2  20 rr rr         jsr minix_read_block                    ; and we read it
+00452Er 2                   ; add a check for file length
+00452Er 2                   ; we should reduce it by 1024 each time this function is called
+00452Er 2  A0 04            ldy #4
+004530r 2               @dec_loop:
+004530r 2  AD rr rr D0      dec16zero MINIX_FILESIZE_COMPARE    ; decrement the two high bytes of the filesize 4 times: this reduces the file size left by 1024
+004534r 2  05 CE rr rr  
+004538r 2  F0 08 CE rr  
+004542r 2  F0 03            beq @end_loop                       ; if we reach zero on the high bytes, we have only one block left to read for the remainder of the file so exit now
+004544r 2  88               dey
+004545r 2  D0 E9            bne @dec_loop
+004547r 2               
+004547r 2               @end_loop:
+004547r 2                   ; TODO check Y here to see if we whould read another block or not
+004547r 2                   ; if y is > 0 then we should read another block
+004547r 2                   ; otherwise, the end of the data is in the block we just read
+004547r 2  C0 01            cpy #1
+004549r 2  B0 0A            bcs @exit_end
+00454Br 2  EE rr rr D0      inc16 MINIX_ZONE_TO_READ            ; we increment MINIX_ZONE_TO_READ for the next time we get called
+00454Fr 2  03 EE rr rr  
+004553r 2  80 03            bra @exit_continue
+004555r 2               @exit_end:
+004555r 2  7A               ply
+004556r 2  18               clc
+004557r 2  60               rts
+004558r 2               @exit_continue:
+004558r 2  7A               ply
+004559r 2  38               sec
+00455Ar 2  60               rts
 00455Br 2               
-00455Br 2                   ; we have the first block with inodes in MINIX_CURRENT_BLOCK
-00455Br 2                   ; now we have to add the number of blocks necessary to reach the MINIX_CURRENT_INODEth block
-00455Br 2                   ; each inode is 32 bytes, which means there are 32 in each block
-00455Br 2                   ; so let's divide MINIX_CURRENT_INODE by 32 and add it to the current block to get the real block where that inode is located
 00455Br 2               
-00455Br 2  AD rr rr 8D      cp16 MINIX_CURRENT_INODE, MINIX_TMP
-00455Fr 2  rr rr AD rr  
-004563r 2  rr 8D rr rr  
-004567r 2  A0 05            ldy #5
-004569r 2               minix_read_inode_loop1:
-004569r 2  4E rr rr 6E      lsr16 MINIX_TMP
-00456Dr 2  rr rr        
-00456Fr 2  88               dey
-004570r 2  D0 F7            bne minix_read_inode_loop1
-004572r 2               
-004572r 2  18 AD rr rr      add16 MINIX_CURRENT_BLOCK, MINIX_TMP, MINIX_CURRENT_BLOCK
-004576r 2  6D rr rr 8D  
-00457Ar 2  rr rr AD rr  
-004585r 2               
-004585r 2                   ; MINIX_CURRENT_BLOCK is set up, read data
-004585r 2  20 rr rr         jsr minix_read_block            ; read block to buffer
-004588r 2               
-004588r 2                   ; the offset into the block is calculated by taking MINIX_CURRENT_INODE,
-004588r 2                   ; dividing by 32 and taking the remainder
-004588r 2                   ; (which is done by doing and $1F) and then
-004588r 2                   ; multiplying by 32 again to get the byte ofset into the block
-004588r 2  9C rr rr         stz MINIX_TMP + 1
-00458Br 2  AD rr rr         lda MINIX_CURRENT_INODE
-00458Er 2  29 1F            and #$1F
-004590r 2  8D rr rr         sta MINIX_TMP
-004593r 2  A0 05            ldy #5
-004595r 2               minix_read_inode_loop2:
-004595r 2  0E rr rr 2E      asl16 MINIX_TMP         ; multiply inode remainder by 32 bytes to get byte offset
-004599r 2  rr rr        
-00459Br 2  88               dey
-00459Cr 2  D0 F7            bne minix_read_inode_loop2
-00459Er 2               
-00459Er 2                   ; the byte ofset into the block is now in MINIX_TMP
-00459Er 2                   ; add it to the buffer pointer
-00459Er 2                   ; and save it to our own pointer
-00459Er 2  18 AD rr rr      add16 MINIX_TMP, io_buffer_ptr, MINIX_PTR
-0045A2r 2  65 rr 85 rr  
-0045A6r 2  AD rr rr 65  
-0045ADr 2               
-0045ADr 2               minix_read_inode_loop3:
-0045ADr 2                   ; copy from buffer to data structure
-0045ADr 2  B1 rr            lda (MINIX_PTR), y
-0045AFr 2  99 rr rr         sta MINIX_INODE, y
-0045B2r 2  88               dey
-0045B3r 2  D0 F8            bne minix_read_inode_loop3
-0045B5r 2                   ; the inode is now stored in MINIX_INODE for future reference
-0045B5r 2                   ; we set the zone to read to zero
-0045B5r 2                   ; so that when we read the data we start with zone 0
-0045B5r 2  9C rr rr         stz MINIX_ZONE_TO_READ
-0045B8r 2  9C rr rr         stz MINIX_ZONE_TO_READ + 1
-0045BBr 2  EE rr rr D0      inc16 MINIX_CURRENT_INODE       ; put current inode number back to what it was, in case we need ot again
-0045BFr 2  03 EE rr rr  
-0045C3r 2  7A               ply
-0045C4r 2  60               rts
-0045C5r 2               
-0045C5r 2               ; read the superblock
-0045C5r 2               ; carry clear on success
-0045C5r 2               ; carry set on error
-0045C5r 2               minix_read_superblock:
-0045C5r 2  5A               phy                             ; save y register just in case
-0045C6r 2  A9 01            lda #1                          ; setup to read block 1
-0045C8r 2  8D rr rr         sta MINIX_CURRENT_BLOCK         ; this is the second block on the disk
-0045CBr 2  9C rr rr         stz MINIX_CURRENT_BLOCK + 1
-0045CEr 2  20 rr rr         jsr minix_read_block            ; read block to buffer
-0045D1r 2  A0 14            ldy #20                         ; copy data to RAM
-0045D3r 2               
-0045D3r 2               minix_read_superblock_loop:
-0045D3r 2  B1 rr            lda (io_buffer_ptr), y
-0045D5r 2  99 rr rr         sta MINIX_SUPERBLOCK, y
-0045D8r 2  88               dey
-0045D9r 2  D0 F8            bne minix_read_superblock_loop
-0045DBr 2               
-0045DBr 2                   ; set current inode to root inode
-0045DBr 2  9C rr rr         stz MINIX_CURRENT_INODE + 1
-0045DEr 2  A9 01            lda #MINIX_ROOT_INODE
-0045E0r 2  8D rr rr         sta MINIX_CURRENT_INODE
-0045E3r 2               
-0045E3r 2                   ; check for magic number
-0045E3r 2  AD rr rr         lda MINIX_MAGIC
-0045E6r 2  C9 8F            cmp #<MINIX_MAGIC_NUMBER
-0045E8r 2  D0 0A            bne minix_read_superblock_fail
-0045EAr 2  AD rr rr         lda MINIX_MAGIC + 1
-0045EDr 2  C9 13            cmp #>MINIX_MAGIC_NUMBER
-0045EFr 2  D0 03            bne minix_read_superblock_fail
-0045F1r 2  7A               ply
-0045F2r 2  18               clc
-0045F3r 2  60               rts
-0045F4r 2               minix_read_superblock_fail:
-0045F4r 2  7A               ply
-0045F5r 2  38               sec
-0045F6r 2  60               rts
-0045F7r 2               
-0045F7r 2               .segment "RODATA"
+00455Br 2               
+00455Br 2               ; Once an inode has been written, we can write the file data
+00455Br 2               ; This routine only writes one block of data at a time, from the buffer pointed to by io_buffer_ptr
+00455Br 2               ; and in the data zone number MINIX_ZONE_TO_WRITE
+00455Br 2               ; this is a reference to the number of the zone in the inode data structure, which itself contains
+00455Br 2               ; the number of the block to write to.
+00455Br 2               ; there is no check for file length, it is up to  the user to manage that.
+00455Br 2               ; This is to allow read / modify / write per block
+00455Br 2               minix_write_data:
+00455Br 2  5A               phy
+00455Cr 2                   ; check if zone to read is zero.
+00455Cr 2  AD rr rr         lda MINIX_ZONE_TO_WRITE
+00455Fr 2  C9 07            cmp #7                                      ; we only handle the direct zones for now
+004561r 2  B0 2F            bcs @exit_end                               ; so we exit if we are trying to write to zone 7 or higher
+004563r 2  8D rr rr         sta MINIX_TMP                               ; copy current zone to temporary
+004566r 2  9C rr rr         stz MINIX_TMP + 1
+004569r 2  0E rr rr         asl MINIX_TMP                               ; multiply by two because we want the byte offset into the inode
+00456Cr 2  18               clc                                         ; add the zone byte offset to the address where zone 0 is stored
+00456Dr 2  A9 rr            lda #<MINIX_INODE_ZONE0
+00456Fr 2  6D rr rr         adc MINIX_TMP
+004572r 2  85 rr            sta MINIX_PTR
+004574r 2  A9 rr            lda #>MINIX_INODE_ZONE0
+004576r 2  6D rr rr         adc MINIX_TMP + 1
+004579r 2  85 rr            sta MINIX_PTR + 1
+00457Br 2                   ; we now have the address where we will find the zone to read in MINIX_TMP
+00457Br 2  A0 00            ldy #0
+00457Dr 2  B1 rr            lda (MINIX_PTR),y                 ; we copy that data to the block to read
+00457Fr 2  8D rr rr         sta MINIX_CURRENT_BLOCK
+004582r 2  B1 rr            lda (MINIX_PTR+1), y
+004584r 2  8D rr rr         sta MINIX_CURRENT_BLOCK+1
+004587r 2               
+004587r 2  20 rr rr         jsr minix_write_block                    ; and we write it
+00458Ar 2               
+00458Ar 2  EE rr rr D0      inc16 MINIX_ZONE_TO_WRITE            ; we increment MINIX_ZONE_TO_WRITE for the next time we get called
+00458Er 2  03 EE rr rr  
+004592r 2               @exit_end:
+004592r 2  7A               ply
+004593r 2  60               rts
+004594r 2               
+004594r 2               
+004594r 2               
+004594r 2               ; read one inode entry into RAM data structure
+004594r 2               ; the number of the inode to read is in MINIX_CURRENT_INODE
+004594r 2               minix_read_inode:
+004594r 2  5A               phy
+004595r 2                   ; MINIX_CURRENT_INODE contains the number of the inode we have to read to find the data zone
+004595r 2                   ; the blocks with inodes start at block 1 + MINIX_N_INODE_MAP_BLOCKS + MINIX_N_ZONE_MAP_BLOCKS
+004595r 2  AD rr rr 8D      cp16 MINIX_N_INODE_MAP_BLOCKS, MINIX_CURRENT_BLOCK    ; copy number of inode map blocks to temporary
+004599r 2  rr rr AD rr  
+00459Dr 2  rr 8D rr rr  
+0045A1r 2  EE rr rr D0      inc16 MINIX_CURRENT_BLOCK                             ; add 1 to account for superblock
+0045A5r 2  03 EE rr rr  
+0045A9r 2  EE rr rr D0      inc16 MINIX_CURRENT_BLOCK                             ; add 1 to account for blank root block
+0045ADr 2  03 EE rr rr  
+0045B1r 2  18 AD rr rr      add16 MINIX_CURRENT_BLOCK, MINIX_N_ZONE_MAP_BLOCKS, MINIX_CURRENT_BLOCK ; add the number of zone map blocks
+0045B5r 2  6D rr rr 8D  
+0045B9r 2  rr rr AD rr  
+0045C4r 2               
+0045C4r 2  AD rr rr D0      dec16 MINIX_CURRENT_INODE       ; since inodes are 1 indexed, we need to decrement it by one
+0045C8r 2  03 CE rr rr  
+0045CCr 2  CE rr rr     
+0045CFr 2               
+0045CFr 2                   ; we have the first block with inodes in MINIX_CURRENT_BLOCK
+0045CFr 2                   ; now we have to add the number of blocks necessary to reach the MINIX_CURRENT_INODEth block
+0045CFr 2                   ; each inode is 32 bytes, which means there are 32 in each block
+0045CFr 2                   ; so let's divide MINIX_CURRENT_INODE by 32 and add it to the current block to get the real block where that inode is located
+0045CFr 2               
+0045CFr 2  AD rr rr 8D      cp16 MINIX_CURRENT_INODE, MINIX_TMP
+0045D3r 2  rr rr AD rr  
+0045D7r 2  rr 8D rr rr  
+0045DBr 2  A0 05            ldy #5
+0045DDr 2               minix_read_inode_loop1:
+0045DDr 2  4E rr rr 6E      lsr16 MINIX_TMP
+0045E1r 2  rr rr        
+0045E3r 2  88               dey
+0045E4r 2  D0 F7            bne minix_read_inode_loop1
+0045E6r 2               
+0045E6r 2  18 AD rr rr      add16 MINIX_CURRENT_BLOCK, MINIX_TMP, MINIX_CURRENT_BLOCK
+0045EAr 2  6D rr rr 8D  
+0045EEr 2  rr rr AD rr  
+0045F9r 2               
+0045F9r 2                   ; MINIX_CURRENT_BLOCK is set up, read data
+0045F9r 2  20 rr rr         jsr minix_read_block            ; read block to buffer
+0045FCr 2               
+0045FCr 2                   ; the offset into the block is calculated by taking MINIX_CURRENT_INODE,
+0045FCr 2                   ; dividing by 32 and taking the remainder
+0045FCr 2                   ; (which is done by doing and $1F) and then
+0045FCr 2                   ; multiplying by 32 again to get the byte ofset into the block
+0045FCr 2  9C rr rr         stz MINIX_TMP + 1
+0045FFr 2  AD rr rr         lda MINIX_CURRENT_INODE
+004602r 2  29 1F            and #$1F
+004604r 2  8D rr rr         sta MINIX_TMP
+004607r 2  A0 05            ldy #5
+004609r 2               minix_read_inode_loop2:
+004609r 2  0E rr rr 2E      asl16 MINIX_TMP         ; multiply inode remainder by 32 bytes to get byte offset
+00460Dr 2  rr rr        
+00460Fr 2  88               dey
+004610r 2  D0 F7            bne minix_read_inode_loop2
+004612r 2               
+004612r 2                   ; the byte ofset into the block is now in MINIX_TMP
+004612r 2                   ; add it to the buffer pointer
+004612r 2                   ; and save it to our own pointer
+004612r 2  18 AD rr rr      add16 MINIX_TMP, io_buffer_ptr, MINIX_PTR
+004616r 2  65 rr 85 rr  
+00461Ar 2  AD rr rr 65  
+004621r 2               
+004621r 2               minix_read_inode_loop3:
+004621r 2                   ; copy from buffer to data structure
+004621r 2  B1 rr            lda (MINIX_PTR), y
+004623r 2  99 rr rr         sta MINIX_INODE, y
+004626r 2  88               dey
+004627r 2  D0 F8            bne minix_read_inode_loop3
+004629r 2                   ; the inode is now stored in MINIX_INODE for future reference
+004629r 2                   ; we set the zone to read to zero
+004629r 2                   ; so that when we read the data we start with zone 0
+004629r 2  9C rr rr         stz MINIX_ZONE_TO_READ
+00462Cr 2  9C rr rr         stz MINIX_ZONE_TO_READ + 1
+00462Fr 2  EE rr rr D0      inc16 MINIX_CURRENT_INODE       ; put current inode number back to what it was, in case we need ot again
+004633r 2  03 EE rr rr  
+004637r 2  7A               ply
+004638r 2  60               rts
+004639r 2               
+004639r 2               
+004639r 2               ; write an inode
+004639r 2               ; inode data is in MINIX_INODE
+004639r 2               ; inode number is in MINIX_CURRENT_INODE, 1 indexed
+004639r 2               
+004639r 2               minix_write_inode:
+004639r 2  5A               phy
+00463Ar 2                   ; MINIX_CURRENT_INODE contains the number of the inode we have to read to find the data zone
+00463Ar 2                   ; the blocks with inodes start at block 1 + MINIX_N_INODE_MAP_BLOCKS + MINIX_N_ZONE_MAP_BLOCKS
+00463Ar 2  AD rr rr 8D      cp16 MINIX_N_INODE_MAP_BLOCKS, MINIX_CURRENT_BLOCK    ; copy number of inode map blocks to temporary
+00463Er 2  rr rr AD rr  
+004642r 2  rr 8D rr rr  
+004646r 2  EE rr rr D0      inc16 MINIX_CURRENT_BLOCK                             ; add 1 to account for superblock
+00464Ar 2  03 EE rr rr  
+00464Er 2  EE rr rr D0      inc16 MINIX_CURRENT_BLOCK                             ; add 1 to account for blank root block
+004652r 2  03 EE rr rr  
+004656r 2  18 AD rr rr      add16 MINIX_CURRENT_BLOCK, MINIX_N_ZONE_MAP_BLOCKS, MINIX_CURRENT_BLOCK ; add the number of zone map blocks
+00465Ar 2  6D rr rr 8D  
+00465Er 2  rr rr AD rr  
+004669r 2               
+004669r 2  AD rr rr D0      dec16 MINIX_CURRENT_INODE       ; since inodes are 1 indexed, we need to decrement it by one
+00466Dr 2  03 CE rr rr  
+004671r 2  CE rr rr     
+004674r 2               
+004674r 2                   ; we have the first block with inodes in MINIX_CURRENT_BLOCK
+004674r 2                   ; now we have to add the number of blocks necessary to reach the MINIX_CURRENT_INODEth block
+004674r 2                   ; each inode is 32 bytes, which means there are 32 in each block
+004674r 2                   ; so let's divide MINIX_CURRENT_INODE by 32 and add it to the current block to get the real block where that inode is located
+004674r 2               
+004674r 2  AD rr rr 8D      cp16 MINIX_CURRENT_INODE, MINIX_TMP
+004678r 2  rr rr AD rr  
+00467Cr 2  rr 8D rr rr  
+004680r 2  A0 05            ldy #5
+004682r 2               minix_write_inode_loop1:            ; divide inode number by 32
+004682r 2  4E rr rr 6E      lsr16 MINIX_TMP
+004686r 2  rr rr        
+004688r 2  88               dey
+004689r 2  D0 F7            bne minix_write_inode_loop1
+00468Br 2               
+00468Br 2  18 AD rr rr      add16 MINIX_CURRENT_BLOCK, MINIX_TMP, MINIX_CURRENT_BLOCK   ; MINIX_CURRENT_BLOCK contains the number of the block where our inode is located
+00468Fr 2  6D rr rr 8D  
+004693r 2  rr rr AD rr  
+00469Er 2               
+00469Er 2                   ; copy data from inode in memory data structure to our buffer
+00469Er 2               
+00469Er 2                   ; the offset into the block is calculated by taking MINIX_CURRENT_INODE,
+00469Er 2                   ; dividing by 32 and taking the remainder
+00469Er 2                   ; (which is done by doing and $1F) and then
+00469Er 2                   ; multiplying by 32 again to get the byte ofset into the block
+00469Er 2  9C rr rr         stz MINIX_TMP + 1
+0046A1r 2  AD rr rr         lda MINIX_CURRENT_INODE
+0046A4r 2  29 1F            and #$1F
+0046A6r 2  8D rr rr         sta MINIX_TMP
+0046A9r 2  A0 05            ldy #5
+0046ABr 2               minix_write_inode_loop2:
+0046ABr 2  0E rr rr 2E      asl16 MINIX_TMP         ; multiply inode remainder by 32 bytes to get byte offset
+0046AFr 2  rr rr        
+0046B1r 2  88               dey
+0046B2r 2  D0 F7            bne minix_write_inode_loop2
+0046B4r 2               
+0046B4r 2                   ; the byte ofset into the block is now in MINIX_TMP
+0046B4r 2                   ; add it to the buffer pointer
+0046B4r 2                   ; and save it to our own pointer
+0046B4r 2  18 AD rr rr      add16 MINIX_TMP, io_buffer_ptr, MINIX_PTR
+0046B8r 2  65 rr 85 rr  
+0046BCr 2  AD rr rr 65  
+0046C3r 2  20 rr rr         jsr minix_read_block            ; read block to make sure we have latest inode from disk in the buffer, ready to be modified
+0046C6r 2               minix_write_inode_loop3:
+0046C6r 2                   ; copy from data structure to buffer
+0046C6r 2  B9 rr rr         lda MINIX_INODE, y
+0046C9r 2  91 rr            sta (MINIX_PTR), y
+0046CBr 2               
+0046CBr 2  88               dey
+0046CCr 2  D0 F8            bne minix_write_inode_loop3
+0046CEr 2                   ; MINIX_CURRENT_BLOCK was set up above,
+0046CEr 2                   ; so we can now write data to disk
+0046CEr 2  20 rr rr         jsr minix_write_block            ; write block from buffer
+0046D1r 2                   ; we set the zone to write to zero
+0046D1r 2                   ; so that when we want to write some data we start with zone 0
+0046D1r 2  9C rr rr         stz MINIX_ZONE_TO_WRITE
+0046D4r 2  9C rr rr         stz MINIX_ZONE_TO_WRITE + 1
+0046D7r 2  EE rr rr D0      inc16 MINIX_CURRENT_INODE       ; put current inode number back to what it was, in case we need it again
+0046DBr 2  03 EE rr rr  
+0046DFr 2  7A               ply
+0046E0r 2  60               rts
+0046E1r 2               
+0046E1r 2               
+0046E1r 2               ; read the superblock
+0046E1r 2               ; carry clear on success
+0046E1r 2               ; carry set on error
+0046E1r 2               minix_read_superblock:
+0046E1r 2  5A               phy                             ; save y register just in case
+0046E2r 2  A9 01            lda #1                          ; setup to read block 1
+0046E4r 2  8D rr rr         sta MINIX_CURRENT_BLOCK         ; this is the second block on the disk
+0046E7r 2  9C rr rr         stz MINIX_CURRENT_BLOCK + 1
+0046EAr 2  20 rr rr         jsr minix_read_block            ; read block to buffer
+0046EDr 2  A0 14            ldy #20                         ; copy data to RAM
+0046EFr 2               
+0046EFr 2               minix_read_superblock_loop:
+0046EFr 2  B1 rr            lda (io_buffer_ptr), y
+0046F1r 2  99 rr rr         sta MINIX_SUPERBLOCK, y
+0046F4r 2  88               dey
+0046F5r 2  D0 F8            bne minix_read_superblock_loop
+0046F7r 2               
+0046F7r 2                   ; set current inode to root inode
+0046F7r 2  9C rr rr         stz MINIX_CURRENT_INODE + 1
+0046FAr 2  A9 01            lda #MINIX_ROOT_INODE
+0046FCr 2  8D rr rr         sta MINIX_CURRENT_INODE
+0046FFr 2               
+0046FFr 2                   ; check for magic number
+0046FFr 2  AD rr rr         lda MINIX_MAGIC
+004702r 2  C9 8F            cmp #<MINIX_MAGIC_NUMBER
+004704r 2  D0 0A            bne minix_read_superblock_fail
+004706r 2  AD rr rr         lda MINIX_MAGIC + 1
+004709r 2  C9 13            cmp #>MINIX_MAGIC_NUMBER
+00470Br 2  D0 03            bne minix_read_superblock_fail
+00470Dr 2  7A               ply
+00470Er 2  18               clc
+00470Fr 2  60               rts
+004710r 2               minix_read_superblock_fail:
+004710r 2  7A               ply
+004711r 2  38               sec
+004712r 2  60               rts
+004713r 2               
+004713r 2               
+004713r 2               
+004713r 2               .segment "RODATA"
 000000r 2               minix_data:
-000000r 2               
+000000r 2               .align $100
 000000r 2  00 00 00 00  .incbin "minix.img"
 000004r 2  00 00 00 00  
 000008r 2  00 00 00 00  
@@ -17692,228 +17858,331 @@ Current file: platform/py65mon/main.s
 002800r 1               
 002800r 1               
 002800r 1               .segment "DATA"
-0045F7r 1  30 30 30 30  number_string: .asciiz "000000177777"
-0045FBr 1  30 30 31 37  
-0045FFr 1  37 37 37 37  
-004604r 1               
-004604r 1  74 65 73 74  test_filename: .asciiz "test.txt"
-004608r 1  2E 74 78 74  
-00460Cr 1  00           
-00460Dr 1               
-00460Dr 1               kernel_init:
-00460Dr 1               v_nmi:
-00460Dr 1               v_irq:                          ; IRQ handler
-00460Dr 1               
-00460Dr 1               
-00460Dr 1  DA A2 00 BD      printascii welcome_message
-004611r 1  rr rr F0 06  
-004615r 1  20 rr rr E8  
-00461Cr 1               
-00461Cr 1  A9 rr            lda #<dictionary
-00461Er 1  85 rr            sta up
-004620r 1  A9 rr            lda #>dictionary
-004622r 1  85 rr            sta up + 1
-004624r 1               
-004624r 1  20 rr rr         jsr calculate_free_mem
-004627r 1  AD rr rr         lda tmp_var + 1
-00462Ar 1  AE rr rr         ldx tmp_var
-00462Dr 1  20 rr rr         jsr print16
-004630r 1               
-004630r 1  DA A2 00 BD      printascii free_message
-004634r 1  rr rr F0 06  
-004638r 1  20 rr rr E8  
-00463Fr 1               
-00463Fr 1               
-00463Fr 1  20 rr rr         jsr print_message
-004642r 1  0D 0A 00         .byte AscCR,AscLF, 0
-004645r 1               
-004645r 1                   ; set up buffer pointer
-004645r 1  A9 rr            lda #<IO_BUFFER
-004647r 1  85 rr            sta io_buffer_ptr
-004649r 1  A9 rr            lda #>IO_BUFFER
-00464Br 1  85 rr            sta io_buffer_ptr + 1
-00464Dr 1               
-00464Dr 1  A9 rr            lda #>IO_BUFFER
-00464Fr 1  A2 rr            ldx #<IO_BUFFER
-004651r 1  20 rr rr         jsr print16
-004654r 1  20 rr rr         jsr print_message
-004657r 1  0D 0A 00         .byte AscCR,AscLF, 0
-00465Ar 1               
-00465Ar 1  20 rr rr         jsr minix_read_superblock
-00465Dr 1  90 17            bcc @ok
-00465Fr 1  20 rr rr         jsr print_message
-004662r 1  42 61 64 20      .byte "Bad superblock", AscCR,AscLF, 0
-004666r 1  73 75 70 65  
-00466Ar 1  72 62 6C 6F  
-004673r 1               
-004673r 1               
-004673r 1  4C rr rr         jmp @forth
-004676r 1               @ok:
-004676r 1                   ; this read the root inode to
-004676r 1  20 rr rr         jsr minix_read_root
-004679r 1  90 0B            bcc @root_ok
-00467Br 1  20 rr rr         jsr print_message
-00467Er 1  52 46 0D 0A      .byte "RF", AscCR,AscLF, 0
-004682r 1  00           
-004683r 1  4C rr rr         jmp forth
-004686r 1               @root_ok:
-004686r 1                   ; jsr minix_ls
-004686r 1               
-004686r 1  20 rr rr         jsr print_message
-004689r 1  0D 0A 00         .byte AscCR,AscLF, 0
-00468Cr 1               
-00468Cr 1               
-00468Cr 1                   ; fill search filename with zeroes
-00468Cr 1  A2 1E            ldx #30
-00468Er 1               @l1:
-00468Er 1  9E rr rr         stz MINIX_SEARCH_FILENAME, x
-004691r 1  CA               dex
-004692r 1  D0 FA            bne @l1
-004694r 1  A2 1E            ldx #30                 ; length of data to copy
-004696r 1                   ; copy search filename
-004696r 1  BD rr rr 9D      memcp test_filename, MINIX_SEARCH_FILENAME
-00469Ar 1  rr rr CA D0  
-00469Er 1  F7 AD rr rr  
-0046A5r 1               
-0046A5r 1  20 rr rr         jsr print_message
-0046A8r 1  0D 0A 00         .byte AscCR,AscLF, 0
-0046ABr 1  20 rr rr         jsr minix_find_inode_for_filename       ; search filename
-0046AEr 1  B0 31            bcs @find_fail
-0046B0r 1               
-0046B0r 1  20 rr rr         jsr minix_read_file
-0046B3r 1  B0 11            bcs @file_fail
-0046B5r 1               
-0046B5r 1  20 rr rr         jsr print_message
-0046B8r 1  66 69 6C 65      .byte "file read", AscCR,AscLF, 0
-0046BCr 1  20 72 65 61  
-0046C0r 1  64 0D 0A 00  
-0046C4r 1  80 40            bra @forth
-0046C6r 1               @file_fail:
-0046C6r 1  20 rr rr         jsr print_message
-0046C9r 1  4E 6F 74 20      .byte "Not a regular file", AscCR,AscLF, 0
-0046CDr 1  61 20 72 65  
-0046D1r 1  67 75 6C 61  
-0046DEr 1  4C rr rr         jmp forth
-0046E1r 1               @find_fail:
-0046E1r 1  20 rr rr         jsr print_message
-0046E4r 1  0D 0A 00         .byte AscCR,AscLF, 0
-0046E7r 1  20 rr rr         jsr print_message
-0046EAr 1  44 61 74 61      .byte "Data: ", 0
-0046EEr 1  3A 20 00     
-0046F1r 1               
-0046F1r 1               
-0046F1r 1  A5 rr            lda io_buffer_ptr + 1
-0046F3r 1  A6 rr            ldx io_buffer_ptr
-0046F5r 1  20 rr rr         jsr print16
-0046F8r 1               
-0046F8r 1  20 rr rr         jsr print_message
-0046FBr 1  4E 46 0D 0A      .byte "NF", AscCR,AscLF, 0
-0046FFr 1  00           
-004700r 1  20 rr rr         jsr print_message
-004703r 1  0D 0A 00         .byte AscCR,AscLF, 0
-004706r 1               
-004706r 1               @forth:
-004706r 1  4C rr rr         jmp forth
-004709r 1               
-004709r 1               
-004709r 1               minix_ls:
-004709r 1  5A               phy
-00470Ar 1               
-00470Ar 1                   ; load first entry
-00470Ar 1  A0 00            ldy #0
-00470Cr 1               @loop:
-00470Cr 1  A9 0D            lda #$0D
-00470Er 1  20 rr rr         jsr kernel_putc
-004711r 1  A9 0A            lda #$0A
-004713r 1  20 rr rr         jsr kernel_putc
-004716r 1  B1 rr            lda (io_buffer_ptr), y
-004718r 1  F0 26            beq @exit                   ; if this points to the 0 inode, exit now, because this file does not exist
-00471Ar 1                   ; otherwise, the file does exist, print its name
-00471Ar 1  A5 rr 85 rr      cp16 io_buffer_ptr, util_tmp
-00471Er 1  A5 rr 85 rr  
-004722r 1  E6 rr D0 02      inc16 util_tmp
-004726r 1  E6 rr        
-004728r 1  E6 rr D0 02      inc16 util_tmp
-00472Cr 1  E6 rr        
-00472Er 1  5A               phy
-00472Fr 1  20 rr rr         jsr print_zp_index_string
-004732r 1  7A               ply
-004733r 1                   ; increase y by 20 to load next entry
-004733r 1  98               tya
-004734r 1  69 20            adc #$20
-004736r 1  B0 03            bcs @inchigh
-004738r 1  A8               tay
-004739r 1  80 D1            bra @loop
-00473Br 1               @inchigh:
-00473Br 1  E6 rr            inc io_buffer_ptr + 1
-00473Dr 1  A8               tay
-00473Er 1  80 CC            bra @loop
-004740r 1               @exit:
-004740r 1  7A               ply
-004741r 1  60               rts
-004742r 1               
-004742r 1               
-004742r 1               
-004742r 1               platform_bye:
-004742r 1  4C rr rr         jmp platform_bye
-004745r 1               kernel_putc:
-004745r 1                   ; """Print a single character to the console. """
-004745r 1                   ;; Send_Char - send character in A out serial port.
-004745r 1                   ;; Uses: A (original value restored)
-004745r 1  8D 01 F0             sta $f001
-004748r 1  60                   rts
-004749r 1               
-004749r 1               kernel_getc:
-004749r 1                   ; """Get a single character from the keyboard. By default, py65mon
-004749r 1                   ; is set to $f004, which we just keep. Note that py65mon's getc routine
-004749r 1                   ; is non-blocking, so it will return '00' even if no key has been
-004749r 1                   ; pressed. We turn this into a blocking version by waiting for a
-004749r 1                   ; non-zero character.
-004749r 1                   ; """
-004749r 1               
-004749r 1               _loop:
-004749r 1  AD 04 F0         lda $f004
-00474Cr 1  F0 FB            beq _loop
-00474Er 1  60               rts
-00474Fr 1               
-00474Fr 1               io_read_sector:
-00474Fr 1                   ; sector to read is in io_current_sector
-00474Fr 1  5A               phy
-004750r 1  A9 rr            lda #<minix_data                ; load the minix data location
-004752r 1  85 rr            sta io_read_location            ; and store it temporarly
-004754r 1  A9 rr            lda #>minix_data
-004756r 1  85 rr            sta io_read_location + 1
-004758r 1  A5 rr 85 rr      cp16 io_current_sector, io_sector_tmp   ; copy sector requested to temporary
-00475Cr 1  A5 rr 85 rr  
-004760r 1                   ;multiply requested sector by 512 to get byte offset
-004760r 1  A0 09            ldy #9
-004762r 1               @mult:
-004762r 1  06 rr 26 rr      asl16 io_sector_tmp
-004766r 1  88               dey
-004767r 1  D0 F9            bne @mult
-004769r 1  18 A5 rr 65      add16 io_sector_tmp, io_read_location, io_sector_tmp     ; add minix data address to byte offset
-00476Dr 1  rr 85 rr A5  
-004771r 1  rr 65 rr 85  
+004713r 1  30 30 30 30  number_string: .asciiz "000000177777"
+004717r 1  30 30 31 37  
+00471Br 1  37 37 37 37  
+004720r 1  44 61 74 61  file_test_string:.asciiz "Data has been written. Did we overwrite the file?"
+004724r 1  20 68 61 73  
+004728r 1  20 62 65 65  
+004752r 1  74 65 73 74  test_filename: .asciiz "test.txt"
+004756r 1  2E 74 78 74  
+00475Ar 1  00           
+00475Br 1  64 69 72 00  test_filename2: .asciiz "dir"
+00475Fr 1               
+00475Fr 1               kernel_init:
+00475Fr 1               v_nmi:
+00475Fr 1               v_irq:                          ; IRQ handler
+00475Fr 1               
+00475Fr 1               
+00475Fr 1  DA A2 00 BD      printascii welcome_message
+004763r 1  rr rr F0 06  
+004767r 1  20 rr rr E8  
+00476Er 1               
+00476Er 1  A9 rr            lda #<dictionary
+004770r 1  85 rr            sta up
+004772r 1  A9 rr            lda #>dictionary
+004774r 1  85 rr            sta up + 1
 004776r 1               
-004776r 1  A0 00            ldy #0
-004778r 1               @loop1:
-004778r 1  B1 rr            lda (io_sector_tmp), y
-00477Ar 1  91 rr            sta (io_buffer_ptr), y
-00477Cr 1  C8               iny
-00477Dr 1  D0 F9            bne @loop1
-00477Fr 1  E6 rr            inc io_sector_tmp + 1       ; read next page
-004781r 1  E6 rr            inc io_buffer_ptr + 1       ; write to next page
-004783r 1               @loop2:
-004783r 1  B1 rr            lda (io_sector_tmp), y
-004785r 1  91 rr            sta (io_buffer_ptr), y
-004787r 1  C8               iny
-004788r 1  D0 F9            bne @loop2
-00478Ar 1  C6 rr            dec io_buffer_ptr + 1       ; point back to the beginning of the buffer
-00478Cr 1  7A               ply
-00478Dr 1  60               rts
-00478Er 1               
-00478Er 1               
-00478Er 1               .segment "RODATA"
+004776r 1  20 rr rr         jsr calculate_free_mem
+004779r 1  AD rr rr         lda tmp_var + 1
+00477Cr 1  AE rr rr         ldx tmp_var
+00477Fr 1  20 rr rr         jsr print16
+004782r 1               
+004782r 1  DA A2 00 BD      printascii free_message
+004786r 1  rr rr F0 06  
+00478Ar 1  20 rr rr E8  
+004791r 1               
+004791r 1               
+004791r 1  20 rr rr         jsr print_message
+004794r 1  0D 0A 00         .byte AscCR,AscLF, 0
+004797r 1               
+004797r 1                   ; set up buffer pointer
+004797r 1  A9 rr            lda #<IO_BUFFER
+004799r 1  85 rr            sta io_buffer_ptr
+00479Br 1  A9 rr            lda #>IO_BUFFER
+00479Dr 1  85 rr            sta io_buffer_ptr + 1
+00479Fr 1               
+00479Fr 1  A9 rr            lda #>IO_BUFFER
+0047A1r 1  A2 rr            ldx #<IO_BUFFER
+0047A3r 1  20 rr rr         jsr print16
+0047A6r 1  20 rr rr         jsr print_message
+0047A9r 1  0D 0A 00         .byte AscCR,AscLF, 0
+0047ACr 1               
+0047ACr 1  20 rr rr         jsr minix_read_superblock
+0047AFr 1  90 17            bcc @ok
+0047B1r 1  20 rr rr         jsr print_message
+0047B4r 1  42 61 64 20      .byte "Bad superblock", AscCR,AscLF, 0
+0047B8r 1  73 75 70 65  
+0047BCr 1  72 62 6C 6F  
+0047C5r 1               
+0047C5r 1               
+0047C5r 1  4C rr rr         jmp @forth
+0047C8r 1               @ok:
+0047C8r 1                   ; this read the root inode to
+0047C8r 1  20 rr rr         jsr minix_read_root
+0047CBr 1  90 15            bcc @root_ok
+0047CDr 1  20 rr rr         jsr print_message
+0047D0r 1  42 61 64 20      .byte "Bad root dir", AscCR,AscLF, 0
+0047D4r 1  72 6F 6F 74  
+0047D8r 1  20 64 69 72  
+0047DFr 1  4C rr rr         jmp forth
+0047E2r 1               @root_ok:
+0047E2r 1                   ; jsr minix_ls
+0047E2r 1               
+0047E2r 1  20 rr rr         jsr print_message
+0047E5r 1  0D 0A 00         .byte AscCR,AscLF, 0
+0047E8r 1               
+0047E8r 1               
+0047E8r 1                   ; fill search filename with zeroes
+0047E8r 1  A2 1E            ldx #30
+0047EAr 1               @l1:
+0047EAr 1  9E rr rr         stz MINIX_SEARCH_FILENAME, x
+0047EDr 1  CA               dex
+0047EEr 1  D0 FA            bne @l1
+0047F0r 1  A2 1E            ldx #30                 ; length of data to copy
+0047F2r 1                   ; copy search filename
+0047F2r 1  BD rr rr 9D      memcp test_filename, MINIX_SEARCH_FILENAME
+0047F6r 1  rr rr CA D0  
+0047FAr 1  F7 AD rr rr  
+004801r 1  20 rr rr         jsr minix_find_inode_for_filename       ; search filename
+004804r 1  90 03            bcc @find_ok
+004806r 1  4C rr rr         jmp forth
+004809r 1               @find_ok:
+004809r 1  20 rr rr         jsr minix_read_file
+00480Cr 1  90 1B            bcc @file_ok
+00480Er 1  20 rr rr         jsr print_message
+004811r 1  4E 6F 74 20      .byte "Not a regular file", AscCR,AscLF, 0
+004815r 1  61 20 72 65  
+004819r 1  67 75 6C 61  
+004826r 1  4C rr rr         jmp forth
+004829r 1               @file_ok:
+004829r 1  20 rr rr         jsr print_message
+00482Cr 1  66 69 6C 65      .byte "file read", AscCR,AscLF, 0
+004830r 1  20 72 65 61  
+004834r 1  64 0D 0A 00  
+004838r 1               
+004838r 1                   ; change inode userid
+004838r 1  A9 55            lda #$55
+00483Ar 1  8D rr rr         sta MINIX_INODE_UID
+00483Dr 1  A9 AA            lda #$AA
+00483Fr 1  8D rr rr         sta MINIX_INODE_UID + 1
+004842r 1  A2 00 BD rr      strlen file_test_string
+004846r 1  rr F0 03 E8  
+00484Ar 1  80 F8        
+00484Cr 1  8E rr rr         stx MINIX_INODE_FILESIZE    ; save new future file size
+00484Fr 1  20 rr rr         jsr minix_write_inode
+004852r 1               
+004852r 1  20 rr rr         jsr minix_read_file
+004855r 1               
+004855r 1  A2 00            ldx #0
+004857r 1               @wloop:
+004857r 1  BD rr rr         lda file_test_string, x
+00485Ar 1  F0 06            beq @wexit
+00485Cr 1  9D rr rr         sta IO_BUFFER, x
+00485Fr 1  E8               inx
+004860r 1  80 F5            bra @wloop
+004862r 1               @wexit:
+004862r 1  20 rr rr         jsr minix_write_data
+004865r 1               
+004865r 1  20 rr rr         jsr print_message
+004868r 1  0D 0A 00         .byte AscCR,AscLF, 0
+00486Br 1  A2 1E            ldx #30
+00486Dr 1               @l2:
+00486Dr 1  9E rr rr         stz MINIX_SEARCH_FILENAME, x
+004870r 1  CA               dex
+004871r 1  D0 FA            bne @l2
+004873r 1  A2 1E            ldx #30                 ; length of data to copy
+004875r 1                   ; copy search filename
+004875r 1               
+004875r 1  BD rr rr 9D      memcp test_filename, MINIX_SEARCH_FILENAME
+004879r 1  rr rr CA D0  
+00487Dr 1  F7 AD rr rr  
+004884r 1               
+004884r 1  20 rr rr         jsr print_message
+004887r 1  0D 0A 00         .byte AscCR,AscLF, 0
+00488Ar 1  20 rr rr         jsr minix_find_inode_for_filename       ; search filename
+00488Dr 1  90 17            bcc @file_ok1
+00488Fr 1  20 rr rr         jsr print_message
+004892r 1  66 69 6C 65      .byte "file find fail", AscCR,AscLF, 0
+004896r 1  20 66 69 6E  
+00489Ar 1  64 20 66 61  
+0048A3r 1  4C rr rr         jmp forth
+0048A6r 1               @file_ok1:
+0048A6r 1  20 rr rr         jsr print_message
+0048A9r 1  66 69 6C 65      .byte "file find 2", AscCR,AscLF, 0
+0048ADr 1  20 66 69 6E  
+0048B1r 1  64 20 32 0D  
+0048B7r 1  20 rr rr         jsr minix_read_file
+0048BAr 1  90 17            bcc @file_ok2
+0048BCr 1  20 rr rr         jsr print_message
+0048BFr 1  66 69 6C 65      .byte "file read fail", AscCR,AscLF, 0
+0048C3r 1  20 72 65 61  
+0048C7r 1  64 20 66 61  
+0048D0r 1  4C rr rr         jmp forth
+0048D3r 1               @file_ok2:
+0048D3r 1  20 rr rr         jsr print_message
+0048D6r 1  66 69 6C 65      .byte "file read 2", AscCR,AscLF, 0
+0048DAr 1  20 72 65 61  
+0048DEr 1  64 20 32 0D  
+0048E4r 1               
+0048E4r 1  80 27            bra @forth
+0048E6r 1               
+0048E6r 1               @find_fail:
+0048E6r 1  20 rr rr         jsr print_message
+0048E9r 1  0D 0A 00         .byte AscCR,AscLF, 0
+0048ECr 1  20 rr rr         jsr print_message
+0048EFr 1  44 61 74 61      .byte "Data: ", 0
+0048F3r 1  3A 20 00     
+0048F6r 1               
+0048F6r 1               
+0048F6r 1  A5 rr            lda io_buffer_ptr + 1
+0048F8r 1  A6 rr            ldx io_buffer_ptr
+0048FAr 1  20 rr rr         jsr print16
+0048FDr 1               
+0048FDr 1  20 rr rr         jsr print_message
+004900r 1  0D 0A 4E 46      .byte AscCR,AscLF,"NF", AscCR,AscLF, 0
+004904r 1  0D 0A 00     
+004907r 1  20 rr rr         jsr print_message
+00490Ar 1  0D 0A 00         .byte AscCR,AscLF, 0
+00490Dr 1               
+00490Dr 1               @forth:
+00490Dr 1  4C rr rr         jmp forth
+004910r 1               
+004910r 1               
+004910r 1               minix_ls:
+004910r 1  5A               phy
+004911r 1               
+004911r 1                   ; load first entry
+004911r 1  A0 00            ldy #0
+004913r 1               @loop:
+004913r 1  A9 0D            lda #$0D
+004915r 1  20 rr rr         jsr kernel_putc
+004918r 1  A9 0A            lda #$0A
+00491Ar 1  20 rr rr         jsr kernel_putc
+00491Dr 1  B1 rr            lda (io_buffer_ptr), y
+00491Fr 1  F0 26            beq @exit                   ; if this points to the 0 inode, exit now, because this file does not exist
+004921r 1                   ; otherwise, the file does exist, print its name
+004921r 1  A5 rr 85 rr      cp16 io_buffer_ptr, util_tmp
+004925r 1  A5 rr 85 rr  
+004929r 1  E6 rr D0 02      inc16 util_tmp
+00492Dr 1  E6 rr        
+00492Fr 1  E6 rr D0 02      inc16 util_tmp
+004933r 1  E6 rr        
+004935r 1  5A               phy
+004936r 1  20 rr rr         jsr print_zp_index_string
+004939r 1  7A               ply
+00493Ar 1                   ; increase y by 20 to load next entry
+00493Ar 1  98               tya
+00493Br 1  69 20            adc #$20
+00493Dr 1  B0 03            bcs @inchigh
+00493Fr 1  A8               tay
+004940r 1  80 D1            bra @loop
+004942r 1               @inchigh:
+004942r 1  E6 rr            inc io_buffer_ptr + 1
+004944r 1  A8               tay
+004945r 1  80 CC            bra @loop
+004947r 1               @exit:
+004947r 1  7A               ply
+004948r 1  60               rts
+004949r 1               
+004949r 1               
+004949r 1               
+004949r 1               platform_bye:
+004949r 1  4C rr rr         jmp platform_bye
+00494Cr 1               kernel_putc:
+00494Cr 1                   ; """Print a single character to the console. """
+00494Cr 1                   ;; Send_Char - send character in A out serial port.
+00494Cr 1                   ;; Uses: A (original value restored)
+00494Cr 1  8D 01 F0             sta $f001
+00494Fr 1  60                   rts
+004950r 1               
+004950r 1               kernel_getc:
+004950r 1                   ; """Get a single character from the keyboard. By default, py65mon
+004950r 1                   ; is set to $f004, which we just keep. Note that py65mon's getc routine
+004950r 1                   ; is non-blocking, so it will return '00' even if no key has been
+004950r 1                   ; pressed. We turn this into a blocking version by waiting for a
+004950r 1                   ; non-zero character.
+004950r 1                   ; """
+004950r 1               
+004950r 1               _loop:
+004950r 1  AD 04 F0         lda $f004
+004953r 1  F0 FB            beq _loop
+004955r 1  60               rts
+004956r 1               
+004956r 1               io_read_sector:
+004956r 1                   ; sector to read is in io_current_sector
+004956r 1  5A               phy
+004957r 1  A9 rr            lda #<minix_data                ; load the minix data location
+004959r 1  85 rr            sta io_read_location            ; and store it temporarly
+00495Br 1  A9 rr            lda #>minix_data
+00495Dr 1  85 rr            sta io_read_location + 1
+00495Fr 1  A5 rr 85 rr      cp16 io_current_sector, io_sector_tmp   ; copy sector requested to temporary
+004963r 1  A5 rr 85 rr  
+004967r 1                   ;multiply requested sector by 512 to get byte offset
+004967r 1  A0 09            ldy #9
+004969r 1               @mult:
+004969r 1  06 rr 26 rr      asl16 io_sector_tmp
+00496Dr 1  88               dey
+00496Er 1  D0 F9            bne @mult
+004970r 1  18 A5 rr 65      add16 io_sector_tmp, io_read_location, io_sector_tmp     ; add minix data address to byte offset
+004974r 1  rr 85 rr A5  
+004978r 1  rr 65 rr 85  
+00497Dr 1               
+00497Dr 1  A0 00            ldy #0
+00497Fr 1               @loop1:
+00497Fr 1  B1 rr            lda (io_sector_tmp), y
+004981r 1  91 rr            sta (io_buffer_ptr), y
+004983r 1  C8               iny
+004984r 1  D0 F9            bne @loop1
+004986r 1  E6 rr            inc io_sector_tmp + 1       ; read next page
+004988r 1  E6 rr            inc io_buffer_ptr + 1       ; write to next page
+00498Ar 1               @loop2:
+00498Ar 1  B1 rr            lda (io_sector_tmp), y
+00498Cr 1  91 rr            sta (io_buffer_ptr), y
+00498Er 1  C8               iny
+00498Fr 1  D0 F9            bne @loop2
+004991r 1  C6 rr            dec io_buffer_ptr + 1       ; point back to the beginning of the buffer
+004993r 1  7A               ply
+004994r 1  60               rts
+004995r 1               
+004995r 1               io_write_sector:
+004995r 1                   ; the sector to write to is in io_current_sector
+004995r 1                   ; the data to write is in the buffer pointed to by io_buffer_ptr
+004995r 1  5A               phy
+004996r 1  A9 rr            lda #<minix_data                ; load the minix data location
+004998r 1  85 rr            sta io_read_location            ; and store it temporarly
+00499Ar 1  A9 rr            lda #>minix_data
+00499Cr 1  85 rr            sta io_read_location + 1
+00499Er 1  A5 rr 85 rr      cp16 io_current_sector, io_sector_tmp   ; copy sector requested to temporary
+0049A2r 1  A5 rr 85 rr  
+0049A6r 1                   ;multiply requested sector by 512 to get byte offset
+0049A6r 1  A0 09            ldy #9
+0049A8r 1               @mult:
+0049A8r 1  06 rr 26 rr      asl16 io_sector_tmp
+0049ACr 1  88               dey
+0049ADr 1  D0 F9            bne @mult
+0049AFr 1  18 A5 rr 65      add16 io_sector_tmp, io_read_location, io_sector_tmp     ; add minix data address to byte offset
+0049B3r 1  rr 85 rr A5  
+0049B7r 1  rr 65 rr 85  
+0049BCr 1               
+0049BCr 1  A0 00            ldy #0
+0049BEr 1               @loop1:
+0049BEr 1  B1 rr            lda (io_buffer_ptr), y
+0049C0r 1  91 rr            sta (io_sector_tmp), y
+0049C2r 1  C8               iny
+0049C3r 1  D0 F9            bne @loop1
+0049C5r 1  E6 rr            inc io_sector_tmp + 1       ; read next page
+0049C7r 1  E6 rr            inc io_buffer_ptr + 1       ; write to next page
+0049C9r 1               @loop2:
+0049C9r 1  B1 rr            lda (io_buffer_ptr), y
+0049CBr 1  91 rr            sta (io_sector_tmp), y
+0049CDr 1  C8               iny
+0049CEr 1  D0 F9            bne @loop2
+0049D0r 1  C6 rr            dec io_buffer_ptr + 1       ; point back to the beginning of the buffer
+0049D2r 1  7A               ply
+0049D3r 1  60               rts
+0049D4r 1               
+0049D4r 1               .segment "RODATA"
 002800r 1  20 62 79 74  free_message: .byte " bytes free", $0D, 0
 002804r 1  65 73 20 66  
 002808r 1  72 65 65 0D  

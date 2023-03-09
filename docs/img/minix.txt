@@ -1,5 +1,4 @@
 
-
 ; This is a library to use a minix file system on the 65C02 CMOS processor.
 ; it requires 2 bytes in zeropage, 100 bytes for variables in RAM
 ; and a buffer of 1024 bytes provided by the user of this library.
@@ -53,7 +52,6 @@ MINIX_CURRENT_FILE_INODE: .res 2
 MINIX_TMP: .res 2
 MINIX_FILESIZE_COMPARE: .res 2
 MINIX_ZONE_TO_READ: .res 1
-MINIX_ZONE_TO_WRITE: .res 1
 MINIX_SEARCH_INODE: .res 2
 MINIX_SEARCH_FILENAME: .res 30
 
@@ -118,28 +116,6 @@ minix_read_block_noinc:
     jsr io_read_sector          ; Read next sector
     dec io_buffer_ptr + 1       ; put buffer pointer back
     ; one full block is now in the buffer pointed to by io_buffer_ptr
-    rts
-
-minix_write_block:
-    stz io_current_sector                   ; zero current sector to read
-    stz io_current_sector + 1
-    stz io_current_sector + 2
-    stz io_current_sector + 3
-    stz MINIX_SECTOR + 2                    ; zero top bytes of sector to read
-    stz MINIX_SECTOR + 3
-    cp16 MINIX_CURRENT_BLOCK, MINIX_SECTOR  ; copy current block number
-    asl16 MINIX_SECTOR                      ; multiply by two to get first block sector number
-    bcc minix_write_block_noinc
-    inc io_current_sector + 2               ; increase higher byte if previous asl set the carry
-minix_write_block_noinc:
-    cp16  MINIX_SECTOR, io_current_sector  ; copy result to the sector to read
-    jsr io_write_sector          ; read first sector
-
-    inc io_buffer_ptr + 1       ; read from next buffer 512 block to get full 1024 block
-    inc io_current_sector       ; setup to write to next sector
-    jsr io_write_sector          ; Write next sector
-    dec io_buffer_ptr + 1       ; put buffer pointer back
-    ; one full block has now been written to disk
     rts
 
 ; read the root inode
@@ -319,63 +295,6 @@ minix_read_inode_data:
     sec
     rts
 
-; file name to create is in MINIX_FILENAME
-; the directory in which to create it is in MINIX_CURRENT_DIR_INODE
-minix_create_file:
-    ; find a free inode by looking at the bitmap
-    ; find a free data zone by looking at the zone bitmap
-    ; create the inode data structure for the new file
-    ; with a size of zero
-    ; write the inode to disk
-    ; get the data for the directory
-    ; add a line with the inode number for the new file
-    ; and it's filename
-    rts
-
-
-; Once an inode has been written, we can write the file data
-; This routine only writes one block of data at a time, from the buffer pointed to by io_buffer_ptr
-; and in the data zone number MINIX_ZONE_TO_WRITE
-; this is a reference to the number of the zone in the inode data structure, which itself contains
-; the number of the block to write to.
-; there is no check for file length, it is up to  the user to manage that.
-; This is to allow read / modify / write per block
-; the zone to write is incremented at the end of this routine, though
-; so if the file data does not exceed one block it will cause a problem
-; if the file data ecxeeds one block, this routine expects 
-; the zones to be set in the inode data in RAM before being called
-minix_write_data:
-    phy
-    ; check if zone to read is zero.
-    lda MINIX_ZONE_TO_WRITE
-    cmp #7                                      ; we only handle the direct zones for now
-    bcs @exit_end                               ; so we exit if we are trying to write to zone 7 or higher
-    sta MINIX_TMP                               ; copy current zone to temporary
-    stz MINIX_TMP + 1
-    asl MINIX_TMP                               ; multiply by two because we want the byte offset into the inode
-    clc                                         ; add the zone byte offset to the address where zone 0 is stored
-    lda #<MINIX_INODE_ZONE0
-    adc MINIX_TMP
-    sta MINIX_PTR
-    lda #>MINIX_INODE_ZONE0
-    adc MINIX_TMP + 1
-    sta MINIX_PTR + 1
-    ; we now have the address where we will find the zone to read in MINIX_TMP
-    ldy #0
-    lda (MINIX_PTR),y                 ; we copy that data to the block to read
-    sta MINIX_CURRENT_BLOCK
-    iny
-    lda (MINIX_PTR), y
-    sta MINIX_CURRENT_BLOCK+1
-
-    jsr minix_write_block                    ; and we write it
-
-    inc16 MINIX_ZONE_TO_WRITE            ; we increment MINIX_ZONE_TO_WRITE for the next time we get called
-@exit_end:
-    ply
-    rts
-
-
 
 ; read one inode entry into RAM data structure
 ; the number of the inode to read is in MINIX_CURRENT_INODE
@@ -442,75 +361,6 @@ minix_read_inode_loop3:
     rts
 
 
-; write an inode
-; inode data is in MINIX_INODE
-; inode number is in MINIX_CURRENT_INODE, 1 indexed
-
-minix_write_inode:
-    phy
-    ; MINIX_CURRENT_INODE contains the number of the inode we have to read to find the data zone
-    ; the blocks with inodes start at block 1 + MINIX_N_INODE_MAP_BLOCKS + MINIX_N_ZONE_MAP_BLOCKS
-    cp16 MINIX_N_INODE_MAP_BLOCKS, MINIX_CURRENT_BLOCK    ; copy number of inode map blocks to temporary
-    inc16 MINIX_CURRENT_BLOCK                             ; add 1 to account for superblock
-    inc16 MINIX_CURRENT_BLOCK                             ; add 1 to account for blank root block
-    add16 MINIX_CURRENT_BLOCK, MINIX_N_ZONE_MAP_BLOCKS, MINIX_CURRENT_BLOCK ; add the number of zone map blocks
-
-    dec16 MINIX_CURRENT_INODE       ; since inodes are 1 indexed, we need to decrement it by one
-
-    ; we have the first block with inodes in MINIX_CURRENT_BLOCK
-    ; now we have to add the number of blocks necessary to reach the MINIX_CURRENT_INODEth block
-    ; each inode is 32 bytes, which means there are 32 in each block
-    ; so let's divide MINIX_CURRENT_INODE by 32 and add it to the current block to get the real block where that inode is located
-    
-    cp16 MINIX_CURRENT_INODE, MINIX_TMP
-    ldy #5
-minix_write_inode_loop1:            ; divide inode number by 32
-    lsr16 MINIX_TMP
-    dey
-    bne minix_write_inode_loop1
-
-    add16 MINIX_CURRENT_BLOCK, MINIX_TMP, MINIX_CURRENT_BLOCK   ; MINIX_CURRENT_BLOCK contains the number of the block where our inode is located
-
-    ; copy data from inode in memory data structure to our buffer
-    
-    ; the offset into the block is calculated by taking MINIX_CURRENT_INODE, 
-    ; dividing by 32 and taking the remainder
-    ; (which is done by doing and $1F) and then 
-    ; multiplying by 32 again to get the byte ofset into the block
-    stz MINIX_TMP + 1
-    lda MINIX_CURRENT_INODE
-    and #$1F
-    sta MINIX_TMP
-    ldy #5
-minix_write_inode_loop2:
-    asl16 MINIX_TMP         ; multiply inode remainder by 32 bytes to get byte offset
-    dey
-    bne minix_write_inode_loop2
-
-    ; the byte ofset into the block is now in MINIX_TMP
-    ; add it to the buffer pointer
-    ; and save it to our own pointer
-    add16 MINIX_TMP, io_buffer_ptr, MINIX_PTR
-    jsr minix_read_block            ; read block to make sure we have latest inode from disk in the buffer, ready to be modified
-minix_write_inode_loop3:
-    ; copy from data structure to buffer
-    lda MINIX_INODE, y
-    sta (MINIX_PTR), y
-    
-    dey
-    bne minix_write_inode_loop3
-    ; MINIX_CURRENT_BLOCK was set up above, 
-    ; so we can now write data to disk
-    jsr minix_write_block            ; write block from buffer
-    ; we set the zone to write to zero
-    ; so that when we want to write some data we start with zone 0
-    stz MINIX_ZONE_TO_WRITE
-    stz MINIX_ZONE_TO_WRITE + 1
-    inc16 MINIX_CURRENT_INODE       ; put current inode number back to what it was, in case we need it again
-    ply
-    rts
-
-
 ; read the superblock
 ; carry clear on success
 ; carry set on error
@@ -549,8 +399,34 @@ minix_read_superblock_fail:
     rts
 
 
+; MACROS
 
-.segment "RODATA"
-minix_data:
-.align $100
-.incbin "minix.img"
+.macro asl16 src 
+    asl src
+    rol src + 1
+.endmacro
+
+.macro  cp16   src, dest
+    lda src
+    sta dest
+    lda src + 1
+    sta dest + 1
+.endmacro
+
+.macro inc16 src
+.local @done
+    inc src       ;Increment the LSB
+    bne @done       ;If the result was not zero we're done
+    inc src+1       ;Increment the MSB if LSB wrapped round
+@done:
+.endmacro
+
+.macro add16 first, second, result
+    CLC             ;Ensure carry is clear
+    LDA first+0       ;Add the two least significant bytes
+    ADC second+0
+    STA result+0       ;... and store the result
+    LDA first+1       ;Add the two most significant bytes
+    ADC second+1       ;... and any propagated carry bit
+    STA result+1       ;... and store the result
+.endmacro
