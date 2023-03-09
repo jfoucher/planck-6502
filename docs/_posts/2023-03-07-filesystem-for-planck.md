@@ -76,7 +76,7 @@ MINIX superblock layout
 <td>$00</td><td colspan="2">No. inodes</td><td colspan="2">No. zones</td><td colspan="2">inode map blocks</td><td colspan="2">zone map blocks</td><td colspan="2">First data zone</td><td colspan="2">Log zone size</td><td colspan="4">Max. file size</td>
 </tr>
 <tr>
-<td>$10</td><td colspan="2">Minix magic</td><td colspan=2>Mount state</td><td colspan="12"></td>
+<td>$10</td><td colspan="2">Minix magic</td><td colspan="2">Mount state</td><td colspan="12"></td>
 </tr>
 </tbody>
 </table>
@@ -123,10 +123,10 @@ MINIX inode layout
 </thead>
 <tbody>
 <tr>
-<td>$00</td><td colspan=2>MODE</td><td colspan=2>UID</td><td colspan=4>FILESIZE</td><td colspan=4>TIME</td><td>GID</td><td>LINKS</td><td colspan=2>ZONE 0</td>
+<td>$00</td><td colspan="2">MODE</td><td colspan="2">UID</td><td colspan="4">FILESIZE</td><td colspan="4">TIME</td><td>GID</td><td>LINKS</td><td colspan="2">ZONE 0</td>
 </tr>
 <tr>
-<td>$10</td><td colspan=2>ZONE 1</td><td colspan=2>ZONE 2</td><td colspan=2>ZONE 3</td><td colspan=2>ZONE 4</td><td colspan=2>ZONE 5</td><td colspan=2>ZONE 6</td><td colspan=2>ZONE 7</td><td colspan=2>ZONE 8</td>
+<td>$10</td><td colspan="2">ZONE 1</td><td colspan="2">ZONE 2</td><td colspan="2">ZONE 3</td><td colspan="2">ZONE 4</td><td colspan="2">ZONE 5</td><td colspan="2">ZONE 6</td><td colspan="2">ZONE 7</td><td colspan="2">ZONE 8</td>
 </tr>
 </tbody>
 </table>
@@ -186,10 +186,10 @@ MINIX Directory entry layout
 </thead>
 <tbody>
 <tr>
-<td>$00</td><td colspan=2>INODE</td><td colspan=14>FILENAME</td>
+<td>$00</td><td colspan="2">INODE</td><td colspan="14">FILENAME</td>
 </tr>
 <tr>
-<td>$10</td><td colspan=16>FILENAME (cont.)</td>
+<td>$10</td><td colspan="16">FILENAME (cont.)</td>
 </tr>
 </tbody>
 </table>
