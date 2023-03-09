@@ -73,10 +73,10 @@ MINIX superblock layout
 </thead>
 <tbody>
 <tr>
-<td>$00</td><td colspan=2>No. inodes</td><td colspan=2>No. zones</td><td colspan=2>inode map blocks</td><td colspan=2>zone map blocks</td><td colspan=2>First data zone</td><td colspan=2>Log zone size</td><td colspan=4>Max. file size</td>
+<td>$00</td><td colspan="2">No. inodes</td><td colspan="2">No. zones</td><td colspan="2">inode map blocks</td><td colspan="2">zone map blocks</td><td colspan="2">First data zone</td><td colspan="2">Log zone size</td><td colspan="4">Max. file size</td>
 </tr>
 <tr>
-<td>$10</td><td colspan=2>Minix magic</td><td colspan=2>Mount state</td><td colspan=12></td>
+<td>$10</td><td colspan="2">Minix magic</td><td colspan=2>Mount state</td><td colspan="12"></td>
 </tr>
 </tbody>
 </table>
