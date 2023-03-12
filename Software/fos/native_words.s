@@ -3711,9 +3711,9 @@ z_dup:          rts
         ; ed.asm or the manual for details.
         ; """
 xt_ed:
-
+        .ifdef ed6502
                 jsr ed6502      ; kept in separate file
-
+        .endif
 
 z_ed:           rts
 

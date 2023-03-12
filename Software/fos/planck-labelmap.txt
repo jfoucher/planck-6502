@@ -2,7 +2,7 @@ Modules list:
 -------------
 main.o:
     BSS               Offs=000000  Size=000913  Align=00001  Fill=0000
-    DATA              Offs=000000  Size=004F7A  Align=00001  Fill=0000
+    DATA              Offs=000000  Size=0049A4  Align=00001  Fill=0000
     ZEROPAGE          Offs=000000  Size=00004C  Align=00001  Fill=0000
     STARTUP           Offs=000000  Size=00002C  Align=00001  Fill=0000
     DATASTACK         Offs=000000  Size=00007F  Align=00001  Fill=0000
@@ -22,21 +22,21 @@ Name                   Start     End    Size  Align
 ----------------------------------------------------
 ZEROPAGE              000000  000065  000066  00001
 DATASTACK             000080  0000FE  00007F  00001
-DATA                  000200  005179  004F7A  00001
-BSS                   00517A  005A8C  000913  00001
-DICTIONARY            005A8D  006A8C  001000  00001
-STARTUP               00CF7A  00CFA5  00002C  00001
-CODE                  00CFA6  00CFF5  000050  00001
+DATA                  000200  004BA3  0049A4  00001
+BSS                   004BA4  0054B6  000913  00001
+DICTIONARY            0054B7  0064B6  001000  00001
+STARTUP               00C9A4  00C9CF  00002C  00001
+CODE                  00C9D0  00CA1F  000050  00001
 VECTORS               00FFFA  00FFFF  000006  00001
 
 
 Exports list by name:
 ---------------------
-__BSS_RUN__               00517A RLA    __BSS_SIZE__              000913 REA    
+__BSS_RUN__               004BA4 RLA    __BSS_SIZE__              000913 REA    
 __DATA_LOAD__             008000 RLA    __DATA_RUN__              000200 RLA    
-__DATA_SIZE__             004F7A REA    copydata                  00CFA6 RLA    
+__DATA_SIZE__             0049A4 REA    copydata                  00C9D0 RLA    
 ptr1                      000054 RLZ    ptr2                      000056 RLZ    
-tmp1                      00005C RLZ    zerobss                   00CFD3 RLA    
+tmp1                      00005C RLZ    zerobss                   00C9FD RLA    
 
 
 
@@ -44,9 +44,9 @@ Exports list by value:
 ----------------------
 ptr1                      000054 RLZ    ptr2                      000056 RLZ    
 tmp1                      00005C RLZ    __DATA_RUN__              000200 RLA    
-__BSS_SIZE__              000913 REA    __DATA_SIZE__             004F7A REA    
-__BSS_RUN__               00517A RLA    __DATA_LOAD__             008000 RLA    
-copydata                  00CFA6 RLA    zerobss                   00CFD3 RLA    
+__BSS_SIZE__              000913 REA    __DATA_SIZE__             0049A4 REA    
+__BSS_RUN__               004BA4 RLA    __DATA_LOAD__             008000 RLA    
+copydata                  00C9D0 RLA    zerobss                   00C9FD RLA    
 
 
 

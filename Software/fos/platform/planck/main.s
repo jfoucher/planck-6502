@@ -122,12 +122,12 @@ io_read_sector_address = sd_read_sector
 ; .include "drivers/fat32.s"
 ; .include "drivers/lcd.s"
 
-
+; .include "../../ed.s"
 .include "../../forth.s"
 
 .segment "DATA"
 
-.include "../../ed.s"
+
 
 
 platform_bye:
