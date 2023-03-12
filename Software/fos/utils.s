@@ -5,7 +5,8 @@
 util_tmp: .res 2
 
 .segment "BSS"
-tmp_var: .res 2
+util_tmp_var: .res 2
+pad: .res 4
 
 .segment "DATA"
 
@@ -88,13 +89,8 @@ calculate_free_mem:
     ; read and check same
     ; fill again with zeroes
 
-    lda up
-    sta util_tmp
-    lda up + 1
-    sta util_tmp + 1
-
-    stz tmp_var
-    stz tmp_var + 1
+    stz util_tmp_var
+    stz util_tmp_var + 1
 
     ldy #0
 @loop:
@@ -104,9 +100,9 @@ calculate_free_mem:
     bne @exit               ; no equal, stop couting and exit
     lda #0                  ; zero the memory again
     sta (util_tmp), y
-    inc tmp_var
+    inc util_tmp_var
     bne @incok
-    inc tmp_var + 1
+    inc util_tmp_var + 1
 @incok:
     iny
     bne @loop

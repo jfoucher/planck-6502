@@ -167,7 +167,7 @@ nt_cf_cat:
         .word nt_cf_rsptr, xt_cf_cat, z_cf_cat
         .byte "cat"
 .endif
-.ifdef DISK_BUFFER
+.ifdef IO_BUFFER
 nt_fat_init:
         .byte 3, 0
         .ifdef CF_ADDRESS
@@ -185,11 +185,19 @@ nt_rsptr:
         .byte 5, 0
         .word nt_fat_init, xt_io_readsector, z_io_readsector
         .byte "rsptr"
+nt_io_readblock:
+        .byte 2, 0
+        .word nt_rsptr, xt_io_readblock, z_io_readblock
+        .byte "rb"
+nt_io_writeblock:
+        .byte 2, 0
+        .word nt_io_readblock, xt_io_writeblock, z_io_writeblock
+        .byte "wb"
 .endif
 nt_time:
         .byte 4, 0
-.ifdef DISK_BUFFER
-        .word nt_rsptr, xt_time, z_time
+.ifdef IO_BUFFER
+        .word nt_io_writeblock, xt_time, z_time
 .elseif .def(CF_ADDRESS)
         .word nt_cf_cat, xt_time, z_time
 .elseif .def(SD)
@@ -1589,40 +1597,40 @@ nt_root_set_order:
 ; END of ROOT-WORDLIST
 
 
-; ; EDITOR-WORDLIST
+; EDITOR-WORDLIST
 
-; nt_editor_enter_screen:
-;         .byte 12, 0
-;         .word 0000, xt_editor_enter_screen, z_editor_enter_screen
-;         .byte "enter-screen"
+nt_editor_enter_screen:
+        .byte 12, 0
+        .word 0000, xt_editor_enter_screen, z_editor_enter_screen
+        .byte "enter-screen"
 
-; nt_editor_erase_screen:
-;         .byte 12, 0
-;         .word nt_editor_enter_screen, xt_editor_erase_screen, z_editor_erase_screen
-;         .byte "erase-screen"
+nt_editor_erase_screen:
+        .byte 12, 0
+        .word nt_editor_enter_screen, xt_editor_erase_screen, z_editor_erase_screen
+        .byte "erase-screen"
 
-; nt_editor_el:
-;         .byte 2, 0
-;         .word nt_editor_erase_screen, xt_editor_el, z_editor_el
-;         .byte "el"
+nt_editor_el:
+        .byte 2, 0
+        .word nt_editor_erase_screen, xt_editor_el, z_editor_el
+        .byte "el"
 
-; nt_editor_l:
-;         .byte 1, 0
-;         .word nt_editor_el, xt_editor_l, z_editor_l
-;         .byte "l"
+nt_editor_l:
+        .byte 1, 0
+        .word nt_editor_el, xt_editor_l, z_editor_l
+        .byte "l"
 
-; nt_editor_line:
-;         .byte 4, UF
-;         .word nt_editor_l, xt_editor_line, z_editor_line
-;         .byte "line"
+nt_editor_line:
+        .byte 4, UF
+        .word nt_editor_l, xt_editor_line, z_editor_line
+        .byte "line"
 
 editor_dictionary_start:
-; nt_editor_o:
-;         .byte 1, 0
-;         .word nt_editor_line, xt_editor_o, z_editor_o
-;         .byte "o"
+nt_editor_o:
+        .byte 1, 0
+        .word nt_editor_line, xt_editor_o, z_editor_o
+        .byte "o"
 
-; ; END of EDITOR-WORDLIST
+; END of EDITOR-WORDLIST
 
 
 ; ; ASSEMBLER-WORDLIST

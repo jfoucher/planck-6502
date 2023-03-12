@@ -81,13 +81,13 @@ jsr kernel_putc
 .local @skip
 .local @end
     lda src             ; load low byte
-    bne @skip           ; if it's not zero, just decrement it
+    bne @skip           ; if it's not zero, decrement it
     dec src + 1         ; if low byte is zero decrement high byte
     beq @end            ; if high byte is also zero, we reached zero, exit now
 @skip:
     dec src
     bne @end            ; if low byte is not zero exit now
-    lda src + 1         ; if low byte is zero, load high byte to check if it's also zero
+    lda src + 1         ; if low byte was zero, load high byte to check if it's also zero
 @end:
 .endmacro
 

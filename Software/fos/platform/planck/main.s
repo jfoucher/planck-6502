@@ -9,7 +9,7 @@ ram_end = $8000
 .include "drivers/cf.inc"
 .include "drivers/acia.inc"
 .include "drivers/via.inc"
-.include "drivers/sd.inc"
+; .include "drivers/sd.inc"
 ; .include "drivers/ps2.inc"
 ; .include "drivers/4004.inc"
 ; .include "drivers/lcd.inc"
@@ -17,6 +17,7 @@ ram_end = $8000
 ; .include "drivers/keyboard.inc"
 
 .segment "ZEROPAGE": zeropage
+io_buffer_ptr: .res 2
 
 .include "drivers/zp.s"
 
@@ -29,7 +30,8 @@ has_acia: .res 1
 .endif
 
 .ifdef CF_ADDRESS
-
+IO_BUFFER: .res $400
+IO_SECTOR: .res 4
 .endif
 
 
@@ -96,18 +98,21 @@ ram_zeroed:
 .endif
 .ifdef CF_ADDRESS
 .include "drivers/cf.s"
+io_read_sector_address = cf_read_sector
+io_write_sector_address = cf_write_sector
 .endif
 .ifdef SD
 
 .include "drivers/sd.s"
+io_read_sector_address = sd_read_sector
 
 .endif
 
-.if .def(SD)
-.include "../../fat16.s"
-.elseif .def(CF_ADDRESS)
-.include "../../fat16.s"
-.endif
+; .if .def(SD)
+; .include "../../fat16.s"
+; .elseif .def(CF_ADDRESS)
+; .include "../../fat16.s"
+; .endif
 
 .include "../../utils.s"
 
@@ -122,7 +127,7 @@ ram_zeroed:
 
 .segment "DATA"
 
-; .include "../../ed.s"
+.include "../../ed.s"
 
 
 platform_bye:
@@ -135,12 +140,7 @@ kernel_init:
     sta PORTB
     stz PORTA
 .endif
-.ifdef timer_init
-    stz time
-    stz time+1
-    stz time+2
-    stz time+3
-.endif
+
 jsr acia_init
 .ifdef timer_init
     jsr timer_init
@@ -151,6 +151,9 @@ jsr acia_init
 .ifdef ps2_init
     jsr ps2_init
 .endif
+.ifdef cf_init
+    jsr cf_init
+.endif
 .ifdef lcd_init
     jsr lcd_init
 .endif
@@ -160,12 +163,13 @@ jsr acia_init
 .ifdef kb_init
     jsr kb_init
 .endif
+
     printascii welcome_message
 
     lda #<dictionary
-    sta up
+    sta util_tmp
     lda #>dictionary
-    sta up + 1
+    sta util_tmp + 1
 
     jsr calculate_free_mem
     lda tmp_var + 1
@@ -173,17 +177,18 @@ jsr acia_init
     jsr print16
 
     printascii free_message
+
 
     jmp forth
 
 v_nmi:
     
-    jsr calculate_free_mem
-    lda tmp_var + 1
-    ldx tmp_var
-    jsr print16
+    ; jsr calculate_free_mem
+    ; lda tmp_var + 1
+    ; ldx tmp_var
+    ; jsr print16
 
-    printascii free_message
+    ; printascii free_message
     printascii ready_message
 
     jmp xt_abort
@@ -192,7 +197,12 @@ v_nmi:
 
 
 io_read_sector:
-    jmp (io_read_sector_ptr)        ; jump to read sector routine
+    jmp io_read_sector_address        ; jump to read sector routine
+
+io_write_sector:
+    jmp io_write_sector_address        ; jump to read sector routine
+
+
 
 kernel_putc:
     ; """Print a single character to the console. """

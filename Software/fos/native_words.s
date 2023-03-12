@@ -3711,9 +3711,9 @@ z_dup:          rts
         ; ed.asm or the manual for details.
         ; """
 xt_ed:
-            .ifdef ed6502
+
                 jsr ed6502      ; kept in separate file
-            .endif
+
 
 z_ed:           rts
 
@@ -12140,14 +12140,14 @@ xt_sd_readsector:
                 ; get and save sector number (32 bit number, double)
                 ; most significant part is TOS
                 lda 0, x
-                sta FAT_LBA + 2
+                sta IO_SECTOR + 2
                 lda 1, x
-                sta FAT_LBA + 3
+                sta IO_SECTOR + 3
                 ; least significant part is NOS
                 lda 2, x
-                sta FAT_LBA + 0
+                sta IO_SECTOR + 0
                 lda 3, x
-                sta FAT_LBA + 1
+                sta IO_SECTOR + 1
                 lda #1
                 sta SD_CRC
         
@@ -12192,8 +12192,8 @@ xt_cf_init:
 z_cf_init:
         rts
 
-; ## fat_init ( addr -- ) "Initialize FAT16 on CF or SD card at specified address"
-; ## "fat_init" coded Custom
+; ## fat ( addr -- ) "Initialize FAT16 on CF or SD card at specified address"
+; ## "fat" coded Custom
 xt_fat_init: 
 .ifdef CF_ADDRESS
         ; initialize CF card
@@ -12203,18 +12203,19 @@ xt_fat_init:
         lda #7
         jsr sd_init
 .endif
-.ifdef DISK_BUFFER
+.ifdef IO_BUFFER
+.ifdef fat_init
         jsr fat_init
-
-        printstr DISK_BUFFER + 43, 11
+.endif
+        printstr IO_BUFFER + 43, 11
         ; printascii cf_fat_mounted_message
         ; jsr xt_cr
 fat_init_exit:
         dex
         dex
-        lda #<DISK_BUFFER
+        lda #<IO_BUFFER
         sta 0, x
-        lda #>DISK_BUFFER
+        lda #>IO_BUFFER
         sta 1, x
 .endif
 z_fat_init: 
@@ -12237,8 +12238,8 @@ xt_cf_ls:
         jsr xt_cr
 
 @fatok:
-        cp16 FAT_CURRENT_DIR_SEC, FAT_LBA
-        cp16 FAT_CURRENT_DIR_SEC + 2, FAT_LBA + 2
+        cp16 FAT_CURRENT_DIR_SEC, IO_SECTOR
+        cp16 FAT_CURRENT_DIR_SEC + 2, IO_SECTOR + 2
 
         jsr io_read_sector
 
@@ -12248,9 +12249,9 @@ xt_cf_ls:
         printascii ls_header
         jsr xt_cr
 
-        lda #<DISK_BUFFER
+        lda #<IO_BUFFER
         sta FAT_PTR2
-        lda #>DISK_BUFFER
+        lda #>IO_BUFFER
         sta FAT_PTR2 + 1
 
         phy
@@ -12291,9 +12292,9 @@ xt_cf_ls:
 
         ; dex
         ; dex
-        ; lda #<DISK_BUFFER
+        ; lda #<IO_BUFFER
         ; sta 0, x
-        ; lda #>DISK_BUFFER
+        ; lda #>IO_BUFFER
         ; sta 1, x
 
 z_cf_ls:
@@ -12342,18 +12343,10 @@ entry_type_file: .asciiz "   F    "
 .endif
 xt_cf_info:
 .ifdef CF_ADDRESS
-        jsr cf_init
-        jsr cf_wait
-        lda #$EC
-        sta CF_ADDRESS + 7
-        dex
-        dex
-        lda #<DISK_BUFFER
-        sta 0, x
-        lda #>DISK_BUFFER
-        sta 1, x
-        jsr cf_read
-
+        jsr cf_info
+        jsr xt_cr
+        jsr cf_print_id
+        jsr cf_print_capacity
 .endif
 z_cf_info:
         rts
@@ -12379,7 +12372,7 @@ xt_cf_cd:
 
         jsr fat_convert_filename
 
-        jsr fat_find_file               ; after this, the pointer to the entry in DISK_BUFFER is in FAT_PTR1
+        jsr fat_find_file               ; after this, the pointer to the entry in IO_BUFFER is in FAT_PTR1
         bcs @found
         inx
         inx
@@ -12454,7 +12447,7 @@ xt_cf_cat:
 
         jsr fat_convert_filename
 
-        jsr fat_find_file               ; after this, the pointer to the entry in DISK_BUFFER is in FAT_PTR1
+        jsr fat_find_file               ; after this, the pointer to the entry in IO_BUFFER is in FAT_PTR1
         bcs @found
         inx
         inx
@@ -12504,8 +12497,8 @@ xt_cf_cat:
         cp16 FAT_CURRENT_DIR_SEC + 2, FAT_TMP + 2
         jsr fat_get_sector_for_cluster
         ; save sector number to CF_LBA
-        cp16 FAT_CURRENT_DIR_SEC, FAT_LBA
-        cp16 FAT_CURRENT_DIR_SEC + 2, FAT_LBA + 2
+        cp16 FAT_CURRENT_DIR_SEC, IO_SECTOR
+        cp16 FAT_CURRENT_DIR_SEC + 2, IO_SECTOR + 2
         cp16 FAT_TMP, FAT_CURRENT_DIR_SEC
         cp16 FAT_TMP + 2, FAT_CURRENT_DIR_SEC + 2
 
@@ -12554,26 +12547,30 @@ xt_cf_readsector:
         jsr underflow_2
         ; most significant part is TOS
         lda 0, x
-        sta FAT_LBA + 2
+        sta IO_SECTOR + 2
         lda 1, x
-        sta FAT_LBA + 3
+        sta IO_SECTOR + 3
         ; least significant part is NOS
         lda 2, x
-        sta FAT_LBA + 0
+        sta IO_SECTOR + 0
         lda 3, x
-        sta FAT_LBA + 1
+        sta IO_SECTOR + 1
         ; LBA is set, now read sector
         jsr cf_init
 
+        lda #<IO_BUFFER
+        sta io_buffer_ptr
+        lda #>IO_BUFFER
+        sta io_buffer_ptr + 1
         jsr cf_read_sector
 
         ; return buffer address
         inx
         inx
-        lda #<DISK_BUFFER
+        lda #<IO_BUFFER
         sta 0, x
 
-        lda #>DISK_BUFFER
+        lda #>IO_BUFFER
 
         sta 1, x
 .endif
@@ -12605,16 +12602,93 @@ z_sd_rsptr:
         rts
 
 xt_io_readsector:
-.ifdef DISK_BUFFER
+.ifdef IO_BUFFER
         dex
         dex
-        lda #<io_read_sector_ptr
+        lda #<io_read_sector_address
         sta 0, x
-        lda #>io_read_sector_ptr
+        lda #>io_read_sector_address
         sta 1, x
 .endif
 z_io_readsector:
         rts
 
+xt_io_readblock:
+.ifdef IO_BUFFER
+        ; block-read ( addr blk# -- ) 
+        lda 2, x
+        sta io_buffer_ptr
+        lda 3, x
+        sta io_buffer_ptr + 1
+        lda 0, x
+        sta IO_SECTOR
+        lda 1, x
+        sta IO_SECTOR + 1
+        stz IO_SECTOR + 2
+        stz IO_SECTOR + 3
+
+        asl IO_SECTOR                   ; multiply by two to get first sector number
+        rol IO_SECTOR + 1
+        rol IO_SECTOR + 2
+
+        ; lda io_buffer_ptr
+        ; sta 0, x
+        ; lda io_buffer_ptr + 1
+        ; sta 1, x
+        ; jsr xt_dot
+
+        jsr io_read_sector
+        inc32 IO_SECTOR
+        inc io_buffer_ptr + 1
+        inc io_buffer_ptr + 1
+        jsr io_read_sector
+        ; lda io_buffer_ptr
+        ; sta 0, x
+        ; lda io_buffer_ptr + 1
+        ; sta 1, x
+        ; jsr xt_dot
+
+        inx
+        inx
+
+.endif
+z_io_readblock:
+        rts
+
+xt_io_writeblock:
+.ifdef IO_BUFFER
+        ; block-write ( addr blk# -- ) 
+        lda 2, x
+        sta io_buffer_ptr
+        lda 3, x
+        sta io_buffer_ptr + 1
+        lda 0, x
+        sta IO_SECTOR
+        lda 1, x
+        sta IO_SECTOR + 1
+        stz IO_SECTOR + 2
+        stz IO_SECTOR + 3
+
+        asl IO_SECTOR                   ; multiply by two to get first sector number
+        rol IO_SECTOR + 1
+        rol IO_SECTOR + 2
+
+        jsr io_write_sector
+        inc32 IO_SECTOR
+        inc io_buffer_ptr + 1
+        inc io_buffer_ptr + 1
+        jsr io_write_sector
+
+
+        ; inc io_buffer_ptr + 1           ; jump two pages forward
+        ; inc io_buffer_ptr + 1
+        ; jsr io_write_sector
+        inx
+        inx
+        ; inx
+        ; inx
+.endif
+z_io_writeblock:
+        rts
 ; END
 
