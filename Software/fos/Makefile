@@ -14,6 +14,27 @@ fos-%.bin: platform/%/main.s platform/%/*/*.s platform/%/memory.cfg $(COMMON_SOU
 	-o $@ \
 	$<
 
+cf-%.bin: platform/%/cf.s platform/%/*/*.s platform/%/cf.cfg $(COMMON_SOURCES)
+	cl65 --listing $*-cflisting.txt \
+	--mapfile $*-cflabelmap.txt \
+	--config platform/$*/cf.cfg \
+	--target none \
+	-v \
+	-O \
+	--cpu 65C02 \
+	-o $@ \
+	$<
+
+rom-%.bin: platform/%/boot.s platform/%/*/*.s platform/%/cf.cfg $(COMMON_SOURCES)
+	cl65 --listing $*-romlisting.txt \
+	--mapfile $*-romlabelmap.txt \
+	--config platform/$*/boot.cfg \
+	--target none \
+	-v \
+	-O \
+	--cpu 65C02 \
+	-o $@ \
+	$<
 
 
 sim:	fos-py65mon.bin

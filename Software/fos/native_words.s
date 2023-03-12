@@ -282,7 +282,11 @@ cold_user_table:
         .byte 4                         ; #WORDLISTS (FORTH EDITOR ASSEMBLER ROOT)
         .word dictionary_start          ; FORTH-WORDLIST
         .word editor_dictionary_start   ; EDITOR-WORDLIST
+.ifdef TALI_OPTIONAL_ASSEMBLER
         .word assembler_dictionary_start ; ASSEMBLER-WORDLIST
+.else
+        .word 0
+.endif
         .word root_dictionary_start     ; ROOT-WORDLIST
         .word 0,0,0,0,0,0,0,0           ; User wordlists
         .byte 1                         ; #ORDER
@@ -3020,7 +3024,7 @@ z_digit_question:
         ; """
 xt_disasm:
                 jsr underflow_2
-            .ifdef disassembler
+            .ifdef TALI_OPTIONAL_ASSEMBLER
                 jsr disassembler
             .endif
 
@@ -12187,6 +12191,97 @@ xt_cf_info:
 .endif
 z_cf_info:
         rts
+
+cf_print_capacity:
+    phy
+
+    jsr xt_cr
+
+    ldy #120
+    ; print lba size
+    lda (io_buffer_ptr), y
+    sta LBA_SIZE
+    iny
+    lda (io_buffer_ptr), y
+    sta LBA_SIZE + 1
+
+    iny
+    lda (io_buffer_ptr), y
+    sta LBA_SIZE + 2
+
+    iny
+    lda (io_buffer_ptr), y
+    sta LBA_SIZE + 3
+
+    ldy #9
+@loop:
+    asl32 LBA_SIZE
+    dey
+    bne @loop
+
+    dex
+    dex
+    dex
+    dex
+
+    lda LBA_SIZE
+    sta 2, x
+    lda LBA_SIZE + 1
+    sta 3, x
+    lda LBA_SIZE + 2
+    sta 0, x
+    lda LBA_SIZE + 3
+    sta 1, x
+
+    jsr xt_ud_dot
+
+    dex
+    dex
+    dex
+    dex
+    lda #6
+    sta 0, x
+    stz 1, x
+    lda #<bytes_msg
+    sta 2, x
+    lda #>bytes_msg
+    sta 3, x
+    jsr xt_type
+    jsr xt_cr
+    ply
+    rts
+
+
+cf_info:
+;     jsr cf_init
+;     jsr cf_wait
+;     lda #$EC
+;     sta CF_ADDRESS + 7
+;     lda #<IO_BUFFER
+;     sta io_buffer_ptr
+;     lda #>IO_BUFFER
+;     sta io_buffer_ptr + 1
+;     jsr cf_read
+    rts
+
+cf_print_id:
+    ; print model number
+    phy
+    ldy #55
+@loop:
+    lda (io_buffer_ptr), y
+    jsr kernel_putc
+    dey
+    lda (io_buffer_ptr), y
+    jsr kernel_putc
+    iny
+    iny
+    iny
+    cpy #(40+55)
+    bcc @loop
+    ply
+    rts
+
 
 xt_io_readblock:
 .ifdef io_read_sector_address
