@@ -1,6 +1,7 @@
 
 .include "../../macros.s"
 CLOCK_SPEED = 24000000
+TALI_OPTIONAL_ASSEMBLER = 1
 
 ram_end = $8000
 
@@ -123,11 +124,15 @@ io_read_sector_address = sd_read_sector
 ; .include "drivers/lcd.s"
 
 ; .include "../../ed.s"
+
 .include "../../forth.s"
 
 .segment "DATA"
 
-
+.ifdef TALI_OPTIONAL_ASSEMBLER
+.include "../../assembler.s"
+.include "../../disassembler.s"
+.endif
 
 
 platform_bye:

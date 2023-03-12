@@ -15,16 +15,12 @@ cf_init:
     sta CF_ADDRESS + 7
     jsr cf_wait
     lda #$E0
-    ; ldy #6
-    ; sta (CF_ADDRESS),y
     sta CF_ADDRESS + 6
+    jsr cf_wait
     lda #$1
-    ; ldy #1
-    ; sta (CF_ADDRESS),y
     sta CF_ADDRESS + 1
+    jsr cf_wait
     lda #$EF
-    ; ldy #7
-    ; sta (CF_ADDRESS),y
     sta CF_ADDRESS + 7
     jsr cf_wait
     jsr cf_err
@@ -38,22 +34,22 @@ cf_read:
     phy
     ldy #0
 @loop:
-    jsr cf_wait
+    ; jsr cf_wait
     lda CF_ADDRESS
-    ; jsr kernel_putc
     sta (io_buffer_ptr), y
     iny
     bne @loop
     inc io_buffer_ptr + 1
-@loop2:
     jsr cf_wait
+@loop2:
+    ; jsr cf_wait
     lda CF_ADDRESS
-    ; jsr kernel_putc
     sta (io_buffer_ptr), y
     iny
     bne @loop2
     dec io_buffer_ptr + 1
 @loop3:
+    jsr cf_wait
     lda CF_ADDRESS + 7
     and #$08
     beq @exit
@@ -123,6 +119,7 @@ cf_write:
     bne @loop2
     dec io_buffer_ptr + 1
 @loop3:
+    jsr cf_wait
     lda CF_ADDRESS + 7
     and #$08
     beq @exit
@@ -150,26 +147,20 @@ cf_wait:
     rts
     
 cf_set_lba:
-    ; phy
     lda IO_SECTOR
-    ; ldy #3
-    ; sta (CF_ADDRESS),y
     sta CF_ADDRESS + 3
+    jsr cf_wait
     lda IO_SECTOR + 1
-    ; ldy #4
-    ; sta (CF_ADDRESS), y
     sta CF_ADDRESS + 4
+    jsr cf_wait
     lda IO_SECTOR + 2
-    ; ldy #5
-    ; sta (CF_ADDRESS), y
     sta CF_ADDRESS + 5
+    jsr cf_wait
     lda IO_SECTOR + 3
     and #$0F
     ora #$E0
-    ; ldy #6
-    ; sta (CF_ADDRESS), y
     sta CF_ADDRESS + 6
-    ; ply
+    jsr cf_wait
     rts
 
 cf_err:

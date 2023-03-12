@@ -23,6 +23,9 @@ str_see_flags =       9
 str_see_nt =         10
 str_see_xt =         11
 str_see_size =       12
+str_disasm_lit     = 13
+str_disasm_sdc     = 14
+str_disasm_bra     = 15    
 
 ; Since we can't fit a 16-bit address in a register, we use indexes as offsets
 ; to tables as error and string numbers.
@@ -47,6 +50,9 @@ s_see_flags:  .byte "flags (CO AN IM NN UF HC): ", 0
 s_see_nt:     .byte "nt: ", 0
 s_see_xt:     .byte "xt: ", 0
 s_see_size:   .byte "size (decimal): ", 0
+s_disasm_lit: .byte "LITERAL ", 0
+s_disasm_sdc: .byte "STACK DEPTH CHECK", 0
+s_disasm_bra: .byte "BRANCH ",0
 
 
 ; ## ERROR STRINGS
