@@ -110,84 +110,28 @@ nt_spi_transceive:
         .word nt_spi_select, xt_spi_transceive, z_spi_transceive
         .byte "spi_transceive"
 .endif
-.ifdef SD
-nt_sd_init:
-        .byte 7, 0
-        .ifdef VIA1_BASE
-        .word nt_spi_transceive, xt_sd_init, z_sd_init
-        .else
-        .word nt_cls, xt_sd_init, z_sd_init
-        .endif
-        .byte "sd_init"
-nt_sd_rsptr:
-        .byte 7, 0
-        .word nt_sd_init, xt_sd_rsptr, z_sd_rsptr
-        .byte "sdrsptr"
-nt_sd_readsector:
-        .byte 13, 0
-        .word nt_sd_rsptr, xt_sd_readsector, z_sd_readsector
-        .byte "sd_readsector"
 
-.endif
 
 .ifdef CF_ADDRESS
-nt_cf_rs:
-        .byte 2, 0
-        .ifdef SD
-        .word nt_sd_readsector, xt_cf_readsector, z_cf_readsector
-        .elseif .def(VIA1_BASE)
-        .word nt_spi_transceive, xt_cf_readsector, z_cf_readsector
-        .else
-        .word nt_cls, xt_cf_readsector, z_cf_readsector
-        .endif
-        .byte "rs"
-
-
 nt_cf_info:
         .byte 4, 0
-        .word nt_cf_rs, xt_cf_info, z_cf_info
-        .byte "info"
-nt_cf_ls:
-        .byte 2, 0
-        .word nt_cf_info, xt_cf_ls, z_cf_ls
-        .byte "ls"
-
-nt_cf_cd:
-        .byte 2, 0
-        .word nt_cf_ls, xt_cf_cd, z_cf_cd
-        .byte "cd"
-
-nt_cf_rsptr:
-        .byte 7, 0
-        .word nt_cf_cd, xt_cf_rsptr, z_cf_rsptr
-        .byte "cfrsptr"
-
-nt_cf_cat:
-        .byte 3, 0
-        .word nt_cf_rsptr, xt_cf_cat, z_cf_cat
-        .byte "cat"
-.endif
-.ifdef IO_BUFFER
-nt_fat_init:
-        .byte 3, 0
-        .ifdef CF_ADDRESS
-        .word nt_cf_cat, xt_fat_init, z_fat_init
-        .elseif .def(SD)
-        .word nt_sd_readsector, xt_fat_init, z_fat_init
-        .elseif .def(VIA1_BASE)
-        .word nt_spi_transceive, xt_fat_init, z_fat_init
+        .ifdef VIA1_BASE
+        .word nt_spi_select, xt_cf_info, z_cf_info
         .else
-        .word nt_cls, xt_fat_init, z_fat_init
+        .word nt_cls, xt_cf_info, z_cf_info
         .endif
-        .byte "fat"
-
-nt_rsptr:
-        .byte 5, 0
-        .word nt_fat_init, xt_io_readsector, z_io_readsector
-        .byte "rsptr"
+        .byte "info"
+.endif
+.ifdef io_read_sector_address
 nt_io_readblock:
         .byte 2, 0
-        .word nt_rsptr, xt_io_readblock, z_io_readblock
+        .ifdef CF_ADDRESS
+        .word nt_cf_info, xt_io_readblock, z_io_readblock
+        .elseif .def(VIA1_BASE)
+        .word nt_spi_transceive, xt_io_readblock, z_io_readblock
+        .else
+        .word nt_cls, xt_io_readblock, z_io_readblock
+        .endif
         .byte "rb"
 nt_io_writeblock:
         .byte 2, 0
@@ -196,12 +140,10 @@ nt_io_writeblock:
 .endif
 nt_time:
         .byte 4, 0
-.ifdef IO_BUFFER
+.ifdef io_read_sector_address
         .word nt_io_writeblock, xt_time, z_time
 .elseif .def(CF_ADDRESS)
-        .word nt_cf_cat, xt_time, z_time
-.elseif .def(SD)
-        .word nt_sd_readsector, xt_time, z_time
+        .word nt_cf_info, xt_time, z_time
 .elseif .def(VIA1_BASE)
         .word nt_spi_transceive, xt_time, z_time
 .else

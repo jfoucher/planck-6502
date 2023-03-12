@@ -30,7 +30,7 @@ has_acia: .res 1
 .endif
 
 .ifdef CF_ADDRESS
-IO_BUFFER: .res $400
+IO_BUFFER = cp0+256 ; set IO_BUFFER to block buffer
 IO_SECTOR: .res 4
 .endif
 
