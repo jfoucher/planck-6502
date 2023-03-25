@@ -27,3 +27,6 @@ Hardware/cf_board/cf_board-backups
 cf_board-2023-02-21_175402.zip
 Hardware/proto_board/proto_board-backups
 Hardware/ram_board/ram_board-backups
+Emulator/wasm/dist
+Emulator/wasm/node_modules
+Hardware/flash_adapter/flash_adapter-backups

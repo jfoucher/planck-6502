@@ -40,8 +40,8 @@ IRQ0   |2     19| IRQ_OUT
 IRQ1   |3     18| RAM_CS
 IRQ2   |4     17| ROM_CS
 IRQ3   |5     16| RAM_W
-IRQ4   |6     15| NONE
-IRQ5   |7     14| SIRQ
+IRQ4   |6     15| A13
+IRQ5   |7     14| A14
 SER_IRQ|8     13| INH
 A15    |9     12| SSEL
 Gnd    |10    11| RW
@@ -60,7 +60,8 @@ Pin 9  =  A15;
 Pin 11 =  RW;
 Pin 12 = SSEL;  
 Pin 13 = INH; 
-Pin 14 = SIRQ; 
+Pin 14 = A14; 
+Pin 15 = A13; 
 Pin 16 = RAM_W; 
 Pin 17 = ROM_CS; 
 Pin 18 = RAM_CS; 
