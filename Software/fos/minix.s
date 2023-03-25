@@ -550,7 +550,3 @@ minix_read_superblock_fail:
 
 
 
-.segment "RODATA"
-minix_data:
-.align $100
-.incbin "minix.img"

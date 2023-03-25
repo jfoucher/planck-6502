@@ -1,0 +1,983 @@
+ca65 V2.18 - N/A
+Main file   : tinyload.asm
+Current file: tinyload.asm
+
+000000r 1               ;;
+000000r 1               ;; A minimal loader that tries to load and execute a file
+000000r 1               ;; from a FAT16-formatted SD card.
+000000r 1               ;;
+000000r 1               
+000000r 1               
+000000r 1               ;; Basic definitions ################################################
+000000r 1               
+000000r 1               
+000000r 1               ;; positions of basic constants
+000000r 1               CONST32_1 = $a0
+000000r 1               CONST32_2 = $a4
+000000r 1               CONST32_32 = $a8
+000000r 1               
+000000r 1               ;; arguments, return values, temporary zp storage
+000000r 1               ;; those are not guaranteed to be preserved by normal subroutines
+000000r 1               ;; interrupt handlers, however, *are* mandated to restore those!
+000000r 1               ARG1 = $c0
+000000r 1               ARG2 = ARG1 + 4
+000000r 1               RET = ARG2 + 4
+000000r 1               TMP = RET + 4
+000000r 1               TMP1 = TMP
+000000r 1               TMP2 = TMP1 + 4
+000000r 1               TMP3 = TMP2 + 4
+000000r 1               TMP4 = TMP3 + 4
+000000r 1               
+000000r 1               ;; some space to save registers if we cannot use the stack
+000000r 1               SAVEA = TMP4 + 4
+000000r 1               SAVEX = SAVEA + 1
+000000r 1               SAVEY = SAVEX + 1
+000000r 1               
+000000r 1               ;; some storage for pointers
+000000r 1               PTR1 = SAVEY + 1
+000000r 1               PTR2 = PTR1 + 2
+000000r 1               PTR3 = PTR2 + 2
+000000r 1               
+000000r 1               ;; pointers for math (arguments and result)
+000000r 1               
+000000r 1               MPTR1 = PTR3 + 2	; first argument
+000000r 1               MPTR2 = MPTR1 + 2	; second argument
+000000r 1               MPTR3 = MPTR2 + 2	; primary result
+000000r 1               MPTR4 = MPTR3 + 2	; secondary result (where relevant, like remainder of division)
+000000r 1               
+000000r 1               ;; those *are* saved by subroutines and interrupts!
+000000r 1               VREG1 = MPTR4 + 2
+000000r 1               VREG2 = VREG1 + 1
+000000r 1               
+000000r 1               ;; IRQ vector for applications
+000000r 1               IRQ_VEC = VREG2 + 1
+000000r 1               
+000000r 1               
+000000r 1               ;; A few special characters
+000000r 1               C_LF = $0A	; line feed
+000000r 1               C_CR = $0D	; carriage return
+000000r 1               C_BS = $08	; backspace
+000000r 1               C_PT = $2E	; point
+000000r 1               C_SP = $20	; space
+000000r 1               C_EX = $21	; exclamation mark
+000000r 1               
+000000r 1               
+000000r 1               
+000000r 1               
+000000r 1               ;; Macros ###########################################################
+000000r 1               
+000000r 1               .include "macros.asm"
+000000r 2               
+000000r 2               .macro push_axy
+000000r 2               	pha		; push accumulator to stack
+000000r 2               	txa		; x -> a
+000000r 2               	pha		; push x to stack
+000000r 2               	tya		; y -> a
+000000r 2               	pha		; push y to stack
+000000r 2               .endmacro
+000000r 2               
+000000r 2               .macro pull_axy
+000000r 2               	pla		; pull y from stack
+000000r 2               	tay		; a -> y
+000000r 2               	pla		; pull x from stack
+000000r 2               	tax		; a -> x
+000000r 2               	pla		; pull a from stack
+000000r 2               .endmacro
+000000r 2               
+000000r 2               
+000000r 2               .macro push_ax
+000000r 2               	pha
+000000r 2               	txa
+000000r 2               	pha
+000000r 2               .endmacro
+000000r 2               
+000000r 2               
+000000r 2               .macro pull_ax
+000000r 2               	pla
+000000r 2               	tax
+000000r 2               	pla
+000000r 2               .endmacro
+000000r 2               
+000000r 2               .macro push_ay
+000000r 2               	pha
+000000r 2               	tya
+000000r 2               	pha
+000000r 2               .endmacro
+000000r 2               
+000000r 2               
+000000r 2               .macro pull_ay
+000000r 2               	pla
+000000r 2               	tay
+000000r 2               	pla
+000000r 2               .endmacro
+000000r 2               
+000000r 2               
+000000r 2               .macro push_vregs
+000000r 2               	lda VREG1
+000000r 2               	pha
+000000r 2               	lda VREG2
+000000r 2               	pha
+000000r 2               .endmacro
+000000r 2               
+000000r 2               
+000000r 2               .macro pull_vregs
+000000r 2               	pla
+000000r 2               	sta VREG2
+000000r 2               	pla
+000000r 2               	sta VREG1
+000000r 2               .endmacro
+000000r 2               
+000000r 2               
+000000r 2               .macro put_address ADDR, L1, L2
+000000r 2               	lda #<ADDR
+000000r 2               	sta L1
+000000r 2               	lda #>ADDR
+000000r 2                .ifnblank L2
+000000r 2               	sta L2
+000000r 2                .else
+000000r 2               	sta L1+1
+000000r 2                .endif
+000000r 2               .endmacro
+000000r 2               
+000000r 2               
+000000r 2               .macro put_address_lo ADDR, L1
+000000r 2               	lda #<ADDR
+000000r 2               	sta L1
+000000r 2               .endmacro
+000000r 2               
+000000r 2               
+000000r 2               .macro mov16 SRC, DEST
+000000r 2               	lda SRC
+000000r 2               	sta DEST
+000000r 2               	lda SRC+1
+000000r 2               	sta DEST+1
+000000r 2               .endmacro
+000000r 2               
+000000r 2               .macro mov32 SRC, DEST
+000000r 2               	lda SRC
+000000r 2               	sta DEST
+000000r 2               	lda SRC+1
+000000r 2               	sta DEST+1
+000000r 2               	lda SRC+2
+000000r 2               	sta DEST+2
+000000r 2               	lda SRC+3
+000000r 2               	sta DEST+3
+000000r 2               .endmacro
+000000r 2               
+000000r 2               
+000000r 2               .macro prepare_rts ADDR
+000000r 2               	lda #>(ADDR - 1)
+000000r 2               	pha
+000000r 2               	lda #<(ADDR - 1)
+000000r 2               	pha
+000000r 2               .endmacro
+000000r 2               
+000000r 2               
+000000r 2               .macro add32 SRC1, SRC2, DEST
+000000r 2               	put_address SRC1, MPTR1
+000000r 2               	put_address SRC2, MPTR2
+000000r 2               	put_address DEST, MPTR3
+000000r 2               	jsr math_add32
+000000r 2               .endmacro
+000000r 2               
+000000r 2               .macro div32 SRC1, SRC2, DEST1, DEST2
+000000r 2               	put_address SRC1, MPTR1
+000000r 2               	put_address SRC2, MPTR2
+000000r 2               	put_address DEST1, MPTR3
+000000r 2               	put_address DEST2, MPTR4
+000000r 2               	jsr math_div32
+000000r 2               .endmacro
+000000r 2               
+000000r 2               .macro mul32 SRC1, SRC2, DEST
+000000r 2               	put_address SRC1, MPTR1
+000000r 2               	put_address SRC2, MPTR2
+000000r 2               	put_address DEST, MPTR3
+000000r 2               	jsr math_mul32
+000000r 2               .endmacro
+000000r 2               
+000000r 2               .macro sub32 SRC1, SRC2, DEST
+000000r 2               	put_address SRC1, MPTR1
+000000r 2               	put_address SRC2, MPTR2
+000000r 2               	put_address DEST, MPTR3
+000000r 2               	jsr math_sub32
+000000r 2               .endmacro
+000000r 2               
+000000r 2               
+000000r 2               
+000000r 1               
+000000r 1               
+000000r 1               ;; Predefined Data ##################################################
+000000r 1               
+000000r 1               .segment "DATA"
+000000r 1               
+000000r 1  41 55 54 4F  S_AUTOEXEC: .asciiz "AUTOEXECBIN"
+000004r 1  45 58 45 43  
+000008r 1  42 49 4E 00  
+00000Cr 1               
+00000Cr 1               
+00000Cr 1               ;; Code #############################################################
+00000Cr 1               
+00000Cr 1               .segment "CODE"
+000000r 1               
+000000r 1               .include "util.asm"
+000000r 2               .proc util_clear_arg1
+000000r 2  A9 00        	lda #0
+000002r 2  85 C0        	sta ARG1
+000004r 2  85 C1        	sta ARG1+1
+000006r 2  85 C2        	sta ARG1+2
+000008r 2  85 C3        	sta ARG1+3
+00000Ar 2  60           	rts
+00000Br 2               .endproc
+00000Br 2               
+00000Br 2               
+00000Br 2               
+00000Br 2               
+00000Br 1               .include "math.asm"
+00000Br 2               .proc math_add32
+00000Br 2  48 98 48     	push_ay
+00000Er 2               
+00000Er 2  18           	clc
+00000Fr 2  08           	php
+000010r 2  A0 00        	ldy #0
+000012r 2               loop:
+000012r 2  28           	plp
+000013r 2  B1 E5        	lda (MPTR1),y
+000015r 2  71 E7        	adc (MPTR2),y
+000017r 2  91 E9        	sta (MPTR3),y
+000019r 2  08           	php
+00001Ar 2  C8           	iny
+00001Br 2  C0 04        	cpy #4
+00001Dr 2  D0 F3        	bne loop
+00001Fr 2               
+00001Fr 2  28           	plp
+000020r 2               
+000020r 2  68 A8 68     	pull_ay
+000023r 2  60           	rts
+000024r 2               .endproc
+000024r 2               
+000024r 2               
+000024r 2               .proc math_div32
+000024r 2  48 8A 48 98  	push_axy
+000028r 2  48           
+000029r 2               
+000029r 2               	;; some mapping of labels
+000029r 2               	dividend = TMP1
+000029r 2               	divisor = TMP2
+000029r 2               	remainder = TMP3
+000029r 2               	result = dividend
+000029r 2               	temp = TMP4
+000029r 2               
+000029r 2               
+000029r 2  A0 00        	ldy #0
+00002Br 2               loop_init:
+00002Br 2  B1 E5        	lda (MPTR1),y
+00002Dr 2  99 CC 00     	sta dividend,y		; copy argument 1
+000030r 2  B1 E7        	lda (MPTR2),y
+000032r 2  99 D0 00     	sta divisor,y		; copy argument 2
+000035r 2  A9 00        	lda #0
+000037r 2  99 D4 00     	sta remainder,y		; preset remainder to zero
+00003Ar 2  C8           	iny
+00003Br 2  C0 04        	cpy #4
+00003Dr 2  D0 EC        	bne loop_init
+00003Fr 2               
+00003Fr 2               
+00003Fr 2  A2 20        	ldx #32			; repeat for each bit: ...
+000041r 2               divloop:
+000041r 2  06 CC        	asl dividend		; dividend*2, msb -> Carry
+000043r 2  26 CD        	rol dividend+1
+000045r 2  26 CE        	rol dividend+2
+000047r 2  26 CF        	rol dividend+3
+000049r 2  26 D4        	rol remainder		; remainder*2 + msb from carry
+00004Br 2  26 D5        	rol remainder+1
+00004Dr 2  26 D6        	rol remainder+2
+00004Fr 2  26 D7        	rol remainder+3
+000051r 2               
+000051r 2               
+000051r 2  A0 00        	ldy #0
+000053r 2  38           	sec
+000054r 2  08           	php
+000055r 2               loop_substract:
+000055r 2  28           	plp
+000056r 2  B9 D4 00     	lda remainder,y
+000059r 2  F9 D0 00     	sbc divisor,y
+00005Cr 2  99 D8 00     	sta temp,y
+00005Fr 2  08           	php
+000060r 2  C8           	iny
+000061r 2  C0 04        	cpy #4
+000063r 2  D0 F0        	bne loop_substract
+000065r 2  28           	plp				; clean up stack and restore carry for next branch
+000066r 2               
+000066r 2  90 12        	bcc skip			; if carry=0 then divisor didn't fit in yet
+000068r 2  A5 D8 85 D4  	mov32 temp, remainder		; else substraction result is new remainder
+00006Cr 2  A5 D9 85 D5  
+000070r 2  A5 DA 85 D6  
+000078r 2  E6 CC        	inc result			; and INCrement result cause divisor fit in 1 times
+00007Ar 2               
+00007Ar 2               skip:
+00007Ar 2  CA           	dex
+00007Br 2  D0 C4        	bne divloop
+00007Dr 2               
+00007Dr 2               
+00007Dr 2  A0 00        	ldy #0
+00007Fr 2               loop_copy_result:
+00007Fr 2  B9 CC 00     	lda result,y
+000082r 2  91 E9        	sta (MPTR3),y
+000084r 2  B9 D4 00     	lda remainder,y
+000087r 2  91 EB        	sta (MPTR4),y
+000089r 2  C8           	iny
+00008Ar 2  C0 04        	cpy #4
+00008Cr 2  D0 F1        	bne loop_copy_result
+00008Er 2               
+00008Er 2  68 A8 68 AA  	pull_axy
+000092r 2  68           
+000093r 2  60           	rts
+000094r 2               .endproc
+000094r 2               
+000094r 2               
+000094r 2               
+000094r 2               .proc math_mul32
+000094r 2  48 98 48     	push_ay
+000097r 2               
+000097r 2  A0 00        	ldy #0
+000099r 2               loop_init:
+000099r 2  B1 E5        	lda (MPTR1),y
+00009Br 2  99 CC 00     	sta TMP1,y
+00009Er 2  B1 E7        	lda (MPTR2),y
+0000A0r 2  99 D0 00     	sta TMP2,y
+0000A3r 2  A9 00        	lda #0
+0000A5r 2  91 E9        	sta (MPTR3),y
+0000A7r 2  C8           	iny
+0000A8r 2  C0 04        	cpy #4
+0000AAr 2  D0 ED        	bne loop_init
+0000ACr 2               
+0000ACr 2               loop:
+0000ACr 2  46 D3        	lsr TMP2+3
+0000AEr 2  66 D2        	ror TMP2+2
+0000B0r 2  66 D1        	ror TMP2+1
+0000B2r 2  66 D0        	ror TMP2
+0000B4r 2  90 13        	bcc skip_add	; if least-significant bit wasn't set, skip addition
+0000B6r 2               
+0000B6r 2  A0 00        	ldy #0
+0000B8r 2  18           	clc
+0000B9r 2  08           	php
+0000BAr 2               loop_add:
+0000BAr 2  28           	plp
+0000BBr 2  B1 E9        	lda (MPTR3),y
+0000BDr 2  79 CC 00     	adc TMP1,y
+0000C0r 2  91 E9        	sta (MPTR3),y
+0000C2r 2  08           	php
+0000C3r 2  C8           	iny
+0000C4r 2  C0 04        	cpy #4
+0000C6r 2  D0 F2        	bne loop_add
+0000C8r 2  28           	plp		; clean up stack
+0000C9r 2               
+0000C9r 2               
+0000C9r 2               skip_add:
+0000C9r 2  06 CC        	asl TMP1	; shift left...
+0000CBr 2  26 CD        	rol TMP1+1	; ... and rotate carry bit in from low to high
+0000CDr 2  26 CE        	rol TMP1+2
+0000CFr 2  26 CF        	rol TMP1+3
+0000D1r 2               
+0000D1r 2  A5 D0        	lda TMP2	; check if factor is zero already
+0000D3r 2  05 D1        	ora TMP2+1
+0000D5r 2  05 D2        	ora TMP2+2
+0000D7r 2  05 D3        	ora TMP2+3
+0000D9r 2  D0 D1        	bne loop
+0000DBr 2               
+0000DBr 2  68 A8 68     	pull_ay
+0000DEr 2  60           	rts
+0000DFr 2               .endproc
+0000DFr 2               
+0000DFr 2               
+0000DFr 2               
+0000DFr 2               .proc math_sub32
+0000DFr 2  48 98 48     	push_ay
+0000E2r 2               
+0000E2r 2  38           	sec
+0000E3r 2  08           	php
+0000E4r 2  A0 00        	ldy #0
+0000E6r 2               loop:
+0000E6r 2  28           	plp				; get carry back from stack
+0000E7r 2  B1 E5        	lda (MPTR1),y
+0000E9r 2  F1 E7        	sbc (MPTR2),y
+0000EBr 2  91 E9        	sta (MPTR3),y
+0000EDr 2  08           	php
+0000EEr 2  C8           	iny
+0000EFr 2  C0 04        	cpy #4			; this ruins the carry flags
+0000F1r 2  D0 F3        	bne loop
+0000F3r 2               
+0000F3r 2  28           	plp
+0000F4r 2               
+0000F4r 2  68 A8 68     	pull_ay
+0000F7r 2  60           	rts
+0000F8r 2               .endproc
+0000F8r 2               
+0000F8r 2               
+0000F8r 1               .include "io.asm"
+0000F8r 2               IOBASE   = $FFD1	; register to read/write data from ACIA
+0000F8r 2               IOSTATUS = $FFD0	; location of status register
+0000F8r 2               IOCMD    = $FFD0	; location of command register
+0000F8r 2               IOCMD_INIT = $15;	; init value for ACIA
+0000F8r 2               IOSTATUS_RXFULL = $01;
+0000F8r 2               IOSTATUS_TXEMPTY = $02;
+0000F8r 2               
+0000F8r 2               SDDATA = $FFD8
+0000F8r 2               SDSTATUS = $FFD9
+0000F8r 2               SDCONTROL = $FFD9
+0000F8r 2               SDLBA0 = $FFDA
+0000F8r 2               SDLBA1 = $FFDB
+0000F8r 2               SDLBA2 = $FFDC
+0000F8r 2               
+0000F8r 2               
+0000F8r 2               
+0000F8r 2               ;;
+0000F8r 2               ;; initialize input/output
+0000F8r 2               ;;
+0000F8r 2               .proc io_init
+0000F8r 2               	;; initialize ACIA
+0000F8r 2  A9 15        	lda #IOCMD_INIT
+0000FAr 2  8D D0 FF     	sta IOCMD
+0000FDr 2               
+0000FDr 2  60           	rts
+0000FEr 2               .endproc
+0000FEr 2               
+0000FEr 2               
+0000FEr 2               ;;
+0000FEr 2               ;; Transmit single character to ACIA output device
+0000FEr 2               ;; a-register contains argument
+0000FEr 2               ;;
+0000FEr 2               .proc io_write_char
+0000FEr 2  48           	pha
+0000FFr 2               
+0000FFr 2               readstatus:
+0000FFr 2  AD D0 FF     	lda IOSTATUS	; load status register
+000102r 2  29 02        	and #IOSTATUS_TXEMPTY        ; Is the tx register empty?
+000104r 2  F0 F9        	beq readstatus	; busy waiting till ready
+000106r 2               
+000106r 2  68           	pla		; get character
+000107r 2  8D D1 FF     	sta IOBASE	; write to output
+00010Ar 2               
+00010Ar 2  60           	rts		; end subroutine
+00010Br 2               .endproc
+00010Br 2               
+00010Br 2               
+00010Br 2               ;;
+00010Br 2               ;; read a 512-byte block from the SD card.
+00010Br 2               ;; (ARG1,ARG1+1,ARG1+2): block index on SD card
+00010Br 2               ;; (ARG2) and (ARG2)+1: pages to write data into
+00010Br 2               ;;
+00010Br 2               .proc io_sd_read_block
+00010Br 2  48 8A 48 98  	push_axy
+00010Fr 2  48           
+000110r 2               
+000110r 2               wait:
+000110r 2  AD D9 FF     	lda SDSTATUS
+000113r 2  C9 80        	cmp #128
+000115r 2  D0 F9        	bne wait
+000117r 2               
+000117r 2  A5 C0        	lda ARG1
+000119r 2  8D DA FF     	sta SDLBA0
+00011Cr 2  A5 C1        	lda ARG1+1
+00011Er 2  8D DB FF     	sta SDLBA1
+000121r 2  A5 C2        	lda ARG1+2
+000123r 2  8D DC FF     	sta SDLBA2
+000126r 2               
+000126r 2  A9 00        	lda #0
+000128r 2  85 C0        	sta ARG1
+00012Ar 2  8D D9 FF     	sta SDCONTROL	; issue read command
+00012Dr 2               
+00012Dr 2  A6 C4        	ldx ARG2	; dump into page (ARG2) and following page
+00012Fr 2  A0 02        	ldy #2		; read two chunks of 256 bytes
+000131r 2               read_to_page:
+000131r 2  86 C1        	stx ARG1+1
+000133r 2  E8           	inx
+000134r 2  20 rr rr     	jsr io_sd_read_to_page
+000137r 2  88           	dey
+000138r 2  D0 F7        	bne read_to_page
+00013Ar 2               
+00013Ar 2  68 A8 68 AA  	pull_axy
+00013Er 2  68           
+00013Fr 2  60           	rts
+000140r 2               .endproc
+000140r 2               
+000140r 2               ;;
+000140r 2               ;; read 256 bytes and put it into page designated by (ARG1,ARG1+1)
+000140r 2               ;;
+000140r 2               .proc io_sd_read_to_page
+000140r 2  48 98 48     	push_ay
+000143r 2               
+000143r 2  A0 00        	ldy #0
+000145r 2               
+000145r 2               loop:
+000145r 2  AD D9 FF     	lda SDSTATUS
+000148r 2  C9 E0        	cmp #224
+00014Ar 2  D0 F9        	bne loop
+00014Cr 2               
+00014Cr 2  AD D8 FF     	lda SDDATA
+00014Fr 2  91 C0        	sta (ARG1),y
+000151r 2               
+000151r 2  C8           	iny
+000152r 2  D0 F1        	bne loop	; we're done once we wrap around to zero again
+000154r 2               
+000154r 2  68 A8 68     	pull_ay
+000157r 2  60           	rts
+000158r 2               .endproc
+000158r 2               
+000158r 2               
+000158r 2               
+000158r 2               
+000158r 2               
+000158r 2               
+000158r 1               .include "fat.asm"
+000158r 2               BUFFERPAGE = 2					; pages 2 and 3 serve as buffer für 512-bytes sectors
+000158r 2               BUFFERBASE = BUFFERPAGE * 256	; absolute starting address of buffer
+000158r 2               LOADPAGE = 8					; load files into memory starting with this page
+000158r 2               LASTLOADPAGE = 223				; last page to load into
+000158r 2               
+000158r 2               
+000158r 2               ;; Memory positions for FAT layout information.
+000158r 2               ;; Many variables here could fit in less than 4 bytes.
+000158r 2               ;; However, this makes 32-bit math much easier.
+000158r 2               BYTESPERSECTOR = $0000
+000158r 2               SECTORSPERCLUSTER = BYTESPERSECTOR + 4
+000158r 2               RESERVEDSECTORS = SECTORSPERCLUSTER + 4
+000158r 2               FATCOPIES = RESERVEDSECTORS + 4
+000158r 2               ROOTENTRIES = FATCOPIES + 4
+000158r 2               SECTORSPERFAT = ROOTENTRIES + 4
+000158r 2               ROOTSTART = SECTORSPERFAT + 4
+000158r 2               ROOTSIZE = ROOTSTART + 4
+000158r 2               DATASTART = ROOTSIZE + 4
+000158r 2               POSITION = DATASTART + 4
+000158r 2               CURRENTCLUSTER = POSITION + 4
+000158r 2               OFFSET = CURRENTCLUSTER + 4
+000158r 2               CURRENTPAGE = OFFSET + 4
+000158r 2               
+000158r 2               
+000158r 2               ;;
+000158r 2               ;; read basic information from FAT boot block
+000158r 2               ;; and do some basic computations regarding the fs layout
+000158r 2               ;;
+000158r 2               .proc fat_init
+000158r 2               
+000158r 2  20 rr rr     	jsr fat_buffer_sector
+00015Br 2               
+00015Br 2               	;; sectors per cluster
+00015Br 2  AD 0D 02     	lda BUFFERBASE + 13
+00015Er 2  85 04        	sta SECTORSPERCLUSTER
+000160r 2               
+000160r 2               	;; reserved sectors
+000160r 2  AD 0E 02     	lda BUFFERBASE + 14
+000163r 2  85 08        	sta RESERVEDSECTORS
+000165r 2               
+000165r 2               	;; number of FAT copies
+000165r 2  AD 10 02     	lda BUFFERBASE + 16
+000168r 2  85 0C        	sta FATCOPIES
+00016Ar 2               
+00016Ar 2               	;; determine bytes per sector
+00016Ar 2  AD 0B 02     	lda BUFFERBASE + 11
+00016Dr 2  85 00        	sta BYTESPERSECTOR
+00016Fr 2  AD 0C 02     	lda BUFFERBASE + 12
+000172r 2  85 01        	sta BYTESPERSECTOR+1
+000174r 2               
+000174r 2               	;; number of root directory entries
+000174r 2  AD 11 02     	lda BUFFERBASE + 17
+000177r 2  85 10        	sta ROOTENTRIES
+000179r 2  AD 12 02     	lda BUFFERBASE + 18
+00017Cr 2  85 11        	sta ROOTENTRIES+1
+00017Er 2               
+00017Er 2               	;; sectors per FAT
+00017Er 2  AD 16 02     	lda BUFFERBASE + 22
+000181r 2  85 14        	sta SECTORSPERFAT
+000183r 2  AD 17 02     	lda BUFFERBASE + 23
+000186r 2  85 15        	sta SECTORSPERFAT+1
+000188r 2               
+000188r 2               	;; using put_address_lo for setting up math pointers
+000188r 2               	;; this works as all our variables and constants are in
+000188r 2               	;; page 0
+000188r 2               
+000188r 2               
+000188r 2               	;; compute position of root directory
+000188r 2               	;mul32 SECTORSPERFAT, FATCOPIES, ROOTSTART
+000188r 2  A9 14 85 E5  	put_address_lo SECTORSPERFAT, MPTR1
+00018Cr 2  A9 0C 85 E7  	put_address_lo FATCOPIES, MPTR2
+000190r 2  A9 18 85 E9  	put_address_lo ROOTSTART, MPTR3
+000194r 2  20 rr rr     	jsr math_mul32
+000197r 2               
+000197r 2               	;add32 ROOTSTART, RESERVEDSECTORS, ROOTSTART
+000197r 2  A9 18 85 E5  	put_address_lo ROOTSTART, MPTR1
+00019Br 2  A9 08 85 E7  	put_address_lo RESERVEDSECTORS, MPTR2
+00019Fr 2  20 rr rr     	jsr math_add32
+0001A2r 2               
+0001A2r 2               	;; compute size of root directory
+0001A2r 2               	;mul32 ROOTENTRIES, CONST32_32, ROOTSIZE
+0001A2r 2  A9 10 85 E5  	put_address_lo ROOTENTRIES, MPTR1
+0001A6r 2  A9 A8 85 E7  	put_address_lo CONST32_32, MPTR2
+0001AAr 2  A9 1C 85 E9  	put_address_lo ROOTSIZE, MPTR3
+0001AEr 2  20 rr rr     	jsr math_mul32
+0001B1r 2               
+0001B1r 2               	;div32 ROOTSIZE, BYTESPERSECTOR, ROOTSIZE, TMP
+0001B1r 2  A9 1C 85 E5  	put_address_lo ROOTSIZE, MPTR1
+0001B5r 2  A9 00 85 E7  	put_address_lo BYTESPERSECTOR, MPTR2
+0001B9r 2  A9 CC 85 EB  	put_address_lo TMP, MPTR4
+0001BDr 2  20 rr rr     	jsr math_div32
+0001C0r 2               
+0001C0r 2               	;; compute position of data region
+0001C0r 2               	;; the two first entries in the FAT are special and don't point to data
+0001C0r 2               	;; offset the start of the data region accordingly
+0001C0r 2               	;mul32 SECTORSPERCLUSTER, CONST32_2, TMP4
+0001C0r 2  A9 04 85 E5  	put_address_lo SECTORSPERCLUSTER, MPTR1
+0001C4r 2  A9 A4 85 E7  	put_address_lo CONST32_2, MPTR2
+0001C8r 2  A9 D8 85 E9  	put_address_lo TMP4, MPTR3
+0001CCr 2  20 rr rr     	jsr math_mul32
+0001CFr 2               	;add32 ROOTSTART, ROOTSIZE, DATASTART
+0001CFr 2  A9 18 85 E5  	put_address_lo ROOTSTART, MPTR1
+0001D3r 2  A9 1C 85 E7  	put_address_lo ROOTSIZE, MPTR2
+0001D7r 2  A9 20 85 E9  	put_address_lo DATASTART, MPTR3
+0001DBr 2  20 rr rr     	jsr math_add32
+0001DEr 2               
+0001DEr 2               	;sub32 DATASTART, TMP4, DATASTART
+0001DEr 2  A9 20 85 E5  	put_address_lo DATASTART, MPTR1
+0001E2r 2  A9 D8 85 E7  	put_address_lo TMP4, MPTR2
+0001E6r 2  20 rr rr     	jsr math_sub32
+0001E9r 2               
+0001E9r 2               
+0001E9r 2  60           	rts
+0001EAr 2               .endproc
+0001EAr 2               
+0001EAr 2               ;;
+0001EAr 2               ;; loads sector denoted by (ARG1,ARG1+1,ARG1+2) into buffer
+0001EAr 2               ;;
+0001EAr 2               .proc fat_buffer_sector
+0001EAr 2  A9 02        	lda #BUFFERPAGE
+0001ECr 2  85 C4        	sta ARG2
+0001EEr 2  20 rr rr     	jsr io_sd_read_block
+0001F1r 2  60           	rts
+0001F2r 2               .endproc
+0001F2r 2               
+0001F2r 2               
+0001F2r 2               
+0001F2r 2               ;;
+0001F2r 2               ;; Determines next cluster in chain.
+0001F2r 2               ;; Reads CURRENTCLUSTER and writes there as well.
+0001F2r 2               ;;
+0001F2r 2               .proc fat_next_cluster
+0001F2r 2  48 98 48     	push_ay
+0001F5r 2               
+0001F5r 2               	;; compute sector for cluster entry
+0001F5r 2               	;mul32 CURRENTCLUSTER, CONST32_2, ARG1		; each cluster entry is two bytes in FAT16
+0001F5r 2  A9 28 85 E5  	put_address_lo CURRENTCLUSTER, MPTR1
+0001F9r 2  A9 A4 85 E7  	put_address_lo CONST32_2, MPTR2
+0001FDr 2  A9 C0 85 E9  	put_address_lo ARG1, MPTR3
+000201r 2  20 rr rr     	jsr math_mul32
+000204r 2               	;div32 ARG1, BYTESPERSECTOR, ARG1, OFFSET	; compute sector position and byte offset
+000204r 2  A9 C0 85 E5  	put_address_lo ARG1, MPTR1
+000208r 2  A9 00 85 E7  	put_address_lo BYTESPERSECTOR, MPTR2
+00020Cr 2  A9 2C 85 EB  	put_address_lo OFFSET, MPTR4
+000210r 2  20 rr rr     	jsr math_div32
+000213r 2               
+000213r 2               	;add32 ARG1, RESERVEDSECTORS, ARG1			; add starting position of the FAT
+000213r 2  A9 08 85 E7  	put_address_lo RESERVEDSECTORS, MPTR2
+000217r 2  20 rr rr     	jsr math_add32
+00021Ar 2               
+00021Ar 2  20 rr rr     	jsr fat_buffer_sector				; load sector with the relevant piece of the cluster chain
+00021Dr 2               
+00021Dr 2  20 rr rr     	jsr util_clear_arg1
+000220r 2  A9 02        	lda #BUFFERPAGE
+000222r 2  85 C1        	sta ARG1+1					; use ARG1 as pointer for a change
+000224r 2  A9 C0 85 E5  	add32 ARG1, OFFSET, ARG1	; add byte offset
+000228r 2  A9 00 85 E6  
+00022Cr 2  A9 2C 85 E7  
+00023Fr 2  A0 00        	ldy #0
+000241r 2  B1 C0        	lda (ARG1),y
+000243r 2  85 28        	sta CURRENTCLUSTER
+000245r 2  C8           	iny
+000246r 2  B1 C0        	lda (ARG1),y
+000248r 2  85 29        	sta CURRENTCLUSTER+1
+00024Ar 2               
+00024Ar 2  68 A8 68     	pull_ay
+00024Dr 2  60           	rts
+00024Er 2               .endproc
+00024Er 2               
+00024Er 2               
+00024Er 2               
+00024Er 2               ;;
+00024Er 2               ;; Load complete cluster (as denoted by CURRENTCLUSTER) into pages starting with CURRENTPAGE.
+00024Er 2               ;; Increments CURRENTPAGE accordingly.
+00024Er 2               ;;
+00024Er 2               .proc fat_load_cluster
+00024Er 2  48 8A 48     	push_ax
+000251r 2               
+000251r 2               
+000251r 2               	;mul32 CURRENTCLUSTER, SECTORSPERCLUSTER, POSITION
+000251r 2  A9 28 85 E5  	put_address_lo CURRENTCLUSTER, MPTR1
+000255r 2  A9 04 85 E7  	put_address_lo SECTORSPERCLUSTER, MPTR2
+000259r 2  A9 24 85 E9  	put_address_lo POSITION, MPTR3
+00025Dr 2  20 rr rr     	jsr math_mul32
+000260r 2               	;add32 POSITION, DATASTART, POSITION
+000260r 2  A9 24 85 E5  	put_address_lo POSITION, MPTR1
+000264r 2  A9 20 85 E7  	put_address_lo DATASTART, MPTR2
+000268r 2  20 rr rr     	jsr math_add32
+00026Br 2               
+00026Br 2               	;; argument to advance sector position
+00026Br 2  A9 A0 85 E7  	put_address_lo CONST32_1, MPTR2
+00026Fr 2               
+00026Fr 2  A2 00        	ldx #0
+000271r 2  86 C8        	stx RET			; return code: zero is OK
+000273r 2               loop_sectors:
+000273r 2               
+000273r 2  A5 30        	lda CURRENTPAGE
+000275r 2  C9 DF        	cmp #LASTLOADPAGE
+000277r 2  B0 27        	bcs out_of_mem	; if carry set: CURRENTPAGE >= LASTLOADPAGE
+000279r 2               
+000279r 2               load:
+000279r 2  A5 24 85 C0  	mov32 POSITION, ARG1
+00027Dr 2  A5 25 85 C1  
+000281r 2  A5 26 85 C2  
+000289r 2  A5 30        	lda CURRENTPAGE
+00028Br 2  85 C4        	sta ARG2
+00028Dr 2               
+00028Dr 2  20 rr rr     	jsr io_sd_read_block
+000290r 2               
+000290r 2               	;add32 POSITION, CONST32_1, POSITION		; advance sector position
+000290r 2  20 rr rr     	jsr math_add32
+000293r 2  E6 30        	inc CURRENTPAGE							; advance page...
+000295r 2  E6 30        	inc CURRENTPAGE							; ... two times (a sector is 512 bytes)
+000297r 2  E8           	inx
+000298r 2  E4 04        	cpx SECTORSPERCLUSTER
+00029Ar 2  D0 D7        	bne loop_sectors
+00029Cr 2               
+00029Cr 2               end:
+00029Cr 2  68 AA 68     	pull_ax
+00029Fr 2  60           	rts
+0002A0r 2               
+0002A0r 2               out_of_mem:
+0002A0r 2  A9 01        	lda #1			; return code: not OK
+0002A2r 2  85 C8        	sta RET
+0002A4r 2  D0 F6        	bne end
+0002A6r 2               .endproc
+0002A6r 2               
+0002A6r 2               
+0002A6r 2               ;;
+0002A6r 2               ;; This routine will try to find and load a file with a name matching S_AUTOEXEC
+0002A6r 2               ;;
+0002A6r 2               .proc fat_load_autoexec
+0002A6r 2               	;; ------------------------------------------------------------
+0002A6r 2               	;; put down code for "file not found"
+0002A6r 2               	;; ------------------------------------------------------------
+0002A6r 2  A9 FF        	lda #$FF
+0002A8r 2  85 28        	sta CURRENTCLUSTER
+0002AAr 2  85 29        	sta CURRENTCLUSTER+1
+0002ACr 2               
+0002ACr 2               	;; ------------------------------------------------------------
+0002ACr 2               	;; loop over every sector of root dir
+0002ACr 2               	;; ------------------------------------------------------------
+0002ACr 2  A2 00        	ldx #0
+0002AEr 2               loop_sectors:
+0002AEr 2               
+0002AEr 2  20 rr rr     	jsr util_clear_arg1
+0002B1r 2  86 C0        	stx ARG1
+0002B3r 2  A9 C0 85 E5  	add32 ARG1, ROOTSTART, ARG1
+0002B7r 2  A9 00 85 E6  
+0002BBr 2  A9 18 85 E7  
+0002CEr 2  20 rr rr     	jsr fat_buffer_sector
+0002D1r 2  20 rr rr     	jsr fat_find_autoexec_in_buffer
+0002D4r 2               
+0002D4r 2  E8           	inx
+0002D5r 2  E4 1C        	cpx ROOTSIZE
+0002D7r 2  D0 D5        	bne loop_sectors
+0002D9r 2               
+0002D9r 2               	;; check if a file was found
+0002D9r 2  A5 28        	lda CURRENTCLUSTER
+0002DBr 2  C9 FF        	cmp #$FF
+0002DDr 2  D0 0A        	bne load
+0002DFr 2  A5 29        	lda CURRENTCLUSTER+1
+0002E1r 2  C9 FF        	cmp #$FF
+0002E3r 2  D0 04        	bne load
+0002E5r 2               
+0002E5r 2               	;; file not found, store non-zero return code
+0002E5r 2  85 C8        	sta RET
+0002E7r 2  F0 1A        	beq end
+0002E9r 2               
+0002E9r 2               	;; ------------------------------------------------------------
+0002E9r 2               	;; load file
+0002E9r 2               	;; ------------------------------------------------------------
+0002E9r 2               load:
+0002E9r 2  A9 08        	lda #LOADPAGE			; starting page of load
+0002EBr 2  85 30        	sta CURRENTPAGE
+0002EDr 2               
+0002EDr 2               loop_cluster:
+0002EDr 2  20 rr rr     	jsr fat_load_cluster
+0002F0r 2  A5 C8        	lda RET					; check for out-of-memory status
+0002F2r 2  D0 0F        	bne end
+0002F4r 2               
+0002F4r 2  20 rr rr     	jsr fat_next_cluster
+0002F7r 2               
+0002F7r 2               	;; check for end of cluster chain
+0002F7r 2  A5 28        	lda CURRENTCLUSTER
+0002F9r 2  C9 FF        	cmp #$FF
+0002FBr 2  D0 F0        	bne loop_cluster
+0002FDr 2  A5 29        	lda CURRENTCLUSTER+1
+0002FFr 2  C9 F8        	cmp #$F8
+000301r 2  90 EA        	bcc loop_cluster
+000303r 2               
+000303r 2               end:
+000303r 2  60           	rts
+000304r 2               .endproc
+000304r 2               
+000304r 2               ;;
+000304r 2               ;; Searches through a directory in the buffer.
+000304r 2               ;;
+000304r 2               .proc fat_find_autoexec_in_buffer
+000304r 2  48 8A 48 98  	push_axy
+000308r 2  48           
+000309r 2               
+000309r 2               	;; initialize position (memorized in ARG1)
+000309r 2  20 rr rr     	jsr util_clear_arg1
+00030Cr 2  A9 02        	lda #BUFFERPAGE
+00030Er 2  85 C1        	sta ARG1+1
+000310r 2               
+000310r 2               loop_entries:
+000310r 2               
+000310r 2               	;; PTR1: Pointer to dir entry
+000310r 2  A5 C0 85 DF  	mov16 ARG1, PTR1
+000314r 2  A5 C1 85 E0  
+000318r 2               
+000318r 2               	;; ------------------------------------------------------------
+000318r 2               	;; check status of directory entry
+000318r 2               	;; ------------------------------------------------------------
+000318r 2  A0 00        	ldy #0
+00031Ar 2  B1 DF        	lda (PTR1),y
+00031Cr 2  F0 3E        	beq end				; entry empty, no subsequent entry
+00031Er 2  C9 E5        	cmp #$e5
+000320r 2  F0 23        	beq next_entry		; file deleted
+000322r 2               
+000322r 2  A0 0B        	ldy #11
+000324r 2  B1 DF        	lda (PTR1),y
+000326r 2  29 02        	and #$02
+000328r 2  D0 1B        	bne next_entry		; file hidden
+00032Ar 2               
+00032Ar 2               	;; ------------------------------------------------------------
+00032Ar 2               	;; compare file name of entry with S_AUTOEXEC
+00032Ar 2               	;; ------------------------------------------------------------
+00032Ar 2               
+00032Ar 2  A0 0B        	ldy #11
+00032Cr 2               compare_filename:
+00032Cr 2  88           	dey
+00032Dr 2  B1 DF        	lda (PTR1),y
+00032Fr 2  D9 rr rr     	cmp S_AUTOEXEC,y
+000332r 2  D0 11        	bne next_entry
+000334r 2  98           	tya
+000335r 2  D0 F5        	bne compare_filename
+000337r 2               
+000337r 2               
+000337r 2               	;; ------------------------------------------------------------
+000337r 2               	;; file name matches!
+000337r 2               	;; ------------------------------------------------------------
+000337r 2  A0 1A        	ldy #26
+000339r 2  B1 DF        	lda (PTR1),y
+00033Br 2  85 28        	sta CURRENTCLUSTER
+00033Dr 2  C8           	iny
+00033Er 2  B1 DF        	lda (PTR1),y
+000340r 2  85 29        	sta CURRENTCLUSTER+1
+000342r 2  4C rr rr     	jmp end
+000345r 2               
+000345r 2               next_entry:
+000345r 2               	;add32 ARG1, CONST32_32, ARG1		; advance position by 32 bytes
+000345r 2  A9 C0 85 E5  	put_address_lo ARG1, MPTR1
+000349r 2  A9 A8 85 E7  	put_address_lo CONST32_32, MPTR2
+00034Dr 2  A9 C0 85 E9  	put_address_lo ARG1, MPTR3
+000351r 2  20 rr rr     	jsr math_add32
+000354r 2  E8           	inx
+000355r 2  E0 10        	cpx #16								; iterate over 16 entries
+000357r 2  F0 03        	beq end
+000359r 2  4C rr rr     	jmp loop_entries
+00035Cr 2               
+00035Cr 2               end:
+00035Cr 2  68 A8 68 AA  	pull_axy
+000360r 2  68           
+000361r 2  60           	rts
+000362r 2               .endproc
+000362r 2               
+000362r 2               
+000362r 2               
+000362r 1               
+000362r 1               .proc START
+000362r 1  78           	sei
+000363r 1  D8           	cld			; clear decimal mode
+000364r 1  A2 FF        	ldx #$FF
+000366r 1  9A           	txs			; initialize stack pointer
+000367r 1               
+000367r 1               
+000367r 1               	;; clear zero-page to avoid having to clear variables
+000367r 1  A9 00        	lda #0
+000369r 1  AA           	tax
+00036Ar 1               clear_zp:
+00036Ar 1  95 00        	sta $0000,x
+00036Cr 1  E8           	inx
+00036Dr 1  D0 FB        	bne clear_zp
+00036Fr 1               
+00036Fr 1               	;; put some constants in ZP
+00036Fr 1  A9 01        	lda #1
+000371r 1  85 A0        	sta CONST32_1
+000373r 1  A9 02        	lda #2
+000375r 1  85 A4        	sta CONST32_2
+000377r 1  A9 20        	lda #32
+000379r 1  85 A8        	sta CONST32_32
+00037Br 1               
+00037Br 1               
+00037Br 1  20 rr rr     	jsr io_init
+00037Er 1  20 rr rr     	jsr fat_init
+000381r 1               
+000381r 1               
+000381r 1  58           	cli
+000382r 1               
+000382r 1               	;; look for autoexec.bin on SD card #########################
+000382r 1  20 rr rr     	jsr fat_load_autoexec;
+000385r 1  A5 C8        	lda RET
+000387r 1  D0 03        	bne error			; file not found?
+000389r 1               
+000389r 1  4C 00 08     	jmp $0800			; jump into loaded code
+00038Cr 1               
+00038Cr 1               error:
+00038Cr 1               	;; print out exclamation mark in case of an error
+00038Cr 1  A9 21        	lda #C_EX
+00038Er 1  20 rr rr     	jsr io_write_char
+000391r 1  D0 F9        	bne error
+000393r 1               
+000393r 1               .endproc
+000393r 1               
+000393r 1               
+000393r 1               ;;
+000393r 1               ;; IRQ handler
+000393r 1               ;;
+000393r 1               .proc IRQ
+000393r 1  48           	pha		; save affected register
+000394r 1               
+000394r 1  A5 EF        	lda IRQ_VEC	; check if IRQ vector is zero
+000396r 1  05 F0        	ora IRQ_VEC+1
+000398r 1  F0 09        	beq end		; if so, skip
+00039Ar 1               
+00039Ar 1               	; there is no indirect jsr so push return address to stack
+00039Ar 1               	; so the actual IRQ handler code can rts later on
+00039Ar 1  A9 rr 48 A9  	prepare_rts end
+00039Er 1  rr 48        
+0003A0r 1  6C EF 00     	jmp (IRQ_VEC)
+0003A3r 1               
+0003A3r 1               end:
+0003A3r 1  68           	pla		; restore register
+0003A4r 1  40           	rti		; return from interrupt
+0003A5r 1               .endproc
+0003A5r 1               
+0003A5r 1               
+0003A5r 1               
+0003A5r 1               ; system vectors ####################################################
+0003A5r 1               
+0003A5r 1               .segment "VECTORS"
+000000r 1               .org    $FFFA
+00FFFA  1               
+00FFFA  1  rr rr        .addr	IRQ		; NMI vector
+00FFFC  1  rr rr        .addr	START		; RESET vector
+00FFFE  1  rr rr        .addr	IRQ		; IRQ vector
+010000  1               
+010000  1               
+010000  1               

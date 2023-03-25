@@ -17,7 +17,8 @@ fos-%.bin: platform/%/main.s platform/%/*/*.s platform/%/memory.cfg $(COMMON_SOU
 
 
 sim:	fos-py65mon.bin
-	py65mon -m 65c02 -r fos-py65mon.bin
+#py65mon -m 65c02 -r fos-py65mon.bin
+	cd ../../Emulator && make clean && make && ./planckemu ../Software/fos/fos-py65mon.bin
 
 
 # Convert the high-level Forth words to ASCII files that ca65 can include with .incbin

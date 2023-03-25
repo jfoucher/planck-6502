@@ -1,0 +1,71 @@
+Modules list:
+-------------
+cf_test.o:
+    CODE              Offs=000000  Size=000012  Align=00001  Fill=0000
+    BSS               Offs=000000  Size=00023E  Align=00001  Fill=0000
+    DATA              Offs=000000  Size=000341  Align=00001  Fill=0000
+    ZEROPAGE          Offs=000000  Size=000006  Align=00001  Fill=0000
+    ROM_VECTORS       Offs=000000  Size=000006  Align=00001  Fill=0000
+/opt/homebrew/Cellar/cc65/2.19/share/cc65/lib/none.lib(copydata.o):
+    CODE              Offs=000012  Size=00002D  Align=00001  Fill=0000
+/opt/homebrew/Cellar/cc65/2.19/share/cc65/lib/none.lib(zerobss.o):
+    CODE              Offs=00003F  Size=000023  Align=00001  Fill=0000
+/opt/homebrew/Cellar/cc65/2.19/share/cc65/lib/none.lib(zeropage.o):
+    ZEROPAGE          Offs=000006  Size=00001A  Align=00001  Fill=0000
+
+
+Segment list:
+-------------
+Name                   Start     End    Size  Align
+----------------------------------------------------
+ZEROPAGE              000000  00001F  000020  00001
+DATA                  000200  000540  000341  00001
+BSS                   000600  00083D  00023E  00001
+CODE                  008341  0083A2  000062  00001
+ROM_VECTORS           00FFFA  00FFFF  000006  00001
+
+
+Exports list by name:
+---------------------
+__BSS_RUN__               000600 RLA    __BSS_SIZE__              00023E REA    
+__DATA_LOAD__             008000 RLA    __DATA_RUN__              000200 RLA    
+__DATA_SIZE__             000341 REA    copydata                  008353 RLA    
+ptr1                      00000E RLZ    ptr2                      000010 RLZ    
+tmp1                      000016 RLZ    zerobss                   008380 RLA    
+
+
+
+Exports list by value:
+----------------------
+ptr1                      00000E RLZ    ptr2                      000010 RLZ    
+tmp1                      000016 RLZ    __DATA_RUN__              000200 RLA    
+__BSS_SIZE__              00023E REA    __DATA_SIZE__             000341 REA    
+__BSS_RUN__               000600 RLA    __DATA_LOAD__             008000 RLA    
+copydata                  008353 RLA    zerobss                   008380 RLA    
+
+
+
+Imports list:
+-------------
+__BSS_RUN__ ([linker generated]):
+    zerobss.o                 common/zerobss.s(8)
+__BSS_SIZE__ ([linker generated]):
+    zerobss.o                 common/zerobss.s(8)
+__DATA_LOAD__ ([linker generated]):
+    copydata.o                common/copydata.s(8)
+__DATA_RUN__ ([linker generated]):
+    copydata.o                common/copydata.s(8)
+__DATA_SIZE__ ([linker generated]):
+    copydata.o                common/copydata.s(8)
+copydata (copydata.o):
+    cf_test.o                 cf_test.s(47)
+ptr1 (zeropage.o):
+    zerobss.o                 common/zerobss.s(9)
+    copydata.o                common/copydata.s(9)
+ptr2 (zeropage.o):
+    copydata.o                common/copydata.s(9)
+tmp1 (zeropage.o):
+    copydata.o                common/copydata.s(9)
+zerobss (zerobss.o):
+    cf_test.o                 cf_test.s(48)
+

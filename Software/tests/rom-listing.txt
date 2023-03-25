@@ -1,0 +1,813 @@
+ca65 V2.18 - N/A
+Main file   : cf_test.s
+Current file: cf_test.s
+
+000000r 1               
+000000r 1               CF_BUF = FAT_BUFFER
+000000r 1               CF_ADDRESS = $FFE0
+000000r 1               CF_READ_SECTOR_COMMAND = $20
+000000r 1               ACIA_BASE   = $FFE0
+000000r 1               ACIA_DATA = ACIA_BASE
+000000r 1               ACIA_STATUS = ACIA_BASE + 1
+000000r 1               ACIA_CMD = ACIA_BASE + 2
+000000r 1               ACIA_CTRL = ACIA_BASE + 3
+000000r 1               
+000000r 1               .include "../fos/macros.s"
+000000r 2               .macro  printascii   addr
+000000r 2               .local @loop
+000000r 2               .local @done
+000000r 2                   phx
+000000r 2                   ldx #0
+000000r 2               @loop:
+000000r 2                   lda addr,x
+000000r 2                   beq @done
+000000r 2                   jsr kernel_putc
+000000r 2                   inx
+000000r 2                   bra @loop
+000000r 2               @done:
+000000r 2                   plx
+000000r 2               .endmacro
+000000r 2               
+000000r 2               
+000000r 2               
+000000r 2               .macro  cp16   src, dest
+000000r 2                   lda src
+000000r 2                   sta dest
+000000r 2                   lda src + 1
+000000r 2                   sta dest + 1
+000000r 2               .endmacro
+000000r 2               
+000000r 2               .macro printstr addr, len
+000000r 2               .repeat len, I
+000000r 2               lda addr + I
+000000r 2               jsr kernel_putc
+000000r 2               .endrepeat
+000000r 2               .endmacro
+000000r 2               
+000000r 2               .macro asl16 src
+000000r 2                   asl src
+000000r 2                   rol src + 1
+000000r 2               .endmacro
+000000r 2               
+000000r 2               .macro asl32 src
+000000r 2                   asl src
+000000r 2                   rol src + 1
+000000r 2                   rol src + 2
+000000r 2                   rol src + 3
+000000r 2               .endmacro
+000000r 2               
+000000r 2               .macro lsr16 src
+000000r 2                   lsr src + 1
+000000r 2                   ror src
+000000r 2               .endmacro
+000000r 2               
+000000r 2               .macro inc16 src
+000000r 2               .local @done
+000000r 2                   inc src       ;Increment the LSB
+000000r 2                   bne @done       ;If the result was not zero we're done
+000000r 2                   inc src+1       ;Increment the MSB if LSB wrapped round
+000000r 2               @done:
+000000r 2               .endmacro
+000000r 2               
+000000r 2               .macro inc32 src
+000000r 2               .local @done
+000000r 2                   inc src       ;Increment the LSB
+000000r 2                   bne @done       ;If the result was not zero we're done
+000000r 2                   inc src+1       ;Increment next byte if LSB wrapped round
+000000r 2                   bne @done
+000000r 2                   inc src+2       ;Increment the next byte the previous wrapped round
+000000r 2                   bne @done
+000000r 2                   inc src+3       ;Increment the MSB if previous wrapped round
+000000r 2               @done:
+000000r 2               .endmacro
+000000r 2               
+000000r 2               .macro dec16 src
+000000r 2               .local @skip
+000000r 2               .local @end
+000000r 2                   lda src             ; load low byte
+000000r 2                   bne @skip           ; if it's not zero, just decrement it
+000000r 2                   dec src + 1         ; if low byte is zero decrement high byte
+000000r 2               @skip:
+000000r 2                   dec src
+000000r 2               @end:
+000000r 2               .endmacro
+000000r 2               
+000000r 2               .macro dec16zero src
+000000r 2               .local @skip
+000000r 2               .local @end
+000000r 2                   lda src             ; load low byte
+000000r 2                   bne @skip           ; if it's not zero, decrement it
+000000r 2                   dec src + 1         ; if low byte is zero decrement high byte
+000000r 2                   beq @end            ; if high byte is also zero, we reached zero, exit now
+000000r 2               @skip:
+000000r 2                   dec src
+000000r 2                   bne @end            ; if low byte is not zero exit now
+000000r 2                   lda src + 1         ; if low byte was zero, load high byte to check if it's also zero
+000000r 2               @end:
+000000r 2               .endmacro
+000000r 2               
+000000r 2               .macro add16 first, second, result
+000000r 2                   CLC             ;Ensure carry is clear
+000000r 2                   LDA first+0       ;Add the two least significant bytes
+000000r 2                   ADC second+0
+000000r 2                   STA result+0       ;... and store the result
+000000r 2                   LDA first+1       ;Add the two most significant bytes
+000000r 2                   ADC second+1       ;... and any propagated carry bit
+000000r 2                   STA result+1       ;... and store the result
+000000r 2               .endmacro
+000000r 2               
+000000r 2               ; compare data at two adresses for defined length
+000000r 2               ; On exit, carry is set if there is a match
+000000r 2               ; and unset if no match
+000000r 2               ; length of data to check is in X
+000000r 2               
+000000r 2               .macro memcmp first, second
+000000r 2               .local @exit
+000000r 2               .local @loop
+000000r 2               .local @exit_fail
+000000r 2               @loop:
+000000r 2                   lda first, x
+000000r 2                   cmp second, x
+000000r 2                   bne @exit_fail
+000000r 2                   dex
+000000r 2                   bne @loop
+000000r 2                   lda first           ; check 0th element
+000000r 2                   cmp second
+000000r 2                   bne @exit_fail
+000000r 2                   sec
+000000r 2                   bra @exit
+000000r 2               @exit_fail:
+000000r 2                   clc
+000000r 2               @exit:
+000000r 2               .endmacro
+000000r 2               
+000000r 2               ; copy data from one address to another for defined length
+000000r 2               ; length of data to copy is in X
+000000r 2               .macro memcp first, second
+000000r 2               .local @exit
+000000r 2               .local @loop
+000000r 2               @loop:
+000000r 2                   lda first, x
+000000r 2                   sta second, x
+000000r 2                   dex
+000000r 2                   bne @loop
+000000r 2                   lda first           ; copy zeroth item
+000000r 2                   sta second
+000000r 2               @exit:
+000000r 2               .endmacro
+000000r 2               
+000000r 2               
+000000r 2               ; calculates length of zero terminated string
+000000r 2               ; result is in x
+000000r 2               .macro strlen address
+000000r 2               .local @loop
+000000r 2               .local @exit
+000000r 2                   ldx #0
+000000r 2               @loop:
+000000r 2                   lda address, x
+000000r 2                   beq @exit
+000000r 2                   inx
+000000r 2                   bra @loop
+000000r 2               @exit:
+000000r 2               .endmacro
+000000r 2               
+000000r 2               .macro push_axy
+000000r 2               	pha		; push accumulator to stack
+000000r 2               	phx
+000000r 2                   phy
+000000r 2               .endmacro
+000000r 2               
+000000r 2               .macro pull_axy
+000000r 2               	ply		; pull y from stack
+000000r 2               	plx		; pull x from stack
+000000r 2               	pla		; pull a from stack
+000000r 2               .endmacro
+000000r 2               
+000000r 2               
+000000r 2               .macro push_ax
+000000r 2               	pha
+000000r 2               	phx
+000000r 2               .endmacro
+000000r 2               
+000000r 2               
+000000r 2               .macro pull_ax
+000000r 2               	pla
+000000r 2               	plx
+000000r 2               .endmacro
+000000r 2               
+000000r 2               .macro push_ay
+000000r 2               	pha
+000000r 2               	phy
+000000r 2               .endmacro
+000000r 2               
+000000r 2               
+000000r 2               .macro pull_ay
+000000r 2               	pla
+000000r 2               	ply
+000000r 2               .endmacro
+000000r 2               
+000000r 2               
+000000r 2               .macro mov32 SRC, DEST
+000000r 2               	lda SRC
+000000r 2               	sta DEST
+000000r 2               	lda SRC+1
+000000r 2               	sta DEST+1
+000000r 2               	lda SRC+2
+000000r 2               	sta DEST+2
+000000r 2               	lda SRC+3
+000000r 2               	sta DEST+3
+000000r 2               .endmacro
+000000r 2               
+000000r 1               
+000000r 1               
+000000r 1               .segment "ZEROPAGE": zeropage
+000000r 1  xx xx        CF_POINTER: .res 2
+000002r 1  xx xx        CF_BUF_PTR: .res 2
+000004r 1  xx xx        util_tmp: .res 2
+000006r 1               
+000006r 1               
+000006r 1               
+000006r 1               .segment "BSS"
+000000r 1  xx           has_acia: .res 1
+000001r 1  xx xx xx xx  CF_LBA: .res 4
+000005r 1  xx xx xx xx  CF_PART_START: .res 4
+000009r 1  xx xx xx xx  CF_CURRENT_DIR_SEC: .res 4
+00000Dr 1  xx xx xx xx  CF_CURRENT_FILE_SIZE: .res 4
+000011r 1  xx xx xx xx  CF_TMP: .res 4
+000015r 1  xx xx        CF_CURRENT_CLUSTER: .res 2
+000017r 1  xx xx        CF_ROOT_ENT_CNT: .res 2     ; $200
+000019r 1  xx xx        CF_ROOT_DIR_SECS: .res 2    ; $02
+00001Br 1  xx xx        CF_FAT_SEC_CNT: .res 2      ; $F5
+00001Dr 1  xx xx        CF_FIRST_DATA_SEC: .res 2   ; $022B
+00001Fr 1  xx xx        CF_FIRST_ROOT_SEC: .res 2   ; $020B
+000021r 1               
+000021r 1               
+000021r 1  xx           CF_SEC_PER_CLUS: .res 1     ; $8
+000022r 1               
+000022r 1  xx xx xx xx  CF_CURRENT_DIR: .res 12
+000026r 1  xx xx xx xx  
+00002Ar 1  xx xx xx xx  
+00002Er 1  xx xx xx xx  FAT_FILE_NAME_TMP: .res 12
+000032r 1  xx xx xx xx  
+000036r 1  xx xx xx xx  
+00003Ar 1               
+00003Ar 1  xx xx xx xx  FAT_BUFFER: .res $200
+00003Er 1  xx xx xx xx  
+000042r 1  xx xx xx xx  
+00023Ar 1               
+00023Ar 1  xx xx xx xx  LBA_SIZE: .res 4
+00023Er 1               
+00023Er 1               .segment "CODE"
+000000r 1               reset:
+000000r 1                   .import    copydata
+000000r 1                   .import zerobss
+000000r 1  20 rr rr         JSR     copydata
+000003r 1  20 rr rr         jsr zerobss
+000006r 1  4C rr rr         jmp start
+000009r 1  53 74 61 72  test_str: .asciiz "Starting"
+00000Dr 1  74 69 6E 67  
+000011r 1  00           
+000012r 1               
+000012r 1               .segment "DATA"
+000000r 1               
+000000r 1               
+000000r 1               
+000000r 1               start:
+000000r 1  D8               cld
+000001r 1  58               cli
+000002r 1  20 rr rr         jsr acia_init
+000005r 1  A2 00            ldx #0
+000007r 1               @loop:
+000007r 1  BD rr rr         lda test_str,x
+00000Ar 1  F0 06            beq @done
+00000Cr 1  20 rr rr         jsr acia_out
+00000Fr 1  E8               inx
+000010r 1  80 F5            bra @loop
+000012r 1               @done:
+000012r 1  A9 0D            lda #$0d
+000014r 1  20 rr rr         jsr acia_out
+000017r 1  A9 0A            lda #$0A
+000019r 1  20 rr rr         jsr acia_out
+00001Cr 1  A9 0D            lda #$0D
+00001Er 1  20 rr rr         jsr acia_out
+000021r 1  A9 0A            lda #$0A
+000023r 1  20 rr rr         jsr acia_out
+000026r 1  A9 0D            lda #$0D
+000028r 1  20 rr rr         jsr acia_out
+00002Br 1               
+00002Br 1               
+00002Br 1  20 rr rr         jsr cf_init
+00002Er 1  20 rr rr         jsr cf_wait
+000031r 1  A9 EC            lda #$EC
+000033r 1  8D E7 FF         sta CF_ADDRESS + 7
+000036r 1  20 rr rr         jsr cf_wait
+000039r 1  20 rr rr         jsr cf_read
+00003Cr 1               
+00003Cr 1  20 rr rr         jsr output_fat_buffer
+00003Fr 1               
+00003Fr 1  A9 0A            lda #$0A
+000041r 1  20 rr rr         jsr acia_out
+000044r 1  A9 0D            lda #$0D
+000046r 1  20 rr rr         jsr acia_out
+000049r 1  20 rr rr         jsr output_fat_buffer_raw
+00004Cr 1  A9 0A            lda #$0A
+00004Er 1  20 rr rr         jsr acia_out
+000051r 1  A9 0D            lda #$0D
+000053r 1  20 rr rr         jsr acia_out
+000056r 1               
+000056r 1                   ; print model number
+000056r 1  A2 00            ldx #0
+000058r 1               @loopp:
+000058r 1  BD rr rr         lda FAT_BUFFER+55, x
+00005Br 1  20 rr rr         jsr acia_out
+00005Er 1  BD rr rr         lda FAT_BUFFER+54, x
+000061r 1  20 rr rr         jsr acia_out
+000064r 1  E8               inx
+000065r 1  E8               inx
+000066r 1  E0 28            cpx #40
+000068r 1  90 EE            bcc @loopp
+00006Ar 1               
+00006Ar 1               @exit_p:
+00006Ar 1                   ; print lba size
+00006Ar 1  AD rr rr         lda FAT_BUFFER + 123
+00006Dr 1  8D rr rr         sta LBA_SIZE + 3
+000070r 1  AD rr rr         lda FAT_BUFFER + 122
+000073r 1  8D rr rr         sta LBA_SIZE + 2
+000076r 1  AD rr rr         lda FAT_BUFFER + 121
+000079r 1  8D rr rr         sta LBA_SIZE + 1
+00007Cr 1  AD rr rr         lda FAT_BUFFER + 120
+00007Fr 1  8D rr rr         sta LBA_SIZE
+000082r 1               
+000082r 1  0E rr rr 2E      asl32 LBA_SIZE
+000086r 1  rr rr 2E rr  
+00008Ar 1  rr 2E rr rr  
+00008Er 1  0E rr rr 2E      asl32 LBA_SIZE
+000092r 1  rr rr 2E rr  
+000096r 1  rr 2E rr rr  
+00009Ar 1  0E rr rr 2E      asl32 LBA_SIZE
+00009Er 1  rr rr 2E rr  
+0000A2r 1  rr 2E rr rr  
+0000A6r 1  0E rr rr 2E      asl32 LBA_SIZE
+0000AAr 1  rr rr 2E rr  
+0000AEr 1  rr 2E rr rr  
+0000B2r 1  0E rr rr 2E      asl32 LBA_SIZE
+0000B6r 1  rr rr 2E rr  
+0000BAr 1  rr 2E rr rr  
+0000BEr 1  0E rr rr 2E      asl32 LBA_SIZE
+0000C2r 1  rr rr 2E rr  
+0000C6r 1  rr 2E rr rr  
+0000CAr 1  0E rr rr 2E      asl32 LBA_SIZE
+0000CEr 1  rr rr 2E rr  
+0000D2r 1  rr 2E rr rr  
+0000D6r 1  0E rr rr 2E      asl32 LBA_SIZE
+0000DAr 1  rr rr 2E rr  
+0000DEr 1  rr 2E rr rr  
+0000E2r 1  0E rr rr 2E      asl32 LBA_SIZE
+0000E6r 1  rr rr 2E rr  
+0000EAr 1  rr 2E rr rr  
+0000EEr 1               
+0000EEr 1  20 rr rr         jsr print_message
+0000F1r 1  0D 0A 00         .byte $0D, $0A, 0
+0000F4r 1               
+0000F4r 1  AD rr rr         lda LBA_SIZE+3
+0000F7r 1  20 rr rr         jsr output_ascii
+0000FAr 1               
+0000FAr 1  AD rr rr         lda LBA_SIZE+2
+0000FDr 1  20 rr rr         jsr output_ascii
+000100r 1               
+000100r 1  AD rr rr         lda LBA_SIZE+1
+000103r 1  20 rr rr         jsr output_ascii
+000106r 1               
+000106r 1  AD rr rr         lda LBA_SIZE
+000109r 1  20 rr rr         jsr output_ascii
+00010Cr 1               
+00010Cr 1  20 rr rr         jsr print_message
+00010Fr 1  20 62 79 74      .byte " bytes ",$0D,$0A, 0
+000113r 1  65 73 20 0D  
+000117r 1  0A 00        
+000119r 1                   ;jmp end
+000119r 1               
+000119r 1  A0 10            ldy #$10
+00011Br 1  20 rr rr         jsr delay_long
+00011Er 1               
+00011Er 1               
+00011Er 1  9C rr rr         stz CF_LBA
+000121r 1  9C rr rr         stz CF_LBA + 1
+000124r 1  9C rr rr         stz CF_LBA + 2
+000127r 1  9C rr rr         stz CF_LBA + 3
+00012Ar 1               
+00012Ar 1               
+00012Ar 1  20 rr rr         jsr cf_read_sector
+00012Dr 1               
+00012Dr 1  20 rr rr         jsr output_fat_buffer
+000130r 1               
+000130r 1  A9 0A            lda #$0A
+000132r 1  20 rr rr         jsr acia_out
+000135r 1  A9 0D            lda #$0D
+000137r 1  20 rr rr         jsr acia_out
+00013Ar 1  A9 0A            lda #$0A
+00013Cr 1  20 rr rr         jsr acia_out
+00013Fr 1  A9 0D            lda #$0D
+000141r 1  20 rr rr         jsr acia_out
+000144r 1  A9 0A            lda #$0A
+000146r 1  20 rr rr         jsr acia_out
+000149r 1  A9 0D            lda #$0D
+00014Br 1  20 rr rr         jsr acia_out
+00014Er 1               
+00014Er 1               
+00014Er 1  A9 3F            lda #$3F
+000150r 1  8D rr rr         sta CF_LBA
+000153r 1               
+000153r 1  A0 10            ldy #$10
+000155r 1  20 rr rr         jsr delay_long
+000158r 1  20 rr rr         jsr cf_read_sector
+00015Br 1               
+00015Br 1  20 rr rr         jsr output_fat_buffer
+00015Er 1               
+00015Er 1  A9 0D            lda #$0D
+000160r 1  20 rr rr         jsr acia_out
+000163r 1  A9 0A            lda #$0A
+000165r 1  20 rr rr         jsr acia_out
+000168r 1  A9 0D            lda #$0D
+00016Ar 1  20 rr rr         jsr acia_out
+00016Dr 1               
+00016Dr 1               
+00016Dr 1  A9 2A            lda #$2A
+00016Fr 1  8D rr rr         sta CF_LBA
+000172r 1  A9 02            lda #$2
+000174r 1  8D rr rr         sta CF_LBA + 1
+000177r 1               
+000177r 1  A0 10            ldy #$10
+000179r 1  20 rr rr         jsr delay_long
+00017Cr 1  20 rr rr         jsr cf_read_sector
+00017Fr 1               
+00017Fr 1  20 rr rr         jsr output_fat_buffer
+000182r 1               
+000182r 1  A9 03            lda #$03
+000184r 1  8D rr rr         sta CF_LBA
+000187r 1               
+000187r 1  A0 10            ldy #$10
+000189r 1  20 rr rr         jsr delay_long
+00018Cr 1  20 rr rr         jsr cf_read_sector
+00018Fr 1               
+00018Fr 1  20 rr rr         jsr output_fat_buffer
+000192r 1               
+000192r 1               
+000192r 1               end:
+000192r 1  4C rr rr         jmp end
+000195r 1               
+000195r 1               output_fat_buffer_raw:
+000195r 1  A2 00            ldx #0
+000197r 1               @loop:
+000197r 1  BD rr rr         lda FAT_BUFFER, x
+00019Ar 1  20 rr rr         jsr acia_out
+00019Dr 1  E8               inx
+00019Er 1  D0 F7            bne @loop
+0001A0r 1               @loop2:
+0001A0r 1  BD rr rr         lda FAT_BUFFER+256, x
+0001A3r 1  20 rr rr         jsr acia_out
+0001A6r 1  E8               inx
+0001A7r 1  D0 F7            bne @loop2
+0001A9r 1               
+0001A9r 1  60               rts
+0001AAr 1               
+0001AAr 1               zero_buffer:
+0001AAr 1  A2 00            ldx #0
+0001ACr 1               @loop:
+0001ACr 1  9E rr rr         stz FAT_BUFFER, X
+0001AFr 1  E8               inx
+0001B0r 1  D0 FA            bne @loop
+0001B2r 1               @loop2:
+0001B2r 1  9E rr rr         stz FAT_BUFFER+256, X
+0001B5r 1  E8               inx
+0001B6r 1  D0 FA            bne @loop2
+0001B8r 1  60               rts
+0001B9r 1               
+0001B9r 1               output_fat_buffer:
+0001B9r 1  A2 00            ldx #0
+0001BBr 1               @loop:
+0001BBr 1  BD rr rr         lda FAT_BUFFER, x
+0001BEr 1  20 rr rr         jsr output_ascii
+0001C1r 1  A9 20            lda #' '
+0001C3r 1  20 rr rr         jsr acia_out
+0001C6r 1  E8               inx
+0001C7r 1  D0 F2            bne @loop
+0001C9r 1               @loop2:
+0001C9r 1  BD rr rr         lda FAT_BUFFER+256, x
+0001CCr 1  20 rr rr         jsr output_ascii
+0001CFr 1  A9 20            lda #' '
+0001D1r 1  20 rr rr         jsr acia_out
+0001D4r 1  E8               inx
+0001D5r 1  D0 F2            bne @loop2
+0001D7r 1               
+0001D7r 1  60               rts
+0001D8r 1               
+0001D8r 1               cf_wait:
+0001D8r 1                   ; phy
+0001D8r 1                   ; ldy #7
+0001D8r 1               @wait_loop:
+0001D8r 1                   ; lda (CF_ADDRESS), y
+0001D8r 1  AD E7 FF         lda CF_ADDRESS + 7
+0001DBr 1  29 80            and #$80
+0001DDr 1  D0 F9            bne @wait_loop
+0001DFr 1                   ; ply
+0001DFr 1  60               rts
+0001E0r 1               
+0001E0r 1               
+0001E0r 1               cf_init:
+0001E0r 1                   ; phy
+0001E0r 1  A9 04            lda #$4
+0001E2r 1                   ; ldy #7
+0001E2r 1                   ; sta (CF_ADDRESS),y
+0001E2r 1  8D E7 FF         sta CF_ADDRESS + 7
+0001E5r 1  20 rr rr         jsr cf_wait
+0001E8r 1  A9 E0            lda #$E0
+0001EAr 1                   ; ldy #6
+0001EAr 1                   ; sta (CF_ADDRESS),y
+0001EAr 1  8D E6 FF         sta CF_ADDRESS + 6
+0001EDr 1  A9 01            lda #$1
+0001EFr 1                   ; ldy #1
+0001EFr 1                   ; sta (CF_ADDRESS),y
+0001EFr 1  8D E1 FF         sta CF_ADDRESS + 1
+0001F2r 1  A9 EF            lda #$EF
+0001F4r 1                   ; ldy #7
+0001F4r 1                   ; sta (CF_ADDRESS),y
+0001F4r 1  8D E7 FF         sta CF_ADDRESS + 7
+0001F7r 1  20 rr rr         jsr cf_wait
+0001FAr 1  20 rr rr         jsr cf_err
+0001FDr 1                   ; ply
+0001FDr 1  60               rts
+0001FEr 1               
+0001FEr 1               
+0001FEr 1               cf_read:
+0001FEr 1  5A               phy
+0001FFr 1  A9 rr            lda #<FAT_BUFFER
+000201r 1  85 rr            sta CF_BUF_PTR
+000203r 1  A9 rr            lda #>FAT_BUFFER
+000205r 1  85 rr            sta CF_BUF_PTR + 1
+000207r 1  A0 00            ldy #0
+000209r 1               @begin:
+000209r 1  20 rr rr         jsr cf_wait
+00020Cr 1                   ; lda CF_ADDRESS + 7
+00020Cr 1                   ; and #$08
+00020Cr 1                   ; beq @exit
+00020Cr 1  AD E0 FF         lda CF_ADDRESS
+00020Fr 1  91 rr            sta (CF_BUF_PTR), y
+000211r 1  20 rr rr         jsr acia_out
+000214r 1  C8               iny
+000215r 1  D0 F2            bne @begin
+000217r 1  E6 rr            inc CF_BUF_PTR + 1
+000219r 1                   ;bra @begin
+000219r 1               @loop:
+000219r 1  20 rr rr         jsr cf_wait
+00021Cr 1                   ; lda CF_ADDRESS + 7
+00021Cr 1                   ; and #$08
+00021Cr 1                   ; beq @exit
+00021Cr 1  AD E0 FF         lda CF_ADDRESS
+00021Fr 1  91 rr            sta (CF_BUF_PTR), y
+000221r 1  20 rr rr         jsr acia_out
+000224r 1  C8               iny
+000225r 1  D0 F2            bne @loop
+000227r 1  C6 rr            dec CF_BUF_PTR + 1
+000229r 1               @loop2:
+000229r 1  20 rr rr         jsr cf_wait
+00022Cr 1  AD E7 FF         lda CF_ADDRESS + 7
+00022Fr 1  29 08            and #$08
+000231r 1  F0 06            beq @exit
+000233r 1  AD E0 FF         lda CF_ADDRESS
+000236r 1  C8               iny
+000237r 1  D0 F0            bne @loop2
+000239r 1               @exit:
+000239r 1  7A               ply
+00023Ar 1  60               rts
+00023Br 1               
+00023Br 1               cf_set_lba:
+00023Br 1                   ; phy
+00023Br 1  AD rr rr         lda CF_LBA
+00023Er 1                   ; ldy #3
+00023Er 1                   ; sta (CF_ADDRESS),y
+00023Er 1  8D E3 FF         sta CF_ADDRESS + 3
+000241r 1  20 rr rr         jsr cf_wait
+000244r 1  AD rr rr         lda CF_LBA + 1
+000247r 1                   ; ldy #4
+000247r 1                   ; sta (CF_ADDRESS), y
+000247r 1  8D E4 FF         sta CF_ADDRESS + 4
+00024Ar 1  20 rr rr         jsr cf_wait
+00024Dr 1  AD rr rr         lda CF_LBA + 2
+000250r 1                   ; ldy #5
+000250r 1                   ; sta (CF_ADDRESS), y
+000250r 1  8D E5 FF         sta CF_ADDRESS + 5
+000253r 1  20 rr rr         jsr cf_wait
+000256r 1  AD rr rr         lda CF_LBA + 3
+000259r 1  29 0F            and #$0F
+00025Br 1  09 E0            ora #$E0
+00025Dr 1                   ; ldy #6
+00025Dr 1                   ; sta (CF_ADDRESS), y
+00025Dr 1  8D E6 FF         sta CF_ADDRESS + 6
+000260r 1                   ; ply
+000260r 1  60               rts
+000261r 1               
+000261r 1               cf_read_sector:
+000261r 1  20 rr rr         jsr zero_buffer
+000264r 1                   ; sei
+000264r 1                   ; phy
+000264r 1                   ; buffer should be set in CF_BUF_PTR
+000264r 1               
+000264r 1  20 rr rr         jsr cf_wait
+000267r 1  20 rr rr         jsr cf_set_lba
+00026Ar 1  20 rr rr         jsr cf_wait
+00026Dr 1  A9 01            lda #1
+00026Fr 1                   ; ldy #2
+00026Fr 1                   ; sta (CF_ADDRESS), y
+00026Fr 1  8D E2 FF         sta CF_ADDRESS + 2
+000272r 1  20 rr rr         jsr cf_wait
+000275r 1  A9 20            lda #CF_READ_SECTOR_COMMAND
+000277r 1                   ; ldy #7
+000277r 1                   ; sta (CF_ADDRESS), y
+000277r 1  8D E7 FF         sta CF_ADDRESS + 7
+00027Ar 1  20 rr rr         jsr cf_wait
+00027Dr 1  20 rr rr         jsr cf_read
+000280r 1  20 rr rr         jsr cf_err
+000283r 1                   ; ply
+000283r 1                   ; cli
+000283r 1  60               rts
+000284r 1               
+000284r 1               cf_err:
+000284r 1                   ; phy
+000284r 1  20 rr rr         jsr cf_wait
+000287r 1                   ; ldy #7
+000287r 1                   ; lda (CF_ADDRESS), y
+000287r 1  AD E7 FF         lda CF_ADDRESS + 7
+00028Ar 1  29 01            and #$01
+00028Cr 1  F0 05            beq @exit
+00028Er 1               @exit_fail:
+00028Er 1  A9 21            lda #'!'
+000290r 1  20 rr rr         jsr acia_out
+000293r 1               @exit:
+000293r 1                   ; ply
+000293r 1  60               rts
+000294r 1               
+000294r 1               
+000294r 1               cf_end:
+000294r 1               
+000294r 1               acia_init:
+000294r 1  8D E1 FF         sta ACIA_STATUS        ; soft reset (value not important)
+000297r 1                                           ; set specific modes and functions
+000297r 1  9C rr rr         stz has_acia
+00029Ar 1  A9 0B            lda #$0B                ; no parity, no echo, no Tx interrupt, NO Rx interrupt, enable Tx/Rx
+00029Cr 1                   ;lda #$09               ; no parity, no echo, no Tx interrupt, Rx interrupt, enable Tx/Rx
+00029Cr 1  8D E2 FF         sta ACIA_CMD        ; store to the command register
+00029Fr 1  AD E2 FF         lda ACIA_CMD        ; load command register again
+0002A2r 1  C9 0B            cmp #$0B                ; if not the same
+0002A4r 1  D0 11            bne acia_absent         ; then it means the ACIA is not connected
+0002A6r 1  AD E1 FF         lda ACIA_STATUS         ; Read the ACAI status to
+0002A9r 1  29 60            and #$60                ; check if present or absent
+0002ABr 1  D0 0A            bne acia_absent
+0002ADr 1  A9 01            lda #1
+0002AFr 1  8D rr rr         sta has_acia           ; remember that ACIA is here
+0002B2r 1  A9 10            lda #$10               ; 1 stop bits, 8 bit word length, internal clock, 115.200k baud rate
+0002B4r 1                   ;lda #$10               ; 1 stop bits, 8 bit word length, internal clock, 1200 baud rate
+0002B4r 1  8D E3 FF         sta ACIA_CTRL          ; program the ctl register
+0002B7r 1               
+0002B7r 1               acia_absent:
+0002B7r 1  A0 20            ldy #$20
+0002B9r 1               aa_loop:
+0002B9r 1  20 rr rr         jsr delay_short
+0002BCr 1  AD E1 FF         lda ACIA_STATUS         ; Read ACIA data a few times
+0002BFr 1  AD E0 FF         lda ACIA_DATA           ; to try and prevent spurious characters
+0002C2r 1  88               dey
+0002C3r 1  D0 F4            bne aa_loop
+0002C5r 1               aa_end:
+0002C5r 1  60               rts
+0002C6r 1               
+0002C6r 1               acia_out:
+0002C6r 1  48               pha
+0002C7r 1  5A               phy
+0002C8r 1  8D E0 FF         sta ACIA_DATA
+0002CBr 1  A0 40            ldy #$40            ;minimal delay is $02
+0002CDr 1  20 rr rr         jsr delay_short
+0002D0r 1  7A               ply
+0002D1r 1  68               pla
+0002D2r 1  60               rts
+0002D3r 1               
+0002D3r 1               acia_getc:
+0002D3r 1  AD E1 FF         lda ACIA_STATUS                 ; Read the ACIA status to
+0002D6r 1  29 08            and #$08                        ; Check if there is character in the receiver
+0002D8r 1  F0 05            beq @no_char      ; Exit now if we don't get one.
+0002DAr 1  AD E0 FF         lda ACIA_DATA
+0002DDr 1  38               sec
+0002DEr 1  60               rts
+0002DFr 1               @no_char:
+0002DFr 1  18               clc
+0002E0r 1  60               rts
+0002E1r 1               
+0002E1r 1               ; this routine delays by 2304 * y + 23 cycles
+0002E1r 1               delay:
+0002E1r 1  DA             phx       ; 3 cycles
+0002E2r 1  5A             phy       ; 3 cycles
+0002E3r 1               two:
+0002E3r 1  A2 FF          ldx #$ff  ; 2 cycles
+0002E5r 1               one:
+0002E5r 1  EA             nop       ; 2 cycles
+0002E6r 1  EA             nop       ; 2 cycles
+0002E7r 1  CA             dex       ; 2 cycles
+0002E8r 1  D0 FB          bne one   ; 3 for all cycles, 2 for last
+0002EAr 1  88             dey       ; 2 cycles
+0002EBr 1  D0 F6          bne two   ; 3 for all cycles, 2 for last
+0002EDr 1  7A             ply       ; 4 cycles
+0002EEr 1  FA             plx       ; 4 cycles
+0002EFr 1  60             rts       ; 6 cycles
+0002F0r 1               
+0002F0r 1               ; delay is in Y register
+0002F0r 1               delay_long:
+0002F0r 1  48             pha
+0002F1r 1  5A             phy
+0002F2r 1  DA             phx
+0002F3r 1  98             tya
+0002F4r 1  AA             tax
+0002F5r 1               delay_long_loop:
+0002F5r 1  A0 FF          ldy #$ff
+0002F7r 1  20 rr rr       jsr delay
+0002FAr 1  CA             dex
+0002FBr 1  D0 F8          bne delay_long_loop
+0002FDr 1  FA             plx
+0002FEr 1  7A             ply
+0002FFr 1  68             pla
+000300r 1  60             rts
+000301r 1               
+000301r 1               delay_short:        ; delay Y * 19 cycles
+000301r 1  5A             phy
+000302r 1               delay_short_loop:
+000302r 1  EA             nop               ; 2 cycles
+000303r 1  EA             nop               ; 2 cycles
+000304r 1  EA             nop               ; 2 cycles
+000305r 1  EA             nop               ; 2 cycles
+000306r 1  EA             nop               ; 2 cycles
+000307r 1  EA             nop               ; 2 cycles
+000308r 1  EA             nop               ; 2 cycles
+000309r 1               
+000309r 1  88             dey               ; 2 cycles
+00030Ar 1  D0 F6          bne delay_short_loop   ; 2 or 3 cycles
+00030Cr 1  7A             ply
+00030Dr 1  60             rts
+00030Er 1               
+00030Er 1               output_ascii:
+00030Er 1               ; """Convert byte in A to two ASCII hex digits and EMIT them"""
+00030Er 1  48               pha
+00030Fr 1  4A               lsr             ; convert high nibble first
+000310r 1  4A               lsr
+000311r 1  4A               lsr
+000312r 1  4A               lsr
+000313r 1  20 rr rr         jsr output_ascii_nibble_to_ascii
+000316r 1  68               pla
+000317r 1               
+000317r 1                   ; fall through to _nibble_to_ascii
+000317r 1               
+000317r 1               output_ascii_nibble_to_ascii:
+000317r 1               ; """Private helper function for byte_to_ascii: Print lower nibble
+000317r 1               ; of A and and EMIT it. This does the actual work.
+000317r 1               ; """
+000317r 1  29 0F            and #$0F
+000319r 1  09 30            ora #'0'
+00031Br 1  C9 3A            cmp #$3A        ; '9+1
+00031Dr 1  90 02            bcc @1
+00031Fr 1  69 06            adc #$06
+000321r 1               
+000321r 1               @1:
+000321r 1  20 rr rr         jsr acia_out
+000324r 1  60               rts
+000325r 1               
+000325r 1               
+000325r 1               
+000325r 1               
+000325r 1               print_message:
+000325r 1  68           	pla					; get return address from stack
+000326r 1  85 rr        	sta util_tmp
+000328r 1  68           	pla
+000329r 1  85 rr        	sta util_tmp + 1
+00032Br 1               
+00032Br 1  80 03        	bra @inc
+00032Dr 1               @print:
+00032Dr 1  20 rr rr     	jsr acia_out
+000330r 1               
+000330r 1               @inc:
+000330r 1  E6 rr        	inc util_tmp
+000332r 1  D0 02        	bne @inced
+000334r 1  E6 rr        	inc util_tmp + 1
+000336r 1               @inced:
+000336r 1  B2 rr        	lda (util_tmp)
+000338r 1  D0 F3        	bne @print
+00033Ar 1  A5 rr        	lda util_tmp + 1
+00033Cr 1  48           	pha
+00033Dr 1  A5 rr        	lda util_tmp
+00033Fr 1  48           	pha
+000340r 1               print_message_end:
+000340r 1  60           	rts
+000341r 1               
+000341r 1               
+000341r 1               .segment "ROM_VECTORS"
+000000r 1               
+000000r 1  rr rr        .word reset
+000002r 1  rr rr        .word reset
+000004r 1  rr rr        .word reset
+000004r 1               

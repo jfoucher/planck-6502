@@ -1,0 +1,63 @@
+<!doctype html>
+<html lang="en-us">
+
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+    <link rel="stylesheet" href="styles.css">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons">
+    <title>Planck 6502 Emulator</title>
+    <script async src="https://unpkg.com/es-module-shims@1.6.3/dist/es-module-shims.js"></script>
+
+</head>
+
+<body>
+    <div class="header">
+            <h1>Planck 6502 Emulator <a href="http://planck6502.com" target="_blank">visit
+                    planck6502.com</a> </h1>
+
+            <button type="button" id="run-btn">Run</button>
+            <button type="button" id="reset-btn">Reset</button>
+            <input type="file" id="choose-rom"/>
+    </div>
+    <div class="container">
+        <section class="io-container">
+            
+            <textarea id="io"></textarea>
+        </section>
+        <section id="emulator">
+            <input id="zoomer" type="range" min=".01" max="1.5" value="1" step="0.01" />
+            <div class="emu-layout">
+
+                <div class="emu-container" id="canvas-container">
+                    <div id="text-label"></div>
+                    <!-- <figure id="spinner">
+                        <div class="spinner"></div>
+                        <strong>Loading</strong>
+                    </figure>
+                    <div class="emscripten" id="status">Downloading...</div>
+                    <div class="emscripten">
+                        <progress value="0" max="100" id="progress" hidden=1></progress>
+                    </div> -->
+                    <!-- <canvas onclick="this.focus();" tabindex="1" id="canvas" class=""
+                        oncontextmenu="event.preventDefault()"></canvas> -->
+
+                </div>
+
+                
+            </div>
+
+        </section>
+        
+        
+    </div>
+
+    <script src="dist/bundle.js">
+    </script>
+    <script async type="text/javascript" src="planckemu.js"></script>
+
+</body>
+
+</html>
+
+

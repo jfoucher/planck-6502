@@ -1,0 +1,571 @@
+ca65 V2.18 - N/A
+Main file   : platform/planck/boot.s
+Current file: platform/planck/boot.s
+
+000000r 1               
+000000r 1               .include "../../macros.s"
+000000r 2               .macro  printascii   addr
+000000r 2               .local @loop
+000000r 2               .local @done
+000000r 2                   phx
+000000r 2                   ldx #0
+000000r 2               @loop:
+000000r 2                   lda addr,x
+000000r 2                   beq @done
+000000r 2                   jsr kernel_putc
+000000r 2                   inx
+000000r 2                   bra @loop
+000000r 2               @done:
+000000r 2                   plx
+000000r 2               .endmacro
+000000r 2               
+000000r 2               
+000000r 2               
+000000r 2               .macro  cp16   src, dest
+000000r 2                   lda src
+000000r 2                   sta dest
+000000r 2                   lda src + 1
+000000r 2                   sta dest + 1
+000000r 2               .endmacro
+000000r 2               
+000000r 2               .macro printstr addr, len
+000000r 2               .repeat len, I
+000000r 2               lda addr + I
+000000r 2               jsr kernel_putc
+000000r 2               .endrepeat
+000000r 2               .endmacro
+000000r 2               
+000000r 2               .macro asl16 src
+000000r 2                   asl src
+000000r 2                   rol src + 1
+000000r 2               .endmacro
+000000r 2               
+000000r 2               .macro asl32 src
+000000r 2                   asl src
+000000r 2                   rol src + 1
+000000r 2                   rol src + 2
+000000r 2                   rol src + 3
+000000r 2               .endmacro
+000000r 2               
+000000r 2               .macro lsr16 src
+000000r 2                   lsr src + 1
+000000r 2                   ror src
+000000r 2               .endmacro
+000000r 2               
+000000r 2               .macro inc16 src
+000000r 2               .local @done
+000000r 2                   inc src       ;Increment the LSB
+000000r 2                   bne @done       ;If the result was not zero we're done
+000000r 2                   inc src+1       ;Increment the MSB if LSB wrapped round
+000000r 2               @done:
+000000r 2               .endmacro
+000000r 2               
+000000r 2               .macro inc32 src
+000000r 2               .local @done
+000000r 2                   inc src       ;Increment the LSB
+000000r 2                   bne @done       ;If the result was not zero we're done
+000000r 2                   inc src+1       ;Increment next byte if LSB wrapped round
+000000r 2                   bne @done
+000000r 2                   inc src+2       ;Increment the next byte the previous wrapped round
+000000r 2                   bne @done
+000000r 2                   inc src+3       ;Increment the MSB if previous wrapped round
+000000r 2               @done:
+000000r 2               .endmacro
+000000r 2               
+000000r 2               .macro dec16 src
+000000r 2               .local @skip
+000000r 2               .local @end
+000000r 2                   lda src             ; load low byte
+000000r 2                   bne @skip           ; if it's not zero, just decrement it
+000000r 2                   dec src + 1         ; if low byte is zero decrement high byte
+000000r 2               @skip:
+000000r 2                   dec src
+000000r 2               @end:
+000000r 2               .endmacro
+000000r 2               
+000000r 2               .macro dec16zero src
+000000r 2               .local @skip
+000000r 2               .local @end
+000000r 2                   lda src             ; load low byte
+000000r 2                   bne @skip           ; if it's not zero, decrement it
+000000r 2                   dec src + 1         ; if low byte is zero decrement high byte
+000000r 2                   beq @end            ; if high byte is also zero, we reached zero, exit now
+000000r 2               @skip:
+000000r 2                   dec src
+000000r 2                   bne @end            ; if low byte is not zero exit now
+000000r 2                   lda src + 1         ; if low byte was zero, load high byte to check if it's also zero
+000000r 2               @end:
+000000r 2               .endmacro
+000000r 2               
+000000r 2               .macro add16 first, second, result
+000000r 2                   CLC             ;Ensure carry is clear
+000000r 2                   LDA first+0       ;Add the two least significant bytes
+000000r 2                   ADC second+0
+000000r 2                   STA result+0       ;... and store the result
+000000r 2                   LDA first+1       ;Add the two most significant bytes
+000000r 2                   ADC second+1       ;... and any propagated carry bit
+000000r 2                   STA result+1       ;... and store the result
+000000r 2               .endmacro
+000000r 2               
+000000r 2               ; compare data at two adresses for defined length
+000000r 2               ; On exit, carry is set if there is a match
+000000r 2               ; and unset if no match
+000000r 2               ; length of data to check is in X
+000000r 2               
+000000r 2               .macro memcmp first, second
+000000r 2               .local @exit
+000000r 2               .local @loop
+000000r 2               .local @exit_fail
+000000r 2               @loop:
+000000r 2                   lda first, x
+000000r 2                   cmp second, x
+000000r 2                   bne @exit_fail
+000000r 2                   dex
+000000r 2                   bne @loop
+000000r 2                   lda first           ; check 0th element
+000000r 2                   cmp second
+000000r 2                   bne @exit_fail
+000000r 2                   sec
+000000r 2                   bra @exit
+000000r 2               @exit_fail:
+000000r 2                   clc
+000000r 2               @exit:
+000000r 2               .endmacro
+000000r 2               
+000000r 2               ; copy data from one address to another for defined length
+000000r 2               ; length of data to copy is in X
+000000r 2               .macro memcp first, second
+000000r 2               .local @exit
+000000r 2               .local @loop
+000000r 2               @loop:
+000000r 2                   lda first, x
+000000r 2                   sta second, x
+000000r 2                   dex
+000000r 2                   bne @loop
+000000r 2                   lda first           ; copy zeroth item
+000000r 2                   sta second
+000000r 2               @exit:
+000000r 2               .endmacro
+000000r 2               
+000000r 2               
+000000r 2               ; calculates length of zero terminated string
+000000r 2               ; result is in x
+000000r 2               .macro strlen address
+000000r 2               .local @loop
+000000r 2               .local @exit
+000000r 2                   ldx #0
+000000r 2               @loop:
+000000r 2                   lda address, x
+000000r 2                   beq @exit
+000000r 2                   inx
+000000r 2                   bra @loop
+000000r 2               @exit:
+000000r 2               .endmacro
+000000r 2               
+000000r 2               .macro push_axy
+000000r 2               	pha		; push accumulator to stack
+000000r 2               	phx
+000000r 2                   phy
+000000r 2               .endmacro
+000000r 2               
+000000r 2               .macro pull_axy
+000000r 2               	ply		; pull y from stack
+000000r 2               	plx		; pull x from stack
+000000r 2               	pla		; pull a from stack
+000000r 2               .endmacro
+000000r 2               
+000000r 2               
+000000r 2               .macro push_ax
+000000r 2               	pha
+000000r 2               	phx
+000000r 2               .endmacro
+000000r 2               
+000000r 2               
+000000r 2               .macro pull_ax
+000000r 2               	pla
+000000r 2               	plx
+000000r 2               .endmacro
+000000r 2               
+000000r 2               .macro push_ay
+000000r 2               	pha
+000000r 2               	phy
+000000r 2               .endmacro
+000000r 2               
+000000r 2               
+000000r 2               .macro pull_ay
+000000r 2               	pla
+000000r 2               	ply
+000000r 2               .endmacro
+000000r 2               
+000000r 2               
+000000r 2               .macro mov32 SRC, DEST
+000000r 2               	lda SRC
+000000r 2               	sta DEST
+000000r 2               	lda SRC+1
+000000r 2               	sta DEST+1
+000000r 2               	lda SRC+2
+000000r 2               	sta DEST+2
+000000r 2               	lda SRC+3
+000000r 2               	sta DEST+3
+000000r 2               .endmacro
+000000r 2               
+000000r 1               CLOCK_SPEED = 12000000
+000000r 1               
+000000r 1               RAM_END = $8000
+000000r 1               CODE_START= $200
+000000r 1               
+000000r 1               ; select includes to enable card drivers
+000000r 1               
+000000r 1               .include "drivers/cf.inc"
+000000r 2               
+000000r 2               CF_READ_SECTOR_COMMAND = $20
+000000r 2               CF_WRITE_SECTOR_COMMAND = $30
+000000r 2               CF_ADDRESS = $FFD0
+000000r 2               
+000000r 1               
+000000r 1               
+000000r 1               .segment "ZEROPAGE": zeropage
+000000r 1  xx xx        IRQ_VEC: .res 2
+000002r 1  xx xx        NMI_VEC: .res 2
+000004r 1  xx xx        io_buffer_ptr: .res 2
+000006r 1               
+000006r 1               .segment "BSS"
+000000r 1  xx           has_acia: .res 1
+000001r 1               .ifdef CF_ADDRESS
+000001r 1  xx xx xx xx  IO_SECTOR: .res 4
+000005r 1               .endif
+000005r 1               
+000005r 1               
+000005r 1               .segment "CODE"
+000000r 1               
+000000r 1               .include "drivers/acia.inc"
+000000r 2               ACIA_BASE   = $FFE0
+000000r 2               ACIA_DATA = ACIA_BASE
+000000r 2               ACIA_STATUS = ACIA_BASE + 1
+000000r 2               ACIA_CMD = ACIA_BASE + 2
+000000r 2               ACIA_CTRL = ACIA_BASE + 3
+000000r 2               
+000000r 2               
+000000r 1               .include "drivers/acia.s"
+000000r 2               ACIA_DELAY = CLOCK_SPEED / 500000
+000000r 2               
+000000r 2               acia_init:
+000000r 2  8D E1 FF         sta ACIA_STATUS        ; soft reset (value not important)
+000003r 2                                           ; set specific modes and functions
+000003r 2  9C rr rr         stz has_acia
+000006r 2  A9 0B            lda #$0B                ; no parity, no echo, no Tx interrupt, NO Rx interrupt, enable Tx/Rx
+000008r 2                   ;lda #$09               ; no parity, no echo, no Tx interrupt, Rx interrupt, enable Tx/Rx
+000008r 2  8D E2 FF         sta ACIA_CMD        ; store to the command register
+00000Br 2  AD E2 FF         lda ACIA_CMD        ; load command register again
+00000Er 2  C9 0B            cmp #$0B                ; if not the same
+000010r 2  D0 11            bne acia_absent         ; then it means the ACIA is not connected
+000012r 2  AD E1 FF         lda ACIA_STATUS         ; Read the ACAI status to
+000015r 2  29 60            and #$60                ; check if present or absent
+000017r 2  D0 0A            bne acia_absent
+000019r 2  A9 01            lda #1
+00001Br 2  8D rr rr         sta has_acia           ; remember that ACIA is here
+00001Er 2  A9 10            lda #$10               ; 1 stop bits, 8 bit word length, internal clock, 115.200k baud rate
+000020r 2                   ;lda #$10               ; 1 stop bits, 8 bit word length, internal clock, 1200 baud rate
+000020r 2  8D E3 FF         sta ACIA_CTRL          ; program the ctl register
+000023r 2               
+000023r 2               acia_absent:
+000023r 2  A0 14                ldy #20
+000025r 2               aa_loop:
+000025r 2  20 rr rr             jsr delay_short
+000028r 2  AD E1 FF             lda ACIA_STATUS         ; Read ACIA data a few times
+00002Br 2  AD E0 FF             lda ACIA_DATA           ; to try and prevent spurious characters
+00002Er 2  88                   dey
+00002Fr 2  D0 F4                bne aa_loop
+000031r 2               aa_end:
+000031r 2  60                   rts
+000032r 2               
+000032r 2               acia_out:
+000032r 2  48               pha
+000033r 2  5A               phy
+000034r 2  8D E0 FF         sta ACIA_DATA
+000037r 2  A0 18            ldy #ACIA_DELAY            ;minimal delay is $02
+000039r 2  20 rr rr         jsr delay_short
+00003Cr 2  7A               ply
+00003Dr 2  68               pla
+00003Er 2  60               rts
+00003Fr 2               
+00003Fr 2               acia_getc:
+00003Fr 2  AD E1 FF         lda ACIA_STATUS                 ; Read the ACIA status to
+000042r 2  29 08            and #$08                        ; Check if there is character in the receiver
+000044r 2  F0 05            beq @no_char      ; Exit now if we don't get one.
+000046r 2  AD E0 FF         lda ACIA_DATA
+000049r 2  38               sec
+00004Ar 2  60               rts
+00004Br 2               @no_char:
+00004Br 2  18               clc
+00004Cr 2  60               rts
+00004Dr 2               
+00004Dr 1               .include "drivers/delayroutines.s"
+00004Dr 2               ; Copyright 2020 Jonathan Foucher
+00004Dr 2               
+00004Dr 2               ; Permission is hereby granted, free of charge, to any person obtaining a copy of this software
+00004Dr 2               ; and associated documentation files (the "Software"), to deal in the Software without restriction,
+00004Dr 2               ; including without limitation the rights to use, copy, modify, merge, publish, distribute,
+00004Dr 2               ; sublicense, and/or sell copies of the Software, and to permit persons to whom the Software
+00004Dr 2               ; is furnished to do so, subject to the following conditions:
+00004Dr 2               
+00004Dr 2               ; The above copyright notice and this permission notice shall be included in all copies or
+00004Dr 2               ; substantial portions of the Software.
+00004Dr 2               
+00004Dr 2               ; THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED,
+00004Dr 2               ; INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR
+00004Dr 2               ; PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE
+00004Dr 2               ; FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR
+00004Dr 2               ; OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
+00004Dr 2               ; DEALINGS IN THE SOFTWARE.
+00004Dr 2               
+00004Dr 2               
+00004Dr 2               ; this routine delays by 2304 * y + 23 cycles
+00004Dr 2               delay:
+00004Dr 2  DA             phx       ; 3 cycles
+00004Er 2  5A             phy       ; 3 cycles
+00004Fr 2               two:
+00004Fr 2  A2 FF          ldx #$ff  ; 2 cycles
+000051r 2               one:
+000051r 2  EA             nop       ; 2 cycles
+000052r 2  EA             nop       ; 2 cycles
+000053r 2  CA             dex       ; 2 cycles
+000054r 2  D0 FB          bne one   ; 3 for all cycles, 2 for last
+000056r 2  88             dey       ; 2 cycles
+000057r 2  D0 F6          bne two   ; 3 for all cycles, 2 for last
+000059r 2  7A             ply       ; 4 cycles
+00005Ar 2  FA             plx       ; 4 cycles
+00005Br 2  60             rts       ; 6 cycles
+00005Cr 2               
+00005Cr 2               ; delay is in Y register
+00005Cr 2               delay_long:
+00005Cr 2  48             pha
+00005Dr 2  5A             phy
+00005Er 2  DA             phx
+00005Fr 2  98             tya
+000060r 2  AA             tax
+000061r 2               delay_long_loop:
+000061r 2  A0 FF          ldy #$ff
+000063r 2  20 rr rr       jsr delay
+000066r 2  CA             dex
+000067r 2  D0 F8          bne delay_long_loop
+000069r 2  FA             plx
+00006Ar 2  7A             ply
+00006Br 2  68             pla
+00006Cr 2  60             rts
+00006Dr 2               
+00006Dr 2               delay_short:        ; delay Y * 19 cycles
+00006Dr 2  5A             phy
+00006Er 2               delay_short_loop:
+00006Er 2  EA             nop               ; 2 cycles
+00006Fr 2  EA             nop               ; 2 cycles
+000070r 2  EA             nop               ; 2 cycles
+000071r 2  EA             nop               ; 2 cycles
+000072r 2  EA             nop               ; 2 cycles
+000073r 2  EA             nop               ; 2 cycles
+000074r 2  EA             nop               ; 2 cycles
+000075r 2               
+000075r 2               
+000075r 2  88             dey               ; 2 cycles
+000076r 2  D0 F6          bne delay_short_loop   ; 2 or 3 cycles
+000078r 2  7A             ply
+000079r 2  60             rts
+00007Ar 2               
+00007Ar 1               
+00007Ar 1               .ifdef CF_ADDRESS
+00007Ar 1               io_read_sector_address = cf_read_sector
+00007Ar 1               .endif
+00007Ar 1               
+00007Ar 1               
+00007Ar 1               
+00007Ar 1               reset:
+00007Ar 1  20 rr rr         jsr acia_init
+00007Dr 1               
+00007Dr 1  A9 31            lda #'1'
+00007Fr 1  20 rr rr         jsr acia_out
+000082r 1  20 rr rr         jsr cf_init
+000085r 1               
+000085r 1                   ; copy data from CF card to RAM
+000085r 1               
+000085r 1  9C rr rr         stz IO_SECTOR
+000088r 1  9C rr rr         stz IO_SECTOR + 1
+00008Br 1  9C rr rr         stz IO_SECTOR + 2
+00008Er 1  9C rr rr         stz IO_SECTOR + 3
+000091r 1                   ; stz NMI_VEC
+000091r 1                   ; stz NMI_VEC + 1
+000091r 1                   ; stz IRQ_VEC
+000091r 1                   ; stz IRQ_VEC + 1
+000091r 1               
+000091r 1  A9 00            lda #<CODE_START
+000093r 1  85 rr            sta io_buffer_ptr
+000095r 1  A9 02            lda #>CODE_START
+000097r 1  85 rr            sta io_buffer_ptr + 1
+000099r 1               
+000099r 1  A2 3E            ldx #(((RAM_END-CODE_START)/$200)-1)                 ; number of sectors to read
+00009Br 1               @loop:
+00009Br 1  20 rr rr         jsr io_read_sector
+00009Er 1  E6 rr            inc io_buffer_ptr + 1
+0000A0r 1  E6 rr            inc io_buffer_ptr + 1
+0000A2r 1  EE rr rr         inc IO_SECTOR
+0000A5r 1  CA               dex
+0000A6r 1  D0 F3            bne @loop
+0000A8r 1               
+0000A8r 1  A9 32            lda #'2'
+0000AAr 1  20 rr rr         jsr acia_out
+0000ADr 1               
+0000ADr 1  AD 00 02         lda CODE_START
+0000B0r 1  20 rr rr         jsr acia_out
+0000B3r 1  AD 01 02         lda CODE_START + 1
+0000B6r 1  20 rr rr         jsr acia_out
+0000B9r 1  AD 02 02         lda CODE_START + 2
+0000BCr 1  20 rr rr         jsr acia_out
+0000BFr 1               
+0000BFr 1  4C 00 02         jmp CODE_START          ; jump to start of code
+0000C2r 1               
+0000C2r 1               nmi:
+0000C2r 1  48               pha		; save affected register
+0000C3r 1               
+0000C3r 1  A5 rr        	lda NMI_VEC	; check if NMI vector is zero
+0000C5r 1  05 rr        	ora NMI_VEC+1
+0000C7r 1  F0 04        	beq nmi_end		; if so, skip
+0000C9r 1               
+0000C9r 1               
+0000C9r 1  68           	pla		; restore register
+0000CAr 1  6C rr rr     	jmp (NMI_VEC)
+0000CDr 1               
+0000CDr 1               nmi_end:    ; should not be called
+0000CDr 1  68           	pla		; restore register
+0000CEr 1  40           	rti		; return from interrupt
+0000CFr 1               
+0000CFr 1               irq:
+0000CFr 1  48           	pha		; save affected register
+0000D0r 1               
+0000D0r 1  A5 rr        	lda IRQ_VEC	; check if IRQ vector is zero
+0000D2r 1  05 rr        	ora IRQ_VEC+1
+0000D4r 1  F0 04        	beq end		; if so, skip
+0000D6r 1               
+0000D6r 1               	; there is no indirect jsr so push return address to stack
+0000D6r 1               	; so the actual IRQ handler code can rts later on
+0000D6r 1  68           	pla		; restore register
+0000D7r 1  6C rr rr     	jmp (IRQ_VEC)
+0000DAr 1               
+0000DAr 1               end:
+0000DAr 1  68           	pla		; restore register
+0000DBr 1  40           	rti		; return from interrupt
+0000DCr 1               
+0000DCr 1               io_read_sector:
+0000DCr 1  4C rr rr         jmp io_read_sector_address        ; jump to read sector routine
+0000DFr 1               
+0000DFr 1               
+0000DFr 1               kernel_putc:
+0000DFr 1  60               rts
+0000E0r 1               
+0000E0r 1               cf_init:
+0000E0r 1                   ; phy
+0000E0r 1  A9 04            lda #$4
+0000E2r 1                   ; ldy #7
+0000E2r 1                   ; sta (CF_ADDRESS),y
+0000E2r 1  8D D7 FF         sta CF_ADDRESS + 7
+0000E5r 1  20 rr rr         jsr cf_wait
+0000E8r 1  A9 E0            lda #$E0
+0000EAr 1  8D D6 FF         sta CF_ADDRESS + 6
+0000EDr 1  20 rr rr         jsr cf_wait
+0000F0r 1  A9 01            lda #$1
+0000F2r 1  8D D1 FF         sta CF_ADDRESS + 1
+0000F5r 1  20 rr rr         jsr cf_wait
+0000F8r 1  A9 EF            lda #$EF
+0000FAr 1  8D D7 FF         sta CF_ADDRESS + 7
+0000FDr 1  20 rr rr         jsr cf_wait
+000100r 1  20 rr rr         jsr cf_err
+000103r 1                   ; ply
+000103r 1  60               rts
+000104r 1               
+000104r 1               
+000104r 1               cf_read:
+000104r 1  5A               phy
+000105r 1  A0 00            ldy #0
+000107r 1               @loop:
+000107r 1                   ; jsr cf_wait
+000107r 1  AD D0 FF         lda CF_ADDRESS
+00010Ar 1  92 rr            sta (io_buffer_ptr)
+00010Cr 1  C8               iny
+00010Dr 1  D0 F8            bne @loop
+00010Fr 1  E6 rr            inc io_buffer_ptr + 1
+000111r 1                   ; jsr cf_wait
+000111r 1               @loop2:
+000111r 1                   ; jsr cf_wait
+000111r 1  AD D0 FF         lda CF_ADDRESS
+000114r 1  91 rr            sta (io_buffer_ptr), y
+000116r 1  C8               iny
+000117r 1  D0 F8            bne @loop2
+000119r 1  C6 rr            dec io_buffer_ptr + 1
+00011Br 1               @loop3:
+00011Br 1  20 rr rr         jsr cf_wait
+00011Er 1  AD D7 FF         lda CF_ADDRESS + 7
+000121r 1  29 08            and #$08
+000123r 1  F0 06            beq @exit
+000125r 1  AD D0 FF         lda CF_ADDRESS
+000128r 1  C8               iny
+000129r 1  D0 F0            bne @loop3
+00012Br 1               @exit:
+00012Br 1  7A               ply
+00012Cr 1  60               rts
+00012Dr 1               
+00012Dr 1               
+00012Dr 1               ; number of sectors to read is in X
+00012Dr 1               cf_read_sector:
+00012Dr 1  78               sei
+00012Er 1  20 rr rr         jsr cf_set_lba
+000131r 1  A9 01            lda #1
+000133r 1  8D D2 FF         sta CF_ADDRESS + 2
+000136r 1  20 rr rr         jsr cf_wait
+000139r 1  A9 20            lda #CF_READ_SECTOR_COMMAND
+00013Br 1  8D D7 FF         sta CF_ADDRESS + 7
+00013Er 1  20 rr rr         jsr cf_wait
+000141r 1  20 rr rr         jsr cf_read
+000144r 1  20 rr rr         jsr cf_err
+000147r 1  58               cli
+000148r 1  60               rts
+000149r 1               
+000149r 1               
+000149r 1               
+000149r 1               cf_wait:
+000149r 1  AD D7 FF         lda CF_ADDRESS + 7
+00014Cr 1  30 FB            bmi cf_wait             ; wait FOR RDY to become unset
+00014Er 1  29 10            and #$10
+000150r 1  F0 F7            beq cf_wait             ; wait for DSC to become set
+000152r 1  60               rts
+000153r 1               
+000153r 1               cf_set_lba:
+000153r 1  AD rr rr         lda IO_SECTOR
+000156r 1  8D D3 FF         sta CF_ADDRESS + 3
+000159r 1  20 rr rr         jsr cf_wait
+00015Cr 1  AD rr rr         lda IO_SECTOR + 1
+00015Fr 1  8D D4 FF         sta CF_ADDRESS + 4
+000162r 1  20 rr rr         jsr cf_wait
+000165r 1  AD rr rr         lda IO_SECTOR + 2
+000168r 1  8D D5 FF         sta CF_ADDRESS + 5
+00016Br 1  20 rr rr         jsr cf_wait
+00016Er 1  AD rr rr         lda IO_SECTOR + 3
+000171r 1  29 0F            and #$0F
+000173r 1  09 E0            ora #$E0
+000175r 1  8D D6 FF         sta CF_ADDRESS + 6
+000178r 1  20 rr rr         jsr cf_wait
+00017Br 1  60               rts
+00017Cr 1               
+00017Cr 1               cf_err:
+00017Cr 1  20 rr rr         jsr cf_wait
+00017Fr 1  AD D7 FF         lda CF_ADDRESS + 7
+000182r 1  29 01            and #$01
+000184r 1  F0 05            beq @exit
+000186r 1               @exit_fail:
+000186r 1  A9 21            lda #'!'
+000188r 1  20 rr rr         jsr kernel_putc
+00018Br 1               @exit:
+00018Br 1  60               rts
+00018Cr 1               
+00018Cr 1               .segment "VECTORS"
+000000r 1  rr rr        .word nmi
+000002r 1  rr rr        .word reset
+000004r 1  rr rr        .word irq
+000004r 1               

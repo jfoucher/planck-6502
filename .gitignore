@@ -30,3 +30,4 @@ Hardware/ram_board/ram_board-backups
 Emulator/wasm/dist
 Emulator/wasm/node_modules
 Hardware/flash_adapter/flash_adapter-backups
+Hardware/template/planck_board-backups

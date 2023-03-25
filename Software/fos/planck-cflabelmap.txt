@@ -1,0 +1,36 @@
+Modules list:
+-------------
+cf.o:
+    BSS               Offs=000000  Size=000513  Align=00001  Fill=0000
+    DATA              Offs=000000  Size=005E24  Align=00001  Fill=0000
+    ZEROPAGE          Offs=000000  Size=000050  Align=00001  Fill=0000
+    DATASTACK         Offs=000000  Size=00007F  Align=00001  Fill=0000
+    DICTIONARY        Offs=000000  Size=001000  Align=00001  Fill=0000
+    VECTORS           Offs=000000  Size=000006  Align=00001  Fill=0000
+
+
+Segment list:
+-------------
+Name                   Start     End    Size  Align
+----------------------------------------------------
+ZEROPAGE              000000  00004F  000050  00001
+DATASTACK             000080  0000FE  00007F  00001
+DATA                  000200  006023  005E24  00001
+BSS                   006024  006536  000513  00001
+DICTIONARY            006537  007536  001000  00001
+VECTORS               00FFFA  00FFFF  000006  00001
+
+
+Exports list by name:
+---------------------
+
+
+
+Exports list by value:
+----------------------
+
+
+
+Imports list:
+-------------
+

@@ -1,5 +1,6 @@
 .include "../../macros.s"
 ram_end = $8000
+TALI_OPTIONAL_ASSEMBLER = 1
 
 .segment "ZEROPAGE": zeropage
 stack_p: .res 2
@@ -20,13 +21,27 @@ IO_BUFFER: .res $400
 .segment "STARTUP"
 
 v_reset:
+    ; printascii welcome_message
+    ; jmp v_reset
     JSR     copydata
     jsr zerobss
+    
     jmp kernel_init
 
-
+.segment "CODE"
+kernel_putc:
+    ; """Print a single character to the console. """
+    ;; Send_Char - send character in A out serial port.
+    ;; Uses: A (original value restored)
+        sta $f001
+        rts
 
 .include "../../forth.s"
+
+.ifdef TALI_OPTIONAL_ASSEMBLER
+.include "../../assembler.s"
+.include "../../disassembler.s"
+.endif
 
 .segment "DATA"
 .include "../../utils.s"
@@ -44,8 +59,9 @@ kernel_init:
 v_nmi:
 v_irq:                          ; IRQ handler
 
-
     printascii welcome_message
+
+    jmp forth
 
     lda #<dictionary
     sta up
@@ -53,8 +69,8 @@ v_irq:                          ; IRQ handler
     sta up + 1
 
     jsr calculate_free_mem
-    lda tmp_var + 1
-    ldx tmp_var
+    lda util_tmp_var + 1
+    ldx util_tmp_var
     jsr print16
 
     printascii free_message
@@ -229,12 +245,7 @@ minix_ls:
 
 platform_bye:   
     jmp platform_bye
-kernel_putc:
-    ; """Print a single character to the console. """
-    ;; Send_Char - send character in A out serial port.
-    ;; Uses: A (original value restored)
-        sta $f001
-        rts
+
 
 kernel_getc:
     ; """Get a single character from the keyboard. By default, py65mon
@@ -244,9 +255,9 @@ kernel_getc:
     ; non-zero character.
     ; """
 
-_loop:
+getc_loop:
     lda $f004
-    beq _loop
+    beq getc_loop
     rts
 
 io_read_sector:
@@ -317,9 +328,11 @@ io_write_sector:
     rts
 
 .segment "RODATA"
+minix_data:
+.align $100
+; .incbin "minix.img"
 free_message: .byte " bytes free", $0D, 0
 welcome_message: .byte "Welcome to Planck 6502", AscCR, AscLF, AscCR,AscLF, "Type 'words' for available words",AscCR, AscLF,  0
-
 
 .segment "VECTORS"
 
