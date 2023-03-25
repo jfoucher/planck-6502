@@ -147,3 +147,6 @@ Included on the main board is a WDC 6552 serial interface. Its signals are broug
 ### RAM and ROM
 
 32K of RAM and ROM are provided. The RAM socket allows for narrow or wide ram to be used. 
+
+
+![3D View](https://planck6502.com/fabrication/mainboard-3D_top.png)
