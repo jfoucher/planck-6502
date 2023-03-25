@@ -1,6 +1,6 @@
 
 CF_BUF = FAT_BUFFER
-CF_ADDRESS = $FFA0
+CF_ADDRESS = $FFE0
 CF_READ_SECTOR_COMMAND = $20
 ACIA_BASE   = $FFE0
 ACIA_DATA = ACIA_BASE
@@ -56,6 +56,8 @@ test_str: .asciiz "Starting"
 
 
 start:
+    cld
+    cli
     jsr acia_init
     ldx #0
 @loop:
@@ -76,8 +78,6 @@ start:
     lda #$0D
     jsr acia_out
 
-    ldy #$20
-    jsr delay_long
 
     jsr cf_init
     jsr cf_wait
@@ -147,40 +147,29 @@ start:
     jsr output_ascii
 
     jsr print_message
-    .byte " bytes ", 0
-    jmp end
+    .byte " bytes ",$0D,$0A, 0
+    ;jmp end
     
-    jsr cf_init
+    ldy #$10
+    jsr delay_long
+
+
     stz CF_LBA
     stz CF_LBA + 1
     stz CF_LBA + 2
     stz CF_LBA + 3
 
-    jsr cf_read_sector
-
-    jsr output_fat_buffer
-
-    lda #$0A
-    jsr acia_out
-    lda #$0D
-    jsr acia_out
-    lda #$0A
-    jsr acia_out
-    lda #$0D
-    jsr acia_out
-    lda #$0A
-    jsr acia_out
-    lda #$0D
-    jsr acia_out
-
-    
-    lda #$20
-    sta CF_LBA
     
     jsr cf_read_sector
 
     jsr output_fat_buffer
 
+    lda #$0A
+    jsr acia_out
+    lda #$0D
+    jsr acia_out
+    lda #$0A
+    jsr acia_out
     lda #$0D
     jsr acia_out
     lda #$0A
@@ -189,11 +178,39 @@ start:
     jsr acia_out
 
     
-    lda #$0B
+    lda #$3F
     sta CF_LBA
-    lda #2
+
+    ldy #$10
+    jsr delay_long
+    jsr cf_read_sector
+
+    jsr output_fat_buffer
+
+    lda #$0D
+    jsr acia_out
+    lda #$0A
+    jsr acia_out
+    lda #$0D
+    jsr acia_out
+
+    
+    lda #$2A
+    sta CF_LBA
+    lda #$2
     sta CF_LBA + 1
     
+    ldy #$10
+    jsr delay_long
+    jsr cf_read_sector
+
+    jsr output_fat_buffer
+
+    lda #$03
+    sta CF_LBA
+    
+    ldy #$10
+    jsr delay_long
     jsr cf_read_sector
 
     jsr output_fat_buffer
@@ -215,6 +232,18 @@ output_fat_buffer_raw:
     inx
     bne @loop2
 
+    rts
+
+zero_buffer:
+    ldx #0
+@loop:
+    stz FAT_BUFFER, X
+    inx
+    bne @loop
+@loop2:
+    stz FAT_BUFFER+256, X
+    inx
+    bne @loop2
     rts
 
 output_fat_buffer:
@@ -275,26 +304,34 @@ cf_init:
 
 cf_read:
     phy
-    phx
-    ldx #2
-    ldy #0
     lda #<FAT_BUFFER
     sta CF_BUF_PTR
     lda #>FAT_BUFFER
     sta CF_BUF_PTR + 1
+    ldy #0
 @begin:
-    ; jsr cf_wait
+    jsr cf_wait
     ; lda CF_ADDRESS + 7
     ; and #$08
     ; beq @exit
     lda CF_ADDRESS
     sta (CF_BUF_PTR), y
+    jsr acia_out
     iny
     bne @begin
     inc CF_BUF_PTR + 1
-    dex
-    bne @begin
-
+    ;bra @begin
+@loop:
+    jsr cf_wait
+    ; lda CF_ADDRESS + 7
+    ; and #$08
+    ; beq @exit
+    lda CF_ADDRESS
+    sta (CF_BUF_PTR), y
+    jsr acia_out
+    iny
+    bne @loop
+    dec CF_BUF_PTR + 1
 @loop2:
     jsr cf_wait
     lda CF_ADDRESS + 7
@@ -304,7 +341,6 @@ cf_read:
     iny
     bne @loop2 
 @exit:
-    plx
     ply
     rts
 
@@ -335,9 +371,12 @@ cf_set_lba:
     rts
 
 cf_read_sector:
+    jsr zero_buffer
     ; sei
     ; phy
     ; buffer should be set in CF_BUF_PTR
+    
+    jsr cf_wait
     jsr cf_set_lba
     jsr cf_wait
     lda #1

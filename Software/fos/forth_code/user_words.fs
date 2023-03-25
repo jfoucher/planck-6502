@@ -168,90 +168,13 @@ loop ;
 
 \ : tcmultimandel 18 scale_factor ! 0 do scale_factor @ 1+ 1+ scale_factor ! tcmandel loop ;
 
-: init_sd 7 s" sd_init" find if ." sd init ok " else 7 sd_init if ." sd init ok 2 " else ." sd init fail " then then ;
+\ : init_sd 7 s" sd_init" find-name if ." no SD word " else 7 sd_init if ." sd init ok 2 " else ." sd init fail " then then ;
 
 : dumpzp 0 256 dump ;
-
-\ 65488 constant cfbase
-\ 65488 constant cfreg0
-\ 65489 constant cfreg1
-\ 65490 constant cfreg2
-\ 65491 constant cfreg3
-\ 65492 constant cfreg4
-\ 65493 constant cfreg5
-\ 65494 constant cfreg6
-\ 65495 constant cfreg7
-\ 144 constant diagnostic_command
-\ 80 constant format_command
-\ 236 constant ident_command
-\ 227 constant idle_command
-\ 145 constant init_command
-\ 32 constant read_sector_command
-
-\ variable cfbuffer 256 cells allot
-
-\ variable buffptr
-
-\ variable lba 2 cells allot
-
-\ lba 2 cells erase
-\ cfbuffer 256 cells erase
-\ buffptr 1 cells erase
-
-\ variable partstart
-\ variable res_sect
-\ variable secs_cluster
-\ variable secs_fat
-\ variable num_fats
-
-\ : printcstring begin dup c@ dup while emit 1 + repeat 2drop ;
-\ : cfwait begin cfreg7 c@ 128 and 0= until ;
-\ : cferr cfwait cfreg7 c@ 1 and 0= if ." OK " else ." FAIL " then ;
-\ : cfinit 4 cfreg7 c! cfwait 224 cfreg6 c! 1 cfreg1 c! 239 cfreg7 c! cferr ;
-
-\ : cfread 0 buffptr ! begin cfwait cfreg7 c@ 8 and while cfreg0 c@ cfbuffer buffptr @ + c! buffptr @ 1 + buffptr ! repeat ;
-
-\ : cfinfo ident_command cfreg7 c! cfread ." Serial : " cfbuffer 20 + printcstring cr ." Firmware : " cfbuffer 46 + printcstring cr ." Model : " cfbuffer 54 + printcstring cr ." LBA size : " cfbuffer 123 + printcstring cr   ;
-
-\ \ Read MBR
-\ \ check MBR format
-\ \ Check if MBR if partition start sector
-
-
-\ \ set LBA data
-\ : cfsetlba lba c@ cfreg3 c! lba 1 + c@ cfreg4 c! lba 2 + c@ cfreg5 c! lba 3 + c@ 15 and 224 or cfreg6 c! ;
-
-\ \ read sector to buffer
-\ : cfrs cfsetlba 1 cfreg2 c! cfwait read_sector_command cfreg7 c! cfread cferr ;
-
-\ \ read MBR to buffer
-\ : fatreadmbr 0 lba ! 0 lba 2 + ! cfrs ;
-\ \ Set FAT start to lba + read sector
-\ : fatreadpartBR partstart @ lba ! partstart 2 + @ lba 2 + ! cfrs ;
-\ \ Get number of reserved sectors from FAT start
-\ : fatgetressect cfbuffer 14 + @ res_sect ! ;
-\ : fatgetsecsfat cfbuffer 22 + @ secs_fat ! ;
-\ : fatgetsecscluster cfbuffer 13 + c@ secs_cluster ! ;
-\ : fatgetnumfats cfbuffer 16 + c@ num_fats ! ;
-\ \ Get FAT start from MBR
-\ : fatgetpartstart cfbuffer 454 + @ partstart ! cfbuffer 456 + @ partstart 2 + ! ;
-\ : cfdump cfbuffer 512 dump ;
-
-\ : fatrootread partstart @ res_sect @ + secs_fat @ num_fats @ * + lba ! cfrs ;
-
-\ \ Check if sector 0 is MBR or FAT
-\ : fatcheckbrtype cfbuffer 54 + 3 s" FAT" compare 0= ; 
-\ \ if ." FAT " else ." MBR " then ;
-
-\ : checkfat16 cfbuffer 450 + c@ 6 = ;
-\ : checkBR cfbuffer 510 + @ 43605 = ;
-
-\ \ Get first sector of FAT partition
-\ : fatgetfirstsector fatcheckbrtype if 0 partstart ! 0 partstart 2 + ! else fatgetpartstart then fatreadpartBR ;
-
-
-\ : cffatinit fatreadmbr checkBR if checkfat16 if fatgetfirstsector then fatgetressect fatgetsecscluster fatgetsecsfat fatgetnumfats else ." FAIL" then ;
 
 \ cr .( Welcome to Planck 6502 ) cr
 \ END 
 
+' rb block-read-vector !
+' wb block-write-vector !
+editor-wordlist >order

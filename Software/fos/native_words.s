@@ -282,7 +282,11 @@ cold_user_table:
         .byte 4                         ; #WORDLISTS (FORTH EDITOR ASSEMBLER ROOT)
         .word dictionary_start          ; FORTH-WORDLIST
         .word editor_dictionary_start   ; EDITOR-WORDLIST
+.ifdef TALI_OPTIONAL_ASSEMBLER
         .word assembler_dictionary_start ; ASSEMBLER-WORDLIST
+.else
+        .word 0
+.endif
         .word root_dictionary_start     ; ROOT-WORDLIST
         .word 0,0,0,0,0,0,0,0           ; User wordlists
         .byte 1                         ; #ORDER
@@ -3020,7 +3024,7 @@ z_digit_question:
         ; """
 xt_disasm:
                 jsr underflow_2
-            .ifdef disassembler
+            .ifdef TALI_OPTIONAL_ASSEMBLER
                 jsr disassembler
             .endif
 
@@ -3711,9 +3715,9 @@ z_dup:          rts
         ; ed.asm or the manual for details.
         ; """
 xt_ed:
-            .ifdef ed6502
+        .ifdef ed6502
                 jsr ed6502      ; kept in separate file
-            .endif
+        .endif
 
 z_ed:           rts
 
@@ -12140,14 +12144,14 @@ xt_sd_readsector:
                 ; get and save sector number (32 bit number, double)
                 ; most significant part is TOS
                 lda 0, x
-                sta FAT_LBA + 2
+                sta IO_SECTOR + 2
                 lda 1, x
-                sta FAT_LBA + 3
+                sta IO_SECTOR + 3
                 ; least significant part is NOS
                 lda 2, x
-                sta FAT_LBA + 0
+                sta IO_SECTOR + 0
                 lda 3, x
-                sta FAT_LBA + 1
+                sta IO_SECTOR + 1
                 lda #1
                 sta SD_CRC
         
@@ -12177,444 +12181,184 @@ xt_time:
 
 z_time: rts
 
-xt_cf_init:
-.ifdef CF_ADDRESS
-        ; jsr underflow_1
-        ; save CF card address
-        ; lda 0, x
-        ; sta CF_ADDRESS
-        ; lda 1, x
-        ; sta CF_ADDRESS + 1
-        jsr cf_init
-        ; inx
-        ; inx
-.endif
-z_cf_init:
-        rts
 
-; ## fat_init ( addr -- ) "Initialize FAT16 on CF or SD card at specified address"
-; ## "fat_init" coded Custom
-xt_fat_init: 
-.ifdef CF_ADDRESS
-        ; initialize CF card
-        jsr cf_init
-.endif
-.ifdef SD
-        lda #7
-        jsr sd_init
-.endif
-.ifdef DISK_BUFFER
-        jsr fat_init
-
-        printstr DISK_BUFFER + 43, 11
-        ; printascii cf_fat_mounted_message
-        ; jsr xt_cr
-fat_init_exit:
-        dex
-        dex
-        lda #<DISK_BUFFER
-        sta 0, x
-        lda #>DISK_BUFFER
-        sta 1, x
-.endif
-z_fat_init: 
-        rts
-
-
-ls_header:
-        .asciiz "NAME     EXT  TYPE  SIZE"
-xt_cf_ls:
-.ifdef fat_convert_filename
-        ; read the current directory entry
-        ; and save the contents to be displayed later
-
-        ; check if fat is inited
-        lda FAT_SEC_PER_CLUS
-        bne @fatok
-        jsr xt_fat_init
-        inx     ; drop fat_init return value
-        inx
-        jsr xt_cr
-
-@fatok:
-        cp16 FAT_CURRENT_DIR_SEC, FAT_LBA
-        cp16 FAT_CURRENT_DIR_SEC + 2, FAT_LBA + 2
-
-        jsr io_read_sector
-
-        ; current directory first sector is now in buffer
-        ; display file names
-        jsr xt_cr
-        printascii ls_header
-        jsr xt_cr
-
-        lda #<DISK_BUFFER
-        sta FAT_PTR2
-        lda #>DISK_BUFFER
-        sta FAT_PTR2 + 1
-
-        phy
-@outerloop:
-        ldy #11
-        lda (FAT_PTR2), y
-        cmp #$0F                ; ignore long filenames
-        beq @next_entry
-        ldy #0
-        lda (FAT_PTR2), Y       
-        beq @exit               ; if zero, it means we reached the end of the list
-        cmp #$E5                ; if $E5, it means the entry is deleted, so go to next entry
-        beq @next_entry
-@loop:
-        lda (FAT_PTR2), y
-        jsr emit_a
-        iny
-        cpy #8
-        bne @check_end          ; print space after name and before extension
-        lda #' '
-        jsr emit_a
-@check_end:
-        cpy #11
-        bcc @loop
-        ; read entry type
-        lda (FAT_PTR2), y
-        jsr print_entry_type
-
-        jsr print_entry_size
-        lda #$0D
-        jsr emit_a
-@next_entry:
-        add16 FAT_PTR2, fat_entry_size, FAT_PTR2
-        bra @outerloop
-@exit:
-        ply
-.endif
-
-        ; dex
-        ; dex
-        ; lda #<DISK_BUFFER
-        ; sta 0, x
-        ; lda #>DISK_BUFFER
-        ; sta 1, x
-
-z_cf_ls:
-        rts
-.ifdef fat_convert_filename
-print_entry_size:
-        phy
-
-        dex
-        dex
-        dex
-        dex
-
-        ldy #28
-        lda (FAT_PTR2), y
-        sta 2,x
-        ldy #29
-        lda (FAT_PTR2), y
-        sta 3,x
-
-        ldy #30
-        lda (FAT_PTR2), y
-        sta 0,x
-
-        ldy #31
-        lda (FAT_PTR2), y
-        sta 1,x
-        jsr xt_ud_dot
-        ply
-        rts
-
-print_entry_type:
-        and #$10
-        bne @is_dir
-        bra @is_file
-@is_dir:
-        printascii entry_type_dir
-        bra @exit
-@is_file:
-        printascii entry_type_file
-@exit:
-        rts
-
-entry_type_dir: .asciiz "   D    "
-entry_type_file: .asciiz "   F    "
-.endif
 xt_cf_info:
 .ifdef CF_ADDRESS
-        jsr cf_init
-        jsr cf_wait
-        lda #$EC
-        sta CF_ADDRESS + 7
-        dex
-        dex
-        lda #<DISK_BUFFER
-        sta 0, x
-        lda #>DISK_BUFFER
-        sta 1, x
-        jsr cf_read
-
+        jsr cf_info
+        jsr xt_cr
+        jsr cf_print_id
+        jsr cf_print_capacity
 .endif
 z_cf_info:
         rts
 
-xt_cf_cd:
-.ifdef fat_convert_filename
-        phy
-        ; check if fat is inited
-	lda FAT_SEC_PER_CLUS
-	bne @fatok
-	jsr xt_fat_init
-	inx     ; drop fat_init return value
-	inx
-@fatok:
-        lda 0, x
-        sta FAT_PTR1
-        lda 1, x
-        sta FAT_PTR1 + 1
+cf_print_capacity:
+    phy
+
+    jsr xt_cr
+
+    ldy #120
+    ; print lba size
+    lda (io_buffer_ptr), y
+    sta LBA_SIZE
+    iny
+    lda (io_buffer_ptr), y
+    sta LBA_SIZE + 1
+
+    iny
+    lda (io_buffer_ptr), y
+    sta LBA_SIZE + 2
+
+    iny
+    lda (io_buffer_ptr), y
+    sta LBA_SIZE + 3
+
+    ldy #9
+@loop:
+    asl32 LBA_SIZE
+    dey
+    bne @loop
+
+    dex
+    dex
+    dex
+    dex
+
+    lda LBA_SIZE
+    sta 2, x
+    lda LBA_SIZE + 1
+    sta 3, x
+    lda LBA_SIZE + 2
+    sta 0, x
+    lda LBA_SIZE + 3
+    sta 1, x
+
+    jsr xt_ud_dot
+
+    dex
+    dex
+    dex
+    dex
+    lda #6
+    sta 0, x
+    stz 1, x
+    lda #<bytes_msg
+    sta 2, x
+    lda #>bytes_msg
+    sta 3, x
+    jsr xt_type
+    jsr xt_cr
+    ply
+    rts
+
+
+cf_info:
+;     jsr cf_init
+;     jsr cf_wait
+;     lda #$EC
+;     sta CF_ADDRESS + 7
+;     lda #<IO_BUFFER
+;     sta io_buffer_ptr
+;     lda #>IO_BUFFER
+;     sta io_buffer_ptr + 1
+;     jsr cf_read
+    rts
+
+cf_print_id:
+    ; print model number
+    phy
+    ldy #55
+@loop:
+    lda (io_buffer_ptr), y
+    jsr kernel_putc
+    dey
+    lda (io_buffer_ptr), y
+    jsr kernel_putc
+    iny
+    iny
+    iny
+    cpy #(40+55)
+    bcc @loop
+    ply
+    rts
+
+
+xt_io_readblock:
+.ifdef io_read_sector_address
+        ; block-read ( addr blk# -- ) 
         lda 2, x
-        sta FAT_PTR2
+        sta io_buffer_ptr
         lda 3, x
-        sta FAT_PTR2+1
-
-        jsr fat_convert_filename
-
-        jsr fat_find_file               ; after this, the pointer to the entry in DISK_BUFFER is in FAT_PTR1
-        bcs @found
-        inx
-        inx
-        inx
-        inx
-        jsr xt_cr
-        printstr FAT_FILE_NAME_TMP, 11
-        printascii not_found_error        ; directory not found, abort
-        jsr xt_cr
-        ply
-        jsr xt_abort
-@found:
-        ; check if entry is a directory
-        ldy #11
-        lda (FAT_PTR1), y
-        and #$10        
-        bne @is_dir
-        jsr xt_cr
-        printascii not_dir_error        ; Not a directory, abort
-        inx
-        inx
-        inx
-        inx
-        ply
-        jsr xt_cr
-        jsr xt_abort
-@is_dir:
-        ; load cluster number from dir entry
-        ldy #26
-        lda (FAT_PTR1), y
-        sta FAT_CURRENT_CLUSTER
-        iny
-        lda (FAT_PTR1), y
-        sta FAT_CURRENT_CLUSTER + 1
-        ; convert cluster number to sector
-        jsr fat_get_sector_for_cluster
-        ; save sector number to CF_CURRENT_DIR_SEC
-        
-        inx
-        inx
-        inx
-        inx
-        ply
-.endif
-z_cf_cd:
-        
-        rts
-.ifdef fat_convert_filename
-not_dir_error: .asciiz "Not a directory"
-not_found_error: .asciiz " not found"
-.endif
-
-
-xt_cf_cat:
-.ifdef fat_convert_filename
-        phy
-        ; check if fat is inited
-	lda FAT_SEC_PER_CLUS
-	bne @fatok
-	jsr xt_fat_init
-	inx     ; drop fat_init return value
-	inx
-@fatok:
+        sta io_buffer_ptr + 1
         lda 0, x
-        sta FAT_PTR1
+        sta IO_SECTOR
         lda 1, x
-        sta FAT_PTR1 + 1
-        lda 2, x
-        sta FAT_PTR2
-        lda 3, x
-        sta FAT_PTR2+1
+        sta IO_SECTOR + 1
+        stz IO_SECTOR + 2
+        stz IO_SECTOR + 3
 
-        jsr fat_convert_filename
+        asl IO_SECTOR                   ; multiply by two to get first sector number
+        rol IO_SECTOR + 1
+        rol IO_SECTOR + 2
 
-        jsr fat_find_file               ; after this, the pointer to the entry in DISK_BUFFER is in FAT_PTR1
-        bcs @found
-        inx
-        inx
-        inx
-        inx
-        jsr xt_cr
-        printstr FAT_FILE_NAME_TMP, 11
-        printascii not_found_error        ; Not a directory, abort
-        jsr xt_cr
-        jsr xt_abort
-@found:
-        ; check if entry is a directory
-        ldy #11
-        lda (FAT_PTR1), y
-        and #$10        
-        beq @is_file
-        jsr xt_cr
-        printascii not_file_error        ; Not a directory, abort
-        inx
-        inx
-        inx
-        inx
-        jsr xt_cr
-        jsr xt_abort
-@is_file:
-        ; load cluster number from dir entry
-        ldy #26
-        lda (FAT_PTR1), y
-        sta FAT_CURRENT_CLUSTER
-        iny
-        lda (FAT_PTR1), y
-        sta FAT_CURRENT_CLUSTER + 1
-        iny
-        lda (FAT_PTR1), y
-        sta FAT_CURRENT_FILE_SIZE
-        iny
-        lda (FAT_PTR1), y
-        sta FAT_CURRENT_FILE_SIZE + 1
-        iny
-        lda (FAT_PTR1), y
-        sta FAT_CURRENT_FILE_SIZE + 2
-        iny
-        lda (FAT_PTR1), y
-        sta FAT_CURRENT_FILE_SIZE + 3
-        ; convert cluster number to sector
-        cp16 FAT_CURRENT_DIR_SEC, FAT_TMP
-        cp16 FAT_CURRENT_DIR_SEC + 2, FAT_TMP + 2
-        jsr fat_get_sector_for_cluster
-        ; save sector number to CF_LBA
-        cp16 FAT_CURRENT_DIR_SEC, FAT_LBA
-        cp16 FAT_CURRENT_DIR_SEC + 2, FAT_LBA + 2
-        cp16 FAT_TMP, FAT_CURRENT_DIR_SEC
-        cp16 FAT_TMP + 2, FAT_CURRENT_DIR_SEC + 2
-
-        ; file sector number is in CF_CURRENT_FILE_SEC
-@read_next_file_sector:
-        jsr io_read_sector
-        jsr xt_cr
-        jsr output_sector
-
-        ; jsr reduce_filesize_by_one_sector
-
-        ; ; check if filesize is zero
-        ; lda CF_CURRENT_FILE_SIZE + 3
-        ; bne @read_next_file_sector
-        ; lda CF_CURRENT_FILE_SIZE + 2
-        ; bne @read_next_file_sector
-        ; lda CF_CURRENT_FILE_SIZE + 1
-        ; bne @read_next_file_sector
-
-        ; lda CF_CURRENT_FILE_SIZE
-        ; bne @read_next_file_sector
-        
-        
-        inx
-        inx
-        inx
-        inx
-        ; lda #<CF_CURRENT_FILE_SIZE
+        ; lda io_buffer_ptr
         ; sta 0, x
-        ; lda #>CF_CURRENT_FILE_SIZE
+        ; lda io_buffer_ptr + 1
         ; sta 1, x
+        ; jsr xt_dot
 
-        ply
+        jsr io_read_sector
+        inc32 IO_SECTOR
+        inc io_buffer_ptr + 1
+        inc io_buffer_ptr + 1
+        jsr io_read_sector
+        ; lda io_buffer_ptr
+        ; sta 0, x
+        ; lda io_buffer_ptr + 1
+        ; sta 1, x
+        ; jsr xt_dot
+
+        inx
+        inx
+
 .endif
-z_cf_cat:
+z_io_readblock:
         rts
 
-.ifdef fat_convert_filename   
-not_file_error: .asciiz "Not a file"
-.endif
-
-; ## cf_readsector ( double -- addr ) "Set LBA block and read to buffer"
-; ## "cf_readsector" coded Custom
-xt_cf_readsector: 
-.ifdef CF_ADDRESS
-        jsr underflow_2
-        ; most significant part is TOS
-        lda 0, x
-        sta FAT_LBA + 2
-        lda 1, x
-        sta FAT_LBA + 3
-        ; least significant part is NOS
+xt_io_writeblock:
+.ifdef io_read_sector_address
+        ; block-write ( addr blk# -- ) 
         lda 2, x
-        sta FAT_LBA + 0
+        sta io_buffer_ptr
         lda 3, x
-        sta FAT_LBA + 1
-        ; LBA is set, now read sector
-        jsr cf_init
+        sta io_buffer_ptr + 1
+        lda 0, x
+        sta IO_SECTOR
+        lda 1, x
+        sta IO_SECTOR + 1
+        stz IO_SECTOR + 2
+        stz IO_SECTOR + 3
 
-        jsr cf_read_sector
+        asl IO_SECTOR                   ; multiply by two to get first sector number
+        rol IO_SECTOR + 1
+        rol IO_SECTOR + 2
 
-        ; return buffer address
+        jsr io_write_sector
+        inc32 IO_SECTOR
+        inc io_buffer_ptr + 1
+        inc io_buffer_ptr + 1
+        jsr io_write_sector
+
+
+        ; inc io_buffer_ptr + 1           ; jump two pages forward
+        ; inc io_buffer_ptr + 1
+        ; jsr io_write_sector
         inx
         inx
-        lda #<DISK_BUFFER
-        sta 0, x
-
-        lda #>DISK_BUFFER
-
-        sta 1, x
+        ; inx
+        ; inx
 .endif
-z_cf_readsector: 
+z_io_writeblock:
         rts
-
-xt_cf_rsptr:
-.ifdef CF_ADDRESS
-        dex
-        dex
-        lda #<cf_read_sector
-        sta 0, x
-        lda #>cf_read_sector
-        sta 1, x
-        .endif
-z_cf_rsptr:
-        rts
-
-xt_sd_rsptr:
-.ifdef SD
-        dex
-        dex
-        lda #<sd_readsector
-        sta 0, x
-        lda #>sd_readsector
-        sta 1, x
-.endif
-z_sd_rsptr:
-        rts
-
-xt_io_readsector:
-.ifdef DISK_BUFFER
-        dex
-        dex
-        lda #<io_read_sector_ptr
-        sta 0, x
-        lda #>io_read_sector_ptr
-        sta 1, x
-.endif
-z_io_readsector:
-        rts
-
 ; END
 

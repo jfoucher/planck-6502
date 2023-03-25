@@ -1,5 +1,8 @@
-.segment "BSS"
+.segment "ZEROPAGE": zeropage
+FAT_PTR1: .res 2
+FAT_PTR2: .res 2
 
+.segment "BSS"
 FAT_LBA: .res 4
 FAT_PART_START: .res 4
 FAT_CURRENT_DIR_SEC: .res 4
@@ -16,7 +19,7 @@ FAT_CURRENT_DIR: .res 12
 FAT_FILE_NAME_TMP: .res 12
 
 DISK_BUFFER: .res $200
-FAT_BUFFER2: .res $200
+DISK_BUFFER2: .res $200
 
 .segment "DATA"
 .if .def(SD)

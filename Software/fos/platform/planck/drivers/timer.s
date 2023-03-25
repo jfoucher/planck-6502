@@ -13,6 +13,10 @@ timer_init:
     lda #>COUNTER       ; set timer to high byte to calculated value from defined clock speed
 
     sta T1CH        
+    stz time
+    stz time+1
+    stz time+2
+    stz time+3
     cli
     rts
     

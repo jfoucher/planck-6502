@@ -1,11 +1,12 @@
 
 .include "../../macros.s"
 CLOCK_SPEED = 24000000
-TALI_OPTIONAL_ASSEMBLER = 1
+; TALI_OPTIONAL_ASSEMBLER = 1
 
 ram_end = $8000
 
 ; select includes to enable card drivers
+
 
 .include "drivers/cf.inc"
 .include "drivers/acia.inc"
@@ -18,6 +19,8 @@ ram_end = $8000
 ; .include "drivers/keyboard.inc"
 
 .segment "ZEROPAGE": zeropage
+IRQ_VEC: .res 2
+NMI_VEC: .res 2
 io_buffer_ptr: .res 2
 
 .include "drivers/zp.s"
@@ -35,46 +38,8 @@ IO_BUFFER = cp0+256 ; set IO_BUFFER to block buffer
 IO_SECTOR: .res 4
 .endif
 
-
-
-.segment "STARTUP"
-.import    copydata
-.import zerobss
-zero_ram:
-    ldx #$FF
-zero_zp:
-    stz 0, x
-    dex
-    bne zero_zp
-    stz $00
-    lda #0
-    sta $01
-
-    ldx #$80
-    ldy #0
-    lda #0
-@loop:
-    sta ($0), y
-    iny
-    bne @loop
-    inc $1
-    dex
-    bne @loop
-
-    jmp ram_zeroed
-
-v_reset:
-    jmp zero_ram
-ram_zeroed: 
-    JSR     copydata
-    jsr zerobss
-    
-    jmp kernel_init
-
-
-
 .segment "DATA"
-
+jmp kernel_init             ; jump to start when loading from CF card
 .include "drivers/delayroutines.s"
 
 .ifdef VIA1_BASE
@@ -137,6 +102,16 @@ io_read_sector_address = sd_read_sector
 
 platform_bye:
 kernel_init:
+    ; setup IRQ vectors first
+    lda #<v_irq
+    sta IRQ_VEC
+    lda #>v_irq
+    sta IRQ_VEC + 1
+    lda #<v_nmi
+    sta NMI_VEC
+    lda #>v_nmi
+    sta NMI_VEC + 1
+
 .ifdef VIA1_BASE
     lda #$FF
     sta DDRB
@@ -171,17 +146,17 @@ jsr acia_init
 
     printascii welcome_message
 
-    lda #<dictionary
-    sta util_tmp
-    lda #>dictionary
-    sta util_tmp + 1
+    ; lda #<dictionary
+    ; sta util_tmp
+    ; lda #>dictionary
+    ; sta util_tmp + 1
 
-    jsr calculate_free_mem
-    lda tmp_var + 1
-    ldx tmp_var
-    jsr print16
+    ; jsr calculate_free_mem
+    ; lda tmp_var + 1
+    ; ldx tmp_var
+    ; jsr print16
 
-    printascii free_message
+    ; printascii free_message
 
 
     jmp forth
@@ -362,5 +337,5 @@ abort_message: .byte AscCR, AscLF, 0
 .segment "VECTORS"
 
 .word v_nmi
-.word v_reset
+.word kernel_init
 .word v_irq

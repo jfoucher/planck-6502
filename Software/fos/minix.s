@@ -10,6 +10,8 @@
 ; io_current_sector: a 4 byte variable in RAM to indicate which sector to read/write like LBA addressing
 ; io_buffer_ptr: a zeropage pointer to a buffer in RAM where the sector data will be stored
 ; or where it will be found to be written to disk
+; The buffer will be overwriten by many routines.
+; The only time it is safe to write to it is just before calling file_write_data
 ; This library is designed to be assembled with ca65 but it should be 
 ; fairly easy to adapt to another assembler.
 ; Compatible only with MINIX 1 filesystem with 30 character filenames
@@ -112,11 +114,12 @@ minix_read_block_noinc:
     cp16  MINIX_SECTOR, io_current_sector  ; copy result to the sector to read
 
     jsr io_read_sector          ; read first sector
-
+    inc io_buffer_ptr + 1
     inc io_buffer_ptr + 1       ; write to next buffer 512 block to get full 1024 block
     inc io_current_sector       ; setup to read next sector
     jsr io_read_sector          ; Read next sector
     dec io_buffer_ptr + 1       ; put buffer pointer back
+    dec io_buffer_ptr + 1
     ; one full block is now in the buffer pointed to by io_buffer_ptr
     rts
 
@@ -134,11 +137,12 @@ minix_write_block:
 minix_write_block_noinc:
     cp16  MINIX_SECTOR, io_current_sector  ; copy result to the sector to read
     jsr io_write_sector          ; read first sector
-
+    inc io_buffer_ptr + 1
     inc io_buffer_ptr + 1       ; read from next buffer 512 block to get full 1024 block
-    inc io_current_sector       ; setup to write to next sector
+    inc32 io_current_sector       ; setup to write to next sector
     jsr io_write_sector          ; Write next sector
     dec io_buffer_ptr + 1       ; put buffer pointer back
+    dec io_buffer_ptr + 1
     ; one full block has now been written to disk
     rts
 
@@ -319,18 +323,90 @@ minix_read_inode_data:
     sec
     rts
 
-; file name to create is in MINIX_FILENAME
+; Node name to create is in MINIX_FILENAME
 ; the directory in which to create it is in MINIX_CURRENT_DIR_INODE
-minix_create_file:
+; some data can already be set in MINIX_INODE
+; Node mode should be set in MINIX_INODE_MODE
+; this will indicate if the node is a file or directory
+minix_mknod:
+    phy
+    phx
     ; find a free inode by looking at the bitmap
+    stz MINIX_CURRENT_BLOCK + 1
+    lda #2                          ; the first block of the inode map is block 2
+    sta MINIX_CURRENT_BLOCK         ; so read that block now
+    cp16 MINIX_N_INODE_MAP_BLOCKS, MINIX_TMP    ;save the number of inode map blocks temporarily
+@new_block:
+    cp16 io_buffer_ptr, MINIX_PTR               ; copy the io buffer pointer to our own
+    jsr minix_read_block
+    ldx #4                          ; set X to 4 (number of pages to read) 
+@outer:
+    phx                             ; and save to stack
+    ; find the first free inode slot
+    ldy #0
+@loop:
+    ldx #0
+    lda (MINIX_PTR), y              ; load current byte
+    beq @found                      ; if it is zero, at least the first bit is free
+    ; otherwise, rotate A until the carry get unset
+@inner:
+    ror                             ; rotate right
+    bcc @found                      ; if the carry is clear, it means X is now the number of the free bit
+    inx                             ; increase X to keep track of which bit we are looking at
+    cpx #8                          ; if X reaches 8, we went around the byte and found no free slot
+    bcc @inner                      ; try again with next bit
+    iny                             ; increase Y to get next byte
+    bne @loop                       ; if Y did not wrap around, do next byte
+    inc MINIX_PTR + 1               ; if it did wraparound, do next page
+    plx                             ; get X from stack
+    dex                             ; decrement X to check number of pages read
+    bne @outer                      ; X is not zero yet, read another page
+
+    ; we are at the end of the block, read another one if necessary
+    dec16zero MINIX_TMP             ; decrement the number of blocks in inode map by one
+    beq @not_found                  ; if we reached zero, we have not found a free inode
+    inc16 MINIX_CURRENT_BLOCK       ; otherwise, increment block to read
+    bra @new_block                  ; and do the whole circus again
+
+@found:                             ; we found a free inode
+    ; now we need to multiply Y by 8 and add X to find the free inode number
+    ; we don't need MINIX_TMP anymore, so use it to pultiply Y by 8
+    stz MINIX_TMP + 1           ; set high byte to zero
+    sty MINIX_TMP               ; set low byte to Y
+    phx                         ; save X on stack
+    ldx #3
+@mult_loop:
+    asl16 MINIX_TMP             ; shift left 3 times
+    dex
+    bne @mult_loop
+    pla                         ; pull X in A
+    adc MINIX_TMP               ; add low byte of inode number
+    sta MINIX_TMP               ; store to low byte
+    bcc @carry_unset            ; skip next addition if carry was unset
+    lda MINIX_TMP + 1           ; load high byte
+    adc #0                      ; add carry if there is one
+    sta MINIX_TMP + 1           ; store result in high byte
+@carry_unset:
+    ; we now have the inode number in MINIX_TMP
+    cp16 MINIX_TMP, MINIX_CURRENT_INODE         ; copy it to MINIX_CURRENT_INODE to prepare for write
+    ; we have to generate the inode data
+
     ; find a free data zone by looking at the zone bitmap
+
     ; create the inode data structure for the new file
     ; with a size of zero
     ; write the inode to disk
     ; get the data for the directory
     ; add a line with the inode number for the new file
     ; and it's filename
+    clc
+@exit:
+    plx
+    ply
     rts
+@not_found:
+    sec
+    bra @exit
 
 
 ; Once an inode has been written, we can write the file data
@@ -441,14 +517,13 @@ minix_read_inode_loop3:
     ply
     rts
 
-
 ; write an inode
 ; inode data is in MINIX_INODE
 ; inode number is in MINIX_CURRENT_INODE, 1 indexed
 
 minix_write_inode:
     phy
-    ; MINIX_CURRENT_INODE contains the number of the inode we have to read to find the data zone
+    ; MINIX_CURRENT_INODE contains the number of the inode we want to write to
     ; the blocks with inodes start at block 1 + MINIX_N_INODE_MAP_BLOCKS + MINIX_N_ZONE_MAP_BLOCKS
     cp16 MINIX_N_INODE_MAP_BLOCKS, MINIX_CURRENT_BLOCK    ; copy number of inode map blocks to temporary
     inc16 MINIX_CURRENT_BLOCK                             ; add 1 to account for superblock
@@ -540,6 +615,12 @@ minix_read_superblock_loop:
     lda MINIX_MAGIC + 1
     cmp #>MINIX_MAGIC_NUMBER
     bne minix_read_superblock_fail
+    ; we only support zones of 1024 bytes, so exit with error if different
+    lda MINIX_LOG_ZONE_SIZE
+    bne minix_read_superblock_fail
+    lda MINIX_LOG_ZONE_SIZE + 1
+    bne minix_read_superblock_fail
+    
     ply
     clc
     rts

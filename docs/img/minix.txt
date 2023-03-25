@@ -390,6 +390,11 @@ minix_read_superblock_loop:
     lda MINIX_MAGIC + 1
     cmp #>MINIX_MAGIC_NUMBER
     bne minix_read_superblock_fail
+    ; we only support zones of 1024 bytes, so exit with error if different
+    lda MINIX_LOG_ZONE_SIZE
+    bne minix_read_superblock_fail
+    lda MINIX_LOG_ZONE_SIZE + 1
+    bne minix_read_superblock_fail
     ply
     clc
     rts
