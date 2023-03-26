@@ -1,317 +1,81 @@
+.segment "BSS"
+cf_present: .res 1
+LBA_SIZE: .res 4
 
-
-cf_wait: 
-    ; phy
-    ; ldy #7
-@wait_loop:
-    ; lda (CF_ADDRESS), y
-    lda CF_ADDRESS + 7
-    and #$80
-    bne @wait_loop
-    ; ply
-    rts
-
+.segment "CODE"
 
 cf_init:
     ; phy
+    lda CF_ADDRESS + 7  ; wait for RDY flag to become set
+    and #$40
+    beq cf_init
     lda #$4
+    ; lda #$6         ; try disabling interrupts from card
     ; ldy #7
     ; sta (CF_ADDRESS),y
     sta CF_ADDRESS + 7
     jsr cf_wait
     lda #$E0
-    ; ldy #6
-    ; sta (CF_ADDRESS),y
     sta CF_ADDRESS + 6
+    jsr cf_wait
     lda #$1
-    ; ldy #1
-    ; sta (CF_ADDRESS),y
     sta CF_ADDRESS + 1
+    jsr cf_wait
     lda #$EF
-    ; ldy #7
-    ; sta (CF_ADDRESS),y
     sta CF_ADDRESS + 7
     jsr cf_wait
     jsr cf_err
-    ; ply
+
+    lda #$55
+    sta CF_ADDRESS + 3
+    lda CF_ADDRESS + 3
+    cmp #$55
+    beq @exit
+    stz cf_present
+    rts
+@exit:
+    sta cf_present
     rts
 
 
-; cf_read:
-;     phy
-;     ldy #0
-; @readloop:
-;     ; phy
-;     ; ldy #7
-;     ; lda (CF_ADDRESS), y
-;     lda CF_ADDRESS + 7
-;     and #8
-;     beq @exit
-;     ; jsr cf_wait
-;     ; ldy #0
-;     ; lda (CF_ADDRESS), y
-;     lda CF_ADDRESS
-;     ; ply
-;     sta (CF_BUF_PTR), y
-;     ; jsr cf_wait
-;     iny
-;     bne @readloop
-;     ; if y wraps around to zero, increment buffer page
-;     inc CF_BUF_PTR+1
-;     bra @readloop
-; @exit:
-;     ; we only come here because we read an & 8 from REG 7
-;     ; ply
-;     dec CF_BUF_PTR+1
-;     ply
-;     rts
- 
-; : cfread 0 buffptr ! begin cfwait cfreg7 c@ 8 and while cfreg0 c@ cfbuffer buffptr @ + c! buffptr @ 1 + buffptr ! repeat ;
+
 
 cf_read:
     phy
-    phx
-    ldx #2
     ldy #0
-    lda #<DISK_BUFFER
-    sta CF_BUF_PTR
-    lda #>DISK_BUFFER
-    sta CF_BUF_PTR + 1
-@begin:
-    ; jsr cf_wait
-    ; lda CF_ADDRESS + 7
-    ; and #$08
-    ; beq @exit
+@loop:
     lda CF_ADDRESS
-    sta (CF_BUF_PTR), y
+    sta (io_buffer_ptr), y
     iny
-    bne @begin
-    inc CF_BUF_PTR + 1
+    bne @loop
+    inc io_buffer_ptr + 1
     jsr cf_wait
-    dex
-    bne @begin
+@loop2:
+    lda CF_ADDRESS
+    sta (io_buffer_ptr), y
+    iny
+    bne @loop2
+    dec io_buffer_ptr + 1
+@loop3:
+    jsr cf_wait
+    lda CF_ADDRESS + 7
+    and #$08
+    beq @exit
+    lda CF_ADDRESS
+    iny
+    bne @loop3
 @exit:
-    plx
     ply
     rts
 
-; .macro readsector2
-; .scope
-    
-; outerloop:
-;     ldx #0
-; wait:
-;     ldy #0
-;     lda CF_ADDRESS + 7
-;     and #$80
-;     bne wait
-; load:
-;     lda CF_ADDRESS
-;     sta (CF_BUF_PTR), y
-;     iny
-;     bne load
 
-;     inc CF_BUF_PTR + 1
-;     inx
-;     cpx #2
-;     bcc wait
-
-; .endscope
-; .endmacro
-
-; cf_read:
-;     sei
-;     phy
-;     phx
-;     lda #<DISK_BUFFER
-;     sta CF_BUF_PTR
-;     lda #>DISK_BUFFER
-;     sta CF_BUF_PTR + 1
-
-;     readsector2
-; @loop3:
-;     lda CF_ADDRESS + 7
-;     and #8
-;     beq @exit
-;     lda CF_ADDRESS
-;     inx
-;     bne @loop3
-; @exit:
-;     plx
-;     ply
-;     cli
-;     rts
-
-
-; .macro  readsector
-;     .repeat 64, I
-;         .scope
-;     ; ldx #0
-; wait:
-;     lda CF_ADDRESS + 7
-;     and #$80
-;     bne wait
-; load:
-;     lda CF_ADDRESS
-;     sta DISK_BUFFER + I * 8
-;     lda CF_ADDRESS
-;     sta DISK_BUFFER + I * 8 + 1
-;     lda CF_ADDRESS
-;     sta DISK_BUFFER + I * 8 + 2
-;     lda CF_ADDRESS
-;     sta DISK_BUFFER + I * 8 + 3
-;     lda CF_ADDRESS
-;     sta DISK_BUFFER + I * 8 + 4
-;     lda CF_ADDRESS
-;     sta DISK_BUFFER + I * 8 + 5
-;     lda CF_ADDRESS
-;     sta DISK_BUFFER + I * 8 + 6
-;     lda CF_ADDRESS
-;     sta DISK_BUFFER + I * 8 + 7
-;     ; inx
-;     ; cpx #4
-;     ; bcc load
-;         .endscope
-;     .endrep
-; .endmacro
-
-; cf_read:
-;     sei
-;     phx
-;     readsector
-; @loop3:
-;     lda CF_ADDRESS + 7
-;     and #8
-;     beq @exit
-;     lda CF_ADDRESS
-;     inx
-;     bne @loop3
-; @exit:
-;     plx
-;     cli
-;     rts
-
-; cf_read:
-;     sei
-;     phx
-;     ldx #0
-; @loop1:
-; .repeat 16
-;     lda CF_ADDRESS + 7
-;     and #$80
-;     bne @loop1
-;     lda CF_ADDRESS
-;     sta DISK_BUFFER + 16 * I, x
-;     inx
-;     bne @loop1
-; .endrepeat
-;     ; lda CF_ADDRESS + 7
-;     ; and #$80
-;     ; bne @loop1
-;     ; nop
-;     ; nop
-;     ; nop
-;     ; nop
-;     ; nop
-;     ; nop
-;     ; nop
-;     ; nop
-;     ; nop
-;     ; nop
-;     ; nop
-
-;     ; txa
-;     ; and #32
-;     ; bne @getbyte1
-
-;     ; lda (CF_ADDRESS), y
-;     ; lda CF_ADDRESS + 7
-;     ; and #8
-;     ; beq @exit
-;     ; jsr cf_wait
-; @getbyte1:
-;     lda CF_ADDRESS
-;     sta DISK_BUFFER, x
-;     inx
-;     bne @loop1
-; @wait:
-;     lda CF_ADDRESS + 7
-;     and #$80
-;     bne @wait
-; @loop2:
-;     ; lda CF_ADDRESS + 7
-;     ; and #$80
-;     ; bne @loop2
-;     ; nop
-;     ; nop
-;     ; nop
-;     ; nop
-;     ; nop
-;     ; nop
-;     ; nop
-;     ; nop
-;     ; nop
-;     ; nop
-;     ; nop
-
-;     ; txa
-;     ; and #32
-;     ; bne @getbyte2
-;     ; lda CF_ADDRESS + 7
-;     ; and #$80
-;     ; bne @loop2
-;     ; lda CF_ADDRESS + 7
-;     ; and #$80
-;     ; bne @loop2
-;     ; lda CF_ADDRESS + 7
-;     ; and #8
-;     ; beq @exit
-;     ; jsr cf_wait
-; @getbyte2:
-;     lda CF_ADDRESS
-;     sta DISK_BUFFER+256, x
-;     inx
-;     bne @loop2
-; @loop3:
-;     lda CF_ADDRESS + 7
-;     and #8
-;     beq @exit
-;     lda CF_ADDRESS
-;     inx
-;     bne @loop3
-; @exit:
-;     plx
-;     cli
-;     rts
-
-cf_set_lba:
-    ; phy
-    lda FAT_LBA
-    ; ldy #3
-    ; sta (CF_ADDRESS),y
-    sta CF_ADDRESS + 3
-    lda FAT_LBA + 1
-    ; ldy #4
-    ; sta (CF_ADDRESS), y
-    sta CF_ADDRESS + 4
-    lda FAT_LBA + 2
-    ; ldy #5
-    ; sta (CF_ADDRESS), y
-    sta CF_ADDRESS + 5
-    lda FAT_LBA + 3
-    and #$0F
-    ora #$E0
-    ; ldy #6
-    ; sta (CF_ADDRESS), y
-    sta CF_ADDRESS + 6
-    ; ply
-    rts
-
-cf_do_read:
+; number of sectors to read is in X
+cf_read_sector:
+    sei
     jsr cf_set_lba
-    lda #1
     ; ldy #2
     ; sta (CF_ADDRESS), y
+    lda #1
     sta CF_ADDRESS + 2
     jsr cf_wait
     lda #CF_READ_SECTOR_COMMAND
@@ -321,71 +85,85 @@ cf_do_read:
     jsr cf_wait
     jsr cf_read
     jsr cf_err
-    rts
-
-cf_read_sector:
-    sei
-    phx
-    jsr cf_do_read
-    ldx #8
-; verify:
-;     ; ply
-;     ; copy to other buffer
-;     jsr cf_copy_buffer
-
-;     ; read sector again
-;     jsr cf_do_read
-
-;     ; compare buffers
-;     jsr cf_compare_buffers
-;     bcc @exit                   ; both buffers are the same, exit
-;     dex
-;     bne verify            ; buffers are not the same, read again
-@exit:
     cli
-    plx
     rts
 
-cf_compare_buffers:
-    phx
-    ldx #0
+; number of sectors to write is in X
+cf_write_sector:
+    ; sei
+    jsr cf_set_lba
+    lda #1
+    ; ldy #2
+    ; sta (CF_ADDRESS), y
+    sta CF_ADDRESS + 2
+    jsr cf_wait
+    lda #CF_WRITE_SECTOR_COMMAND
+    ; ldy #7
+    ; sta (CF_ADDRESS), y
+    sta CF_ADDRESS + 7
+    jsr cf_wait
+    jsr cf_write
+    jsr cf_err
+    ; cli
+    rts
+
+
+cf_write:
+    phy
+    ldy #0
 @loop:
-    lda DISK_BUFFER, x
-    cmp FAT_BUFFER2, x
-    bne @exit_fail
-    inx
+    jsr cf_wait
+    
+    lda (io_buffer_ptr), y
+    sta CF_ADDRESS
+    iny
     bne @loop
+    inc io_buffer_ptr + 1
 @loop2:
-    lda DISK_BUFFER+256, x
-    cmp FAT_BUFFER2+256, x
-    bne @exit_fail
-    inx
+    jsr cf_wait
+    lda (io_buffer_ptr), y
+    sta CF_ADDRESS
+    iny
     bne @loop2
-    bra @exit_ok
-@exit_fail:
-    sec
-    plx
-    rts
-@exit_ok:
-    clc
-    plx
+    dec io_buffer_ptr + 1
+@loop3:
+    jsr cf_wait
+    lda CF_ADDRESS + 7
+    and #$08
+    beq @exit
+    sta CF_ADDRESS
+    iny
+    bne @loop3
+@exit:
+    ply
     rts
 
-cf_copy_buffer:
-    phx
-    ldx #0
-@loop:
-    lda DISK_BUFFER, x
-    sta FAT_BUFFER2, x
-    inx
-    bne @loop
-@loop2:
-    lda DISK_BUFFER+256, x
-    sta FAT_BUFFER2+256, x
-    inx
-    bne @loop2
 
-    plx
+
+
+
+
+cf_wait:
+@wait_loop:
+    lda CF_ADDRESS + 7
+    bmi @wait_loop
+    rts
+    
+cf_set_lba:
+    lda IO_SECTOR
+    sta CF_ADDRESS + 3
+    jsr cf_wait
+    lda IO_SECTOR + 1
+    sta CF_ADDRESS + 4
+    jsr cf_wait
+    lda IO_SECTOR + 2
+    sta CF_ADDRESS + 5
+    jsr cf_wait
+    lda IO_SECTOR + 3
+    and #$0F
+    ora #$E0
+    sta CF_ADDRESS + 6
+    jsr cf_wait
     rts
 
 cf_err:
@@ -403,8 +181,7 @@ cf_err:
     ; ply
     rts
 
-cf_info:
 
-
+bytes_msg: .byte " bytes"
 cf_end:
     

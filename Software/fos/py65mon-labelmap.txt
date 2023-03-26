@@ -1,18 +1,19 @@
 Modules list:
 -------------
 main.o:
-    RODATA            Offs=000000  Size=00284A  Align=00100  Fill=0000
-    BSS               Offs=000000  Size=00098A  Align=00001  Fill=0000
-    DATA              Offs=000000  Size=0049D4  Align=00001  Fill=0000
+    CODE              Offs=000000  Size=000004  Align=00001  Fill=0000
+    RODATA            Offs=000000  Size=00004A  Align=00100  Fill=0000
+    BSS               Offs=000000  Size=00098E  Align=00001  Fill=0000
+    DATA              Offs=000000  Size=006026  Align=00001  Fill=0000
     ZEROPAGE          Offs=000000  Size=000050  Align=00001  Fill=0000
     STARTUP           Offs=000000  Size=000009  Align=00001  Fill=0000
     DATASTACK         Offs=000000  Size=00007F  Align=00001  Fill=0000
     DICTIONARY        Offs=000000  Size=001000  Align=00001  Fill=0000
     VECTORS           Offs=000000  Size=000006  Align=00001  Fill=0000
 /opt/homebrew/Cellar/cc65/2.19/share/cc65/lib/none.lib(copydata.o):
-    CODE              Offs=000000  Size=00002D  Align=00001  Fill=0000
+    CODE              Offs=000004  Size=00002D  Align=00001  Fill=0000
 /opt/homebrew/Cellar/cc65/2.19/share/cc65/lib/none.lib(zerobss.o):
-    CODE              Offs=00002D  Size=000023  Align=00001  Fill=0000
+    CODE              Offs=000031  Size=000023  Align=00001  Fill=0000
 /opt/homebrew/Cellar/cc65/2.19/share/cc65/lib/none.lib(zeropage.o):
     ZEROPAGE          Offs=000050  Size=00001A  Align=00001  Fill=0000
 
@@ -23,22 +24,22 @@ Name                   Start     End    Size  Align
 ----------------------------------------------------
 ZEROPAGE              000000  000069  00006A  00001
 DATASTACK             000080  0000FE  00007F  00001
-DATA                  000200  004BD3  0049D4  00001
-BSS                   004C00  005589  00098A  00001
-DICTIONARY            00558A  006589  001000  00001
-STARTUP               00C9D4  00C9DC  000009  00001
-CODE                  00C9DD  00CA2C  000050  00001
-RODATA                00CB00  00F349  00284A  00100
+DATA                  000200  006225  006026  00001
+BSS                   006300  006C8D  00098E  00001
+DICTIONARY            006C8E  007C8D  001000  00001
+STARTUP               00E026  00E02E  000009  00001
+CODE                  00E02F  00E082  000054  00001
+RODATA                00E100  00E149  00004A  00100
 VECTORS               00FFFA  00FFFF  000006  00001
 
 
 Exports list by name:
 ---------------------
-__BSS_RUN__               004C00 RLA    __BSS_SIZE__              00098A REA    
+__BSS_RUN__               006300 RLA    __BSS_SIZE__              00098E REA    
 __DATA_LOAD__             008000 RLA    __DATA_RUN__              000200 RLA    
-__DATA_SIZE__             0049D4 REA    copydata                  00C9DD RLA    
+__DATA_SIZE__             006026 REA    copydata                  00E033 RLA    
 ptr1                      000058 RLZ    ptr2                      00005A RLZ    
-tmp1                      000060 RLZ    zerobss                   00CA0A RLA    
+tmp1                      000060 RLZ    zerobss                   00E060 RLA    
 
 
 
@@ -46,9 +47,9 @@ Exports list by value:
 ----------------------
 ptr1                      000058 RLZ    ptr2                      00005A RLZ    
 tmp1                      000060 RLZ    __DATA_RUN__              000200 RLA    
-__BSS_SIZE__              00098A REA    __DATA_SIZE__             0049D4 REA    
-__BSS_RUN__               004C00 RLA    __DATA_LOAD__             008000 RLA    
-copydata                  00C9DD RLA    zerobss                   00CA0A RLA    
+__BSS_SIZE__              00098E REA    __DATA_SIZE__             006026 REA    
+__BSS_RUN__               006300 RLA    __DATA_LOAD__             008000 RLA    
+copydata                  00E033 RLA    zerobss                   00E060 RLA    
 
 
 
@@ -65,7 +66,7 @@ __DATA_RUN__ ([linker generated]):
 __DATA_SIZE__ ([linker generated]):
     copydata.o                common/copydata.s(8)
 copydata (copydata.o):
-    main.o                    platform/py65mon/main.s(18)
+    main.o                    platform/py65mon/main.s(19)
 ptr1 (zeropage.o):
     zerobss.o                 common/zerobss.s(9)
     copydata.o                common/copydata.s(9)
@@ -74,5 +75,5 @@ ptr2 (zeropage.o):
 tmp1 (zeropage.o):
     copydata.o                common/copydata.s(9)
 zerobss (zerobss.o):
-    main.o                    platform/py65mon/main.s(19)
+    main.o                    platform/py65mon/main.s(20)
 

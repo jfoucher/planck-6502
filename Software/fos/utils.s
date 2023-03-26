@@ -4,8 +4,8 @@
 .segment "ZEROPAGE": zeropage
 util_tmp: .res 2
 
-.segment "BSS"
-tmp_var: .res 2
+; .segment "BSS"
+; tmp_var: .res 2
 
 .segment "DATA"
 

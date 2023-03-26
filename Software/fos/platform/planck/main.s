@@ -1,15 +1,18 @@
 
 .include "../../macros.s"
 CLOCK_SPEED = 24000000
+; TALI_OPTIONAL_ASSEMBLER = 1
 
 ram_end = $8000
+
+CODE_START= $200
 
 ; select includes to enable card drivers
 
 .include "drivers/cf.inc"
 .include "drivers/acia.inc"
 .include "drivers/via.inc"
-.include "drivers/sd.inc"
+; .include "drivers/sd.inc"
 ; .include "drivers/ps2.inc"
 ; .include "drivers/4004.inc"
 ; .include "drivers/lcd.inc"
@@ -17,6 +20,7 @@ ram_end = $8000
 ; .include "drivers/keyboard.inc"
 
 .segment "ZEROPAGE": zeropage
+io_buffer_ptr: .res 2
 
 .include "drivers/zp.s"
 
@@ -29,40 +33,19 @@ has_acia: .res 1
 .endif
 
 .ifdef CF_ADDRESS
-
+IO_BUFFER = cp0+256 ; set IO_BUFFER to block buffer
+IO_SECTOR: .res 4
 .endif
 
+.segment "CODE"
+.include "drivers/delayroutines.s"
 
 
 .segment "STARTUP"
 .import    copydata
 .import zerobss
-zero_ram:
-    ldx #$FF
-zero_zp:
-    stz 0, x
-    dex
-    bne zero_zp
-    stz $00
-    lda #0
-    sta $01
-
-    ldx #$80
-    ldy #0
-    lda #0
-@loop:
-    sta ($0), y
-    iny
-    bne @loop
-    inc $1
-    dex
-    bne @loop
-
-    jmp ram_zeroed
-
 v_reset:
-    jmp zero_ram
-ram_zeroed: 
+
     JSR     copydata
     jsr zerobss
     
@@ -71,19 +54,18 @@ ram_zeroed:
 
 
 .segment "DATA"
+jmp kernel_init
 
-.include "drivers/delayroutines.s"
 
 .ifdef VIA1_BASE
 .include "drivers/timer.s"
 .include "drivers/spi.s"
 .endif
 
+
 .ifdef ACIA_BASE
 .include "drivers/acia.s"
 .endif
-
-
 .ifdef KB_VIA_BASE
 .include "drivers/keyboard.s"
 .endif
@@ -96,20 +78,29 @@ ram_zeroed:
 .endif
 .ifdef CF_ADDRESS
 .include "drivers/cf.s"
+io_read_sector_address = cf_read_sector
+io_write_sector_address = cf_write_sector
 .endif
 .ifdef SD
 
 .include "drivers/sd.s"
+io_read_sector_address = sd_read_sector
 
 .endif
-
-.if .def(SD)
-.include "../../fat16.s"
-.elseif .def(CF_ADDRESS)
-.include "../../fat16.s"
-.endif
-
 .include "../../utils.s"
+
+
+
+
+
+
+; .if .def(SD)
+; .include "../../fat16.s"
+; .elseif .def(CF_ADDRESS)
+; .include "../../fat16.s"
+; .endif
+
+
 
 ; .include "drivers/spi.s"
 ; .include "drivers/sd.s"
@@ -117,13 +108,40 @@ ram_zeroed:
 ; .include "drivers/fat32.s"
 ; .include "drivers/lcd.s"
 
+; .include "../../ed.s"
 
 .include "../../forth.s"
 
 .segment "DATA"
 
-; .include "../../ed.s"
+.ifdef TALI_OPTIONAL_ASSEMBLER
+.include "../../assembler.s"
+.include "../../disassembler.s"
+.endif
+.ifdef CF_ADDRESS
+cf_boot:
+    jsr print_message
+    .byte "Booting from CF card", AscCR, AscLF, 0
+    jsr cf_init
+    stz IO_SECTOR
+    stz IO_SECTOR + 1
+    stz IO_SECTOR + 2
+    stz IO_SECTOR + 3
+    lda #<CODE_START
+    sta io_buffer_ptr
+    lda #>CODE_START
+    sta io_buffer_ptr + 1
+    ldx #(((ram_end-CODE_START)/$200)-1)                 ; number of sectors to read
+@loop:
+    jsr io_read_sector
+    inc io_buffer_ptr + 1
+    inc io_buffer_ptr + 1
+    inc IO_SECTOR
+    dex
+    bne @loop
 
+    jmp CODE_START          ; jump to start of code
+.endif
 
 platform_bye:
 kernel_init:
@@ -135,12 +153,7 @@ kernel_init:
     sta PORTB
     stz PORTA
 .endif
-.ifdef timer_init
-    stz time
-    stz time+1
-    stz time+2
-    stz time+3
-.endif
+
 jsr acia_init
 .ifdef timer_init
     jsr timer_init
@@ -151,6 +164,9 @@ jsr acia_init
 .ifdef ps2_init
     jsr ps2_init
 .endif
+.ifdef cf_init
+    jsr cf_init
+.endif
 .ifdef lcd_init
     jsr lcd_init
 .endif
@@ -160,12 +176,31 @@ jsr acia_init
 .ifdef kb_init
     jsr kb_init
 .endif
+.ifdef CF_ADDRESS
+    lda cf_present
+    beq @no_cf_card
+    jsr print_message
+    .byte "Press any key to boot from CF card", AscCR, AscLF, 0
+    ldy #$60
+@bl2:
+    ldx #$FF
+@boot_loop:
+    jsr Get_Char
+    bcs cf_boot_jump
+    jsr delay_short
+    dex
+    bne @boot_loop
+    dey
+    bne @bl2
+
+.endif
+@no_cf_card:
     printascii welcome_message
 
     lda #<dictionary
-    sta up
+    sta util_tmp
     lda #>dictionary
-    sta up + 1
+    sta util_tmp + 1
 
     jsr calculate_free_mem
     lda tmp_var + 1
@@ -173,17 +208,21 @@ jsr acia_init
     jsr print16
 
     printascii free_message
+
 
     jmp forth
 
+cf_boot_jump:
+    jmp cf_boot
+
 v_nmi:
     
-    jsr calculate_free_mem
-    lda tmp_var + 1
-    ldx tmp_var
-    jsr print16
+    ; jsr calculate_free_mem
+    ; lda tmp_var + 1
+    ; ldx tmp_var
+    ; jsr print16
 
-    printascii free_message
+    ; printascii free_message
     printascii ready_message
 
     jmp xt_abort
@@ -192,7 +231,12 @@ v_nmi:
 
 
 io_read_sector:
-    jmp (io_read_sector_ptr)        ; jump to read sector routine
+    jmp io_read_sector_address        ; jump to read sector routine
+
+io_write_sector:
+    jmp io_write_sector_address        ; jump to read sector routine
+
+
 
 kernel_putc:
     ; """Print a single character to the console. """
@@ -228,10 +272,10 @@ Get_Char:
 get_ps2_char:                       ; no ACIA char available, try to get from KB buffer
 .ifdef ps2_get_char
     jsr ps2_get_char
-.endif
+
     bcc get_kb_char
     sec
-
+.endif
     rts
 get_kb_char:
     .ifdef kb_get_char
@@ -240,7 +284,8 @@ get_kb_char:
     ; jsr delay_short
     ; ply
         jsr kb_get_char
-        
+        bcc exit
+        sec
     .endif
 exit:                         ; Indicate no char available.
     rts                             ; return
