@@ -11535,7 +11535,8 @@ xt_words:
                 bcc @1
 
                 jsr xt_cr
-                lda #0
+                lda 0, x
+                inc
 @1:
                 pha
                 jsr xt_type             ; ( nt )
@@ -12253,15 +12254,15 @@ cf_print_capacity:
 
 
 cf_info:
-;     jsr cf_init
-;     jsr cf_wait
-;     lda #$EC
-;     sta CF_ADDRESS + 7
-;     lda #<IO_BUFFER
-;     sta io_buffer_ptr
-;     lda #>IO_BUFFER
-;     sta io_buffer_ptr + 1
-;     jsr cf_read
+    jsr cf_init
+    jsr cf_wait
+    lda #$EC
+    sta CF_ADDRESS + 7
+    lda #<IO_BUFFER
+    sta io_buffer_ptr
+    lda #>IO_BUFFER
+    sta io_buffer_ptr + 1
+    jsr cf_read
     rts
 
 cf_print_id:

@@ -11,9 +11,9 @@ ram_end = $8000
 .include "drivers/acia.inc"
 .include "drivers/via.inc"
 ; .include "drivers/sd.inc"
-; .include "drivers/ps2.inc"
+.include "drivers/ps2.inc"
 ; .include "drivers/4004.inc"
-; .include "drivers/lcd.inc"
+.include "drivers/lcd.inc"
 ; .include "drivers/vga.inc"
 ; .include "drivers/keyboard.inc"
 
@@ -23,19 +23,11 @@ io_buffer_ptr: .res 2
 .include "drivers/zp.s"
 
 .segment "BSS"
-.ifdef VIA1_BASE
-lcd_absent: .res 1
-.endif
-.ifdef ACIA_BASE
-has_acia: .res 1
-.endif
 
 .ifdef CF_ADDRESS
 IO_BUFFER = cp0+256 ; set IO_BUFFER to block buffer
 IO_SECTOR: .res 4
 .endif
-
-
 
 .segment "STARTUP"
 .import    copydata
@@ -86,7 +78,9 @@ ram_zeroed:
 .include "drivers/acia.s"
 .endif
 
-
+.ifdef LCD_BASE
+.include "drivers/lcd.s"
+.endif
 .ifdef KB_VIA_BASE
 .include "drivers/keyboard.s"
 .endif
@@ -121,7 +115,6 @@ io_read_sector_address = sd_read_sector
 ; .include "drivers/sd.s"
 ; .include "drivers/vga.s"
 ; .include "drivers/fat32.s"
-; .include "drivers/lcd.s"
 
 ; .include "../../ed.s"
 
@@ -223,7 +216,7 @@ send_char:
     .endif
 send_char_exit:    
 .ifdef lcd_print
-    ; jsr lcd_print
+    jsr lcd_print
 .endif
     pla
     rts
@@ -237,7 +230,7 @@ send_char_exit:
 Get_Char:
     jsr acia_getc
     bcc get_ps2_char                ; check keyboard buffer if nothing from ACIA
-    sec                             ; Set Carry to show we got a character
+                                    ; Carry is set to show we got a character
     rts                             ; Return
     
 get_ps2_char:                       ; no ACIA char available, try to get from KB buffer
@@ -245,18 +238,11 @@ get_ps2_char:                       ; no ACIA char available, try to get from KB
     jsr ps2_get_char
 .endif
     bcc get_kb_char
-    sec
-
     rts
 get_kb_char:
-    .ifdef kb_get_char
-    
-    ; ldy #5
-    ; jsr delay_short
-    ; ply
-        jsr kb_get_char
-        
-    .endif
+.ifdef kb_get_char
+    jsr kb_get_char
+.endif
 exit:                         ; Indicate no char available.
     rts                             ; return
 
@@ -338,7 +324,7 @@ v_irq_timer:
         pla                         ; pull return address
         pla
         
-        cli                         ; clear interrupt diabled bit
+        cli                         ; clear interrupt disabled bit
         jmp xt_abort
 
 .endif
@@ -347,6 +333,7 @@ v_kb_irq_timer:
     lda KB_T1CL ; clear timer interrupt
     inc kb_time
     bne v_irq_exit
+
 .endif
     ;jsr kb_scan
 v_irq_exit:

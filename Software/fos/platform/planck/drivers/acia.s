@@ -1,5 +1,9 @@
 ACIA_DELAY = CLOCK_SPEED / 500000
+.segment "BSS"
 
+has_acia: .res 1
+
+.segment "DATA"
 acia_init:
     sta ACIA_STATUS        ; soft reset (value not important)
                             ; set specific modes and functions
@@ -34,8 +38,10 @@ acia_out:
     pha
     phy
     sta ACIA_DATA
+.ifndef LCD_BUF                ; if the LCD is in the build, we do not need to delay
     ldy #ACIA_DELAY            ;minimal delay is $02
     jsr delay_short
+.endif
     ply
     pla
     rts

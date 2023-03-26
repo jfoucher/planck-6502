@@ -5,25 +5,31 @@ lcd_pos: .res 1
 
 .segment "BSS"
 LCD_BUF: .res 128
+has_lcd: .res 1
 
 .segment "CODE"
 
 ; initialize the LCD in 8 bit mode
 lcd_init:
+    stz has_lcd
     jsr buf_clr
-    lda #0
-    sta lcd_absent
-    sta LCD_BUF_W_PTR
-    sta LCD_BUF_R_PTR
-    sta lcd_pos
-
+    lda LCD_ADDR_DISABLED
+    ror
+    bcs lcd_init_exit
+    ; sta has_lcd
+    ; sta PORTA
+@lcd_ok:
+    sta has_lcd
+    ; sta PORTA
+    stz LCD_BUF_W_PTR
+    stz LCD_BUF_R_PTR
+    stz lcd_pos
 
     ldy #$FF
     jsr delay
 
     LDA #$38            ;function set: 8 bit
     jsr lcd_inst
-
 
     ldy #$FF
     jsr delay
@@ -47,8 +53,7 @@ lcd_init:
 
     ldy #$ff            ; wait a while
     jsr delay
-
-
+lcd_init_exit:
     RTS
 
 ; Send an instruction in 8 bit mode
@@ -58,7 +63,7 @@ lcd_inst:
     ldy #$2                    ; Delay 38 clock cycles - 3 us at 12.5 MHz
     jsr delay_short
     sta LCD_ADDR_DISABLED
-    ldy #$20                     ; Delay 608 clock cycles - 48 us at 12.5 MHz
+    ldy #$08                     ; Delay 608 clock cycles - 48 us at 12.5 MHz
     jsr delay_short
     ply
     rts
@@ -67,8 +72,9 @@ lcd_send:
     sta LCD_DATA_ENABLED
     ldy #$2                    ; Delay 38 clock cycles - 3 us at 12.5 MHz
     jsr delay_short
+
     sta LCD_DATA_DISABLED
-    ldy #$20                     ; Delay 608 clock cycles - 48 us at 12.5 MHz
+    ldy #$08                     ; Delay 608 clock cycles - 48 us at 12.5 MHz
     jsr delay_short
     rts
 
@@ -77,6 +83,8 @@ lcd_print:               ; 8 bit data in A
     phy
     phx
     pha
+    ldx has_lcd
+    beq @continue
     cmp #$0A
     beq @next_line
     cmp #$0D

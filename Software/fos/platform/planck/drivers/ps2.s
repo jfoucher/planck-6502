@@ -25,6 +25,7 @@ control_keys: .res 1
 character: .res 1
 
 .segment "BSS"
+.align 16
 KB_BUF: .res 128
 KB_STATE: .res 1
 KB_TEMP: .res 1
@@ -78,8 +79,8 @@ kb_conn_msg_end:
   ; jsr kb_reset
   ; jsr kb_leds
   ; jsr kb_leds_data
-
-  ; jmp done_init
+  ; maybe remove this to make PS2 work ?
+  jmp done_init
 
   lda #KB_INIT_STATE_RESET
   sta KB_INIT_STATE
@@ -129,6 +130,7 @@ done_init:
   sta KB_STATE
   sta KB_BUF_W_PTR
   sta KB_BUF_R_PTR
+  jsr clear_buffer
   cli ; enable interrupts again
   rts
 
@@ -137,7 +139,7 @@ kb_reset:
   lda #0
   sta KB_INIT_WAIT
   lda #$F0
-  sta PORTA
+  ;sta PORTA
   sei                   ;disable interrupts
   jsr prepare_send
   lda #$FF
@@ -218,30 +220,39 @@ reset_ps2:          ; routine called during a timer interrupt to check
 
 clear_buffer:
   phx
-  ldx #$ff
+  ldx #$84
 @clear_loop:
   stz KB_BUF, x
   dex
   bne @clear_loop
+  stz KB_BUF
   plx
   rts
 
 
 ps2_get_char:
-
     phx                             ; save X
     ldx KB_BUF_R_PTR                ; check the keyboard buffer
     lda KB_BUF, x                   
+    ; jsr kernel_putc
+    ; pha
+    ; txa
+    ; jsr kernel_putc
+    ; pla
     beq no_ps2_char_available       ; exit if nothing found
     stz KB_BUF, x                   ; if there was a character, reset this buffer cell
     inc KB_BUF_R_PTR                ; and increment the read pointer
-
-    sec                             ; mark character present
+    bpl @nomore
+    stz KB_BUF_R_PTR
+@nomore:
     plx                             ; restore X
-    jsr check_ctrl_c
+    sec                             ; mark character present
     rts                             ; return
 no_ps2_char_available:                  ; no keyboard char
     inc KB_BUF_R_PTR                ; increment read pointer for next time
+    bpl @nomore
+    stz KB_BUF_R_PTR
+@nomore:
     plx                             ; restore X
     clc
     rts

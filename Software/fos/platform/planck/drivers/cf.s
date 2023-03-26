@@ -34,15 +34,15 @@ cf_read:
     phy
     ldy #0
 @loop:
-    ; jsr cf_wait
+    jsr cf_wait
     lda CF_ADDRESS
     sta (io_buffer_ptr), y
     iny
     bne @loop
     inc io_buffer_ptr + 1
-    jsr cf_wait
-@loop2:
     ; jsr cf_wait
+@loop2:
+    jsr cf_wait
     lda CF_ADDRESS
     sta (io_buffer_ptr), y
     iny

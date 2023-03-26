@@ -26,7 +26,7 @@ spi_init:
     sta DDRB
     lda #$FF                ; flash leds to see what is going on
     sta DDRA
-    sta PORTA
+    ;sta PORTA
     rts
 
 spi_select:

@@ -19,45 +19,18 @@ csv_bom: https://planck6502.com/fabrication/cf_board-bom.csv
 
 This is a compact flash memory interface card to allow the Planck 6502 to save and restore data to mass storage.
 
-A FAT16 file system should be created on the card before use.
+TaliForth works with raw block storage on the CompactFlash card. A block is 1024 bytes.
+To read the contents of a block, type `{numblock} list` where `{numblock}` is the number of the block to read, so for example `0 list` to show the contents of block 0, or `1000 list` to show the contents of block 1000.
 
-Initialize the card by calling the following word : 
+Read the [Taliforth documentation](https://github.com/SamCoVT/TaliForth2/blob/master-64tass/docs/manual.md#working-with-blocks) to know more.
 
-```
-hex FFD0 cf_fat_init decimal
-```
+## Warning
 
-where FFDO is the address of the slot the card is placed in.
-
-We then have access to the CF card a fat volume. To list files and directories in the disk, type
-
-```
-ls
-```
-
-This should display a list of files and directories at the root of the drive
-
-To output the contents of a file, type
-
-```
-s" file.txt" cat
-```
-
-To load the contents of a file at a memory address $2000 and jump to it, run
-
-```
-hex 2000 s" code.bin" load
-```
-
-
-
-
-
+Building this card is a difficult endeavour due to the fine pitch of the CompactFlash socket.
 
 ![3D View](https://planck6502.com/fabrication/cf_board-3D_top.png)
 
 
-
 ## Slot placement
 
-TBD
+SLOT 5 (`$FFD0`)
