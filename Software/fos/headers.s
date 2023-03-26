@@ -72,20 +72,27 @@ nt_cold:
         .byte 4, 0
         .word nt_bye, xt_cold, z_cold
         .byte "cold"
-
+.ifdef LCD_BUF
 nt_lcdput:
         .byte 6, UF
         .word nt_cold, xt_lcdput, z_lcdput
         .byte "lcdput"
-
+nt_haslcd:
+        .byte 6, 0
+        .word nt_lcdput, xt_haslcd, z_haslcd
+        .byte "haslcd"
 nt_lcdprint:
         .byte 8, UF
-        .word nt_lcdput, xt_lcdprint, z_lcdprint
+        .word nt_haslcd, xt_lcdprint, z_lcdprint
         .byte "lcdprint"
-
+.endif
 nt_cls:
         .byte 3, 0
+.ifdef LCD_BUF
         .word nt_lcdprint, xt_cls, z_cls
+.else
+        .word nt_cold, xt_cls, z_cls
+.endif
         .byte "cls"
 
 .ifdef VIA1_BASE
@@ -124,7 +131,7 @@ nt_cf_info:
 .endif
 .ifdef io_read_sector_address
 nt_io_readblock:
-        .byte 2, 0
+        .byte 2, UF
         .ifdef CF_ADDRESS
         .word nt_cf_info, xt_io_readblock, z_io_readblock
         .elseif .def(VIA1_BASE)
@@ -134,7 +141,7 @@ nt_io_readblock:
         .endif
         .byte "rb"
 nt_io_writeblock:
-        .byte 2, 0
+        .byte 2, UF
         .word nt_io_readblock, xt_io_writeblock, z_io_writeblock
         .byte "wb"
 .endif

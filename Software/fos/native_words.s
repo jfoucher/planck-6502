@@ -12002,6 +12002,18 @@ xt_editor_o:
 
 z_editor_o:     rts
 
+.ifdef LCD_BUF
+xt_haslcd:
+        dex
+        dex
+        lda #<has_lcd
+        sta 0, x
+        lda #>has_lcd
+        sta 1, x
+z_haslcd:
+        rts
+
+
 ; ## LCDPUT ( s -- ) "Print single character to LCD"
 ; ## "lcdput" coded Custom
 xt_lcdput:
@@ -12059,7 +12071,7 @@ xt_lcdprint:
 
 z_lcdprint:         rts
 
-
+.endif
 
 ; ## CLS ( -- ) "clea VGA screen"
 ; ## "cls" coded Custom

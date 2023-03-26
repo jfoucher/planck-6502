@@ -16,11 +16,8 @@ lcd_init:
     lda LCD_ADDR_DISABLED
     ror
     bcs lcd_init_exit
-    ; sta has_lcd
-    ; sta PORTA
-@lcd_ok:
     sta has_lcd
-    ; sta PORTA
+
     stz LCD_BUF_W_PTR
     stz LCD_BUF_R_PTR
     stz lcd_pos
