@@ -5,7 +5,7 @@ short_title: CF board
 
 order: 80
 
-status: dev
+status: prod
 design_files: https://gitlab.com/planck-6502/planck-6502/-/tree/main/Hardware/cf_board
 order: 40
 gerbers: https://planck6502.com/fabrication/cf_board-zip.zip
