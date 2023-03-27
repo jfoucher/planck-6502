@@ -18,7 +18,7 @@ csv_bom: https://planck6502.com/fabrication/cf_board-bom.csv
 
 This is a compact flash memory interface card to allow the Planck 6502 to save and restore data to mass storage.
 
-![Top view of the CompactFlash board](img/compactflash.jpg)
+![Top view of the CompactFlash board](/img/compactflash.jpg)
 
 TaliForth works with raw block storage on the CompactFlash card. A block is 1024 bytes.
 To read the contents of a block, type `{numblock} list` where `{numblock}` is the number of the block to read, so for example `0 list` to show the contents of block 0, or `1000 list` to show the contents of block 1000.
