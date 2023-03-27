@@ -1,7 +1,7 @@
 Modules list:
 -------------
 main.o:
-    CODE              Offs=000000  Size=000178  Align=00001  Fill=0000
+    CODE              Offs=000000  Size=00017B  Align=00001  Fill=0000
     RODATA            Offs=000000  Size=0000FF  Align=00001  Fill=0000
     BSS               Offs=000000  Size=000623  Align=00010  Fill=0000
     DATA              Offs=000000  Size=006125  Align=00001  Fill=0000
@@ -11,9 +11,9 @@ main.o:
     DICTIONARY        Offs=000000  Size=001000  Align=00001  Fill=0000
     VECTORS           Offs=000000  Size=000006  Align=00001  Fill=0000
 /opt/homebrew/Cellar/cc65/2.19/share/cc65/lib/none.lib(copydata.o):
-    CODE              Offs=000178  Size=00002D  Align=00001  Fill=0000
+    CODE              Offs=00017B  Size=00002D  Align=00001  Fill=0000
 /opt/homebrew/Cellar/cc65/2.19/share/cc65/lib/none.lib(zerobss.o):
-    CODE              Offs=0001A5  Size=000023  Align=00001  Fill=0000
+    CODE              Offs=0001A8  Size=000023  Align=00001  Fill=0000
 /opt/homebrew/Cellar/cc65/2.19/share/cc65/lib/none.lib(zeropage.o):
     ZEROPAGE          Offs=000057  Size=00001A  Align=00001  Fill=0000
 
@@ -28,8 +28,8 @@ DATA                  000200  006324  006125  00001
 BSS                   006325  006947  000623  00010
 DICTIONARY            006948  007947  001000  00001
 STARTUP               00E125  00E150  00002C  00001
-CODE                  00E151  00E318  0001C8  00001
-RODATA                00E319  00E417  0000FF  00001
+CODE                  00E151  00E31B  0001CB  00001
+RODATA                00E31C  00E41A  0000FF  00001
 VECTORS               00FFFA  00FFFF  000006  00001
 
 
@@ -37,9 +37,9 @@ Exports list by name:
 ---------------------
 __BSS_RUN__               006325 RLA    __BSS_SIZE__              000623 REA    
 __DATA_LOAD__             008000 RLA    __DATA_RUN__              000200 RLA    
-__DATA_SIZE__             006125 REA    copydata                  00E2C9 RLA    
+__DATA_SIZE__             006125 REA    copydata                  00E2CC RLA    
 ptr1                      00005F RLZ    ptr2                      000061 RLZ    
-tmp1                      000067 RLZ    zerobss                   00E2F6 RLA    
+tmp1                      000067 RLZ    zerobss                   00E2F9 RLA    
 
 
 
@@ -49,7 +49,7 @@ ptr1                      00005F RLZ    ptr2                      000061 RLZ
 tmp1                      000067 RLZ    __DATA_RUN__              000200 RLA    
 __BSS_SIZE__              000623 REA    __DATA_SIZE__             006125 REA    
 __BSS_RUN__               006325 RLA    __DATA_LOAD__             008000 RLA    
-copydata                  00E2C9 RLA    zerobss                   00E2F6 RLA    
+copydata                  00E2CC RLA    zerobss                   00E2F9 RLA    
 
 
 

@@ -721,284 +721,281 @@ Current file: platform/planck/main.s
 000003r 2  20 rr rr         jsr buf_clr
 000006r 2  AD C0 FF         lda LCD_ADDR_DISABLED
 000009r 2  6A               ror
-00000Ar 2  B0 33            bcs lcd_init_exit
-00000Cr 2                   ; sta has_lcd
-00000Cr 2                   ; sta PORTA
-00000Cr 2               @lcd_ok:
-00000Cr 2                   ;sta has_lcd
-00000Cr 2                   ; sta PORTA
-00000Cr 2  64 rr            stz LCD_BUF_W_PTR
-00000Er 2  64 rr            stz LCD_BUF_R_PTR
-000010r 2  64 rr            stz lcd_pos
-000012r 2               
-000012r 2  A0 FF            ldy #$FF
-000014r 2  20 rr rr         jsr delay
-000017r 2               
-000017r 2  A9 38            LDA #$38            ;function set: 8 bit
-000019r 2  20 rr rr         jsr lcd_inst
-00001Cr 2               
-00001Cr 2  A0 FF            ldy #$FF
-00001Er 2  20 rr rr         jsr delay
-000021r 2               
-000021r 2  A9 0F            LDA #$0F            ;display on, cursor on, blink on
-000023r 2  20 rr rr         jsr lcd_inst
-000026r 2               
-000026r 2                   ;entry mode set
-000026r 2  A9 06            LDA #$06
-000028r 2  20 rr rr         jsr lcd_inst
-00002Br 2               
-00002Br 2                   ;clear display
-00002Br 2  A9 01            LDA #$01
-00002Dr 2  20 rr rr         jsr lcd_inst
-000030r 2               
-000030r 2  A0 FF            ldy #$ff            ; wait a while
-000032r 2  20 rr rr         jsr delay
-000035r 2                   ;set dram address to start of screen
-000035r 2  A9 80            LDA #$80
-000037r 2  20 rr rr         jsr lcd_inst
-00003Ar 2               
-00003Ar 2  A0 FF            ldy #$ff            ; wait a while
-00003Cr 2  20 rr rr         jsr delay
-00003Fr 2               lcd_init_exit:
-00003Fr 2  60               RTS
-000040r 2               
-000040r 2               ; Send an instruction in 8 bit mode
-000040r 2               lcd_inst:
-000040r 2  5A               phy
-000041r 2  8D C1 FF         sta LCD_ADDR_ENABLED
-000044r 2  A0 02            ldy #$2                    ; Delay 38 clock cycles - 3 us at 12.5 MHz
-000046r 2  20 rr rr         jsr delay_short
-000049r 2  8D C0 FF         sta LCD_ADDR_DISABLED
-00004Cr 2  A0 08            ldy #$08                     ; Delay 608 clock cycles - 48 us at 12.5 MHz
-00004Er 2  20 rr rr         jsr delay_short
-000051r 2  7A               ply
-000052r 2  60               rts
-000053r 2               
-000053r 2               lcd_send:
-000053r 2  8D C3 FF         sta LCD_DATA_ENABLED
-000056r 2  A0 02            ldy #$2                    ; Delay 38 clock cycles - 3 us at 12.5 MHz
-000058r 2  20 rr rr         jsr delay_short
-00005Br 2               
-00005Br 2  8D C2 FF         sta LCD_DATA_DISABLED
-00005Er 2  A0 08            ldy #$08                     ; Delay 608 clock cycles - 48 us at 12.5 MHz
-000060r 2  20 rr rr         jsr delay_short
-000063r 2  60               rts
-000064r 2               
-000064r 2               ; Sends the character in A to the display
-000064r 2               lcd_print:               ; 8 bit data in A
-000064r 2  5A               phy
-000065r 2  DA               phx
-000066r 2  48               pha
-000067r 2  AE rr rr         ldx has_lcd
-00006Ar 2  F0 27            beq @continue
-00006Cr 2  C9 0A            cmp #$0A
-00006Er 2  F0 67            beq @next_line
-000070r 2  C9 0D            cmp #$0D
-000072r 2  F0 63            beq @next_line
-000074r 2  C9 08            cmp #$08            ;backspace
-000076r 2  F0 1F            beq @backspace
-000078r 2               
-000078r 2  20 rr rr         jsr lcd_send
-00007Br 2  A6 rr            ldx lcd_pos
-00007Dr 2  9D rr rr         sta LCD_BUF, x
-000080r 2               
-000080r 2  E8               inx
-000081r 2                   ; Check at which position we are and change line if necessary
-000081r 2  86 rr            stx lcd_pos
+00000Ar 2  B0 36            bcs lcd_init_exit
+00000Cr 2  8D rr rr         sta has_lcd
+00000Fr 2               
+00000Fr 2  64 rr            stz LCD_BUF_W_PTR
+000011r 2  64 rr            stz LCD_BUF_R_PTR
+000013r 2  64 rr            stz lcd_pos
+000015r 2               
+000015r 2  A0 FF            ldy #$FF
+000017r 2  20 rr rr         jsr delay
+00001Ar 2               
+00001Ar 2  A9 38            LDA #$38            ;function set: 8 bit
+00001Cr 2  20 rr rr         jsr lcd_inst
+00001Fr 2               
+00001Fr 2  A0 FF            ldy #$FF
+000021r 2  20 rr rr         jsr delay
+000024r 2               
+000024r 2  A9 0F            LDA #$0F            ;display on, cursor on, blink on
+000026r 2  20 rr rr         jsr lcd_inst
+000029r 2               
+000029r 2                   ;entry mode set
+000029r 2  A9 06            LDA #$06
+00002Br 2  20 rr rr         jsr lcd_inst
+00002Er 2               
+00002Er 2                   ;clear display
+00002Er 2  A9 01            LDA #$01
+000030r 2  20 rr rr         jsr lcd_inst
+000033r 2               
+000033r 2  A0 FF            ldy #$ff            ; wait a while
+000035r 2  20 rr rr         jsr delay
+000038r 2                   ;set dram address to start of screen
+000038r 2  A9 80            LDA #$80
+00003Ar 2  20 rr rr         jsr lcd_inst
+00003Dr 2               
+00003Dr 2  A0 FF            ldy #$ff            ; wait a while
+00003Fr 2  20 rr rr         jsr delay
+000042r 2               lcd_init_exit:
+000042r 2  60               RTS
+000043r 2               
+000043r 2               ; Send an instruction in 8 bit mode
+000043r 2               lcd_inst:
+000043r 2  5A               phy
+000044r 2  8D C1 FF         sta LCD_ADDR_ENABLED
+000047r 2  A0 02            ldy #$2                    ; Delay 38 clock cycles - 3 us at 12.5 MHz
+000049r 2  20 rr rr         jsr delay_short
+00004Cr 2  8D C0 FF         sta LCD_ADDR_DISABLED
+00004Fr 2  A0 08            ldy #$08                     ; Delay 608 clock cycles - 48 us at 12.5 MHz
+000051r 2  20 rr rr         jsr delay_short
+000054r 2  7A               ply
+000055r 2  60               rts
+000056r 2               
+000056r 2               lcd_send:
+000056r 2  8D C3 FF         sta LCD_DATA_ENABLED
+000059r 2  A0 02            ldy #$2                    ; Delay 38 clock cycles - 3 us at 12.5 MHz
+00005Br 2  20 rr rr         jsr delay_short
+00005Er 2               
+00005Er 2  8D C2 FF         sta LCD_DATA_DISABLED
+000061r 2  A0 08            ldy #$08                     ; Delay 608 clock cycles - 48 us at 12.5 MHz
+000063r 2  20 rr rr         jsr delay_short
+000066r 2  60               rts
+000067r 2               
+000067r 2               ; Sends the character in A to the display
+000067r 2               lcd_print:               ; 8 bit data in A
+000067r 2  5A               phy
+000068r 2  DA               phx
+000069r 2  48               pha
+00006Ar 2  AE rr rr         ldx has_lcd
+00006Dr 2  F0 27            beq @continue
+00006Fr 2  C9 0A            cmp #$0A
+000071r 2  F0 67            beq @next_line
+000073r 2  C9 0D            cmp #$0D
+000075r 2  F0 63            beq @next_line
+000077r 2  C9 08            cmp #$08            ;backspace
+000079r 2  F0 1F            beq @backspace
+00007Br 2               
+00007Br 2  20 rr rr         jsr lcd_send
+00007Er 2  A6 rr            ldx lcd_pos
+000080r 2  9D rr rr         sta LCD_BUF, x
 000083r 2               
-000083r 2  E0 14            cpx #20
-000085r 2  F0 2A            beq @line_2
-000087r 2  E0 28            cpx #40
-000089r 2  F0 31            beq @line_3
-00008Br 2  E0 3C            cpx #60
-00008Dr 2  F0 38            beq @line_4
-00008Fr 2  E0 50            cpx #80
-000091r 2  F0 3F            beq @clr
-000093r 2               
-000093r 2               @continue:
-000093r 2  68               pla
-000094r 2  FA               plx
-000095r 2  7A               ply
-000096r 2  60               rts
-000097r 2               
-000097r 2               ; LCD adressing http://web.alfredstate.edu/faculty/weimandn/lcd/lcd_addressing/lcd_addressing_index.html
-000097r 2               @backspace:
-000097r 2  A9 10            lda #$10            ; shift cursor left
-000099r 2  20 rr rr         jsr lcd_inst
-00009Cr 2  A9 20            lda #$20            ; print a space to erase previous char
-00009Er 2  20 rr rr         jsr lcd_send
-0000A1r 2               
-0000A1r 2  A9 10            lda #$10            ; shift cursor left
-0000A3r 2  20 rr rr         jsr lcd_inst
-0000A6r 2  C6 rr            dec lcd_pos
-0000A8r 2  A6 rr            ldx lcd_pos         ; save in buffer
-0000AAr 2  A9 20            lda #$20
-0000ACr 2  9D rr rr         sta LCD_BUF,x
-0000AFr 2  80 E2            bra @continue
-0000B1r 2               @line_2:
-0000B1r 2  A9 14            lda #20
-0000B3r 2  85 rr            sta lcd_pos
-0000B5r 2  A9 C0            lda #$C0
-0000B7r 2  20 rr rr         jsr lcd_inst
-0000BAr 2  80 D7            bra @continue
-0000BCr 2               
-0000BCr 2               @line_3:
-0000BCr 2  A9 28            lda #40
-0000BEr 2  85 rr            sta lcd_pos
-0000C0r 2  A9 94            lda #$94
-0000C2r 2  20 rr rr         jsr lcd_inst
-0000C5r 2  80 CC            bra @continue
-0000C7r 2               
-0000C7r 2               @line_4:
-0000C7r 2  A9 3C            lda #60
-0000C9r 2  85 rr            sta lcd_pos
-0000CBr 2  A9 D4            lda #$D4
-0000CDr 2  20 rr rr         jsr lcd_inst
-0000D0r 2  80 C1            bra @continue
-0000D2r 2               @clr:
-0000D2r 2                   ; lda #0
-0000D2r 2                   ; sta lcd_pos
-0000D2r 2                   ; lda #$80
-0000D2r 2                   ; jsr lcd_inst
-0000D2r 2  20 rr rr         jsr lcd_scroll_up
-0000D5r 2  80 BC            bra @continue
-0000D7r 2               
-0000D7r 2               @next_line:
-0000D7r 2  A6 rr            ldx lcd_pos            ;get current position
-0000D9r 2  E0 50            cpx #80
-0000DBr 2  F0 F5            beq @clr
-0000DDr 2  E0 3C            cpx #60
-0000DFr 2  F0 E6            beq @line_4
-0000E1r 2  E0 28            cpx #40
-0000E3r 2  F0 D7            beq @line_3
-0000E5r 2  E0 14            cpx #20
-0000E7r 2  F0 C8            beq @line_2
-0000E9r 2  E8               inx
-0000EAr 2  86 rr            stx lcd_pos
-0000ECr 2  A9 20            lda #$20
-0000EEr 2  20 rr rr         jsr lcd_send
-0000F1r 2  9D rr rr         sta LCD_BUF, x
-0000F4r 2  80 E1            bra @next_line
-0000F6r 2               
-0000F6r 2               lcd_scroll_up:
-0000F6r 2  48               pha                     ; save registers
-0000F7r 2  5A               phy
-0000F8r 2  DA               phx
-0000F9r 2  A9 80            lda #$80                ; set LCD address to start
-0000FBr 2  20 rr rr         jsr lcd_inst
-0000FEr 2               
-0000FEr 2  A2 14            ldx #20                 ; start getting characters at the start of the second line
-000100r 2               @scroll_loop:
-000100r 2  BD rr rr         lda LCD_BUF, X          ; load from buffer
-000103r 2  20 rr rr         jsr lcd_send            ; send to display
-000106r 2  A8               tay                     ; save current character in Y
-000107r 2  E0 4F            cpx #79                 ; update LCD address if necessary
-000109r 2  F0 4A            beq @scline_4
-00010Br 2  E0 3B            cpx #59
-00010Dr 2  F0 3F            beq @scline_3
-00010Fr 2  E0 27            cpx #39
-000111r 2  F0 34            beq @scline_2
-000113r 2               @sccontinue:                ; return from updating LCD address
-000113r 2  8A               txa                     ; copy X to A to be able to subtract from it
-000114r 2  38               sec                     ; set carry before subtraction
-000115r 2  E9 14            sbc #20                 ; subtract 20 to get where to put this character
-000117r 2  AA               tax                     ; put the result in X
-000118r 2  98               tya                     ; restore character from Y
-000119r 2  9D rr rr         sta LCD_BUF, X          ; store char in buffer
-00011Cr 2  8A               txa                     ; copy X to A to be able to add to it
-00011Dr 2  18               clc
-00011Er 2  69 14            adc #20                 ; add 20 to restore X
-000120r 2  AA               tax                     ; put the result back in X
-000121r 2  E8               inx                     ; increment X to prepare to get next char
-000122r 2  E0 50            cpx #80                 ; if not at end of buffer
-000124r 2  90 DA            bcc @scroll_loop        ; do next char
-000126r 2                   ; fill the last line with spaces
-000126r 2  A9 D4            lda #$D4                ; set address to last line
-000128r 2  20 rr rr         jsr lcd_inst
-00012Br 2  A9 20            lda #$20
-00012Dr 2  A2 3C            ldx #60
-00012Fr 2               @last_line_loop:
-00012Fr 2  9D rr rr         sta LCD_BUF, x
-000132r 2  20 rr rr         jsr lcd_send
-000135r 2  E8               inx
-000136r 2  E0 50            cpx #80                 ; if not at end of buffer
-000138r 2  90 F5            bcc @last_line_loop     ; do next char
-00013Ar 2               
-00013Ar 2                   ;finally, place the cursor at the start of the last line
-00013Ar 2  A9 3C            lda #60
-00013Cr 2  85 rr            sta lcd_pos
-00013Er 2  A9 D4            lda #$D4
-000140r 2  20 rr rr         jsr lcd_inst
-000143r 2  FA               plx                     ; restore everything as it was
-000144r 2  7A               ply
-000145r 2  68               pla
-000146r 2  60               rts
-000147r 2               
-000147r 2               @scline_2:
-000147r 2  A9 C0            lda #$C0
-000149r 2  20 rr rr         jsr lcd_inst
-00014Cr 2  80 C5            bra @sccontinue
-00014Er 2               
-00014Er 2               @scline_3:
-00014Er 2  A9 94            lda #$94
-000150r 2  20 rr rr         jsr lcd_inst
-000153r 2  80 BE            bra @sccontinue
-000155r 2               
-000155r 2               @scline_4:
-000155r 2  A9 D4            lda #$D4
-000157r 2  20 rr rr         jsr lcd_inst
-00015Ar 2  80 B7            bra @sccontinue
-00015Cr 2               
-00015Cr 2               lcd_clear:
-00015Cr 2  48               PHA
-00015Dr 2                   ;clear display
-00015Dr 2  A9 01            LDA #$01
-00015Fr 2  20 rr rr         jsr lcd_inst
-000162r 2                   ;set dram address
-000162r 2  A9 80            LDA #$80
-000164r 2  20 rr rr         jsr lcd_inst
-000167r 2  68               PLA
-000168r 2  60               RTS
-000169r 2               
-000169r 2               
-000169r 2               buf_clr:
-000169r 2  48               pha
-00016Ar 2  DA               phx
-00016Br 2  A2 80            ldx #$80
-00016Dr 2  A9 20            lda #$20
-00016Fr 2               buf_clr_loop:
-00016Fr 2  9D rr rr         sta LCD_BUF,X
-000172r 2  CA               dex
-000173r 2  D0 FA            bne buf_clr_loop
-000175r 2  FA               plx
-000176r 2  68               pla
-000177r 2  60               rts
-000178r 2               
-000178r 1               .endif
-000178r 1               .ifdef KB_VIA_BASE
-000178r 1               .include "drivers/keyboard.s"
-000178r 1               .endif
-000178r 1               .ifdef KB_INIT_STATE_RESET
-000178r 1               .include "drivers/ps2.s"
-000178r 2               ; Copyright 2020 Jonathan Foucher
-000178r 2               
-000178r 2               ; Permission is hereby granted, free of charge, to any person obtaining a copy of this software
-000178r 2               ; and associated documentation files (the "Software"), to deal in the Software without restriction,
-000178r 2               ; including without limitation the rights to use, copy, modify, merge, publish, distribute,
-000178r 2               ; sublicense, and/or sell copies of the Software, and to permit persons to whom the Software
-000178r 2               ; is furnished to do so, subject to the following conditions:
-000178r 2               
-000178r 2               ; The above copyright notice and this permission notice shall be included in all copies or
-000178r 2               ; substantial portions of the Software.
-000178r 2               
-000178r 2               ; THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED,
-000178r 2               ; INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR
-000178r 2               ; PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE
-000178r 2               ; FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR
-000178r 2               ; OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
-000178r 2               ; DEALINGS IN THE SOFTWARE.
-000178r 2               
-000178r 2               .segment "ZEROPAGE": zeropage
+000083r 2  E8               inx
+000084r 2                   ; Check at which position we are and change line if necessary
+000084r 2  86 rr            stx lcd_pos
+000086r 2               
+000086r 2  E0 14            cpx #20
+000088r 2  F0 2A            beq @line_2
+00008Ar 2  E0 28            cpx #40
+00008Cr 2  F0 31            beq @line_3
+00008Er 2  E0 3C            cpx #60
+000090r 2  F0 38            beq @line_4
+000092r 2  E0 50            cpx #80
+000094r 2  F0 3F            beq @clr
+000096r 2               
+000096r 2               @continue:
+000096r 2  68               pla
+000097r 2  FA               plx
+000098r 2  7A               ply
+000099r 2  60               rts
+00009Ar 2               
+00009Ar 2               ; LCD adressing http://web.alfredstate.edu/faculty/weimandn/lcd/lcd_addressing/lcd_addressing_index.html
+00009Ar 2               @backspace:
+00009Ar 2  A9 10            lda #$10            ; shift cursor left
+00009Cr 2  20 rr rr         jsr lcd_inst
+00009Fr 2  A9 20            lda #$20            ; print a space to erase previous char
+0000A1r 2  20 rr rr         jsr lcd_send
+0000A4r 2               
+0000A4r 2  A9 10            lda #$10            ; shift cursor left
+0000A6r 2  20 rr rr         jsr lcd_inst
+0000A9r 2  C6 rr            dec lcd_pos
+0000ABr 2  A6 rr            ldx lcd_pos         ; save in buffer
+0000ADr 2  A9 20            lda #$20
+0000AFr 2  9D rr rr         sta LCD_BUF,x
+0000B2r 2  80 E2            bra @continue
+0000B4r 2               @line_2:
+0000B4r 2  A9 14            lda #20
+0000B6r 2  85 rr            sta lcd_pos
+0000B8r 2  A9 C0            lda #$C0
+0000BAr 2  20 rr rr         jsr lcd_inst
+0000BDr 2  80 D7            bra @continue
+0000BFr 2               
+0000BFr 2               @line_3:
+0000BFr 2  A9 28            lda #40
+0000C1r 2  85 rr            sta lcd_pos
+0000C3r 2  A9 94            lda #$94
+0000C5r 2  20 rr rr         jsr lcd_inst
+0000C8r 2  80 CC            bra @continue
+0000CAr 2               
+0000CAr 2               @line_4:
+0000CAr 2  A9 3C            lda #60
+0000CCr 2  85 rr            sta lcd_pos
+0000CEr 2  A9 D4            lda #$D4
+0000D0r 2  20 rr rr         jsr lcd_inst
+0000D3r 2  80 C1            bra @continue
+0000D5r 2               @clr:
+0000D5r 2                   ; lda #0
+0000D5r 2                   ; sta lcd_pos
+0000D5r 2                   ; lda #$80
+0000D5r 2                   ; jsr lcd_inst
+0000D5r 2  20 rr rr         jsr lcd_scroll_up
+0000D8r 2  80 BC            bra @continue
+0000DAr 2               
+0000DAr 2               @next_line:
+0000DAr 2  A6 rr            ldx lcd_pos            ;get current position
+0000DCr 2  E0 50            cpx #80
+0000DEr 2  F0 F5            beq @clr
+0000E0r 2  E0 3C            cpx #60
+0000E2r 2  F0 E6            beq @line_4
+0000E4r 2  E0 28            cpx #40
+0000E6r 2  F0 D7            beq @line_3
+0000E8r 2  E0 14            cpx #20
+0000EAr 2  F0 C8            beq @line_2
+0000ECr 2  E8               inx
+0000EDr 2  86 rr            stx lcd_pos
+0000EFr 2  A9 20            lda #$20
+0000F1r 2  20 rr rr         jsr lcd_send
+0000F4r 2  9D rr rr         sta LCD_BUF, x
+0000F7r 2  80 E1            bra @next_line
+0000F9r 2               
+0000F9r 2               lcd_scroll_up:
+0000F9r 2  48               pha                     ; save registers
+0000FAr 2  5A               phy
+0000FBr 2  DA               phx
+0000FCr 2  A9 80            lda #$80                ; set LCD address to start
+0000FEr 2  20 rr rr         jsr lcd_inst
+000101r 2               
+000101r 2  A2 14            ldx #20                 ; start getting characters at the start of the second line
+000103r 2               @scroll_loop:
+000103r 2  BD rr rr         lda LCD_BUF, X          ; load from buffer
+000106r 2  20 rr rr         jsr lcd_send            ; send to display
+000109r 2  A8               tay                     ; save current character in Y
+00010Ar 2  E0 4F            cpx #79                 ; update LCD address if necessary
+00010Cr 2  F0 4A            beq @scline_4
+00010Er 2  E0 3B            cpx #59
+000110r 2  F0 3F            beq @scline_3
+000112r 2  E0 27            cpx #39
+000114r 2  F0 34            beq @scline_2
+000116r 2               @sccontinue:                ; return from updating LCD address
+000116r 2  8A               txa                     ; copy X to A to be able to subtract from it
+000117r 2  38               sec                     ; set carry before subtraction
+000118r 2  E9 14            sbc #20                 ; subtract 20 to get where to put this character
+00011Ar 2  AA               tax                     ; put the result in X
+00011Br 2  98               tya                     ; restore character from Y
+00011Cr 2  9D rr rr         sta LCD_BUF, X          ; store char in buffer
+00011Fr 2  8A               txa                     ; copy X to A to be able to add to it
+000120r 2  18               clc
+000121r 2  69 14            adc #20                 ; add 20 to restore X
+000123r 2  AA               tax                     ; put the result back in X
+000124r 2  E8               inx                     ; increment X to prepare to get next char
+000125r 2  E0 50            cpx #80                 ; if not at end of buffer
+000127r 2  90 DA            bcc @scroll_loop        ; do next char
+000129r 2                   ; fill the last line with spaces
+000129r 2  A9 D4            lda #$D4                ; set address to last line
+00012Br 2  20 rr rr         jsr lcd_inst
+00012Er 2  A9 20            lda #$20
+000130r 2  A2 3C            ldx #60
+000132r 2               @last_line_loop:
+000132r 2  9D rr rr         sta LCD_BUF, x
+000135r 2  20 rr rr         jsr lcd_send
+000138r 2  E8               inx
+000139r 2  E0 50            cpx #80                 ; if not at end of buffer
+00013Br 2  90 F5            bcc @last_line_loop     ; do next char
+00013Dr 2               
+00013Dr 2                   ;finally, place the cursor at the start of the last line
+00013Dr 2  A9 3C            lda #60
+00013Fr 2  85 rr            sta lcd_pos
+000141r 2  A9 D4            lda #$D4
+000143r 2  20 rr rr         jsr lcd_inst
+000146r 2  FA               plx                     ; restore everything as it was
+000147r 2  7A               ply
+000148r 2  68               pla
+000149r 2  60               rts
+00014Ar 2               
+00014Ar 2               @scline_2:
+00014Ar 2  A9 C0            lda #$C0
+00014Cr 2  20 rr rr         jsr lcd_inst
+00014Fr 2  80 C5            bra @sccontinue
+000151r 2               
+000151r 2               @scline_3:
+000151r 2  A9 94            lda #$94
+000153r 2  20 rr rr         jsr lcd_inst
+000156r 2  80 BE            bra @sccontinue
+000158r 2               
+000158r 2               @scline_4:
+000158r 2  A9 D4            lda #$D4
+00015Ar 2  20 rr rr         jsr lcd_inst
+00015Dr 2  80 B7            bra @sccontinue
+00015Fr 2               
+00015Fr 2               lcd_clear:
+00015Fr 2  48               PHA
+000160r 2                   ;clear display
+000160r 2  A9 01            LDA #$01
+000162r 2  20 rr rr         jsr lcd_inst
+000165r 2                   ;set dram address
+000165r 2  A9 80            LDA #$80
+000167r 2  20 rr rr         jsr lcd_inst
+00016Ar 2  68               PLA
+00016Br 2  60               RTS
+00016Cr 2               
+00016Cr 2               
+00016Cr 2               buf_clr:
+00016Cr 2  48               pha
+00016Dr 2  DA               phx
+00016Er 2  A2 80            ldx #$80
+000170r 2  A9 20            lda #$20
+000172r 2               buf_clr_loop:
+000172r 2  9D rr rr         sta LCD_BUF,X
+000175r 2  CA               dex
+000176r 2  D0 FA            bne buf_clr_loop
+000178r 2  FA               plx
+000179r 2  68               pla
+00017Ar 2  60               rts
+00017Br 2               
+00017Br 1               .endif
+00017Br 1               .ifdef KB_VIA_BASE
+00017Br 1               .include "drivers/keyboard.s"
+00017Br 1               .endif
+00017Br 1               .ifdef KB_INIT_STATE_RESET
+00017Br 1               .include "drivers/ps2.s"
+00017Br 2               ; Copyright 2020 Jonathan Foucher
+00017Br 2               
+00017Br 2               ; Permission is hereby granted, free of charge, to any person obtaining a copy of this software
+00017Br 2               ; and associated documentation files (the "Software"), to deal in the Software without restriction,
+00017Br 2               ; including without limitation the rights to use, copy, modify, merge, publish, distribute,
+00017Br 2               ; sublicense, and/or sell copies of the Software, and to permit persons to whom the Software
+00017Br 2               ; is furnished to do so, subject to the following conditions:
+00017Br 2               
+00017Br 2               ; The above copyright notice and this permission notice shall be included in all copies or
+00017Br 2               ; substantial portions of the Software.
+00017Br 2               
+00017Br 2               ; THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED,
+00017Br 2               ; INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR
+00017Br 2               ; PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE
+00017Br 2               ; FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR
+00017Br 2               ; OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
+00017Br 2               ; DEALINGS IN THE SOFTWARE.
+00017Br 2               
+00017Br 2               .segment "ZEROPAGE": zeropage
 00000Dr 2               
 00000Dr 2  xx xx xx xx  last_ps2_time: .res 4
 000011r 2  xx           KB_BUF_W_PTR: .res 1
