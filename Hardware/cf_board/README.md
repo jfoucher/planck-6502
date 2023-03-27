@@ -2,6 +2,8 @@
 
 This board allows adding one Compact Flash (CF) card to the Planck computer. This gives mass storage capabilities to the computer.
 
+![Top view of the CompactFlash board](../docs/img/compactflash.jpg)
+
 The file system is not complete yet, but will probably be FAT16 to allow interoperability with PCs
 
 You will be able to save and load files. 
