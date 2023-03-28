@@ -38,7 +38,7 @@ The first step is to be able to read 1024 bytes of data at once into a buffer. T
 
 Nothing complex here, the routine basically just does this:
 
-```asm
+``` nesasm
 minix_read_block_noinc:
     mov16  MINIX_SECTOR, io_current_sector  ; copy sector to read to IO variable
     ; mov16 is a macro that copies 2 bytes at once
@@ -149,7 +149,7 @@ Once we have read this inode, we can read its data by following the zones links,
 
 Reading data works in exactly the same way for all types of files. Once we have the inode for the file or directory, we can read the zone pointers to get the data at the correct block, which would look someting like this in assembly:
 
-```asm
+``` nesasm
 lda #>(INODE + $0E)    ; get the zone 0 low byte
 sta ZP_POINTER     ; store it in a zeropage pointer low byte
 lda #>(INODE + $0F)    ; get the zone 0 high byte

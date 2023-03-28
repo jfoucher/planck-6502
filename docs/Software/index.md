@@ -45,9 +45,9 @@ As you can see, the [Software/drivers](https://gitlab.com/planck-6502/planck-650
 
 Then in the [fos/platform/planck/main.s](https://gitlab.com/planck-6502/planck-6502/-/blob/main/Software/fos/platform/planck/main.s) file you will have to include your new driver file or files similarly to how other driver files are included : 
 
-````
+``` nesasm
 .include "drivers/keyboard.s"
-````
+```
 
 Then, after the `kernel_init:` label, you can call your initialization routine if any.
 

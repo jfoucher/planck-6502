@@ -38,6 +38,7 @@ The Planck hardware is organized around a motherboard that hosts the CPU and RAM
 The computer board consists of a 65C02 CPU, 32K of RAM, 32K of ROM, a 6551 ACIA for serial communication, 6 expansion slots for addon boards, as well as the following:
 
 ### Clock generation
+
 The clock generation starts with an oscillator. This oscillator should be at twice the target frequency since it is divided by two by a [74HC161 binary counter](https://assets.nexperia.com/documents/data-sheet/74HC161.pdf)
 
 This counter makes possible the clock stretching that will be required by slow peripherals, or indeed any ROM if you run your computer fast enough.
@@ -61,7 +62,6 @@ So this simple circuit generates two clock signals : one that is slow enough for
 One of the purposes of the motherboard is to connect all daughter boards together. It does this by means of an extension bus connector based on a 2.54mm 2x25 pins socket. These connectors are cheap, reliable and easy to obtain. The female connector is placed on the backplane and a right angle male connector on each expansion board.
 
 Most pins on this extension consist of the 65C02 signals, such as 16 address lines, 8 data lines, and a smattering of control lines. The complete bus pinout is detailed below:
-
 
 | Pin number | Pin name | Description |
 |-------|-----|--------|
@@ -116,6 +116,8 @@ Most pins on this extension consist of the 65C02 signals, such as 16 address lin
 | 49 | <span class="overline">RESET</span> | Reset signal trigered by the button on the backplane, active low |
 | 50 | <span class="overline">NMI</span> | non maskable interrupt signal trigered by the button on the backplane, active low |
 
+[View the pinout on pinoutguide.com](https://pinoutguide.com/Electronics/Planck_6502_expansion_bus_pinout.shtml)
+
 ### Expansion slot activation
 
 The 65C02 CPU works with memory mapped input/output. This means that the CPU does not care what device is responding to what address range. To it, when it asks for data from a certain address, it's all the same whether that data comes from RAM, ROM, a temperature sensor or whetever else.
@@ -124,11 +126,12 @@ This means that we need some external logic to activate certain devices when the
 In our case, the motherboard has some logic that tells one of the expansion slots to activate when a certain address range is requested by the CPU. This address decoding, as it is called is taken care of by an ATF22V10, a [programmable logic chip](https://en.wikipedia.org/wiki/Programmable_logic_device) that can be thought of as an ancestor to FPGAs.
 
 This functionality could also be built from discrete logic chips, but using a PLD chip does three things for us:
+
 - First it saves board space. The functionality this single chip provides would need at least two or three chips to replicate with discrete logic
 - Secondly, it speeds up the response time. Each time a signal passes through a chip, it incurs a slight delay. So the fewer chips are on the path, the faster our computer can run.
 - Finally, it allows us to reprogram it to easily change the memory map of the system.
 
-In the default case, slot 0 responds in the address range `$FF80` to `$FF8F`, slot 1 to `$FF90` to `$FF9F`, etc until slot 5 at `$FFD0` to `$FFDF`. This address decoding can be reconfigured by simply reprogramming the PLD, giving quite a lot of flexibility to the system. 
+In the default case, slot 0 responds in the address range `$FF80` to `$FF8F`, slot 1 to `$FF90` to `$FF9F`, etc until slot 5 at `$FFD0` to `$FFDF`. This address decoding can be reconfigured by simply reprogramming the PLD, giving quite a lot of flexibility to the system.
 
 You could for example assign a whole page (256 bytes) or more to each expansion slot, allowing the extension cards to have their driver in an on-board ROM.
 
@@ -146,7 +149,6 @@ Here is the default expansion memory map in table form
 |  0xFFE0           |   0xFFEF            | SERIAL Selected         |
 |-------------------------------------------------------------------|
 
-
 ### Basic user IO
 
 The computer provides some basic user input and output in the form of two buttons and 4 leds.
@@ -162,32 +164,28 @@ If you want to build this computer, please see the [building the computer](build
 <!--
 ## Buy it now with paypal
 
-Currently out of stock, sorry, should be back around mid Novemeber 2021
+Currently out of stock, sorry.
 
 <div>
 <form target="paypal" action="https://www.paypal.com/cgi-bin/webscr" method="post">
 <input type="hidden" name="cmd" value="_s-xclick">
 <input type="hidden" name="hosted_button_id" value="WNF3GUCN92CT6">
-<table style="border:none"  cellpadding="0">
-<tr>
-<td style="border:none;vertical-align:middle">
-<input type="hidden" name="on0" value="Include ICs ?">
-<select name="os0">
-	<option value="No ICs">No ICs €69,00 EUR</option>
-	<option value="All ICs">All ICs €99,00 EUR</option>
-</select>
-</td>
-<td style="border:none;vertical-align:middle"><input type="hidden" name="currency_code" value="EUR">
-<input type="image" src="https://www.paypalobjects.com/en_US/i/btn/btn_cart_LG.gif" border="0" name="submit" alt="PayPal - The safer, easier way to pay online!">
-<img alt="" border="0" src="https://www.paypalobjects.com/en_US/i/scr/pixel.gif" width="1" height="1"></td>
-</tr>
+<table>
+<tr><td><input type="hidden" name="on0" value="Include ICs ?">Include ICs ?</td></tr><tr><td><select name="os0">
+	<option value="No ICs">No ICs €89,00 EUR</option>
+	<option value="All ICs">All ICs €119,00 EUR</option>
+</select> </td></tr>
 </table>
+<input type="hidden" name="currency_code" value="EUR">
+<input type="image" src="https://www.paypalobjects.com/en_US/i/btn/btn_cart_LG.gif" border="0" name="submit" alt="PayPal - The safer, easier way to pay online!">
+<img alt="" border="0" src="https://www.paypalobjects.com/en_US/i/scr/pixel.gif" width="1" height="1">
 </form>
+
 </div>
 
 ## Buy it on Tindie
 
-Currently out of stock, sorry, should be back around mid Novemeber 2021
+Currently out of stock, sorry.
 
 <a href="https://www.tindie.com/products/24831/"><img src="https://d2ss6ovg47m0r5.cloudfront.net/badges/tindie-larges.png" alt="Buy the Planck 6502 computer on Tindie" width="200" height="104"></a>
 -->
