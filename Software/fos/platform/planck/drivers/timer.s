@@ -1,7 +1,10 @@
+.segment "ZEROPAGE"
+time: .res 4
 
+.segment "DATA"
 
-COUNTER = CLOCK_SPEED/400        ; n/s
-
+COUNTER = CLOCK_SPEED/200        ; n/s
+; 200 ticks per second, or 5ms per tick
 timer_init:
     lda IER
     ora #$C0        ;enable interrupt on timer1 timeout
@@ -11,7 +14,6 @@ timer_init:
     lda #<COUNTER     ; set timer to low byte to calculated value from defined clock speed
     sta T1CL
     lda #>COUNTER       ; set timer to high byte to calculated value from defined clock speed
-
     sta T1CH        
     stz time
     stz time+1

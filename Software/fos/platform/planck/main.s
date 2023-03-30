@@ -1,6 +1,7 @@
 
 .include "../../macros.s"
-CLOCK_SPEED = 24000000
+; The clock speed after it is divided by two by the counter
+CLOCK_SPEED = 12000000          
 TALI_OPTIONAL_ASSEMBLER = 1
 
 ram_end = $8000
@@ -18,7 +19,9 @@ ram_end = $8000
 ; .include "drivers/keyboard.inc"
 
 .segment "ZEROPAGE": zeropage
+.ifdef CF_ADDRESS
 io_buffer_ptr: .res 2
+.endif
 
 .include "drivers/zp.s"
 

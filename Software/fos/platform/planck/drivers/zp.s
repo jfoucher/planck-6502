@@ -20,7 +20,5 @@
 
 
 tmp_var: .res 2
-stack_p: .res 2
-.ifdef VIA1_BASE
-time: .res 4
-.endif
+
+
