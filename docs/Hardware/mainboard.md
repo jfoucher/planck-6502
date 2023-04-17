@@ -10,6 +10,9 @@ html_bom: https://planck6502.com/fabrication/mainboard-bom.html
 csv_bom: https://planck6502.com/fabrication/mainboard-bom.csv
 ---
 
+### VERSIONS AFTER 1.2 DO NOT WORK. DO NOT USE!!
+
+I am working on it, but have not found the issue so far.
 
 The Planck computer is an extensible single board computer. Everything need for the computer to work is on the mainboard (Basic IO, ROM, RAM, CPU). It can be extended with up to 6 cards to make it into exactly the computer you want.
 
