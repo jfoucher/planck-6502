@@ -1,4 +1,6 @@
 
+.segment "BSS"
+LBA_SIZE: .res 4
 
 .segment "DATA"
 cf_init:

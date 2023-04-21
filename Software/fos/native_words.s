@@ -12204,7 +12204,7 @@ xt_cf_info:
 .endif
 z_cf_info:
         rts
-
+.ifdef CF_ADDRESS
 cf_print_capacity:
     phy
 
@@ -12295,7 +12295,7 @@ cf_print_id:
     ply
     rts
 
-
+.endif
 xt_io_readblock:
 .ifdef io_read_sector_address
         ; block-read ( addr blk# -- ) 

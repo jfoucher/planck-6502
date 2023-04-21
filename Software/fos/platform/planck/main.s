@@ -7,12 +7,13 @@ TALI_OPTIONAL_ASSEMBLER = 1
 ram_end = $8000
 
 ; select includes to enable card drivers
+; NOT ALL OF THEM WORK
 
 .include "drivers/cf.inc"
 .include "drivers/acia.inc"
 .include "drivers/via.inc"
 ; .include "drivers/sd.inc"
-.include "drivers/ps2.inc"
+; .include "drivers/ps2.inc"
 ; .include "drivers/4004.inc"
 .include "drivers/lcd.inc"
 ; .include "drivers/vga.inc"
@@ -35,32 +36,8 @@ IO_SECTOR: .res 4
 .segment "STARTUP"
 .import    copydata
 .import zerobss
-zero_ram:
-    ldx #$FF
-zero_zp:
-    stz 0, x
-    dex
-    bne zero_zp
-    stz $00
-    lda #0
-    sta $01
-
-    ldx #$80
-    ldy #0
-    lda #0
-@loop:
-    sta ($0), y
-    iny
-    bne @loop
-    inc $1
-    dex
-    bne @loop
-
-    jmp ram_zeroed
 
 v_reset:
-    jmp zero_ram
-ram_zeroed: 
     JSR     copydata
     jsr zerobss
     
@@ -130,7 +107,6 @@ io_read_sector_address = sd_read_sector
 .include "../../disassembler.s"
 .endif
 
-
 platform_bye:
 kernel_init:
 .ifdef VIA1_BASE
@@ -167,17 +143,17 @@ jsr acia_init
 
     printascii welcome_message
 
-    lda #<dictionary
-    sta util_tmp
-    lda #>dictionary
-    sta util_tmp + 1
+    ; lda #<dictionary
+    ; sta util_tmp
+    ; lda #>dictionary
+    ; sta util_tmp + 1
 
-    jsr calculate_free_mem
-    lda tmp_var + 1
-    ldx tmp_var
-    jsr print16
+    ; jsr calculate_free_mem
+    ; lda tmp_var + 1
+    ; ldx tmp_var
+    ; jsr print16
 
-    printascii free_message
+    ; printascii free_message
 
 
     jmp forth
@@ -196,13 +172,13 @@ v_nmi:
 
 
 
-
+.ifdef io_read_sector_address
 io_read_sector:
     jmp io_read_sector_address        ; jump to read sector routine
 
 io_write_sector:
     jmp io_write_sector_address        ; jump to read sector routine
-
+.endif
 
 
 kernel_putc:

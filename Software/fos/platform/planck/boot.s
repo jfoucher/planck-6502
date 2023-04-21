@@ -16,7 +16,7 @@ NMI_VEC: .res 2
 io_buffer_ptr: .res 2
 
 .segment "BSS"
-has_acia: .res 1
+
 .ifdef CF_ADDRESS
 IO_SECTOR: .res 4
 .endif
@@ -31,13 +31,39 @@ IO_SECTOR: .res 4
 .ifdef CF_ADDRESS
 io_read_sector_address = cf_read_sector
 .endif
+VIA1_BASE   = $FFD0
+PORTB = VIA1_BASE
+PORTA  = VIA1_BASE+1
+DDRB = VIA1_BASE+2
+DDRA = VIA1_BASE+3
 
 
-
+boot_msg: .asciiz "Boot Message"
 reset:
+    sei
+    lda #$FF
+    sta DDRA
+    sta DDRB
+    lda #1
+    sta PORTA
+    ldy #$0F
+@delay_loop:
+    
+    jsr delay
+    inc PORTA
+    dey
+    bne @delay_loop
     jsr acia_init
-
-
+    lda #2
+    sta PORTA
+    ldx #0
+@loop1:
+    lda boot_msg, x
+    jsr acia_out
+    beq reset
+    inx
+    bra @loop1
+@loop_exit1:
     jsr cf_init
 
     ; copy data from CF card to RAM
@@ -103,8 +129,11 @@ reset:
     jmp CODE_START          ; jump to start of code
 
 nmi:
-    pha		; save affected register
-
+    ;pha		; save affected register
+    lda #$C0
+    sta PORTA
+    ;pla
+    rti
 	lda NMI_VEC	; check if NMI vector is zero
 	ora NMI_VEC+1
 	beq nmi_end		; if so, skip
@@ -118,8 +147,11 @@ nmi_end:    ; should not be called
 	rti		; return from interrupt
 
 irq: 
-	pha		; save affected register
-
+	;pha		; save affected register
+    lda #$A0
+    sta PORTA
+    ;pla
+    rti
 	lda IRQ_VEC	; check if IRQ vector is zero
 	ora IRQ_VEC+1
 	beq end		; if so, skip

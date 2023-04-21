@@ -61,14 +61,14 @@ Pin 11 =  RW;
 Pin 12 = SSEL;  
 Pin 13 = INH; 
 Pin 14 = A14; 
-Pin 15 = A13; 
+Pin 15 = A13;
 Pin 16 = RAM_W; 
 Pin 17 = ROM_CS; 
 Pin 18 = RAM_CS; 
 Pin 19 = IRQ_OUT; 
 
 
-IRQ_OUT = IRQ0 & IRQ1 & IRQ2 & IRQ3 & IRQ4 & IRQ5 & SIRQ;
+IRQ_OUT = IRQ0 & IRQ1 & IRQ2 & IRQ3 & IRQ4 & IRQ5 & SER_IRQ;
 
 RAM_CS = !(!A15 & SSEL);   // RAM is selected when A15 is low AND SSEL is high
 
