@@ -7462,7 +7462,7 @@
   (symbol (lib_id "Connector_Generic:Conn_02x25_Odd_Even") (at 172.72 91.44 0) (unit 1)
     (in_bom yes) (on_board yes)
     (uuid 00000000-0000-0000-0000-00005ff330aa)
-    (property "Reference" "SLOT5" (id 0) (at 173.99 55.4482 0))
+    (property "Reference" "SLOT2" (id 0) (at 173.99 55.4482 0))
     (property "Value" "Conn_01x40" (id 1) (at 173.99 57.7596 0))
     (property "Footprint" "Connector_PinSocket_2.54mm:PinSocket_2x25_P2.54mm_Vertical" (id 2) (at 172.72 91.44 0)
       (effects (font (size 1.27 1.27)) hide)
@@ -7608,7 +7608,7 @@
   (symbol (lib_id "Connector_Generic:Conn_02x25_Odd_Even") (at 62.23 208.28 0) (unit 1)
     (in_bom yes) (on_board yes)
     (uuid 00000000-0000-0000-0000-00005ff388f3)
-    (property "Reference" "SLOT1" (id 0) (at 63.5 172.2882 0))
+    (property "Reference" "SLOT4" (id 0) (at 63.5 172.2882 0))
     (property "Value" "Conn_01x40" (id 1) (at 63.5 174.5996 0))
     (property "Footprint" "Connector_PinSocket_2.54mm:PinSocket_2x25_P2.54mm_Vertical" (id 2) (at 62.23 208.28 0)
       (effects (font (size 1.27 1.27)) hide)
@@ -7754,7 +7754,7 @@
   (symbol (lib_id "Connector_Generic:Conn_02x25_Odd_Even") (at 118.11 209.55 0) (unit 1)
     (in_bom yes) (on_board yes)
     (uuid 00000000-0000-0000-0000-00005ff3d28d)
-    (property "Reference" "SLOT4" (id 0) (at 119.38 173.5582 0))
+    (property "Reference" "SLOT5" (id 0) (at 119.38 173.5582 0))
     (property "Value" "Conn_01x40" (id 1) (at 119.38 175.8696 0))
     (property "Footprint" "Connector_PinSocket_2.54mm:PinSocket_2x25_P2.54mm_Vertical" (id 2) (at 118.11 209.55 0)
       (effects (font (size 1.27 1.27)) hide)
@@ -7900,7 +7900,7 @@
   (symbol (lib_id "Connector_Generic:Conn_02x25_Odd_Even") (at 114.3 90.17 0) (unit 1)
     (in_bom yes) (on_board yes)
     (uuid 00000000-0000-0000-0000-00005ff4ad1b)
-    (property "Reference" "SLOT3" (id 0) (at 115.57 54.1782 0))
+    (property "Reference" "SLOT1" (id 0) (at 115.57 54.1782 0))
     (property "Value" "Conn_01x40" (id 1) (at 115.57 56.4896 0))
     (property "Footprint" "Connector_PinSocket_2.54mm:PinSocket_2x25_P2.54mm_Vertical" (id 2) (at 114.3 90.17 0)
       (effects (font (size 1.27 1.27)) hide)
@@ -8046,7 +8046,7 @@
   (symbol (lib_id "Connector_Generic:Conn_02x25_Odd_Even") (at 234.95 91.44 0) (unit 1)
     (in_bom yes) (on_board yes)
     (uuid 00000000-0000-0000-0000-00005ff52d4f)
-    (property "Reference" "SLOT6" (id 0) (at 236.22 55.4482 0))
+    (property "Reference" "SLOT3" (id 0) (at 236.22 55.4482 0))
     (property "Value" "Conn_01x40" (id 1) (at 236.22 57.7596 0))
     (property "Footprint" "Connector_PinSocket_2.54mm:PinSocket_2x25_P2.54mm_Vertical" (id 2) (at 234.95 91.44 0)
       (effects (font (size 1.27 1.27)) hide)
@@ -8667,7 +8667,7 @@
   (symbol (lib_id "Connector_Generic:Conn_02x25_Odd_Even") (at 63.5 90.17 0) (unit 1)
     (in_bom yes) (on_board yes)
     (uuid 00000000-0000-0000-0000-000060434fc0)
-    (property "Reference" "SLOT2" (id 0) (at 64.77 54.1782 0))
+    (property "Reference" "SLOT0" (id 0) (at 64.77 54.1782 0))
     (property "Value" "Conn_01x40" (id 1) (at 64.77 56.4896 0))
     (property "Footprint" "Connector_PinSocket_2.54mm:PinSocket_2x25_P2.54mm_Vertical" (id 2) (at 63.5 90.17 0)
       (effects (font (size 1.27 1.27)) hide)
@@ -10725,23 +10725,23 @@
     (path "/00000000-0000-0000-0000-0000600a3302"
       (reference "RESET1") (unit 1) (value "SW_Push") (footprint "Button_Switch_THT:SW_PUSH_6mm")
     )
-    (path "/00000000-0000-0000-0000-00005ff388f3"
-      (reference "SLOT1") (unit 1) (value "Conn_01x40") (footprint "Connector_PinSocket_2.54mm:PinSocket_2x25_P2.54mm_Vertical")
-    )
     (path "/00000000-0000-0000-0000-000060434fc0"
-      (reference "SLOT2") (unit 1) (value "Conn_01x40") (footprint "Connector_PinSocket_2.54mm:PinSocket_2x25_P2.54mm_Vertical")
+      (reference "SLOT0") (unit 1) (value "Conn_01x40") (footprint "Connector_PinSocket_2.54mm:PinSocket_2x25_P2.54mm_Vertical")
     )
     (path "/00000000-0000-0000-0000-00005ff4ad1b"
-      (reference "SLOT3") (unit 1) (value "Conn_01x40") (footprint "Connector_PinSocket_2.54mm:PinSocket_2x25_P2.54mm_Vertical")
-    )
-    (path "/00000000-0000-0000-0000-00005ff3d28d"
-      (reference "SLOT4") (unit 1) (value "Conn_01x40") (footprint "Connector_PinSocket_2.54mm:PinSocket_2x25_P2.54mm_Vertical")
+      (reference "SLOT1") (unit 1) (value "Conn_01x40") (footprint "Connector_PinSocket_2.54mm:PinSocket_2x25_P2.54mm_Vertical")
     )
     (path "/00000000-0000-0000-0000-00005ff330aa"
-      (reference "SLOT5") (unit 1) (value "Conn_01x40") (footprint "Connector_PinSocket_2.54mm:PinSocket_2x25_P2.54mm_Vertical")
+      (reference "SLOT2") (unit 1) (value "Conn_01x40") (footprint "Connector_PinSocket_2.54mm:PinSocket_2x25_P2.54mm_Vertical")
     )
     (path "/00000000-0000-0000-0000-00005ff52d4f"
-      (reference "SLOT6") (unit 1) (value "Conn_01x40") (footprint "Connector_PinSocket_2.54mm:PinSocket_2x25_P2.54mm_Vertical")
+      (reference "SLOT3") (unit 1) (value "Conn_01x40") (footprint "Connector_PinSocket_2.54mm:PinSocket_2x25_P2.54mm_Vertical")
+    )
+    (path "/00000000-0000-0000-0000-00005ff388f3"
+      (reference "SLOT4") (unit 1) (value "Conn_01x40") (footprint "Connector_PinSocket_2.54mm:PinSocket_2x25_P2.54mm_Vertical")
+    )
+    (path "/00000000-0000-0000-0000-00005ff3d28d"
+      (reference "SLOT5") (unit 1) (value "Conn_01x40") (footprint "Connector_PinSocket_2.54mm:PinSocket_2x25_P2.54mm_Vertical")
     )
     (path "/00000000-0000-0000-0000-000060031505"
       (reference "SW1") (unit 1) (value "SW") (footprint "Button_Switch_THT:SW_E-Switch_EG1271_SPDT")
