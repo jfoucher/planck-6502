@@ -1,4 +1,4 @@
-COMMON_SOURCES=cf_test.s
+COMMON_SOURCES=midi_test.s planck.cfg
 
 rom.bin: $(COMMON_SOURCES)
 	cl65 --listing rom-listing.txt \
