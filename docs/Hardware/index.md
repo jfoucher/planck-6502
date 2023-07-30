@@ -160,11 +160,11 @@ The 4 LEDs are connected to pins on the expansion bus, and can thus be driven by
 Finally, there is a power plug (Barrel jack), a power switch and a power LED.
 
 If you want to build this computer, please see the [building the computer](build) page to get more details about what to expect.
-
+<!-- 
 <script async src="https://js.stripe.com/v3/pricing-table.js"></script>
 <stripe-pricing-table pricing-table-id="prctbl_1NZeIWDtAuPfKnt3aQTV31Hu"
 publishable-key="pk_live_51LNKdxDtAuPfKnt3hZwpiwcGTgssR7GG2jbIRn4DPIOubydZ5rS7yfBJlkI4AbDmIXCDKMLSh93dPcZv4k3fWn4f00itJp3VWr">
-</stripe-pricing-table>
+</stripe-pricing-table> -->
 
 <!--
 ## Buy it now with paypal
