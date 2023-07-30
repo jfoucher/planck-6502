@@ -32,3 +32,5 @@ Emulator/wasm/node_modules
 Hardware/flash_adapter/flash_adapter-backups
 Hardware/template/planck_board-backups
 Hardware/keyboard/keyboard-backups
+Hardware/midi/planck_board-backups
+Hardware/midi/midi-backups
