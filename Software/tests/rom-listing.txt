@@ -1,0 +1,740 @@
+ca65 V2.18 - N/A
+Main file   : midi_test.s
+Current file: midi_test.s
+
+000000r 1               ACIA_BASE   = $FFE0
+000000r 1               ACIA_DATA = ACIA_BASE
+000000r 1               ACIA_STATUS = ACIA_BASE + 1
+000000r 1               ACIA_CMD = ACIA_BASE + 2
+000000r 1               ACIA_CTRL = ACIA_BASE + 3
+000000r 1               
+000000r 1               MIDI_BASE   = $FF80
+000000r 1               MIDI_DATA = MIDI_BASE
+000000r 1               MIDI_STATUS = MIDI_BASE + 1
+000000r 1               MIDI_CMD = MIDI_BASE + 2
+000000r 1               MIDI_CTRL = MIDI_BASE + 3
+000000r 1               
+000000r 1               SOUND_CARD_ADDRESS = $FFA0
+000000r 1               REGISTER_ADDRESS = SOUND_CARD_ADDRESS
+000000r 1               REGISTER_DATA = SOUND_CARD_ADDRESS + 1
+000000r 1               
+000000r 1               VIA1_BASE   = $FF90
+000000r 1               PORTB = VIA1_BASE
+000000r 1               PORTA  = VIA1_BASE+1
+000000r 1               DDRB = VIA1_BASE+2
+000000r 1               DDRA = VIA1_BASE+3
+000000r 1               
+000000r 1               
+000000r 1               T1CL = VIA1_BASE + 4
+000000r 1               T1CH = VIA1_BASE + 5
+000000r 1               T1LL = VIA1_BASE + 6
+000000r 1               T1LH = VIA1_BASE + 7
+000000r 1               ACR = VIA1_BASE + 11
+000000r 1               PCR = VIA1_BASE + 12
+000000r 1               IFR = VIA1_BASE + 13
+000000r 1               IER = VIA1_BASE + 14
+000000r 1               
+000000r 1               COUNTER=12
+000000r 1               
+000000r 1               MIDI_NONE = 0
+000000r 1               MIDI_NOTE_ON = 1
+000000r 1               MIDI_NOTE_OFF = 2
+000000r 1               MIDI_CTRL_CHANGE = 3
+000000r 1               MIDI_UNKNOWN = $FF
+000000r 1               
+000000r 1               KON = $20
+000000r 1               
+000000r 1               .macro  printascii   addr
+000000r 1               .local @loop
+000000r 1               .local @done
+000000r 1                   phx
+000000r 1                   ldx #0
+000000r 1               @loop:
+000000r 1                   lda addr,x
+000000r 1                   beq @done
+000000r 1                   jsr acia_out
+000000r 1                   inx
+000000r 1                   bra @loop
+000000r 1               @done:
+000000r 1                   plx
+000000r 1               .endmacro
+000000r 1               
+000000r 1               .segment "BSS"
+000000r 1  xx           midi_current_command: .res 1
+000001r 1  xx           midi_current_note: .res 1
+000002r 1  xx           midi_current_vel: .res 1
+000003r 1  xx           midi_bytes_left: .res 1
+000004r 1  xx xx xx xx  controller_values: .res 120
+000008r 1  xx xx xx xx  
+00000Cr 1  xx xx xx xx  
+00007Cr 1  xx           last_played_note: .res 1
+00007Dr 1  xx           ctrl_tmp: .res 1
+00007Er 1               
+00007Er 1               .segment "CODE"
+000000r 1               
+000000r 1               timer_init:
+000000r 1  AD 9E FF         lda IER
+000003r 1  09 C0            ora #$C0        ;enable interrupt on timer1 timeout
+000005r 1  8D 9E FF         sta IER
+000008r 1  A9 40            lda #$40        ; timer one free run mode
+00000Ar 1  8D 9B FF         sta ACR
+00000Dr 1  A9 0C            lda #COUNTER     ; set timer to low byte to calculated value from defined clock speed
+00000Fr 1  8D 94 FF         sta T1CL
+000012r 1  9C 95 FF         stz T1CH
+000015r 1  9C 90 FF         stz PORTB
+000018r 1  58               cli
+000019r 1  60               rts
+00001Ar 1               
+00001Ar 1               ACIA_DELAY = $10
+00001Ar 1               MIDI_DELAY = $10
+00001Ar 1               
+00001Ar 1               acia_init:
+00001Ar 1  8D E1 FF         sta ACIA_STATUS        ; soft reset (value not important)
+00001Dr 1                                           ; set specific modes and functions
+00001Dr 1  A9 0B            lda #$0B                ; no parity, no echo, no Tx interrupt, NO Rx interrupt, enable Tx/Rx
+00001Fr 1  8D E2 FF         sta ACIA_CMD            ; store to the command register
+000022r 1  A9 10            lda #$10               ; 1 stop bits, 8 bit word length, internal clock, 115.200k baud rate
+000024r 1               
+000024r 1  8D E3 FF         sta ACIA_CTRL          ; program the ctl register
+000027r 1               
+000027r 1  60               rts
+000028r 1               
+000028r 1               acia_out:
+000028r 1  48               pha
+000029r 1  5A               phy
+00002Ar 1  8D E0 FF         sta ACIA_DATA
+00002Dr 1               
+00002Dr 1  A0 10            ldy #ACIA_DELAY            ;minimal delay is $02
+00002Fr 1  20 rr rr         jsr delay_short
+000032r 1               
+000032r 1  7A               ply
+000033r 1  68               pla
+000034r 1  60               rts
+000035r 1               
+000035r 1               acia_getc:
+000035r 1  AD E1 FF         lda ACIA_STATUS                 ; Read the ACIA status to
+000038r 1  29 08            and #$08                        ; Check if there is character in the receiver
+00003Ar 1  F0 05            beq @no_char      ; Exit now if we don't get one.
+00003Cr 1  AD E0 FF         lda ACIA_DATA
+00003Fr 1  38               sec
+000040r 1  60               rts
+000041r 1               @no_char:
+000041r 1  18               clc
+000042r 1  60               rts
+000043r 1               
+000043r 1               
+000043r 1               midi_init:
+000043r 1  8D 81 FF         sta MIDI_STATUS        ; soft reset (value not important)
+000046r 1                                           ; set specific modes and functions
+000046r 1  A9 0B            lda #$0B                ; no parity, no echo, no Tx interrupt, NO Rx interrupt, enable Tx/Rx
+000048r 1  8D 82 FF         sta MIDI_CMD            ; store to the command register
+00004Br 1  A9 10            lda #$10               ; 1 stop bits, 8 bit word length, internal clock, 115.200k baud rate
+00004Dr 1               
+00004Dr 1  8D 83 FF         sta MIDI_CTRL          ; program the ctl register
+000050r 1               
+000050r 1  60               rts
+000051r 1               
+000051r 1               midi_out:
+000051r 1  48               pha
+000052r 1  5A               phy
+000053r 1  8D 80 FF         sta MIDI_DATA
+000056r 1               
+000056r 1  A0 10            ldy #MIDI_DELAY            ;minimal delay is $02
+000058r 1  20 rr rr         jsr delay_short
+00005Br 1               
+00005Br 1  7A               ply
+00005Cr 1  68               pla
+00005Dr 1  60               rts
+00005Er 1               
+00005Er 1               midi_getc:
+00005Er 1  AD 81 FF         lda MIDI_STATUS                 ; Read the ACIA status to
+000061r 1  29 08            and #$08                        ; Check if there is character in the receiver
+000063r 1  F0 05            beq @no_char      ; Exit now if we don't get one.
+000065r 1  AD 80 FF         lda MIDI_DATA
+000068r 1  38               sec
+000069r 1  60               rts
+00006Ar 1               @no_char:
+00006Ar 1  18               clc
+00006Br 1  60               rts
+00006Cr 1               
+00006Cr 1               reset:
+00006Cr 1  D8               cld
+00006Dr 1  A9 FF            lda #$FF
+00006Fr 1  8D 92 FF         sta DDRB
+000072r 1  8D 93 FF         sta DDRA
+000075r 1  A9 00            lda #$0
+000077r 1  8D 90 FF         sta PORTB
+00007Ar 1               
+00007Ar 1  20 rr rr         jsr acia_init
+00007Dr 1  20 rr rr         jsr midi_init
+000080r 1  20 rr rr         jsr load_instrument
+000083r 1               
+000083r 1  A9 41            lda #'A'
+000085r 1  20 rr rr         jsr acia_out
+000088r 1               loop:
+000088r 1  20 rr rr         jsr midi_getc
+00008Br 1  90 FB            bcc loop
+00008Dr 1                   ; pha
+00008Dr 1                   ; jsr byte_to_ascii
+00008Dr 1                   ; pla
+00008Dr 1  30 63            bmi midi_command
+00008Fr 1               midi_data:
+00008Fr 1                   ; DATA byte in A
+00008Fr 1  48               pha
+000090r 1  AD rr rr         lda midi_current_command
+000093r 1  C5 01            cmp MIDI_NOTE_ON
+000095r 1  F0 0A            beq midi_get_note_data
+000097r 1  C5 02            cmp MIDI_NOTE_OFF
+000099r 1  F0 06            beq midi_get_note_data
+00009Br 1  C5 03            cmp MIDI_CTRL_CHANGE
+00009Dr 1  F0 11            beq midi_get_controller_data
+00009Fr 1  80 4E            bra midi_data_end
+0000A1r 1               midi_get_note_data:
+0000A1r 1  AD rr rr         lda midi_bytes_left
+0000A4r 1  F0 44            beq midi_prep_next_data
+0000A6r 1  C9 02            cmp #2                  ; two bytes left, this is the note
+0000A8r 1  F0 36            beq midi_save_note
+0000AAr 1  C9 01            cmp #1                  ; one byte left, this is the velocity
+0000ACr 1  F0 25            beq midi_save_vel
+0000AEr 1  80 3F            bra midi_data_end       ; unknown number of bytes, skip
+0000B0r 1               midi_get_controller_data:
+0000B0r 1  AD rr rr         lda midi_bytes_left
+0000B3r 1  F0 35            beq midi_prep_next_data
+0000B5r 1  C9 02            cmp #2                  ; two bytes left, this is the controller number
+0000B7r 1  F0 06            beq midi_save_ctrl_num
+0000B9r 1  C9 01            cmp #1                  ; one byte left, this is the controller value
+0000BBr 1  F0 09            beq midi_save_ctrl_value
+0000BDr 1  80 30            bra midi_data_end       ; unknown number of bytes, skip
+0000BFr 1               midi_save_ctrl_num:
+0000BFr 1  FA               plx                     ; put controller number in X
+0000C0r 1  CE rr rr         dec midi_bytes_left
+0000C3r 1  DA               phx
+0000C4r 1  80 29            bra midi_data_end
+0000C6r 1               midi_save_ctrl_value:
+0000C6r 1  68               pla
+0000C7r 1  9D rr rr         sta controller_values, x
+0000CAr 1  48               pha
+0000CBr 1  20 rr rr         jsr midi_show_controller_data
+0000CEr 1  CE rr rr         dec midi_bytes_left
+0000D1r 1  80 17            bra midi_prep_next_data
+0000D3r 1               midi_save_vel:
+0000D3r 1  68               pla
+0000D4r 1  8D rr rr         sta midi_current_vel
+0000D7r 1  48               pha
+0000D8r 1                   ; We have the note and the velocity, play the note
+0000D8r 1  20 rr rr         jsr midi_play_note
+0000DBr 1  CE rr rr         dec midi_bytes_left
+0000DEr 1  80 0A            bra midi_prep_next_data
+0000E0r 1               midi_save_note:
+0000E0r 1  68               pla
+0000E1r 1  8D rr rr         sta midi_current_note
+0000E4r 1  48               pha
+0000E5r 1  CE rr rr         dec midi_bytes_left
+0000E8r 1  80 05            bra midi_data_end
+0000EAr 1               midi_prep_next_data:
+0000EAr 1  A9 02            lda #2
+0000ECr 1  8D rr rr         sta midi_bytes_left
+0000EFr 1               midi_data_end:
+0000EFr 1  68               pla
+0000F0r 1  80 4E            bra midi_end
+0000F2r 1               
+0000F2r 1               midi_command:
+0000F2r 1               
+0000F2r 1                   ; Command byte in A
+0000F2r 1  C9 FE            cmp #$FE
+0000F4r 1  F0 3E            beq midi_keepalive
+0000F6r 1  29 F0            and #$F0
+0000F8r 1  C9 90            cmp #$90
+0000FAr 1  F0 14            beq midi_note_on
+0000FCr 1  C9 80            cmp #$80
+0000FEr 1  F0 1C            beq midi_note_off
+000100r 1  C9 B0            cmp #$B0
+000102r 1  F0 24            beq midi_ctrl
+000104r 1               midi_unknown:
+000104r 1  A5 FF            lda MIDI_UNKNOWN
+000106r 1  8D rr rr         sta midi_current_command
+000109r 1  A9 00            lda #0
+00010Br 1  8D rr rr         sta midi_bytes_left
+00010Er 1  80 30            bra midi_end
+000110r 1               midi_note_on:
+000110r 1  A5 01            lda MIDI_NOTE_ON
+000112r 1  8D rr rr         sta midi_current_command
+000115r 1  A9 02            lda #2
+000117r 1  8D rr rr         sta midi_bytes_left
+00011Ar 1  80 24            bra midi_end
+00011Cr 1               midi_note_off:
+00011Cr 1  A5 02            lda MIDI_NOTE_OFF
+00011Er 1  8D rr rr         sta midi_current_command
+000121r 1  A9 02            lda #2
+000123r 1  8D rr rr         sta midi_bytes_left
+000126r 1  80 18            bra midi_end
+000128r 1               midi_ctrl:
+000128r 1  A5 03            lda MIDI_CTRL_CHANGE
+00012Ar 1  8D rr rr         sta midi_current_command
+00012Dr 1  A9 02            lda #2
+00012Fr 1  8D rr rr         sta midi_bytes_left
+000132r 1  80 0C            bra midi_end
+000134r 1               midi_keepalive:
+000134r 1  A5 00            lda MIDI_NONE
+000136r 1  8D rr rr         sta midi_current_command
+000139r 1  A9 00            lda #0
+00013Br 1  8D rr rr         sta midi_bytes_left
+00013Er 1  80 00            bra midi_end
+000140r 1               
+000140r 1               midi_end:
+000140r 1               
+000140r 1                   ; output data from ACIA
+000140r 1                   ;jsr byte_to_ascii
+000140r 1  4C rr rr         jmp loop
+000143r 1               
+000143r 1               
+000143r 1               midi_play_note:
+000143r 1  48               pha
+000144r 1  AD rr rr         lda midi_current_vel
+000147r 1  F0 08            beq play_note_off
+000149r 1                   ; printascii midi_note_on_msg
+000149r 1                   ; lda #' '
+000149r 1                   ; jsr acia_out
+000149r 1  AD rr rr         lda midi_current_note
+00014Cr 1                   ; pha
+00014Cr 1  20 rr rr         jsr play_midi_note
+00014Fr 1                   ; pla
+00014Fr 1                   ; jsr byte_to_ascii
+00014Fr 1                   ; lda #' '
+00014Fr 1                   ; jsr acia_out
+00014Fr 1                   ;lda midi_current_vel
+00014Fr 1                   ; jsr byte_to_ascii
+00014Fr 1  80 06            bra midi_play_end
+000151r 1               play_note_off:
+000151r 1                   ; printascii midi_note_off_msg
+000151r 1                   ; lda #'-'
+000151r 1                   ; jsr acia_out
+000151r 1  AD rr rr         lda midi_current_note
+000154r 1                   ; pha
+000154r 1                   ; jsr byte_to_ascii
+000154r 1                   ; pla
+000154r 1  20 rr rr         jsr stop_midi_note
+000157r 1               midi_play_end:
+000157r 1                   ; lda #$0A
+000157r 1                   ; jsr acia_out
+000157r 1                   ; lda #$0D
+000157r 1                   ; jsr acia_out
+000157r 1  68               pla
+000158r 1  60               rts
+000159r 1               
+000159r 1               midi_show_controller_data:
+000159r 1                   ; controller number is in X
+000159r 1                   ; controller value is in controller_values, x
+000159r 1  DA               phx
+00015Ar 1  E0 0A            cpx #$0A            ; 0A is attack
+00015Cr 1  F0 1E            beq @attack_decay
+00015Er 1  E0 0B            cpx #$0B             ; 0B is decay
+000160r 1  F0 1A            beq @attack_decay
+000162r 1  E0 07            cpx #$07             ; 07 is volume
+000164r 1  F0 02            beq @volume
+000166r 1  80 31            bra @exit
+000168r 1               @volume:
+000168r 1  38               sec
+000169r 1  A9 7F            lda #127     ; load current volume
+00016Br 1  ED rr rr         sbc controller_values + $07
+00016Er 1  4A               lsr                             ; move one bit left since top bit is always zero
+00016Fr 1  A2 40            ldx #$40
+000171r 1  20 rr rr         jsr set_reg
+000174r 1  A2 43            ldx #$43
+000176r 1  20 rr rr         jsr set_reg
+000179r 1  FA               plx
+00017Ar 1  80 1D            bra @exit
+00017Cr 1               @attack_decay:
+00017Cr 1  AD rr rr         lda controller_values + $0B     ; load current decay
+00017Fr 1  4A               lsr ; keep only the 4 most significant bits
+000180r 1  4A               lsr
+000181r 1  4A               lsr
+000182r 1  8D rr rr         sta ctrl_tmp
+000185r 1  AD rr rr         lda controller_values + $0A     ; load current attack
+000188r 1  0A               asl                             ; move one bit left since top bit is always zero
+000189r 1  29 F0            and #$F0                        ; keep only high bits
+00018Br 1  0D rr rr         ora ctrl_tmp
+00018Er 1  A2 60            ldx #$60
+000190r 1  20 rr rr         jsr set_reg
+000193r 1  A2 63            ldx #$63
+000195r 1  20 rr rr         jsr set_reg
+000198r 1                   ; pha
+000198r 1                   ; jsr byte_to_ascii
+000198r 1                   ; pla
+000198r 1  FA               plx
+000199r 1               @exit:
+000199r 1                   ; plx
+000199r 1                   ; pha
+000199r 1                   ; printascii midi_ctrl_msg
+000199r 1                   ; txa
+000199r 1                   ; jsr byte_to_ascii
+000199r 1                   ; lda controller_values, x
+000199r 1                   ; jsr byte_to_ascii
+000199r 1                   ; lda #$0A
+000199r 1                   ; jsr acia_out
+000199r 1                   ; lda #$0D
+000199r 1                   ; jsr acia_out
+000199r 1                   ; pla
+000199r 1  60               rts
+00019Ar 1               
+00019Ar 1  4E 6F 74 65  midi_note_on_msg: .asciiz "Note on"
+00019Er 1  20 6F 6E 00  
+0001A2r 1  4E 6F 74 65  midi_note_off_msg: .asciiz "Note off"
+0001A6r 1  20 6F 66 66  
+0001AAr 1  00           
+0001ABr 1  43 74 72 6C  midi_ctrl_msg: .asciiz "Ctrl change"
+0001AFr 1  20 63 68 61  
+0001B3r 1  6E 67 65 00  
+0001B7r 1               v_irq:
+0001B7r 1  48               pha
+0001B8r 1                   ; lda #'I'
+0001B8r 1                   ; jsr acia_out
+0001B8r 1                   ; lda IFR
+0001B8r 1                   ; bpl irq_exit  ; Interrupt not from VIA, exit
+0001B8r 1                   ; and #$40
+0001B8r 1                   ; beq irq_exit
+0001B8r 1               v_irq_timer:
+0001B8r 1  AD 94 FF         lda T1CL
+0001BBr 1                   ; clear timer interrupt
+0001BBr 1  EE 90 FF         inc PORTB
+0001BEr 1               irq_exit:
+0001BEr 1  68               pla
+0001BFr 1  40               rti
+0001C0r 1               
+0001C0r 1               
+0001C0r 1               
+0001C0r 1               byte_to_ascii:
+0001C0r 1               ; """Convert byte in A to two ASCII hex digits and EMIT them"""
+0001C0r 1               .scope
+0001C0r 1  48               pha
+0001C1r 1  4A               lsr             ; convert high nibble first
+0001C2r 1  4A               lsr
+0001C3r 1  4A               lsr
+0001C4r 1  4A               lsr
+0001C5r 1  20 rr rr         jsr _nibble_to_ascii
+0001C8r 1  68               pla
+0001C9r 1               
+0001C9r 1                   ; fall through to _nibble_to_ascii
+0001C9r 1               
+0001C9r 1               _nibble_to_ascii:
+0001C9r 1               ; """Private helper function for byte_to_ascii: Print lower nibble
+0001C9r 1               ; of A and and EMIT it. This does the actual work.
+0001C9r 1               ; """
+0001C9r 1  29 0F            and #$0F
+0001CBr 1  09 30            ora #'0'
+0001CDr 1  C9 3A            cmp #$3A        ; '9+1
+0001CFr 1  90 02            bcc @1
+0001D1r 1  69 06            adc #$06
+0001D3r 1               
+0001D3r 1               @1:
+0001D3r 1  20 rr rr         jsr acia_out
+0001D6r 1               
+0001D6r 1  60               rts
+0001D7r 1               .endscope
+0001D7r 1               
+0001D7r 1               ; register address is in X
+0001D7r 1               ; register data is in A
+0001D7r 1               set_reg:
+0001D7r 1  8E A0 FF         stx REGISTER_ADDRESS
+0001DAr 1  A0 10            ldy #$10
+0001DCr 1  20 rr rr         jsr delay_short
+0001DFr 1  8D A1 FF         sta REGISTER_DATA
+0001E2r 1               
+0001E2r 1  A0 10            ldy #$10
+0001E4r 1  20 rr rr         jsr delay_short
+0001E7r 1  60               rts
+0001E8r 1               
+0001E8r 1               play_midi_note:
+0001E8r 1                   ; the midi note to play is in A
+0001E8r 1                   ; cmp last_played_note
+0001E8r 1               ;     bne @play
+0001E8r 1               ;     jsr kill_note
+0001E8r 1               ; @play:
+0001E8r 1  8D rr rr         sta last_played_note    ; save it temporalily for legato
+0001EBr 1  0A               asl                     ; multiply note by two because we have 2 bytes per note
+0001ECr 1  AA               tax
+0001EDr 1  DA               phx
+0001EEr 1  BD rr rr         lda midi_freqs, x   ; this loads the low byte (which come first in memory)
+0001F1r 1  A2 A0            ldx #$A0            ; this is the low byte of the frequency
+0001F3r 1  20 rr rr         jsr set_reg
+0001F6r 1  FA               plx
+0001F7r 1  E8               inx                 ; this will get high byte of word,
+0001F8r 1  BD rr rr         lda midi_freqs, x   ; containing the rest of the freq and the block number
+0001FBr 1  09 20            ora #KON
+0001FDr 1  A2 B0            ldx #$B0            ; put it in the proper register
+0001FFr 1  20 rr rr         jsr set_reg
+000202r 1  60               rts
+000203r 1               
+000203r 1               stop_midi_note:
+000203r 1  CD rr rr         cmp last_played_note        ; only stop note if it is the note currently playing
+000206r 1  D0 07            bne stop_exit
+000208r 1               kill_note:
+000208r 1  A9 00            lda #0
+00020Ar 1  A2 B0            ldx #$B0
+00020Cr 1  20 rr rr         jsr set_reg
+00020Fr 1               stop_exit:
+00020Fr 1  60               rts
+000210r 1               
+000210r 1               
+000210r 1               load_instrument:
+000210r 1  A2 20            ldx #$20
+000212r 1  AD rr rr         lda BANJO1
+000215r 1  20 rr rr         jsr set_reg
+000218r 1  A2 40            ldx #$40
+00021Ar 1  AD rr rr         lda BANJO1+1
+00021Dr 1  20 rr rr         jsr set_reg
+000220r 1  A2 60            ldx #$60
+000222r 1  AD rr rr         lda BANJO1+2
+000225r 1  20 rr rr         jsr set_reg
+000228r 1  A2 80            ldx #$80
+00022Ar 1  AD rr rr         lda BANJO1+3
+00022Dr 1  20 rr rr         jsr set_reg
+000230r 1  A2 C0            ldx #$C0
+000232r 1  AD rr rr         lda BANJO1+4
+000235r 1  20 rr rr         jsr set_reg
+000238r 1               
+000238r 1  A2 23            ldx #$23
+00023Ar 1  AD rr rr         lda BANJO1+5
+00023Dr 1  20 rr rr         jsr set_reg
+000240r 1  A2 43            ldx #$43
+000242r 1  AD rr rr         lda BANJO1+6
+000245r 1  20 rr rr         jsr set_reg
+000248r 1  A2 63            ldx #$63
+00024Ar 1  AD rr rr         lda BANJO1+7
+00024Dr 1  20 rr rr         jsr set_reg
+000250r 1  A2 83            ldx #$83
+000252r 1  AD rr rr         lda BANJO1+8
+000255r 1  20 rr rr         jsr set_reg
+000258r 1  A2 C3            ldx #$C3
+00025Ar 1  AD rr rr         lda BANJO1+9
+00025Dr 1  20 rr rr         jsr set_reg
+000260r 1               
+000260r 1  A2 E0            ldx #$E0
+000262r 1  AD rr rr         lda BANJO1+10
+000265r 1  20 rr rr         jsr set_reg
+000268r 1  60               rts
+000269r 1               
+000269r 1  00 31 87 A1  BANJO1:   .byte $00, $31, $87, $A1, $11, $08, $16, $80, $7D, $43, $00
+00026Dr 1  11 08 16 80  
+000271r 1  7D 43 00     
+000274r 1               
+000274r 1               ; this array starts at midi note 0 and goes up to 127
+000274r 1               ; the low byte of each word is the calculated frequency number
+000274r 1               ; the high byte of the word is the block number
+000274r 1               midi_freqs:
+000274r 1  AD 00        .word $AD
+000276r 1  B7 00        .word $B7
+000278r 1  C2 00        .word $C2
+00027Ar 1  CD 00        .word $CD
+00027Cr 1  D9 00        .word $D9
+00027Er 1  E6 00        .word $E6
+000280r 1  F4 00        .word $F4
+000282r 1  02 01        .word $102
+000284r 1  12 01        .word $112
+000286r 1  22 01        .word $122
+000288r 1  33 01        .word $133
+00028Ar 1  45 01        .word $145
+00028Cr 1  59 01        .word $159
+00028Er 1  6D 01        .word $16D
+000290r 1  83 01        .word $183
+000292r 1  9A 01        .word $19A
+000294r 1  B2 01        .word $1B2
+000296r 1  CC 01        .word $1CC
+000298r 1  E8 01        .word $1E8
+00029Ar 1  05 02        .word $205
+00029Cr 1  24 02        .word $224
+00029Er 1  44 02        .word $244
+0002A0r 1  67 02        .word $267
+0002A2r 1  8B 02        .word $28B
+0002A4r 1  B2 02        .word $2B2
+0002A6r 1  DB 02        .word $2DB
+0002A8r 1  06 03        .word $306
+0002AAr 1  34 03        .word $334
+0002ACr 1  65 03        .word $365
+0002AEr 1  99 03        .word $399
+0002B0r 1  CF 03        .word $3CF
+0002B2r 1  05 06        .word $205 | $400
+0002B4r 1  23 06        .word $223 | $400
+0002B6r 1  44 06        .word $244 | $400
+0002B8r 1  66 06        .word $266 | $400
+0002BAr 1  8B 06        .word $28B | $400
+0002BCr 1  B2 06        .word $2B2 | $400
+0002BEr 1  DB 06        .word $2DB | $400
+0002C0r 1  06 07        .word $306 | $400
+0002C2r 1  34 07        .word $334 | $400
+0002C4r 1  65 07        .word $365 | $400
+0002C6r 1  99 07        .word $399 | $400
+0002C8r 1  CF 07        .word $3CF | $400
+0002CAr 1  05 0A        .word $205 | $800
+0002CCr 1  23 0A        .word $223 | $800
+0002CEr 1  44 0A        .word $244 | $800
+0002D0r 1  66 0A        .word $266 | $800
+0002D2r 1  8B 0A        .word $28B | $800
+0002D4r 1  B2 0A        .word $2B2 | $800
+0002D6r 1  DB 0A        .word $2DB | $800
+0002D8r 1  06 0B        .word $306 | $800
+0002DAr 1  34 0B        .word $334 | $800
+0002DCr 1  65 0B        .word $365 | $800
+0002DEr 1  99 0B        .word $399 | $800
+0002E0r 1  CF 0B        .word $3CF | $800
+0002E2r 1  05 0E        .word $205 | $C00
+0002E4r 1  23 0E        .word $223 | $C00
+0002E6r 1  44 0E        .word $244 | $C00
+0002E8r 1  66 0E        .word $266 | $C00
+0002EAr 1  8B 0E        .word $28B | $C00
+0002ECr 1  B2 0E        .word $2B2 | $C00
+0002EEr 1  DB 0E        .word $2DB | $C00
+0002F0r 1  06 0F        .word $306 | $C00
+0002F2r 1  34 0F        .word $334 | $C00
+0002F4r 1  65 0F        .word $365 | $C00
+0002F6r 1  99 0F        .word $399 | $C00
+0002F8r 1  CF 0F        .word $3CF | $C00
+0002FAr 1  05 12        .word $205 | $1000
+0002FCr 1  23 12        .word $223 | $1000
+0002FEr 1  44 12        .word $244 | $1000
+000300r 1  66 12        .word $266 | $1000
+000302r 1  8B 12        .word $28B | $1000
+000304r 1  B2 12        .word $2B2 | $1000
+000306r 1  DB 12        .word $2DB | $1000
+000308r 1  06 13        .word $306 | $1000
+00030Ar 1  34 13        .word $334 | $1000
+00030Cr 1  65 13        .word $365 | $1000
+00030Er 1  99 13        .word $399 | $1000
+000310r 1  CF 13        .word $3CF | $1000
+000312r 1  05 16        .word $205 | $1400
+000314r 1  23 16        .word $223 | $1400
+000316r 1  44 16        .word $244 | $1400
+000318r 1  66 16        .word $266 | $1400
+00031Ar 1  8B 16        .word $28B | $1400
+00031Cr 1  B2 16        .word $2B2 | $1400
+00031Er 1  DB 16        .word $2DB | $1400
+000320r 1  06 17        .word $306 | $1400
+000322r 1  34 17        .word $334 | $1400
+000324r 1  65 17        .word $365 | $1400
+000326r 1  99 17        .word $399 | $1400
+000328r 1  CF 17        .word $3CF | $1400
+00032Ar 1  05 1A        .word $205 | $1800
+00032Cr 1  23 1A        .word $223 | $1800
+00032Er 1  44 1A        .word $244 | $1800
+000330r 1  66 1A        .word $266 | $1800
+000332r 1  8B 1A        .word $28B | $1800
+000334r 1  B2 1A        .word $2B2 | $1800
+000336r 1  DB 1A        .word $2DB | $1800
+000338r 1  06 1B        .word $306 | $1800
+00033Ar 1  34 1B        .word $334 | $1800
+00033Cr 1  65 1B        .word $365 | $1800
+00033Er 1  99 1B        .word $399 | $1800
+000340r 1  CF 1B        .word $3CF | $1800
+000342r 1  05 1E        .word $205 | $1C00
+000344r 1  23 1E        .word $223 | $1C00
+000346r 1  44 1E        .word $244 | $1C00
+000348r 1  66 1E        .word $266 | $1C00
+00034Ar 1  8B 1E        .word $28B | $1C00
+00034Cr 1  B2 1E        .word $2B2 | $1C00
+00034Er 1  DB 1E        .word $2DB | $1C00
+000350r 1  06 1F        .word $306 | $1C00
+000352r 1  34 1F        .word $334 | $1C00
+000354r 1  65 1F        .word $365 | $1C00
+000356r 1  99 1F        .word $399 | $1C00
+000358r 1  CF 1F        .word $3CF | $1C00
+00035Ar 1               
+00035Ar 1               
+00035Ar 1               
+00035Ar 1               
+00035Ar 1               
+00035Ar 1               
+00035Ar 1               
+00035Ar 1               
+00035Ar 1               
+00035Ar 1               
+00035Ar 1               
+00035Ar 1               
+00035Ar 1               
+00035Ar 1               
+00035Ar 1               
+00035Ar 1               
+00035Ar 1               
+00035Ar 1               
+00035Ar 1               
+00035Ar 1               
+00035Ar 1               
+00035Ar 1               
+00035Ar 1                   .include "../fos/platform/planck/drivers/delayroutines.s"
+00035Ar 2               ; Copyright 2020 Jonathan Foucher
+00035Ar 2               
+00035Ar 2               ; Permission is hereby granted, free of charge, to any person obtaining a copy of this software
+00035Ar 2               ; and associated documentation files (the "Software"), to deal in the Software without restriction,
+00035Ar 2               ; including without limitation the rights to use, copy, modify, merge, publish, distribute,
+00035Ar 2               ; sublicense, and/or sell copies of the Software, and to permit persons to whom the Software
+00035Ar 2               ; is furnished to do so, subject to the following conditions:
+00035Ar 2               
+00035Ar 2               ; The above copyright notice and this permission notice shall be included in all copies or
+00035Ar 2               ; substantial portions of the Software.
+00035Ar 2               
+00035Ar 2               ; THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED,
+00035Ar 2               ; INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR
+00035Ar 2               ; PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE
+00035Ar 2               ; FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR
+00035Ar 2               ; OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
+00035Ar 2               ; DEALINGS IN THE SOFTWARE.
+00035Ar 2               
+00035Ar 2               
+00035Ar 2               ; this routine delays by 2304 * y + 23 cycles
+00035Ar 2               delay:
+00035Ar 2  DA             phx       ; 3 cycles
+00035Br 2  5A             phy       ; 3 cycles
+00035Cr 2               two:
+00035Cr 2  A2 FF          ldx #$ff  ; 2 cycles
+00035Er 2               one:
+00035Er 2  EA             nop       ; 2 cycles
+00035Fr 2  EA             nop       ; 2 cycles
+000360r 2  CA             dex       ; 2 cycles
+000361r 2  D0 FB          bne one   ; 3 for all cycles, 2 for last
+000363r 2  88             dey       ; 2 cycles
+000364r 2  D0 F6          bne two   ; 3 for all cycles, 2 for last
+000366r 2  7A             ply       ; 4 cycles
+000367r 2  FA             plx       ; 4 cycles
+000368r 2  60             rts       ; 6 cycles
+000369r 2               
+000369r 2               ; delay is in Y register
+000369r 2               delay_long:
+000369r 2  48             pha
+00036Ar 2  5A             phy
+00036Br 2  DA             phx
+00036Cr 2  98             tya
+00036Dr 2  AA             tax
+00036Er 2               delay_long_loop:
+00036Er 2  A0 FF          ldy #$ff
+000370r 2  20 rr rr       jsr delay
+000373r 2  CA             dex
+000374r 2  D0 F8          bne delay_long_loop
+000376r 2  FA             plx
+000377r 2  7A             ply
+000378r 2  68             pla
+000379r 2  60             rts
+00037Ar 2               
+00037Ar 2               delay_short:        ; delay Y * 19 cycles
+00037Ar 2  5A             phy
+00037Br 2               delay_short_loop:
+00037Br 2  EA             nop               ; 2 cycles
+00037Cr 2  EA             nop               ; 2 cycles
+00037Dr 2  EA             nop               ; 2 cycles
+00037Er 2  EA             nop               ; 2 cycles
+00037Fr 2  EA             nop               ; 2 cycles
+000380r 2  EA             nop               ; 2 cycles
+000381r 2  EA             nop               ; 2 cycles
+000382r 2               
+000382r 2               
+000382r 2  88             dey               ; 2 cycles
+000383r 2  D0 F6          bne delay_short_loop   ; 2 or 3 cycles
+000385r 2  7A             ply
+000386r 2  60             rts
+000387r 2               
+000387r 1                   .segment "ROM_VECTORS"
+000000r 1               nmivec:
+000000r 1  rr rr            .WORD  reset
+000002r 1               resvec:
+000002r 1  rr rr            .WORD  reset
+000004r 1               irqvec:
+000004r 1  rr rr            .WORD  v_irq
+000004r 1               

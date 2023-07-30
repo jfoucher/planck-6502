@@ -1,0 +1,30 @@
+Modules list:
+-------------
+midi_test.o:
+    CODE              Offs=000000  Size=000387  Align=00001  Fill=0000
+    BSS               Offs=000000  Size=00007E  Align=00001  Fill=0000
+    ROM_VECTORS       Offs=000000  Size=000006  Align=00001  Fill=0000
+
+
+Segment list:
+-------------
+Name                   Start     End    Size  Align
+----------------------------------------------------
+BSS                   000200  00027D  00007E  00001
+CODE                  00E000  00E386  000387  00001
+ROM_VECTORS           00FFFA  00FFFF  000006  00001
+
+
+Exports list by name:
+---------------------
+
+
+
+Exports list by value:
+----------------------
+
+
+
+Imports list:
+-------------
+

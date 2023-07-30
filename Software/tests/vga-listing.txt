@@ -1,0 +1,479 @@
+ca65 V2.18 - N/A
+Main file   : vga_test.s
+Current file: vga_test.s
+
+000000r 1               
+000000r 1               .segment "ZEROPAGE": zeropage
+000000r 1  xx           line: .res 1
+000001r 1  xx           char: .res 1
+000002r 1               
+000002r 1               .segment "CODE"
+000000r 1               
+000000r 1               .include "../fos/platform/planck/drivers/via.inc"
+000000r 2               ; Copyright 2020 Jonathan Foucher
+000000r 2               
+000000r 2               ; Permission is hereby granted, free of charge, to any person obtaining a copy of this software
+000000r 2               ; and associated documentation files (the "Software"), to deal in the Software without restriction,
+000000r 2               ; including without limitation the rights to use, copy, modify, merge, publish, distribute,
+000000r 2               ; sublicense, and/or sell copies of the Software, and to permit persons to whom the Software
+000000r 2               ; is furnished to do so, subject to the following conditions:
+000000r 2               
+000000r 2               ; The above copyright notice and this permission notice shall be included in all copies or
+000000r 2               ; substantial portions of the Software.
+000000r 2               
+000000r 2               ; THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED,
+000000r 2               ; INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR
+000000r 2               ; PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE
+000000r 2               ; FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR
+000000r 2               ; OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
+000000r 2               ; DEALINGS IN THE SOFTWARE.
+000000r 2               
+000000r 2               
+000000r 2               VIA1_BASE   = $FF80
+000000r 2               PORTB = VIA1_BASE
+000000r 2               PORTA  = VIA1_BASE+1
+000000r 2               DDRB = VIA1_BASE+2
+000000r 2               DDRA = VIA1_BASE+3
+000000r 2               
+000000r 2               
+000000r 2               T1CL = VIA1_BASE + 4
+000000r 2               T1CH = VIA1_BASE + 5
+000000r 2               T1LL = VIA1_BASE + 6
+000000r 2               T1LH = VIA1_BASE + 7
+000000r 2               ACR = VIA1_BASE + 11
+000000r 2               PCR = VIA1_BASE + 12
+000000r 2               IFR = VIA1_BASE + 13
+000000r 2               IER = VIA1_BASE + 14
+000000r 2               
+000000r 1               .include "../fos/platform/planck/drivers/vga.inc"
+000000r 2               VIDEO_BASE = $FFB0
+000000r 2               
+000000r 2               VIDEO_CTRL = VIDEO_BASE       ;// Formatted as follows |INCR_5|INCR_4|INCR_3|INCR_2|INCR_1|INCR_0|MODE_1|MODE_0|  default to LORES
+000000r 2               VIDEO_ADDR_LOW = VIDEO_BASE + 1   ;// also contains the increment ||||ADDR4|ADDR_3|ADDR_2|ADDR_1|ADDR_0|
+000000r 2               VIDEO_ADDR_HIGH = VIDEO_BASE + 2
+000000r 2               VIDEO_DATA = VIDEO_BASE + 3
+000000r 2               VIDEO_IEN = VIDEO_BASE + 4    ;// formatted as follows |VSYNC| | | | | | |HSYNC|
+000000r 2               VIDEO_INTR = VIDEO_BASE + 5   ;// formatted as follows |VSYNC| | | | | | |HSYNC|
+000000r 2               VIDEO_HSCROLL = VIDEO_BASE + 6
+000000r 2               VIDEO_VSCROLL = VIDEO_BASE + 7
+000000r 2               
+000000r 2               VIDEO_HIRES_HCHARS = 80
+000000r 2               VIDEO_HIRES_VCHARS = 60
+000000r 2               
+000000r 1               .include "../fos/platform/planck/drivers/vga.s"
+000000r 2               
+000000r 2               
+000000r 2               video_init:
+000000r 2                   ; set colors
+000000r 2  A9 05            lda #$05
+000002r 2  8D B0 FF         sta VIDEO_CTRL
+000005r 2  A9 1E            lda #$1E
+000007r 2  8D B1 FF         sta VIDEO_ADDR_LOW
+00000Ar 2  A9 FF            lda #$FF
+00000Cr 2  8D B2 FF         sta VIDEO_ADDR_HIGH
+00000Fr 2  A9 00            lda #$00
+000011r 2  8D B3 FF         sta VIDEO_DATA
+000014r 2  A9 F0            lda #$F0
+000016r 2  8D B3 FF         sta VIDEO_DATA
+000019r 2  A9 00            lda #0
+00001Br 2  8D B4 FF         sta VIDEO_IEN
+00001Er 2  8D B1 FF         sta VIDEO_ADDR_LOW
+000021r 2  8D B2 FF         sta VIDEO_ADDR_HIGH
+000024r 2  20 rr rr         jsr vga_clear
+000027r 2  60               rts
+000028r 2               
+000028r 2               char_out:
+000028r 2  48               pha
+000029r 2  DA               phx
+00002Ar 2  5A               phy
+00002Br 2  C9 0D            cmp #$0D
+00002Dr 2  F0 34            beq next_line
+00002Fr 2  C9 0A            cmp #$0A
+000031r 2  F0 30            beq next_line
+000033r 2  C9 08            cmp #$08
+000035r 2  F0 0F            beq backspace
+000037r 2  8D B3 FF         sta VIDEO_DATA
+00003Ar 2  E6 rr            inc char
+00003Cr 2  A6 rr            ldx char
+00003Er 2  E0 50            cpx #VIDEO_HIRES_HCHARS
+000040r 2  F0 21            beq next_line
+000042r 2               
+000042r 2               char_out_exit:
+000042r 2  7A               ply
+000043r 2  FA               plx
+000044r 2  68               pla
+000045r 2  60               rts
+000046r 2               
+000046r 2               backspace:
+000046r 2  C6 rr            dec char
+000048r 2  A9 85            lda #$85        ; make increment negative
+00004Ar 2  8D B0 FF         sta VIDEO_CTRL
+00004Dr 2  A9 20            lda #$20
+00004Fr 2  8D B3 FF         sta VIDEO_DATA  ;write a space to go back one
+000052r 2  A9 01            lda #$01        ; make increment zero
+000054r 2  8D B0 FF         sta VIDEO_CTRL
+000057r 2  A9 20            lda #$20
+000059r 2  8D B3 FF         sta VIDEO_DATA  ; replace with a space
+00005Cr 2  A9 05            lda #$05        ; make increment positive again
+00005Er 2  8D B0 FF         sta VIDEO_CTRL
+000061r 2  80 DF            bra char_out_exit
+000063r 2               
+000063r 2               next_line:
+000063r 2  E6 rr            inc line
+000065r 2  64 rr            stz char
+000067r 2  A6 rr            ldx line
+000069r 2  E0 3C            cpx #VIDEO_HIRES_VCHARS
+00006Br 2  90 05            bcc nl
+00006Dr 2  20 rr rr         jsr scroll_up
+000070r 2  80 D0            bra char_out_exit
+000072r 2               nl:
+000072r 2  BD rr rr         lda mult_table_high,x
+000075r 2  8D B2 FF         sta VIDEO_ADDR_HIGH
+000078r 2  BD rr rr         lda mult_table_low,x
+00007Br 2  8D B1 FF         sta VIDEO_ADDR_LOW
+00007Er 2  80 C2            bra char_out_exit
+000080r 2               
+000080r 2               scroll_up:
+000080r 2  20 rr rr         jsr vga_clear
+000083r 2  60               rts
+000084r 2  48               pha
+000085r 2                   ; lda #1
+000085r 2                   ; sta VIDEO_VSCROLL
+000085r 2                   ; lda mult_table_high+60
+000085r 2                   ; sta VIDEO_ADDR_HIGH
+000085r 2                   ; lda mult_table_low+60
+000085r 2                   ; sta VIDEO_ADDR_LOW
+000085r 2  A9 00            lda #0
+000087r 2  8D B2 FF         sta VIDEO_ADDR_HIGH
+00008Ar 2  8D B1 FF         sta VIDEO_ADDR_LOW
+00008Dr 2  85 rr            sta char
+00008Fr 2  85 rr            sta line
+000091r 2  68               pla
+000092r 2  60               rts
+000093r 2               
+000093r 2               vga_clear:
+000093r 2  48               pha
+000094r 2  DA               phx
+000095r 2  5A               phy
+000096r 2  A9 00            lda #0
+000098r 2  85 rr            sta line
+00009Ar 2                   ;lda #$05                ; monochrome chars, increment by one
+00009Ar 2                   ;sta VIDEO_CTRL
+00009Ar 2               
+00009Ar 2  A9 00            lda #$00                ; set start address
+00009Cr 2  8D B2 FF         sta VIDEO_ADDR_HIGH
+00009Fr 2  8D B1 FF         sta VIDEO_ADDR_LOW
+0000A2r 2               
+0000A2r 2  A9 20            lda #$20
+0000A4r 2  A0 50            ldy #VIDEO_HIRES_HCHARS
+0000A6r 2               outer:
+0000A6r 2  A2 3C            ldx #VIDEO_HIRES_VCHARS
+0000A8r 2               inner:
+0000A8r 2  8D B3 FF         sta VIDEO_DATA
+0000ABr 2               
+0000ABr 2  CA               dex
+0000ACr 2  D0 FA            bne inner
+0000AEr 2  88               dey
+0000AFr 2  D0 F5            bne outer
+0000B1r 2               
+0000B1r 2  A9 00            lda #0
+0000B3r 2  85 rr            sta line
+0000B5r 2  85 rr            sta char
+0000B7r 2  A9 00            lda #$00
+0000B9r 2  8D B2 FF         sta VIDEO_ADDR_HIGH
+0000BCr 2  8D B1 FF         sta VIDEO_ADDR_LOW
+0000BFr 2  7A               ply
+0000C0r 2  FA               plx
+0000C1r 2  68               pla
+0000C2r 2  60               rts
+0000C3r 2               
+0000C3r 2               
+0000C3r 2               
+0000C3r 2               ; These are precalculated multiplications for ADDR_LOW and ADDR_HIGH depending on the line number
+0000C3r 2               mult_table_high:
+0000C3r 2  00               .byte $00
+0000C4r 2  02               .byte $02
+0000C5r 2  05               .byte $05
+0000C6r 2  07               .byte $07
+0000C7r 2  0A               .byte $0a
+0000C8r 2  0C               .byte $0c
+0000C9r 2  0F               .byte $0f
+0000CAr 2  11               .byte $11
+0000CBr 2  14               .byte $14
+0000CCr 2  16               .byte $16
+0000CDr 2  19               .byte $19
+0000CEr 2  1B               .byte $1b
+0000CFr 2  1E               .byte $1e
+0000D0r 2  20               .byte $20
+0000D1r 2  23               .byte $23
+0000D2r 2  25               .byte $25
+0000D3r 2  28               .byte $28
+0000D4r 2  2A               .byte $2a
+0000D5r 2  2D               .byte $2d
+0000D6r 2  2F               .byte $2f
+0000D7r 2  32               .byte $32
+0000D8r 2  34               .byte $34
+0000D9r 2  37               .byte $37
+0000DAr 2  39               .byte $39
+0000DBr 2  3C               .byte $3c
+0000DCr 2  3E               .byte $3e
+0000DDr 2  41               .byte $41
+0000DEr 2  43               .byte $43
+0000DFr 2  46               .byte $46
+0000E0r 2  48               .byte $48
+0000E1r 2  4B               .byte $4b
+0000E2r 2  4D               .byte $4d
+0000E3r 2  50               .byte $50
+0000E4r 2  52               .byte $52
+0000E5r 2  55               .byte $55
+0000E6r 2  57               .byte $57
+0000E7r 2  5A               .byte $5a
+0000E8r 2  5C               .byte $5c
+0000E9r 2  5F               .byte $5f
+0000EAr 2  61               .byte $61
+0000EBr 2  64               .byte $64
+0000ECr 2  66               .byte $66
+0000EDr 2  69               .byte $69
+0000EEr 2  6B               .byte $6b
+0000EFr 2  6E               .byte $6e
+0000F0r 2  70               .byte $70
+0000F1r 2  73               .byte $73
+0000F2r 2  75               .byte $75
+0000F3r 2  78               .byte $78
+0000F4r 2  7A               .byte $7a
+0000F5r 2  7D               .byte $7d
+0000F6r 2  7F               .byte $7f
+0000F7r 2  82               .byte $82
+0000F8r 2  84               .byte $84
+0000F9r 2  87               .byte $87
+0000FAr 2  89               .byte $89
+0000FBr 2  8C               .byte $8c
+0000FCr 2  8E               .byte $8e
+0000FDr 2  91               .byte $91
+0000FEr 2  93               .byte $93
+0000FFr 2  96               .byte $96
+000100r 2               
+000100r 2               mult_table_low:
+000100r 2  00               .byte $00
+000101r 2  10               .byte $10
+000102r 2  00               .byte $00
+000103r 2  10               .byte $10
+000104r 2  00               .byte $00
+000105r 2  10               .byte $10
+000106r 2  00               .byte $00
+000107r 2  10               .byte $10
+000108r 2  00               .byte $00
+000109r 2  10               .byte $10
+00010Ar 2  00               .byte $00
+00010Br 2  10               .byte $10
+00010Cr 2  00               .byte $00
+00010Dr 2  10               .byte $10
+00010Er 2  00               .byte $00
+00010Fr 2  10               .byte $10
+000110r 2  00               .byte $00
+000111r 2  10               .byte $10
+000112r 2  00               .byte $00
+000113r 2  10               .byte $10
+000114r 2  00               .byte $00
+000115r 2  10               .byte $10
+000116r 2  00               .byte $00
+000117r 2  10               .byte $10
+000118r 2  00               .byte $00
+000119r 2  10               .byte $10
+00011Ar 2  00               .byte $00
+00011Br 2  10               .byte $10
+00011Cr 2  00               .byte $00
+00011Dr 2  10               .byte $10
+00011Er 2  00               .byte $00
+00011Fr 2  10               .byte $10
+000120r 2  00               .byte $00
+000121r 2  10               .byte $10
+000122r 2  00               .byte $00
+000123r 2  10               .byte $10
+000124r 2  00               .byte $00
+000125r 2  10               .byte $10
+000126r 2  00               .byte $00
+000127r 2  10               .byte $10
+000128r 2  00               .byte $00
+000129r 2  10               .byte $10
+00012Ar 2  00               .byte $00
+00012Br 2  10               .byte $10
+00012Cr 2  00               .byte $00
+00012Dr 2  10               .byte $10
+00012Er 2  00               .byte $00
+00012Fr 2  10               .byte $10
+000130r 2  00               .byte $00
+000131r 2  10               .byte $10
+000132r 2  00               .byte $00
+000133r 2  10               .byte $10
+000134r 2  00               .byte $00
+000135r 2  10               .byte $10
+000136r 2  00               .byte $00
+000137r 2  10               .byte $10
+000138r 2  00               .byte $00
+000139r 2  10               .byte $10
+00013Ar 2  00               .byte $00
+00013Br 2  10               .byte $10
+00013Cr 2  00               .byte $00
+00013Dr 2               
+00013Dr 1               .include "../fos/platform/planck/drivers/delayroutines.s"
+00013Dr 2               ; Copyright 2020 Jonathan Foucher
+00013Dr 2               
+00013Dr 2               ; Permission is hereby granted, free of charge, to any person obtaining a copy of this software
+00013Dr 2               ; and associated documentation files (the "Software"), to deal in the Software without restriction,
+00013Dr 2               ; including without limitation the rights to use, copy, modify, merge, publish, distribute,
+00013Dr 2               ; sublicense, and/or sell copies of the Software, and to permit persons to whom the Software
+00013Dr 2               ; is furnished to do so, subject to the following conditions:
+00013Dr 2               
+00013Dr 2               ; The above copyright notice and this permission notice shall be included in all copies or
+00013Dr 2               ; substantial portions of the Software.
+00013Dr 2               
+00013Dr 2               ; THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED,
+00013Dr 2               ; INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR
+00013Dr 2               ; PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE
+00013Dr 2               ; FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR
+00013Dr 2               ; OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
+00013Dr 2               ; DEALINGS IN THE SOFTWARE.
+00013Dr 2               
+00013Dr 2               
+00013Dr 2               ; this routine delays by 2304 * y + 23 cycles
+00013Dr 2               delay:
+00013Dr 2  DA             phx       ; 3 cycles
+00013Er 2  5A             phy       ; 3 cycles
+00013Fr 2               two:
+00013Fr 2  A2 FF          ldx #$ff  ; 2 cycles
+000141r 2               one:
+000141r 2  EA             nop       ; 2 cycles
+000142r 2  EA             nop       ; 2 cycles
+000143r 2  CA             dex       ; 2 cycles
+000144r 2  D0 FB          bne one   ; 3 for all cycles, 2 for last
+000146r 2  88             dey       ; 2 cycles
+000147r 2  D0 F6          bne two   ; 3 for all cycles, 2 for last
+000149r 2  7A             ply       ; 4 cycles
+00014Ar 2  FA             plx       ; 4 cycles
+00014Br 2  60             rts       ; 6 cycles
+00014Cr 2               
+00014Cr 2               ; delay is in Y register
+00014Cr 2               delay_long:
+00014Cr 2  48             pha
+00014Dr 2  5A             phy
+00014Er 2  DA             phx
+00014Fr 2  98             tya
+000150r 2  AA             tax
+000151r 2               delay_long_loop:
+000151r 2  A0 FF          ldy #$ff
+000153r 2  20 rr rr       jsr delay
+000156r 2  CA             dex
+000157r 2  D0 F8          bne delay_long_loop
+000159r 2  FA             plx
+00015Ar 2  7A             ply
+00015Br 2  68             pla
+00015Cr 2  60             rts
+00015Dr 2               
+00015Dr 2               delay_short:        ; delay Y * 19 cycles
+00015Dr 2  5A             phy
+00015Er 2               delay_short_loop:
+00015Er 2  EA             nop               ; 2 cycles
+00015Fr 2  EA             nop               ; 2 cycles
+000160r 2  EA             nop               ; 2 cycles
+000161r 2  EA             nop               ; 2 cycles
+000162r 2  EA             nop               ; 2 cycles
+000163r 2  EA             nop               ; 2 cycles
+000164r 2  EA             nop               ; 2 cycles
+000165r 2               
+000165r 2               
+000165r 2  88             dey               ; 2 cycles
+000166r 2  D0 F6          bne delay_short_loop   ; 2 or 3 cycles
+000168r 2  7A             ply
+000169r 2  60             rts
+00016Ar 2               
+00016Ar 1               
+00016Ar 1               reset:
+00016Ar 1                   ; ldy #$10
+00016Ar 1                   ; jsr delay_long
+00016Ar 1  A9 FF            lda #$FF
+00016Cr 1  8D 83 FF         sta DDRA
+00016Fr 1  8D 82 FF         sta DDRB
+000172r 1  A9 01            lda #01
+000174r 1  8D 80 FF         sta PORTB
+000177r 1  A2 00            ldx #0
+000179r 1               @loop:
+000179r 1  8E 81 FF         stx PORTA
+00017Cr 1  8E B3 FF         stx VIDEO_DATA
+00017Fr 1  8E B1 FF         stx VIDEO_ADDR_LOW
+000182r 1  E8               inx
+000183r 1  A0 FF            ldy #$FF
+000185r 1  20 rr rr         jsr delay
+000188r 1  80 EF            bra @loop
+00018Ar 1                   ; jsr video_init
+00018Ar 1                   ;set background color
+00018Ar 1                   ; lda #$1E
+00018Ar 1                   ; sta VIDEO_ADDR_LOW
+00018Ar 1                   ; lda #$BF
+00018Ar 1                   ; sta VIDEO_ADDR_HIGH
+00018Ar 1                   ; lda #$1F            ; red background
+00018Ar 1                   ; sta VIDEO_DATA
+00018Ar 1                   ; lda #$C0            ; green foreground
+00018Ar 1                   ; sta VIDEO_DATA
+00018Ar 1               
+00018Ar 1                   ; lda #$00
+00018Ar 1                   ; sta VIDEO_ADDR_LOW
+00018Ar 1                   ; sta VIDEO_ADDR_HIGH
+00018Ar 1  A9 01            lda #01
+00018Cr 1  8D 81 FF         sta PORTA
+00018Fr 1               restart:
+00018Fr 1  A2 00            ldx #0
+000191r 1               loop:
+000191r 1  BD rr rr         lda message,x
+000194r 1  F0 F9            beq restart
+000196r 1  20 rr rr         jsr char_out
+000199r 1               
+000199r 1  A0 20            ldy #$20
+00019Br 1  20 rr rr         jsr delay
+00019Er 1  E8               inx
+00019Fr 1  8E 81 FF         stx PORTA
+0001A2r 1  4C rr rr         jmp loop
+0001A5r 1               
+0001A5r 1               read_data:
+0001A5r 1  A9 00            lda #$00
+0001A7r 1  8D B1 FF         sta VIDEO_ADDR_LOW
+0001AAr 1  A9 00            lda #$00
+0001ACr 1  8D B2 FF         sta VIDEO_ADDR_HIGH
+0001AFr 1  A2 00            ldx #0
+0001B1r 1               read_loop:
+0001B1r 1  AD B3 FF         lda VIDEO_DATA
+0001B4r 1  9D rr rr         sta buf,x
+0001B7r 1  E8               inx
+0001B8r 1  E0 64            cpx #100
+0001BAr 1  D0 F5            bne read_loop
+0001BCr 1               
+0001BCr 1               write_again:
+0001BCr 1  A9 04            lda #$04
+0001BEr 1  8D B1 FF         sta VIDEO_ADDR_LOW
+0001C1r 1  A9 03            lda #$03
+0001C3r 1  8D B2 FF         sta VIDEO_ADDR_HIGH
+0001C6r 1  A2 00            ldx #0
+0001C8r 1               write_again_loop:
+0001C8r 1  BD rr rr         lda buf,x
+0001CBr 1  8D B3 FF         sta VIDEO_DATA
+0001CEr 1  E8               inx
+0001CFr 1  E0 64            cpx #100
+0001D1r 1  D0 F5            bne write_again_loop
+0001D3r 1               
+0001D3r 1  A0 FF            ldy #$ff
+0001D5r 1  20 rr rr         jsr delay_long
+0001D8r 1  4C rr rr         jmp reset
+0001DBr 1               
+0001DBr 1  54 68 65 20  message: .asciiz "The quick brown fox jumps over the lazy dog."
+0001DFr 1  71 75 69 63  
+0001E3r 1  6B 20 62 72  
+000208r 1               
+000208r 1  xx xx xx xx  buf: .res 100
+00020Cr 1  xx xx xx xx  
+000210r 1  xx xx xx xx  
+00026Cr 1               .segment "ROM_VECTORS"
+000000r 1               
+000000r 1  rr rr        .word reset
+000002r 1  rr rr        .word reset
+000004r 1  rr rr        .word reset
+000004r 1               

@@ -1,8 +1,19 @@
-COMMON_SOURCES=midi_test.s planck.cfg
+COMMON_SOURCES=planck.cfg
 
-rom.bin: $(COMMON_SOURCES)
-	cl65 --listing rom-listing.txt \
-	--mapfile rom-labelmap.txt \
+midi.bin:  midi_test.s $(COMMON_SOURCES) 
+	cl65 --listing midi-listing.txt \
+	--mapfile midi-labelmap.txt \
+	--config planck.cfg \
+	--target none \
+	-v \
+	-O \
+	--cpu 65C02 \
+	-o $@ \
+	$<
+
+vga.bin:  vga_test.s $(COMMON_SOURCES)
+	cl65 --listing vga-listing.txt \
+	--mapfile vga-labelmap.txt \
 	--config planck.cfg \
 	--target none \
 	-v \

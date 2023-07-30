@@ -1,8 +1,5 @@
-.segment "ZEROPAGE": zeropage
-line: .res 1
-char: .res 1
 
-.segment "DATA"
+
 video_init:
     ; set colors
     lda #$05

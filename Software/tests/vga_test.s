@@ -1,43 +1,59 @@
-.segment "ZEROPAGE"
-line: .res  1
-char: .res  1
 
+.segment "ZEROPAGE": zeropage
+line: .res 1
+char: .res 1
 
 .segment "CODE"
 
-.include "../drivers/via.inc"
-.include "../drivers/vga.inc"
-.include "../drivers/vga.s"
-.include "../drivers/delayroutines.s"
+.include "../fos/platform/planck/drivers/via.inc"
+.include "../fos/platform/planck/drivers/vga.inc"
+.include "../fos/platform/planck/drivers/vga.s"
+.include "../fos/platform/planck/drivers/delayroutines.s"
 
 reset:
-    ldy #$10
-    jsr delay_long
-    jsr video_init
+    ; ldy #$10
+    ; jsr delay_long
+    lda #$FF
+    sta DDRA
+    sta DDRB
+    lda #01
+    sta PORTB
+    ldx #0
+@loop:
+    stx PORTA
+    stx VIDEO_DATA
+    ; stx VIDEO_ADDR_LOW
+    inx
+    ldy #$FF
+    jsr delay
+    bra @loop
+    ; jsr video_init
     ;set background color
-    lda #$1E
-    sta VIDEO_ADDR_LOW
-    lda #$BF
-    sta VIDEO_ADDR_HIGH
-    lda #$1F            ; red background
-    sta VIDEO_DATA
-    lda #$C0            ; green foreground
-    sta VIDEO_DATA
+    ; lda #$1E
+    ; sta VIDEO_ADDR_LOW
+    ; lda #$BF
+    ; sta VIDEO_ADDR_HIGH
+    ; lda #$1F            ; red background
+    ; sta VIDEO_DATA
+    ; lda #$C0            ; green foreground
+    ; sta VIDEO_DATA
 
-    lda #$00
-    sta VIDEO_ADDR_LOW
-    sta VIDEO_ADDR_HIGH
+    ; lda #$00
+    ; sta VIDEO_ADDR_LOW
+    ; sta VIDEO_ADDR_HIGH
+    lda #01
+    sta PORTA
 restart:
     ldx #0
 loop:
     lda message,x
     beq restart
-    sta VIDEO_DATA
+    jsr char_out
     
     ldy #$20
     jsr delay
     inx
-    
+    stx PORTA
     jmp loop
 
 read_data:
@@ -66,11 +82,13 @@ write_again_loop:
     cpx #100
     bne write_again_loop
 
+    ldy #$ff
+    jsr delay_long
     jmp reset
 
 message: .asciiz "The quick brown fox jumps over the lazy dog."
 
-buf: .res 100;
+buf: .res 100
 .segment "ROM_VECTORS"
 
 .word reset
