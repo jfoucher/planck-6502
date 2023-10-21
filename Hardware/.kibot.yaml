@@ -11,7 +11,6 @@ preflight:
   update_xml: true
   run_drc: true
   check_zone_fills: false
-  drc_exclusions_workaround: true
   filters:
     - number: 58
   set_text_variables:

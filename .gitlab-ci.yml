@@ -10,7 +10,7 @@ stages:
   image: setsoft/kicad_auto:ki7
   stage: run_erc
   script:
-    - "cd Hardware/$DIR && [ -f *.kicad_sch ] && kibot -c ../.kibot.yaml -d ../Fabrication -s update_xml,run_drc -i"
+    - "cd Hardware/$DIR && [ -f *.kicad_sch ] && kibot -c ../.kibot.yaml -d ../Fabrication -s update_xml,run_erc -i"
   
   artifacts:
     when: always
@@ -21,7 +21,7 @@ stages:
   image: setsoft/kicad_auto:ki7
   stage: run_drc
   script:
-    - "cd Hardware/$DIR && [ -f *.kicad_pcb ] && kibot -c ../.kibot.yaml -d ../Fabrication -s update_xml,run_erc -i"
+    - "cd Hardware/$DIR && [ -f *.kicad_pcb ] && kibot -c ../.kibot.yaml -d ../Fabrication -s update_xml,run_drc -i -F"
   artifacts:
     when: always
     paths:
