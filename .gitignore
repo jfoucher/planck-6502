@@ -37,3 +37,5 @@ Hardware/midi/midi-backups
 Hardware/pico_vga/pico_vga-backups
 ~ram_board.kicad_pcb.lck
 ~ram_board.kicad_sch.lck
+~mainboard.kicad_pcb.lck
+~mainboard.kicad_sch.lck
