@@ -12298,6 +12298,7 @@ cf_print_id:
 .endif
 xt_io_readblock:
 .ifdef io_read_sector_address
+        jsr underflow_2
         ; block-read ( addr blk# -- ) 
         lda 2, x
         sta io_buffer_ptr
@@ -12341,6 +12342,7 @@ z_io_readblock:
 xt_io_writeblock:
 .ifdef io_read_sector_address
         ; block-write ( addr blk# -- ) 
+        jsr underflow_2
         lda 2, x
         sta io_buffer_ptr
         lda 3, x
@@ -12373,5 +12375,43 @@ xt_io_writeblock:
 .endif
 z_io_writeblock:
         rts
+xt_set_ram_expansion_address:
+.ifdef ENABLE_RAM_EXPANSION
+.if ENABLE_RAM_EXPANSION = 1
+; set slot where RAM extension is located
+        jsr underflow_1
+        lda 0, x
+        sta ram_expansion_address
+        lda 1, x
+        sta ram_expansion_address + 1
+        inx
+        inx
+.endif
+.endif
+z_set_ram_expansion_address:
+        rts
+
+xt_bank:
+.ifdef ENABLE_RAM_EXPANSION
+.if ENABLE_RAM_EXPANSION = 1
+; change RAM bank and enable or disable expansion RAM
+; top bit of byte enables the RAM if set
+        jsr underflow_1
+        lda ram_expansion_address
+        beq @err
+        lda 0, x                        ; only low byte is used
+        sta (ram_expansion_address)
+        bra @end
+@err:
+        lda #err_ramexp
+        jmp error
+@end:
+        inx
+        inx
+.endif
+.endif
+z_bank:
+        rts
+
 ; END
 

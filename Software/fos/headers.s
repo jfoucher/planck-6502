@@ -158,9 +158,18 @@ nt_time:
 .endif
         .byte "time"
 
+nt_bank:                  ; RAM expansion
+        .byte 4, UF
+        .word nt_time, xt_bank, z_bank
+        .byte "bank"
+nt_expad:                  ; RAM expansion
+        .byte 5, UF
+        .word nt_bank, xt_set_ram_expansion_address, z_set_ram_expansion_address
+        .byte "expad"
+
 nt_ed:                  ; ed6502
         .byte 2, NN
-        .word nt_time, xt_ed, z_ed
+        .word nt_expad, xt_ed, z_ed
         .byte "ed"
 
 nt_see: .byte 3, NN

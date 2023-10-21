@@ -60,18 +60,18 @@ lcd_inst:
     ldy #$2                    ; Delay 38 clock cycles - 3 us at 12.5 MHz
     jsr delay_short
     sta LCD_ADDR_DISABLED
-    ldy #$08                     ; Delay 608 clock cycles - 48 us at 12.5 MHz
+    ldy #$10                     ; Delay 608 clock cycles - 48 us at 12.5 MHz
     jsr delay_short
     ply
     rts
 
 lcd_send:
     sta LCD_DATA_ENABLED
-    ldy #$2                    ; Delay 38 clock cycles - 3 us at 12.5 MHz
+    ldy #$4                    ; Delay 38 clock cycles - 3 us at 12.5 MHz
     jsr delay_short
 
     sta LCD_DATA_DISABLED
-    ldy #$08                     ; Delay 608 clock cycles - 48 us at 12.5 MHz
+    ldy #$10                     ; Delay 608 clock cycles - 48 us at 12.5 MHz
     jsr delay_short
     rts
 

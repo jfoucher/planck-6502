@@ -7,7 +7,7 @@ stages:
   - deploy_pages
 
 .erc_template:
-  image: setsoft/kicad_auto:dev_k6
+  image: setsoft/kicad_auto:ki7
   stage: run_erc
   script:
     - "cd Hardware/$DIR && [ -f *.kicad_sch ] && kibot -c ../.kibot.yaml -d ../Fabrication -s update_xml,run_drc -i"
@@ -18,7 +18,7 @@ stages:
       - Hardware/Fabrication/
 
 .drc_template:
-  image: setsoft/kicad_auto:dev_k6
+  image: setsoft/kicad_auto:ki7
   stage: run_drc
   script:
     - "cd Hardware/$DIR && [ -f *.kicad_pcb ] && kibot -c ../.kibot.yaml -d ../Fabrication -s update_xml,run_erc -i"
@@ -28,7 +28,7 @@ stages:
       - Hardware/Fabrication/
 
 .output_template:
-  image: setsoft/kicad_auto:dev_k6
+  image: setsoft/kicad_auto:ki7
   stage: gen_fab
   script:
     - "cd Hardware/$DIR && [ -f *.kicad_pcb ] && kibot -d ../Fabrication -c ../.kibot.yaml --skip-pre update_xml,run_drc,run_erc print_front gerbers drill zip render print_sch csv-bom html-bom && rm -rf ../Fabrication/Gerbers"

@@ -4,6 +4,8 @@
 CLOCK_SPEED = 12000000          
 TALI_OPTIONAL_ASSEMBLER = 1
 
+ENABLE_RAM_EXPANSION = 1
+
 ram_end = $8000
 
 ; select includes to enable card drivers
@@ -23,7 +25,11 @@ ram_end = $8000
 .ifdef CF_ADDRESS
 io_buffer_ptr: .res 2
 .endif
-
+.ifdef ENABLE_RAM_EXPANSION
+.if ENABLE_RAM_EXPANSION = 1
+ram_expansion_address: .res 2
+.endif
+.endif
 .include "drivers/zp.s"
 
 .segment "BSS"
@@ -31,6 +37,9 @@ io_buffer_ptr: .res 2
 .ifdef CF_ADDRESS
 IO_BUFFER = cp0+256 ; set IO_BUFFER to block buffer
 IO_SECTOR: .res 4
+.endif
+.ifdef VIDEO_BASE
+vga_enable: .res 1
 .endif
 
 .segment "STARTUP"
@@ -117,6 +126,13 @@ kernel_init:
     sta PORTB
     stz PORTA
 .endif
+.ifdef ENABLE_RAM_EXPANSION
+.if ENABLE_RAM_EXPANSION = 1
+stz ram_expansion_address
+stz ram_expansion_address + 1
+.endif
+.endif
+
 
 jsr acia_init
 .ifdef timer_init

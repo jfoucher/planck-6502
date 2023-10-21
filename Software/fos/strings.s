@@ -74,12 +74,13 @@ err_underflow =    9
 err_negallot =     10
 err_wordlist =     11
 err_blockwords =   12
+err_ramexp =      13
 
 error_table:
         .word es_allot, es_badsource, es_compileonly, es_defer  ;  0-3
         .word es_divzero, es_noname, es_refill, es_state        ;  4-7
         .word es_syntax, es_underflow, es_negallot, es_wordlist ;  8-11
-        .word es_blockwords                                    ; 12
+        .word es_blockwords, es_ramexp                                    ; 12-13
 
 es_allot:       .byte "ALLOT using all available memory", 0
 es_badsource:   .byte "Illegal SOURCE-ID during REFILL", 0
@@ -94,7 +95,7 @@ es_underflow:   .byte "Stack underflow", 0
 es_negallot:    .byte "Max memory freed with ALLOT", 0
 es_wordlist:    .byte "No wordlists available", 0
 es_blockwords:  .byte "Please assign vectors BLOCK-READ-VECTOR and BLOCK-WRITE-VECTOR",0
-
+es_ramexp:      .byte "Please the RAM expansion card address with expad",0
 ; ## ENVIRONMENT STRINGS
 
 ; These are used by the ENVIRONMENT? word and stored in the old string format:

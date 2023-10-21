@@ -64,7 +64,7 @@ module vga (
     localparam V_CHAR_LORES = 30;
     localparam H_CHAR_LORES = 40;
 
-    localparam RAM_SIZE = 14'h1800;// + 'h400;
+    localparam RAM_SIZE = 14'h1900;// + 'h400;
     localparam SCREEN_CHARS = 'h1D4B;
 
     reg [1:0]   mode;
@@ -365,7 +365,7 @@ module vga (
             end
             `VSCROLL_REG:
             begin
-                do_scroll <= command_data;
+                vscroll_reg <= command_data;
                 save_state <= `SAVE_STATE_END;
             end
             default:
@@ -430,7 +430,8 @@ module vga (
     //reg [12:0] ram_add;
 
     // RAM address to get character from
-    wire [6:0] line = (YPOS >> 3);
+    wire [10:0] scrolled_ypos = (YPOS + vscroll_reg);
+    wire [6:0] line = (scrolled_ypos >> 3);
     wire [6:0] char = ((XPOS+2) >> 3);
     wire [12:0] next_line_addr = (YPOS > V_RES) ? 0 : ((line+1) * H_CHAR_HIRES);
     wire [12:0] this_line_addr = ((line * H_CHAR_HIRES) + char);
@@ -452,13 +453,14 @@ module vga (
     always @(posedge CLK_FAST) begin
 
         if (DE) begin
+            // if display is enabled, set the current pixel to be shown below
             //ram_add <= ((line * H_CHAR_HIRES) + char);
             fb0_char <= fb0[ram_add];
             cur_char <= (show_cursor && (ram_add == address_reg)) ? 8 : fb0_char;
-            char_data_line <= character_rom[((cur_char & 8'h7F) << 3) | (YPOS & 8'h7)];
+            char_data_line <= character_rom[((cur_char & 8'h7F) << 3) | (scrolled_ypos & 8'h7)];
             cur_px <= (char_data_line >> (XPOS & 8'h7)) & 1'b1;
         end else if (do_scroll) begin
-
+            // Display inactive, scroll if necessary
             //move_tmp <= fb0[move_pos + do_scroll * V_CHAR_HIRES];
 
         end

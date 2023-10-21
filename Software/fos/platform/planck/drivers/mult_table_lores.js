@@ -1,9 +1,9 @@
 bufHigh = [];
 
 bufLow = [];
-console.log('table to multiply by 50');
-for (var i = 0; i <= 40 ; i++) {
-    let num = 50*i*3;
+console.log('table to multiply by 30');
+for (var i = 0; i <= 30 ; i++) {
+    let num = 40*i;
     let low = (num & 0x1F);
     let high = (num >> 5);
     let numstr = ("00" + low.toString(16)).slice(-2)

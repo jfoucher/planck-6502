@@ -34,3 +34,6 @@ Hardware/template/planck_board-backups
 Hardware/keyboard/keyboard-backups
 Hardware/midi/planck_board-backups
 Hardware/midi/midi-backups
+Hardware/pico_vga/pico_vga-backups
+~ram_board.kicad_pcb.lck
+~ram_board.kicad_sch.lck

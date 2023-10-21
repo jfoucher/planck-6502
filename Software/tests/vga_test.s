@@ -4,13 +4,21 @@ line: .res 1
 char: .res 1
 
 .segment "CODE"
+.import    copydata
+
+reset:
+    jsr copydata
+    jmp start
+
+
+.segment "DATA"
 
 .include "../fos/platform/planck/drivers/via.inc"
 .include "../fos/platform/planck/drivers/vga.inc"
 .include "../fos/platform/planck/drivers/vga.s"
 .include "../fos/platform/planck/drivers/delayroutines.s"
 
-reset:
+start:
     ; ldy #$10
     ; jsr delay_long
     lda #$FF
@@ -18,16 +26,20 @@ reset:
     sta DDRB
     lda #01
     sta PORTB
+    jsr video_init
     ldx #0
 @loop:
     stx PORTA
-    stx VIDEO_DATA
+    txa
+    ; jsr char_outz AEEEE
+    sta VIDEO_DATA
     ; stx VIDEO_ADDR_LOW
     inx
-    ldy #$FF
-    jsr delay
+    ; ldy #$10
+    ; jsr delay
+
     bra @loop
-    ; jsr video_init
+    
     ;set background color
     ; lda #$1E
     ; sta VIDEO_ADDR_LOW
@@ -44,14 +56,19 @@ reset:
     lda #01
     sta PORTA
 restart:
+    ldy #$10
+    jsr delay_long
+    jsr video_init
+    ldy #$10
+    jsr delay_long
     ldx #0
 loop:
     lda message,x
     beq restart
     jsr char_out
-    
-    ldy #$20
-    jsr delay
+    ; sta VIDEO_DATA
+    ; ldy #$10
+    ; jsr delay
     inx
     stx PORTA
     jmp loop
@@ -86,11 +103,11 @@ write_again_loop:
     jsr delay_long
     jmp reset
 
-message: .asciiz "The quick brown fox jumps over the lazy dog."
+message: .byte "The quick brown fox jumps over the lazy dog! 1234567890", $0D, "Second line"
 
 buf: .res 100
 .segment "ROM_VECTORS"
 
-.word reset
+.word restart
 .word reset
 .word reset
