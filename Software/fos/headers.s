@@ -167,9 +167,19 @@ nt_expad:                  ; RAM expansion
         .word nt_bank, xt_set_ram_expansion_address, z_set_ram_expansion_address
         .byte "expad"
 
+nt_intelhex:                  
+        .byte 4, NN
+        .word nt_expad, xt_intelhex, z_intelhex
+        .byte "ihex"
+
+nt_go:                  
+        .byte 2, UF
+        .word nt_intelhex, xt_go, z_go
+        .byte "go"
+
 nt_ed:                  ; ed6502
         .byte 2, NN
-        .word nt_expad, xt_ed, z_ed
+        .word nt_go, xt_ed, z_ed
         .byte "ed"
 
 nt_see: .byte 3, NN

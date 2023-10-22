@@ -56,7 +56,10 @@
           "width": 0.0
         }
       ],
-      "drc_exclusions": [],
+      "drc_exclusions": [
+        "silk_edge_clearance|0|81125000|c26a9c0d-dad6-4d5d-874f-cbe89b97e884|6c6965db-af44-456b-86a3-159a83a4e64d",
+        "silk_edge_clearance|0|90325000|c26a9c0d-dad6-4d5d-874f-cbe89b97e884|f5d5582f-474b-4c14-923f-ba197e573e68"
+      ],
       "meta": {
         "filename": "board_design_settings.json",
         "version": 2
@@ -527,6 +530,7 @@
     ]
   ],
   "text_variables": {
-    "VERSION": "v1.0"
+    "DATE": "2023-10-22",
+    "VERSION": "v1.4.9"
   }
 }

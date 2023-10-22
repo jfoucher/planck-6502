@@ -5,14 +5,20 @@ kibot:
 global:
   filters:
     - number: 58
+    - number: 10
+    - number: 8
     
 preflight:
   run_erc: true
   update_xml: true
   run_drc: true
   check_zone_fills: false
+  ignore_unconnected: true
+
   filters:
     - number: 58
+    - number: 10
+    - number: 8
   set_text_variables:
     - command: git describe --tags
       name: VERSION

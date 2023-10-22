@@ -17,7 +17,7 @@ ram_end = $8000
 ; .include "drivers/sd.inc"
 ; .include "drivers/ps2.inc"
 ; .include "drivers/4004.inc"
-.include "drivers/lcd.inc"
+; .include "drivers/lcd.inc"
 ; .include "drivers/vga.inc"
 ; .include "drivers/keyboard.inc"
 
@@ -30,9 +30,21 @@ io_buffer_ptr: .res 2
 ram_expansion_address: .res 2
 .endif
 .endif
+
+load_addr: .res 2
+
 .include "drivers/zp.s"
 
 .segment "BSS"
+.ifdef load_addr
+char_count: .res 1
+record_type: .res 1
+start_address: .res 2
+start_bank: .res 1
+running_checksum: .res 1
+checksum: .res 1
+ihex_tmp: .res 1
+.endif
 
 .ifdef CF_ADDRESS
 IO_BUFFER = cp0+256 ; set IO_BUFFER to block buffer
@@ -136,7 +148,7 @@ stz ram_expansion_address + 1
 
 jsr acia_init
 .ifdef timer_init
-    jsr timer_init
+    ;jsr timer_init
 .endif
 .ifdef video_init
     jsr video_init

@@ -95,7 +95,7 @@ es_underflow:   .byte "Stack underflow", 0
 es_negallot:    .byte "Max memory freed with ALLOT", 0
 es_wordlist:    .byte "No wordlists available", 0
 es_blockwords:  .byte "Please assign vectors BLOCK-READ-VECTOR and BLOCK-WRITE-VECTOR",0
-es_ramexp:      .byte "Please the RAM expansion card address with expad",0
+es_ramexp:      .byte "Please assign the RAM expansion card address with expad",0
 ; ## ENVIRONMENT STRINGS
 
 ; These are used by the ENVIRONMENT? word and stored in the old string format:

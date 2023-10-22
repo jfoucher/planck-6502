@@ -1,53 +1,52 @@
 Modules list:
 -------------
 main.o:
-    CODE              Offs=000000  Size=00017B  Align=00001  Fill=0000
-    BSS               Offs=000000  Size=000592  Align=00001  Fill=0000
-    DATA              Offs=000000  Size=005E83  Align=00001  Fill=0000
-    ZEROPAGE          Offs=000000  Size=00004D  Align=00001  Fill=0000
+    BSS               Offs=000000  Size=000519  Align=00001  Fill=0000
+    DATA              Offs=000000  Size=005F06  Align=00001  Fill=0000
+    ZEROPAGE          Offs=000000  Size=00004C  Align=00001  Fill=0000
     STARTUP           Offs=000000  Size=000009  Align=00001  Fill=0000
     DATASTACK         Offs=000000  Size=00007F  Align=00001  Fill=0000
     DICTIONARY        Offs=000000  Size=001000  Align=00001  Fill=0000
     VECTORS           Offs=000000  Size=000006  Align=00001  Fill=0000
 /opt/homebrew/Cellar/cc65/2.19/share/cc65/lib/none.lib(copydata.o):
-    CODE              Offs=00017B  Size=00002D  Align=00001  Fill=0000
+    CODE              Offs=000000  Size=00002D  Align=00001  Fill=0000
 /opt/homebrew/Cellar/cc65/2.19/share/cc65/lib/none.lib(zerobss.o):
-    CODE              Offs=0001A8  Size=000023  Align=00001  Fill=0000
+    CODE              Offs=00002D  Size=000023  Align=00001  Fill=0000
 /opt/homebrew/Cellar/cc65/2.19/share/cc65/lib/none.lib(zeropage.o):
-    ZEROPAGE          Offs=00004D  Size=00001A  Align=00001  Fill=0000
+    ZEROPAGE          Offs=00004C  Size=00001A  Align=00001  Fill=0000
 
 
 Segment list:
 -------------
 Name                   Start     End    Size  Align
 ----------------------------------------------------
-ZEROPAGE              000000  000066  000067  00001
+ZEROPAGE              000000  000065  000066  00001
 DATASTACK             000080  0000FE  00007F  00001
-DATA                  000200  006082  005E83  00001
-BSS                   006083  006614  000592  00001
-DICTIONARY            006615  007614  001000  00001
-STARTUP               00DE83  00DE8B  000009  00001
-CODE                  00DE8C  00E056  0001CB  00001
+DATA                  000200  006105  005F06  00001
+BSS                   006106  00661E  000519  00001
+DICTIONARY            00661F  00761E  001000  00001
+STARTUP               00DF06  00DF0E  000009  00001
+CODE                  00DF0F  00DF5E  000050  00001
 VECTORS               00FFFA  00FFFF  000006  00001
 
 
 Exports list by name:
 ---------------------
-__BSS_RUN__               006083 RLA    __BSS_SIZE__              000592 REA    
+__BSS_RUN__               006106 RLA    __BSS_SIZE__              000519 REA    
 __DATA_LOAD__             008000 RLA    __DATA_RUN__              000200 RLA    
-__DATA_SIZE__             005E83 REA    copydata                  00E007 RLA    
-ptr1                      000055 RLZ    ptr2                      000057 RLZ    
-tmp1                      00005D RLZ    zerobss                   00E034 RLA    
+__DATA_SIZE__             005F06 REA    copydata                  00DF0F RLA    
+ptr1                      000054 RLZ    ptr2                      000056 RLZ    
+tmp1                      00005C RLZ    zerobss                   00DF3C RLA    
 
 
 
 Exports list by value:
 ----------------------
-ptr1                      000055 RLZ    ptr2                      000057 RLZ    
-tmp1                      00005D RLZ    __DATA_RUN__              000200 RLA    
-__BSS_SIZE__              000592 REA    __DATA_SIZE__             005E83 REA    
-__BSS_RUN__               006083 RLA    __DATA_LOAD__             008000 RLA    
-copydata                  00E007 RLA    zerobss                   00E034 RLA    
+ptr1                      000054 RLZ    ptr2                      000056 RLZ    
+tmp1                      00005C RLZ    __DATA_RUN__              000200 RLA    
+__BSS_SIZE__              000519 REA    __DATA_SIZE__             005F06 REA    
+__BSS_RUN__               006106 RLA    __DATA_LOAD__             008000 RLA    
+copydata                  00DF0F RLA    zerobss                   00DF3C RLA    
 
 
 
@@ -64,7 +63,7 @@ __DATA_RUN__ ([linker generated]):
 __DATA_SIZE__ ([linker generated]):
     copydata.o                common/copydata.s(8)
 copydata (copydata.o):
-    main.o                    platform/planck/main.s(46)
+    main.o                    platform/planck/main.s(58)
 ptr1 (zeropage.o):
     zerobss.o                 common/zerobss.s(9)
     copydata.o                common/copydata.s(9)
@@ -73,5 +72,5 @@ ptr2 (zeropage.o):
 tmp1 (zeropage.o):
     copydata.o                common/copydata.s(9)
 zerobss (zerobss.o):
-    main.o                    platform/planck/main.s(47)
+    main.o                    platform/planck/main.s(59)
 

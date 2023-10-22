@@ -12413,5 +12413,146 @@ xt_bank:
 z_bank:
         rts
 
+
+ascii_to_nibble:
+        cmp #('9' + 1)            ;check if number
+        bcc @is_number            
+        ; not a number, make uppercase
+        and #$5F         ;do case conversion
+        sbc #7          ; remove difference between A and 9
+        ; there is no check to see if letter is > F
+@is_number:
+        sec
+        sbc #'0'
+        rts
+
+get_byte_from_ascii_no_checksum:
+        jsr kernel_getc         ; get first ascii character
+        jsr ascii_to_nibble
+        asl
+        asl
+        asl
+        asl
+        sta ihex_tmp
+        jsr kernel_getc         ; get second ascii character
+        jsr ascii_to_nibble
+        ora ihex_tmp
+        rts
+
+get_byte_from_ascii:
+        jsr kernel_getc         ; get first ascii character
+        jsr ascii_to_nibble
+        asl
+        asl
+        asl
+        asl
+        sta ihex_tmp
+        jsr kernel_getc         ; get second ascii character
+        jsr ascii_to_nibble
+        ora ihex_tmp
+        sta ihex_tmp
+        clc
+        adc running_checksum    ; add result to checksum
+        sta running_checksum
+        lda ihex_tmp            ; return result
+        rts
+
+; ## IHEX ( -- ) "Load intel hex from serial to RAM"
+; ## "ihex" coded Custom
+xt_intelhex:
+.ifdef load_addr
+@line_start:
+        jsr kernel_getc
+        cmp #':'                ; wait for start of line marker
+        bne @line_start
+        lda #'.'
+        jsr kernel_putc
+        stz running_checksum
+        ;lda #'.'
+        ;jsr kernel_putc         ; print a dot for each line
+        ; line has started
+        jsr get_byte_from_ascii
+        sta char_count
+        jsr get_byte_from_ascii
+        sta load_addr + 1
+        jsr byte_to_ascii
+        jsr get_byte_from_ascii
+        sta load_addr
+        jsr byte_to_ascii
+
+        ; we now have the count and the target address
+        ; check the record type
+        jsr get_byte_from_ascii
+        beq @data  ; data record
+        cmp #1
+        beq @end
+        cmp #3
+        beq @start_segment
+        cmp #5
+        beq @start_addr
+        ; all other types are ignored
+        jmp @line_start
+@data:
+        phy
+        ldy #0
+@data_loop:
+        jsr get_byte_from_ascii
+        sta (load_addr), y
+        jsr byte_to_ascii
+        iny
+        cpy char_count
+        bne @data_loop
+        ply
+        ; verify checksum
+        jsr get_byte_from_ascii_no_checksum
+        ;jsr kernel_putc
+        clc
+        adc running_checksum
+        bne @error
+        bra @line_start
+@error:
+        lda #'!'
+        jsr kernel_putc
+        lda running_checksum
+        jsr kernel_putc
+        bra z_intelhex
+@start_segment:
+@start_addr:
+        phy
+        ldy #2
+@bank_loop:
+        jsr get_byte_from_ascii
+        sta start_bank, y
+        dey
+        bne @bank_loop
+        ldy #2
+@address_loop:
+        jsr get_byte_from_ascii
+        sta start_address, y
+        dey
+        bne @address_loop
+        ply
+        bra @line_start
+
+@end:
+        ; jump right to start address ?
+        ; ignore last line checksum
+        jsr kernel_getc
+        jsr kernel_getc
+        jsr xt_bell
+.endif
+z_intelhex:
+        rts
+
+; ## GO ( -- ) "jump to address"
+; ## "go" coded Custom
+xt_go:
+        jsr underflow_1
+        lda 0, x
+        sta tmp1
+        lda 1, x
+        sta tmp1 + 1
+        jmp (tmp1)
+z_go:
 ; END
 

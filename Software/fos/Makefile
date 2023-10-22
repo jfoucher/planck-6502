@@ -36,6 +36,19 @@ rom-%.bin: platform/%/boot.s platform/%/*/*.s platform/%/cf.cfg $(COMMON_SOURCES
 	-o $@ \
 	$<
 
+hex-%.bin: platform/%/hex.s platform/%/memory.cfg $(COMMON_SOURCES)
+	cl65 --listing $*-listing.txt \
+	--mapfile $*-labelmap.txt \
+	--config platform/$*/memory.cfg \
+	--target none \
+	-v \
+	-O \
+	--cpu 65C02 \
+	-o $@ \
+	$<
+
+hex-test.hex: hex-planck.bin
+	bin2hex hex-planck.bin hex-test.hex 0x9000
 
 sim:	fos-py65mon.bin
 	py65mon -m 65c02 -r fos-py65mon.bin

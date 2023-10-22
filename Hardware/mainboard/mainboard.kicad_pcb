@@ -86,7 +86,8 @@
     )
   )
 
-  (property "VERSION" "v1.0")
+  (property "DATE" "2023-10-22")
+  (property "VERSION" "v1.4.9")
 
   (net 0 "")
   (net 1 "RDY")
