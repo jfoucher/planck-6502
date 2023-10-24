@@ -48,6 +48,26 @@ lda #0
 sta $FFD0
 ```
 
+To use the RAM expansion from forth, two words are provided for convenience the first one `expad` sets the expansion card address.
+
+For example, if it placed in slot 0, run the following:
+
+```forth
+hex ff80 expad
+```
+
+then to activate it and change banks, use the following:
+
+```forth
+hex
+80 bank \ Activates bank 0
+81 bank \ Activates bank 1
+82 bank \ Activates bank 2
+9F bank \ Activates bank 31
+
+0 bank  \ Deactivates RAM expansion and restores ROM
+```
+
 ## Slot placement
 
-There is no driver for this board, you will have to develop custom code for it, so you can place it anywhere you like as long as your code looks for it in the right place.
+You can place the card in any slot, as long as your code knows where it is.

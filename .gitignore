@@ -39,3 +39,4 @@ Hardware/pico_vga/pico_vga-backups
 ~ram_board.kicad_sch.lck
 ~mainboard.kicad_pcb.lck
 ~mainboard.kicad_sch.lck
+*.kicad_pro-bak

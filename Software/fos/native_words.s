@@ -12414,49 +12414,6 @@ z_bank:
         rts
 
 
-ascii_to_nibble:
-        cmp #('9' + 1)            ;check if number
-        bcc @is_number            
-        ; not a number, make uppercase
-        and #$5F         ;do case conversion
-        sbc #7          ; remove difference between A and 9
-        ; there is no check to see if letter is > F
-@is_number:
-        sec
-        sbc #'0'
-        rts
-
-get_byte_from_ascii_no_checksum:
-        jsr kernel_getc         ; get first ascii character
-        jsr ascii_to_nibble
-        asl
-        asl
-        asl
-        asl
-        sta ihex_tmp
-        jsr kernel_getc         ; get second ascii character
-        jsr ascii_to_nibble
-        ora ihex_tmp
-        rts
-
-get_byte_from_ascii:
-        jsr kernel_getc         ; get first ascii character
-        jsr ascii_to_nibble
-        asl
-        asl
-        asl
-        asl
-        sta ihex_tmp
-        jsr kernel_getc         ; get second ascii character
-        jsr ascii_to_nibble
-        ora ihex_tmp
-        sta ihex_tmp
-        clc
-        adc running_checksum    ; add result to checksum
-        sta running_checksum
-        lda ihex_tmp            ; return result
-        rts
-
 ; ## IHEX ( -- ) "Load intel hex from serial to RAM"
 ; ## "ihex" coded Custom
 xt_intelhex:
@@ -12543,6 +12500,51 @@ xt_intelhex:
 .endif
 z_intelhex:
         rts
+
+
+ascii_to_nibble:
+        cmp #('9' + 1)            ;check if number
+        bcc @is_number            
+        ; not a number, make uppercase
+        and #$5F         ;do case conversion
+        sbc #7          ; remove difference between A and 9
+        ; there is no check to see if letter is > F
+@is_number:
+        sec
+        sbc #'0'
+        rts
+
+get_byte_from_ascii_no_checksum:
+        jsr kernel_getc         ; get first ascii character
+        jsr ascii_to_nibble
+        asl
+        asl
+        asl
+        asl
+        sta ihex_tmp
+        jsr kernel_getc         ; get second ascii character
+        jsr ascii_to_nibble
+        ora ihex_tmp
+        rts
+
+get_byte_from_ascii:
+        jsr kernel_getc         ; get first ascii character
+        jsr ascii_to_nibble
+        asl
+        asl
+        asl
+        asl
+        sta ihex_tmp
+        jsr kernel_getc         ; get second ascii character
+        jsr ascii_to_nibble
+        ora ihex_tmp
+        sta ihex_tmp
+        clc
+        adc running_checksum    ; add result to checksum
+        sta running_checksum
+        lda ihex_tmp            ; return result
+        rts
+
 
 ; ## GO ( -- ) "jump to address"
 ; ## "go" coded Custom

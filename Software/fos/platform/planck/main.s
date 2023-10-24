@@ -1,9 +1,12 @@
 
 .include "../../macros.s"
 ; The clock speed after it is divided by two by the counter
-CLOCK_SPEED = 12000000          
+CLOCK_SPEED = 12000000      
+
+; Comment this line to disable taliforth's assembler and disassembler
 TALI_OPTIONAL_ASSEMBLER = 1
 
+; Comment this line to diasble the RAM expansion card and related words
 ENABLE_RAM_EXPANSION = 1
 
 ram_end = $8000
@@ -15,9 +18,9 @@ ram_end = $8000
 .include "drivers/acia.inc"
 .include "drivers/via.inc"
 ; .include "drivers/sd.inc"
-; .include "drivers/ps2.inc"
+.include "drivers/ps2.inc"
 ; .include "drivers/4004.inc"
-; .include "drivers/lcd.inc"
+.include "drivers/lcd.inc"
 ; .include "drivers/vga.inc"
 ; .include "drivers/keyboard.inc"
 
@@ -148,7 +151,7 @@ stz ram_expansion_address + 1
 
 jsr acia_init
 .ifdef timer_init
-    ;jsr timer_init
+    jsr timer_init
 .endif
 .ifdef video_init
     jsr video_init
